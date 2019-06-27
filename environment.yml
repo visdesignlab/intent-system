@@ -1,0 +1,11 @@
+name: intent-server
+dependencies:
+    - flake8
+    - flask
+    - flask-socketio
+    - mypy
+    - numpy
+    - python=3.7
+    - pytest
+    - sklearn
+    - typing
