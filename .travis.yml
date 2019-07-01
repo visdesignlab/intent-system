@@ -14,7 +14,7 @@ install:
 script:
     - python3 setup.py install
     - flake8
-    - mypy src/main.py
+    - mypy intent-server/main.py
 
 test:
     - python3 setup.py test
