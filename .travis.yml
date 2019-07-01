@@ -12,9 +12,9 @@ install:
     - source activate intent-server
 
 script:
-    - python3 setup.py install
     - flake8
-    - mypy src/main.py
+    - mypy intent-server/main.py
+    - python3 setup.py install
 
 test:
     - python3 setup.py test
