@@ -15,6 +15,9 @@ class Dataset:
         output['values'] = self.data.T.to_dict()
         return output
 
+    def numerical(self) -> pd.DataFrame:
+        return self.data.select_dtypes(include='number')
+
     @staticmethod
     def from_json_file(filename: str) -> 'Dataset':
         with open(filename) as read_file:

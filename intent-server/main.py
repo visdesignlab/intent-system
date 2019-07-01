@@ -7,6 +7,7 @@ from typing import List
 # import pandas as pd
 from vendor.interactions import Interaction
 from dataset import Dataset
+from properties import Properties
 
 from flask import Flask, jsonify, request
 from flask_socketio import SocketIO
@@ -36,6 +37,7 @@ def hello():  # type: ignore
 
 
 def main() -> None:
+
     # numeric_data = data.drop(columns=['ListNo'])
     # clf = LocalOutlierFactor(n_neighbors=20, contamination=0.1)
     # pred = clf.fit_predict(numeric_data)
@@ -43,6 +45,7 @@ def main() -> None:
     # data.insert(len(data.columns), 'Outlier', pred)
     # print(data.loc[data['ListNo'] == '1352624'])
     # dataset = Dataset.from_json_file(sys.argv[1])
+    ps = Properties(ds)
 
     socketio.run(app)
 
