@@ -1,4 +1,4 @@
-from intent_server.properties import Measure, Outlier
+from intent_server.properties import Outlier
 
 import pandas as pd
 

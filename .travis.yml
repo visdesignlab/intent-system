@@ -13,7 +13,7 @@ install:
 
 script:
     - flake8
-    - mypy intent_server/main.py
+    - mypy -p intent_server
     - python3 setup.py install
 
 test:

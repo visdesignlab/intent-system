@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from dataset import Dataset
+from .dataset import Dataset
 from sklearn.neighbors import LocalOutlierFactor
 from typing import List
 
