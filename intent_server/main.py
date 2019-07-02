@@ -2,8 +2,6 @@ import sys
 
 from typing import List
 
-# from sklearn.neighbors import LocalOutlierFactor
-
 # import pandas as pd
 from vendor.interactions import Interaction
 from dataset import Dataset
