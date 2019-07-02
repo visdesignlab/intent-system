@@ -9,11 +9,11 @@ before_install:
 
 install:
     - conda env create -f environment.yml
-    - source activate intent-server
+    - source activate intent_server
 
 script:
     - flake8
-    - mypy intent-server/main.py
+    - mypy intent_server/main.py
     - python3 setup.py install
 
 test:
