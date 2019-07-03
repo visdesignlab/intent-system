@@ -6,5 +6,9 @@ setup(
     packages=find_packages(),
     setup_requires=['pytest-runner'],
     tests_require=['pytest'],
-    py_modules=['intent-server.vendor.interactions'],
+    py_modules=[
+        'intent_server.dataset',
+        'intent_server.properties',
+        'intent_server.vendor.interactions'
+    ],
 )

@@ -1,4 +1,4 @@
-name: intent-server
+name: intent_server
 dependencies:
     - flake8
     - flask
