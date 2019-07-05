@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, render_template
 
 from .dataset import Dataset
 
@@ -12,11 +12,13 @@ datasets = {
 
 views = Blueprint('views', __name__)
 
+@views.route('/')
+def index(): # type: ignore
+    return render_template('index.html')
 
 @views.route('/dataset')
 def route_dataset_list():  # type: ignore
     return jsonify(list(datasets.keys()))
-
 
 @views.route('/dataset/<dataset_name>')
 def route_dataset(dataset_name):  # type: ignore
