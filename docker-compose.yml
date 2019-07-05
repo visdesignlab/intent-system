@@ -1,0 +1,4 @@
+intent_server:
+  build: .
+  ports:
+   - "5000:5000"
