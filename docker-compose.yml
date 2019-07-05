@@ -1,4 +1,4 @@
-intent_server:
+web:
   build: .
   ports:
    - "5000:5000"

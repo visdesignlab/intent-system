@@ -10,7 +10,8 @@ RUN  wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh 
   && ./miniconda.sh -b -p /opt/miniconda3 \
   && rm miniconda.sh
 
-RUN conda update --yes conda
+RUN conda update --yes -n base conda \
+  && conda clean --all --yes
 
 ADD . /opt/app
 WORKDIR /opt/app
