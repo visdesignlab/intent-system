@@ -18,7 +18,4 @@ WORKDIR /opt/app
 
 RUN conda env create -f environment.yml
 
-CMD ["source activate intent_server && python3 run.py"]
-
-# RUN /bin/bash -c "conda update conda; conda env create -f environment.yml; source activate intent_server"
-
+CMD ["./server.sh"]
