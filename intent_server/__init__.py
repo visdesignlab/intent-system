@@ -1,5 +1,4 @@
 from flask import Flask
-from typing import Tuple
 
 from .views import views
 
