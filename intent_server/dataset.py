@@ -30,24 +30,24 @@ class Dataset:
     @staticmethod
     def load_housing_data() -> 'Dataset':
         df = pd.concat([
-          pd.read_csv('data/housing/train1.csv', thousands=','),
-          pd.read_csv('data/housing/train2.csv', thousands=','),
+            pd.read_csv('data/housing/train1.csv', thousands=','),
+            pd.read_csv('data/housing/train2.csv', thousands=','),
         ])
         selection = df[[
-          'ListNo',
-          'Acres',
-          'BsmntFin',
-          'Deck',
-          'EWCoord',
-          'GaragCap',
-          'HouseNbr',
-          'LstPrice',
-          'NSCoord',
-          'Taxes',
-          'TotBed',
-          'TotBth',
-          'TotSqf',
-          'YearBlt',
+            'ListNo',
+            'Acres',
+            'BsmntFin',
+            'Deck',
+            'EWCoord',
+            'GaragCap',
+            'HouseNbr',
+            'LstPrice',
+            'NSCoord',
+            'Taxes',
+            'TotBed',
+            'TotBth',
+            'TotSqf',
+            'YearBlt',
         ]]
         if selection.isna().values.any():
             selection = selection.fillna(0)
@@ -58,22 +58,21 @@ class Dataset:
         df = pd.read_csv('data/nba_all_seasons.csv')
         is_season = df['season'] == '2016-17'
         return Dataset('player_name', df[is_season].drop(columns=[
-          'Unnamed: 0',
-          'season',
-          'college',
-          'draft_year',
-          'draft_round',
-          'draft_number',
+            'Unnamed: 0',
+            'season',
+            'college',
+            'draft_year',
+            'draft_round',
+            'draft_number',
         ]), 'NBA Players')
 
     @staticmethod
     def load_draft_combine_data() -> 'Dataset':
         df = pd.read_csv('data/2018_draft_combine.csv')
         return Dataset('Name', df.drop(columns=[
-          'Team',
-          'Position Group',
-          'Position',
-          'Combine ID',
-          'URL',
+            'Team',
+            'Position Group',
+            'Position',
+            'Combine ID',
+            'URL',
         ]), 'NFL Draft Combine')
-
