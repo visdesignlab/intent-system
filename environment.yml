@@ -1,6 +1,7 @@
 name: intent_server
 dependencies:
     - flake8
+    - pandas
     - flask
     - flask-socketio
     - mypy
