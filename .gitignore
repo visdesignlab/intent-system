@@ -126,3 +126,4 @@ dmypy.json
 # Project specific files
 files/
 results/
+.DS_Store
