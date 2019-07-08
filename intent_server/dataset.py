@@ -89,6 +89,11 @@ class Dataset:
         )
         df['Name'] = df['Name'] + ' (' + df['Position'] + ')'
         df = df.drop(columns=['Position'])
+
+        # here we do the 10 % less then `min` trick
+        percent_less = 0.1
+        mins = df.select_dtypes(include='number').apply(lambda col: col.min() - col.min() * percent_less)
+
         if df.isna().values.any():
-            df = df.fillna(0)
+            df = df.fillna(mins)
         return Dataset('Name', df, 'NFL Draft Combine')
