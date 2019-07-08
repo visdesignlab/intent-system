@@ -68,11 +68,27 @@ class Dataset:
 
     @staticmethod
     def load_draft_combine_data() -> 'Dataset':
-        df = pd.read_csv('data/2018_draft_combine.csv')
-        return Dataset('Name', df.drop(columns=[
-            'Team',
-            'Position Group',
-            'Position',
-            'Combine ID',
-            'URL',
-        ]), 'NFL Draft Combine')
+        df = pd.read_csv(
+            'data/2018_draft_combine.csv',
+            usecols=[
+                'Name',
+                'Draft Grade',
+                '40 Yard Dash',
+                'Bench Press',
+                'Vertical Jump',
+                'Broad Jump',
+                'Three Cone Drill',
+                '20 Yard Shuttle',
+                '60 Yard Shuttle',
+                'Height',
+                'Weight',
+                'Arm Length',
+                'Hand Size',
+                'Position',
+            ],
+        )
+        df['Name'] = df['Name'] + ' (' + df['Position'] + ')'
+        df = df.drop(columns=['Position'])
+        if df.isna().values.any():
+            df = df.fillna(0)
+        return Dataset('Name', df, 'NFL Draft Combine')
