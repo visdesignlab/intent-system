@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, render_template
 
 from .dataset import Dataset
+from .properties import Outlier, Properties
 
 
 # Load and preprocess the dataset
@@ -26,3 +27,8 @@ def route_dataset_list():  # type: ignore
 @views.route('/dataset/<dataset_name>')
 def route_dataset(dataset_name):  # type: ignore
     return jsonify(datasets[dataset_name].to_dict())
+
+
+@views.route('/dataset/<dataset_name>/info')
+def route_dataset_info(dataset_name):  # type: ignore
+    props = Properties(datasets[dataset_name], [Outlier(1, 0.1)])
