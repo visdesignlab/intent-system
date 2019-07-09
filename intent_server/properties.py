@@ -48,5 +48,4 @@ class Properties:
         sel = self.dataset.data[dims]
         fn: Callable[[Measure], pd.DataFrame] = lambda m: m.compute(sel)
         comp_measures = map(fn, self.measures)
-        print(comp_measures)
         return pd.concat(comp_measures, axis='columns').T
