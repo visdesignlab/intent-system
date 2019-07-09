@@ -1,11 +1,9 @@
 from abc import ABC, abstractmethod
 from .dataset import Dataset
 from sklearn.neighbors import LocalOutlierFactor
-from typing import List
+from typing import Callable, List
 
 import pandas as pd
-import numpy as np
-import itertools
 
 
 class Dimensions:
@@ -28,7 +26,7 @@ class Measure(ABC):
 
 
 class Outlier(Measure):
-    def __init__(self, n_neighbors: int, contamination: float):
+    def __init__(self, n_neighbors: int, contamination: float) -> None:
         self.n_neighbors = n_neighbors
         self.contamination = contamination
 
@@ -38,17 +36,17 @@ class Outlier(Measure):
     def compute(self, df: pd.DataFrame) -> pd.DataFrame:
         clf = LocalOutlierFactor(n_neighbors=self.n_neighbors, contamination=self.contamination)
         pred = clf.fit_predict(df)
-        return pd.DataFrame(data = pred, columns=[self.columnName()])
+        return pd.DataFrame(data=pred, columns=[self.columnName()])
 
 
 class Properties:
-    def __init__(self, dataset: Dataset, measures: List[Measure]):
+    def __init__(self, dataset: Dataset, measures: List[Measure]) -> None:
         self.dataset = dataset
         self.measures = measures
 
     def for_dims(self, dims: Dimensions) -> pd.DataFrame:
         sel = self.dataset.data[dims]
-        comp_measures = list(map(lambda m: m.compute(sel), self.measures))
+        fn: Callable[[Measure], pd.DataFrame] = lambda m: m.compute(sel)
+        comp_measures = map(fn, self.measures)
         print(comp_measures)
         return pd.concat(comp_measures, axis='columns').T
-
