@@ -33,7 +33,7 @@ class Outlier(Measure):
         self.contamination = contamination
 
     def columnName(self) -> str:
-        return 'Outlier:' + self.n_neighbors + ':' + self.contamination
+        return 'Outlier:' + str(self.n_neighbors) + ':' + str(self.contamination)
 
     def compute(self, df: pd.DataFrame) -> pd.DataFrame:
         clf = LocalOutlierFactor(n_neighbors=self.n_neighbors, contamination=self.contamination)
@@ -44,4 +44,11 @@ class Outlier(Measure):
 class Properties:
     def __init__(self, dataset: Dataset, measures: List[Measure]):
         self.dataset = dataset
-        self.measure = measures
+        self.measures = measures
+
+    def for_dims(self, dims: Dimensions) -> pd.DataFrame:
+        sel = self.dataset.data[dims]
+        comp_measures = list(map(lambda m: m.compute(sel), self.measures))
+        print(comp_measures)
+        return pd.concat(comp_measures, axis='columns').T
+

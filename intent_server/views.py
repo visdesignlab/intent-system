@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, render_template
+from flask import Blueprint, jsonify, render_template, request
 
 from .dataset import Dataset
 from .properties import Outlier, Properties
@@ -31,4 +31,5 @@ def route_dataset(dataset_name):  # type: ignore
 
 @views.route('/dataset/<dataset_name>/info')
 def route_dataset_info(dataset_name):  # type: ignore
-    props = Properties(datasets[dataset_name], [Outlier(1, 0.1)])
+    props = Properties(datasets[dataset_name], [Outlier(1, 0.1), Outlier(2, 0.1)])
+    return jsonify(props.for_dims(request.json).to_dict())
