@@ -1,5 +1,7 @@
 from flask import Blueprint, jsonify, render_template, request
 
+import pandas as pd
+
 from .dataset import Dataset
 from .properties import Outlier, Properties
 
@@ -31,5 +33,10 @@ def route_dataset(dataset_name):  # type: ignore
 
 @views.route('/dataset/<dataset_name>/info')
 def route_dataset_info(dataset_name):  # type: ignore
-    props = Properties(datasets[dataset_name], [Outlier(1, 0.1), Outlier(2, 0.1)])
-    return jsonify(props.for_dims(request.json).to_dict())
+    ds = datasets[dataset_name]
+    props = Properties(ds, [Outlier(1, 0.1), Outlier(2, 0.1)])
+    df = pd.concat([
+        props.labels(),
+        props.for_dims(request.json),
+    ], axis='columns')
+    return jsonify(df.T.to_dict())
