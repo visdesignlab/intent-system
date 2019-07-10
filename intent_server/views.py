@@ -40,3 +40,8 @@ def route_dataset_info(dataset_name):  # type: ignore
         props.for_dims(request.json),
     ], axis='columns')
     return jsonify(df.T.to_dict())
+
+
+@views.route('/dataset/<dataset_name>/predict')
+def route_dataset_predict(dataset_name):  # type: ignore
+    return jsonify(request.json)
