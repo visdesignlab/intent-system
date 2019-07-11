@@ -3,7 +3,8 @@ from flask import Blueprint, jsonify, request, redirect
 import pandas as pd
 
 from .dataset import Dataset
-from .properties import Outlier, Properties
+from .properties import Properties
+from .algorithms.outlier import Outlier
 
 
 # Load and preprocess the dataset
