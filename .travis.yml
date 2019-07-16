@@ -12,6 +12,10 @@ install:
     - source activate intent_server
 
 script:
+    - cd app
+    - yarn install
+    - cd ..
+
     - flake8
     - mypy -p intent_server
     - python3 setup.py install
