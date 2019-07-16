@@ -1,8 +1,11 @@
 FROM ubuntu:16.04
 ENV PATH /opt/miniconda3/bin:$PATH
 
+RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add - \
+  && echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+
 RUN  apt-get update --fix-missing \
-  && apt-get install -y wget bzip2 ca-certificates curl git \
+  && apt-get install -y wget bzip2 ca-certificates curl git yarn \
   && rm -rf /var/lib/apt/lists/*
 
 RUN  wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh \
