@@ -17,6 +17,7 @@ install:
 script:
     - cd app
     - yarn install
+    - yarn run build
     - cd ..
 
     - flake8

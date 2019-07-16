@@ -1,2 +1,8 @@
 #! /bin/bash
-source activate intent_server && python3 run.py
+cd app
+yarn install
+yarn run build
+cd ..
+
+source activate intent_server
+python3 run.py
