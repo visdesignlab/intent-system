@@ -9,7 +9,7 @@ import App from "./App/App";
 import { Provider } from "react-redux";
 import React from "react";
 import ReactDOM from "react-dom";
-import { VisualizationType } from "@visdesignlab/intent-contract";
+// import { VisualizationType } from "@visdesignlab/intent-contract";
 import { initProvenanceRedux } from "@visdesignlab/provenance-lib-core/lib/src";
 import { initVisStoreWithProvenance } from "./App/ProvenanceVisStore/VisStoreProvenance";
 import { loadDataset } from "./App/VisStore/DatasetReducers";
