@@ -20,6 +20,7 @@
     "typescript": "3.5.2"
   },
   "proxy": "https://intent-server.herokuapp.com",
+  "homepage": "https://intent-server.herokuapp.com",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
