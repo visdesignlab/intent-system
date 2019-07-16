@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, render_template, request
+from flask import Blueprint, jsonify, request, redirect
 
 import pandas as pd
 
@@ -18,7 +18,7 @@ views = Blueprint('views', __name__)
 
 @views.route('/')
 def index():  # type: ignore
-    return render_template('index.html')
+    return redirect('index.html')
 
 
 @views.route('/dataset', methods=['GET'])
