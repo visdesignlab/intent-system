@@ -18,7 +18,7 @@ views = Blueprint('views', __name__)
 
 @views.route('/')
 def index():  # type: ignore
-    return redirect('app/build/index.html')
+    return redirect('index.html')
 
 
 @views.route('/dataset', methods=['GET'])
