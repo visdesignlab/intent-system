@@ -1,16 +1,22 @@
 from ..properties import Measure
 
 import pandas as pd
+import numpy as np
 
+
+def dominates(slf: np.ndarray, other: np.ndarray) -> bool:
+    fst: bool = all(map(lambda a, b: b > a, slf, other))
+    snd: bool = all(map(lambda a, b: a < b, slf, other))
+    return fst and snd
 
 
 class Skyline(Measure):
     def __init__(self) -> None:
+        pass
 
-    def maxima1(S,d): -> List[Index]:
-        M: List[Index]
-        M_star: List[Index]
 
+    def belongs_to_skyline(rowIdx, df) -> bool:
+        pass
 
 
     def compute(self, df: pd.DataFrame) -> pd.DataFrame:
