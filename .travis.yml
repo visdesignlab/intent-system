@@ -22,10 +22,8 @@ script:
 
     - flake8
     - mypy -p intent_server
+    - python3 -m pytest
     - python3 setup.py install
-
-test:
-    - python3 setup.py test
 
 notifications:
     email: false
