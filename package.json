@@ -1,0 +1,32 @@
+{
+  "name": "intent-server",
+  "version": "1.0.0",
+  "description": "[![Build Status](https://travis-ci.com/grtlr/intent-server.svg?token=M7qsxhpGdq7xqyuVznBq&branch=master)](https://travis-ci.com/grtlr/intent-server)",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "postinstall": "cd app && yarn install",
+    "update-env": "conda env update -f environment.yml",
+    "free-port": "node freeport.js",
+    "build-env": "yarn install && yarn run update-env",
+    "server": "./server.sh",
+    "app": "cd app && yarn start",
+    "start": "yarn run free-port && concurrently --kill-others \"yarn run server\" \"yarn run app\" ; "
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/grtlr/intent-server.git"
+  },
+  "author": "Kiran Gadhave",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/grtlr/intent-server/issues"
+  },
+  "homepage": "https://github.com/grtlr/intent-server#readme",
+  "dependencies": {
+    "concurrently": "^4.1.1",
+    "kill-port": "^1.5.1"
+  }
+}
