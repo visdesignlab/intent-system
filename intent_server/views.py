@@ -5,6 +5,7 @@ import pandas as pd
 from .dataset import Dataset
 from .properties import Properties
 from .algorithms.outlier import Outlier
+from .algorithms.skyline import Skyline
 
 
 # Load and preprocess the dataset
@@ -16,6 +17,11 @@ datasets = {
 
 views = Blueprint('views', __name__)
 
+measures = [
+    Outlier(1, 0.1),
+    Outlier(2, 0.1),
+    Skyline(),
+]
 
 @views.route('/')
 def index():  # type: ignore
@@ -35,7 +41,7 @@ def route_dataset(dataset_name):  # type: ignore
 @views.route('/dataset/<dataset_name>/info', methods=['POST'])
 def route_dataset_info(dataset_name):  # type: ignore
     ds = datasets[dataset_name]
-    props = Properties(ds, [Outlier(1, 0.1), Outlier(2, 0.1)])
+    props = Properties(ds, measures)
     df = pd.concat([
         props.labels(),
         props.for_dims(request.json),

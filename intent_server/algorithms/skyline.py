@@ -9,21 +9,16 @@ def dominates(slf: np.ndarray, other: np.ndarray) -> bool:
     snd: bool = all(map(lambda a, b: a < b, slf, other))
     return fst and snd
 
+def belongs_to_skyline(data: np.ndarray, pt: np.ndarray) -> bool:
+    return np.apply_along_axis(lambda x: not(dominates(x, pt)), 1, data).all()
+
 
 class Skyline(Measure):
     def __init__(self) -> None:
         pass
 
-
-    def belongs_to_skyline(rowIdx, df) -> bool:
-        pass
-
-
     def compute(self, df: pd.DataFrame) -> pd.DataFrame:
-        # The following implementation comes from
-        # `Computational Geometry: an introduction` by Preparata and Shamos.
-        
-        
-
-        return pd.DataFrame(data=[42], columns=['Skyline']) 
+        data = df.values
+        skyline = np.apply_along_axis(lambda x: belongs_to_skyline(data, x), 1, data)
+        return pd.DataFrame(data=skyline, columns=['Skyline']) 
 
