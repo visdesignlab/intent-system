@@ -22,7 +22,7 @@ script:
 
     - flake8
     - mypy -p intent_server
-    - python3 -m pytest
+    - python3 -m pytest tests
     - python3 setup.py install
 
 notifications:
