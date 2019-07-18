@@ -108,7 +108,6 @@ class MarkSeries extends React.Component<Props, State> {
           }
         })
         .then(res => {
-          console.log("Updated debug info");
           this.setState({
             debugInfo: res.data
           });
