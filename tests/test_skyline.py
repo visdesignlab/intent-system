@@ -1,7 +1,7 @@
 from intent_server.algorithms.skyline import belongs_to_skyline, dominates, Skyline
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 
 
 def test_dominates():
@@ -32,12 +32,19 @@ def test_belongs_to_skyline():
     assert belongs_to_skyline(data, np.array(b))
     assert belongs_to_skyline(data, np.array(d))
 
-    assert belongs_to_skyline(data, np.array(c)) == False
-    assert belongs_to_skyline(data, np.array(e)) == False
-    assert belongs_to_skyline(data, np.array(f)) == False
+    assert not belongs_to_skyline(data, np.array(c))
+    assert not belongs_to_skyline(data, np.array(e))
+    assert not belongs_to_skyline(data, np.array(f))
 
 
 def test_skyline():
-    df = pd.DataFrame(data={'x': [10, 20, 22, 28, 30, 39], 'y': [30, 20, 28, 8, 18, 15]})
-    skyline = Skyline().compute(df)
-    assert False
+    a = [10, 30]
+    b = [20, 20]
+    c = [22, 28]
+    d = [28, 8]
+    e = [30, 18]
+    f = [39, 15]
+    data = np.array([a, b, c, d, e, f])
+    df = pd.DataFrame(data=data)
+    skyline = Skyline().compute(df).transpose()
+    assert np.array_equal(skyline, np.array([1, 1, -1, 1, -1, -1]).reshape([1, 6]))

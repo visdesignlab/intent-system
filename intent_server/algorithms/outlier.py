@@ -16,5 +16,3 @@ class Outlier(Measure):
         clf = LocalOutlierFactor(n_neighbors=self.n_neighbors, contamination=self.contamination)
         pred = clf.fit_predict(df)
         return pd.DataFrame(data=pred, columns=[self.columnName()])
-
-

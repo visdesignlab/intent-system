@@ -23,6 +23,7 @@ measures = [
     Skyline(),
 ]
 
+
 @views.route('/')
 def index():  # type: ignore
     return redirect('index.html')
