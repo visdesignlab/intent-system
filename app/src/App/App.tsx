@@ -20,6 +20,7 @@ import { VisualizationState } from "./VisStore/VisualizationState";
 import { VisualizationType } from "@visdesignlab/intent-contract";
 import { connect } from "react-redux";
 import styled from "styled-components";
+import ScatterPlotMatrix from "../Components/Visualization/ScatterPlotMatrix/ScatterPlotMatrix";
 
 interface StateProps {
   data: any[];
@@ -60,7 +61,15 @@ const App: React.FC<Props> = ({
                 )
               );
             case VisualizationType.ScatterPlotMatrix:
-              return data.length > 0 && <div>Coming Soon..</div>;
+              return (
+                data.length > 0 && (
+                  <ScatterPlotMatrix
+                    data={data}
+                    dimensions={numericColumns}
+                    labelColumn={labelColumn}
+                  />
+                )
+              );
             default:
               return (
                 <PaddedContainer textAlign="center">

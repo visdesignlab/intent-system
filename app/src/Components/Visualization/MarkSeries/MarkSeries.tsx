@@ -4,7 +4,7 @@ import { Brush, BrushDictionary } from "../Data Types/BrushType";
 import { ScaleLinear, brush, brushSelection, select, max } from "d3";
 
 import { MarkData } from "../Data Types/MarkData";
-import { Popup } from "semantic-ui-react";
+import { Popup, Header } from "semantic-ui-react";
 import styled from "styled-components";
 import { VisualizationType } from "@visdesignlab/intent-contract";
 import {
@@ -13,6 +13,8 @@ import {
 } from "../../../App/VisStore/InteractionHistoryReducer";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
+import axios from "axios";
+import { datasetName } from "../../..";
 
 interface RequiredProps {
   vis: VisualizationType;
@@ -57,7 +59,10 @@ interface OptionalProps {
   opacity?: number;
 }
 
-interface State {}
+interface State {
+  brushDict: { [key: string]: any };
+  debugInfo: { [key: string]: any };
+}
 
 type Props = RequiredProps & OptionalProps & StateProps & DispatchProps;
 
@@ -75,8 +80,13 @@ class MarkSeries extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      brushDict: {}
+      brushDict: {},
+      debugInfo: {}
     };
+  }
+
+  componentDidMount() {
+    const { xLabel, yLabel } = this.props;
   }
 
   componentDidUpdate() {
@@ -92,6 +102,22 @@ class MarkSeries extends React.Component<Props, State> {
       addRectangularSelection,
       vis
     } = this.props;
+
+    if (xLabel.length > 0 && yLabel.length > 0) {
+      const data = [xLabel, yLabel];
+      axios
+        .post(`/dataset/${datasetName}/info`, data, {
+          headers: {
+            "Content-Type": "application/json"
+          }
+        })
+        .then(res => {
+          this.setState({
+            debugInfo: res.data
+          });
+        })
+        .catch(err => console.log(err));
+    }
 
     const space = `${xLabel} ${yLabel}`;
 
@@ -254,6 +280,7 @@ class MarkSeries extends React.Component<Props, State> {
       addPointSelection
     } = this.props;
     const { brushDict } = this.props;
+    const { debugInfo } = this.state;
     const space = `${xLabel} ${yLabel}`;
 
     const data: MarkData[] = xValues.map((x, i) => ({
@@ -291,7 +318,12 @@ class MarkSeries extends React.Component<Props, State> {
             return (
               <Popup
                 key={`${JSON.stringify(d)} ${i}`}
-                content={labels[i]}
+                content={
+                  <div>
+                    <Header>{labels[i]}</Header>
+                    <pre>{JSON.stringify(debugInfo[i], null, 2)}</pre>
+                  </div>
+                }
                 trigger={
                   higlightedIndices[i] > 0 || pointSelection.includes(i) ? (
                     higlightedIndices[i] === highestIntersection ? (
