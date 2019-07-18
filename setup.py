@@ -9,6 +9,7 @@ setup(
     py_modules=[
         'intent_server.dataset',
         'intent_server.properties',
-        'intent_server.vendor.interactions'
+        'intent_server.vendor.interactions',
+        'intent_server.algorithms',
     ],
 )

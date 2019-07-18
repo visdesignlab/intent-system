@@ -1,4 +1,4 @@
-from intent_server.properties import Outlier
+from intent_server.algorithms.outlier import Outlier
 
 import pandas as pd
 import numpy as np
