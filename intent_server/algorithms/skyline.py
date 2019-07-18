@@ -5,6 +5,11 @@ import numpy as np
 
 
 def dominates(slf: np.ndarray, other: np.ndarray) -> bool:
+    if np.isnan(slf).any():
+        return False
+    if np.isnan(other).any():
+        return True
+
     fst: bool = all(map(lambda a, b: b > a, slf, other))  # type: ignore
     snd: bool = all(map(lambda a, b: a < b, slf, other))  # type: ignore
     return fst and snd
