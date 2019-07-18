@@ -85,10 +85,6 @@ class MarkSeries extends React.Component<Props, State> {
     };
   }
 
-  componentDidMount() {
-    const { xLabel, yLabel } = this.props;
-  }
-
   componentDidUpdate() {
     const { brushRef } = this;
     const brushGElement = brushRef.current as SVGGElement;
@@ -106,12 +102,13 @@ class MarkSeries extends React.Component<Props, State> {
     if (xLabel.length > 0 && yLabel.length > 0) {
       const data = [xLabel, yLabel];
       axios
-        .post(`/dataset/${datasetName}/info`, data, {
+        .post(`/dataset/${datasetName}/info`, JSON.stringify(data), {
           headers: {
             "Content-Type": "application/json"
           }
         })
         .then(res => {
+          console.log("Updated debug info");
           this.setState({
             debugInfo: res.data
           });
