@@ -317,8 +317,14 @@ class MarkSeries extends React.Component<Props, State> {
                 content={
                   <div>
                     <Header>{labels[i]}</Header>
-                    <pre>{debugInfo["dimensions"]}</pre>
-                    <pre>{JSON.stringify(debugInfo["measures"][i], null, 2)}</pre>
+                    <pre>{debugInfo ? debugInfo["dimensions"] : ""}</pre>
+                    <pre>
+                      {JSON.stringify(
+                        debugInfo["measures"] ? debugInfo["measures"][i] : {},
+                        null,
+                        2
+                      )}
+                    </pre>
                   </div>
                 }
                 trigger={
