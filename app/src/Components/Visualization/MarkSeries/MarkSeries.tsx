@@ -306,6 +306,8 @@ class MarkSeries extends React.Component<Props, State> {
       (brushDict[space] || []).map(b => b.selectedPoints)
     );
 
+    console.log(debugInfo)
+
     return (
       <g>
         <g ref={this.brushRef} />
@@ -317,7 +319,8 @@ class MarkSeries extends React.Component<Props, State> {
                 content={
                   <div>
                     <Header>{labels[i]}</Header>
-                    <pre>{JSON.stringify(debugInfo[i], null, 2)}</pre>
+                    <pre>{debugInfo["dimensions"]}</pre>
+                    <pre>{JSON.stringify(debugInfo["measures"][i], null, 2)}</pre>
                   </div>
                 }
                 trigger={
