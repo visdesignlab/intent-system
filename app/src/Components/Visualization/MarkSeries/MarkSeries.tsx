@@ -306,8 +306,6 @@ class MarkSeries extends React.Component<Props, State> {
       (brushDict[space] || []).map(b => b.selectedPoints)
     );
 
-    console.log(debugInfo)
-
     return (
       <g>
         <g ref={this.brushRef} />
