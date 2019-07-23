@@ -17,6 +17,12 @@ class Dimensions:
             return NotImplemented
         return self.dims == other.dims
 
+    def to_string(self) -> str:
+        return ':'.join(self.dims)
+
+    def indices(self) -> List[str]:
+        return self.dims
+
 
 class Measure(ABC):
     @abstractmethod
@@ -30,7 +36,7 @@ class Properties:
         self.measures = measures
 
     def for_dims(self, dims: Dimensions) -> pd.DataFrame:
-        sel = self.dataset.data[dims]
+        sel = self.dataset.data[dims.indices()]
         fn: Callable[[Measure], pd.DataFrame] = lambda m: m.compute(sel)
         comp_measures = map(fn, self.measures)
         return pd.concat(comp_measures, axis='columns')

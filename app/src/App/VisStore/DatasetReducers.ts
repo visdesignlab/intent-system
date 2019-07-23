@@ -61,6 +61,7 @@ export function loadDataset(url: string) {
         }
       )
       .catch(err => {
+        console.log(err);
         throw new Error(err);
       });
   };
