@@ -6,6 +6,7 @@ from .dataset import Dataset
 from .properties import Dimensions, Properties
 from .algorithms.outlier import Outlier
 from .algorithms.skyline import Skyline
+from .vendor.interactions import interaction_history_from_dict
 
 
 # Load and preprocess the dataset
@@ -57,4 +58,6 @@ def route_dataset_info(dataset_name):  # type: ignore
 
 @views.route('/dataset/<dataset_name>/predict', methods=['POST'])
 def route_dataset_predict(dataset_name):  # type: ignore
+    interaction_history = interaction_history_from_dict(json.loads(request.json)
+    print(interaction_history)
     return jsonify(request.json)
