@@ -1,7 +1,7 @@
 import { Action, Dispatch, Reducer } from "redux";
 import { Dataset, emptyDataset } from "./Dataset";
 
-import { json } from "d3";
+import { text } from "d3";
 
 export enum DatasetActions {
   LOAD_DATASET = "LOAD_DATASET"
@@ -26,9 +26,10 @@ export const DatasetReducer: Reducer<Dataset, DatasetAction> = (
 
 export function loadDataset(url: string) {
   return (dispatch: Dispatch<DatasetAction>) => {
-    json(url)
-      .then(
-        ({
+    text(url)
+      .then(d => {
+        const rawData = d.replace(/\bNaN\b/g, "null");
+        let {
           labelColumn,
           name,
           values
@@ -36,30 +37,30 @@ export function loadDataset(url: string) {
           labelColumn: string;
           name: string;
           values: any[];
-        }) => {
-          let columns: string[] = [];
-          let numericColumns: string[] = [];
-          values = Object.keys(values).map((r: any) => values[r]);
+        } = JSON.parse(rawData);
 
-          if (values.length > 0) {
-            columns = Object.keys(values[0]);
-            numericColumns = columns.filter(
-              col => col !== labelColumn && !isNaN(values[0][col])
-            );
-          }
-          dispatch({
-            type: DatasetActions.LOAD_DATASET,
-            args: {
-              ...emptyDataset(),
-              labelColumn,
-              name,
-              columns,
-              numericColumns,
-              data: values
-            }
-          });
+        let columns: string[] = [];
+        let numericColumns: string[] = [];
+        values = Object.keys(values).map((r: any) => values[r]);
+
+        if (values.length > 0) {
+          columns = Object.keys(values[0]);
+          numericColumns = columns.filter(
+            col => col !== labelColumn && !isNaN(values[0][col])
+          );
         }
-      )
+        dispatch({
+          type: DatasetActions.LOAD_DATASET,
+          args: {
+            ...emptyDataset(),
+            labelColumn,
+            name,
+            columns,
+            numericColumns,
+            data: values
+          }
+        });
+      })
       .catch(err => {
         console.log(err);
         throw new Error(err);
