@@ -1,7 +1,7 @@
 import { Action, Dispatch, Reducer } from "redux";
 import { Dataset, emptyDataset } from "./Dataset";
 
-import { json, text } from "d3";
+import { text } from "d3";
 
 export enum DatasetActions {
   LOAD_DATASET = "LOAD_DATASET"
