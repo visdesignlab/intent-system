@@ -3,7 +3,7 @@ from flask import Blueprint, jsonify, request, redirect
 import pandas as pd
 
 from .dataset import Dataset
-from .properties import Properties
+from .properties import Dimensions, Properties
 from .algorithms.outlier import Outlier
 from .algorithms.skyline import Skyline
 
@@ -43,11 +43,16 @@ def route_dataset(dataset_name):  # type: ignore
 def route_dataset_info(dataset_name):  # type: ignore
     ds = datasets[dataset_name]
     props = Properties(ds, measures)
+    dims = Dimensions(request.json)
     df = pd.concat([
         props.labels(),
-        props.for_dims(request.json),
+        props.for_dims(dims),
     ], axis='columns')
-    return jsonify(df.T.to_dict())
+    dct = {
+       'measures': df.T.to_dict(),
+       'dimensions': dims.to_string(),
+    }
+    return jsonify(dct)
 
 
 @views.route('/dataset/<dataset_name>/predict', methods=['POST'])
