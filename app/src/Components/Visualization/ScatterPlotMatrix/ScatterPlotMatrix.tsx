@@ -1,6 +1,9 @@
 import React from "react";
 import styled from "styled-components";
 import DimensionSelector from "../../DimensionSelector/DimensionSelector";
+import SPMComponent from "./SPMComponent";
+import FullSizeSVG from "../ReusableComponents/FullSizeSVG";
+import { VisualizationType } from "@visdesignlab/intent-contract";
 
 interface State {
   svgHeight: number;
@@ -20,6 +23,8 @@ interface OwnProps {
 type Props = OwnProps & DispatchProps & StateProps;
 
 class ScatterPlotMatrix extends React.Component<Props, State> {
+  ref: React.RefObject<SVGSVGElement> = React.createRef();
+
   readonly state: State = {
     svgHeight: 0,
     svgWidth: 0,
@@ -30,7 +35,28 @@ class ScatterPlotMatrix extends React.Component<Props, State> {
     const { dimensions } = this.props;
 
     this.setState({
+      svgHeight: (this.ref.current as SVGSVGElement).clientHeight,
+      svgWidth: (this.ref.current as SVGSVGElement).clientWidth,
       selectedDimensions: dimensions.slice(0, 3)
+    });
+    // this.props.addEmptyInteraction(VisualizationType.ScatterPlot, [
+    //   dimensions[0],
+    //   dimensions[1]
+    // ]);
+  }
+
+  componentWillMount() {
+    window.addEventListener("resize", this.resize.bind(this));
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.resize.bind(this));
+  }
+
+  resize() {
+    this.setState({
+      svgHeight: (this.ref.current as SVGSVGElement).clientHeight,
+      svgWidth: (this.ref.current as SVGSVGElement).clientWidth
     });
   }
 
@@ -39,8 +65,12 @@ class ScatterPlotMatrix extends React.Component<Props, State> {
   };
 
   render() {
-    const { dimensions } = this.props;
-    const { selectedDimensions } = this.state;
+    const { dimensions, data, labelColumn } = this.props;
+    const { selectedDimensions, svgHeight, svgWidth } = this.state;
+
+    const labels = data.map(r => r[labelColumn]);
+
+    const lesserDim = svgHeight > svgWidth ? svgWidth : svgHeight;
 
     return (
       <ScatterPlotDiv>
@@ -50,11 +80,32 @@ class ScatterPlotMatrix extends React.Component<Props, State> {
           selection={selectedDimensions}
           disabledDimensions={[]}
           notifyColumnChange={(col: string) => {
+            let selDims: any[] = [];
             if (selectedDimensions.includes(col))
-              return selectedDimensions.filter(d => d !== col);
-            else return [...selectedDimensions, col];
+              selDims = selectedDimensions.filter(d => d !== col);
+            else selDims = [...selectedDimensions, col];
+
+            this.setState({
+              selectedDimensions: selDims
+            });
           }}
         />
+        <FullSizeSVG ref={this.ref}>
+          <g transform={`translate(100,100)`}>
+            <SPMComponent
+              vis={VisualizationType.ScatterPlotMatrix}
+              data={data}
+              height={lesserDim - 100}
+              width={lesserDim - 100}
+              labels={labels}
+              columns={selectedDimensions}
+              XZero={false}
+              YZero={false}
+              XOffset={lesserDim * 0.05}
+              YOffset={lesserDim * 0.06}
+            />
+          </g>
+        </FullSizeSVG>
       </ScatterPlotDiv>
     );
   }

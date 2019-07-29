@@ -13,6 +13,7 @@ import ScatterPlotComponent from "../ScatterPlotComponent/ScatterPlotComponent";
 import { VisualizationType } from "@visdesignlab/intent-contract";
 import { connect } from "react-redux";
 import styled from "styled-components";
+import FullSizeSVG from "../ReusableComponents/FullSizeSVG";
 
 interface State {
   svgHeight: number;
@@ -200,11 +201,6 @@ export default connect(
   null,
   mapDispatchToProps
 )(ScatterPlot);
-
-const FullSizeSVG = styled.svg`
-  height: 100%;
-  width: 100%;
-`;
 
 const ScatterPlotDiv = styled.div`
   height: 100%;
