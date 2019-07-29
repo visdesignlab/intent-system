@@ -292,8 +292,10 @@ class MarkSeries extends React.Component<Props, State> {
     const data: MarkData[] = xValues.map((x, i) => ({
       rawX: x,
       rawY: yValues[i],
-      scaledX: xScale(x),
-      scaledY: yScale(yValues[i]),
+      // scaledX: xScale(x),
+      // scaledY: yScale(yValues[i]),
+      scaledX: x ? xScale(x) : 0,
+      scaledY: yValues[i] ? yScale(yValues[i]) : yScale.range()[1],
       label: labels[i]
     }));
 
