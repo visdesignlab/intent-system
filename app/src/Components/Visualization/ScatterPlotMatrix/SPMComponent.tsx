@@ -5,7 +5,7 @@ import { Dimension, DimensionType } from "../Data Types/Dimension";
 import { BrushDictionary } from "../Data Types/BrushType";
 import { ScaleLinear, scaleLinear, min, max } from "d3";
 import Axis, { ScaleType } from "../Axis/Axis";
-import MarkSeries from "../MarkSeries/MarkSeries";
+// import MarkSeries from "../MarkSeries/MarkSeries";
 import { Popup, Header } from "semantic-ui-react";
 
 interface DispatchProps {}
@@ -53,9 +53,9 @@ class SPMComponent extends React.Component<Props, State> {
   componentDidUpdate(prevProps: Props) {
     const {
       height,
-      XOffset,
+      // XOffset,
       width,
-      YOffset,
+      // YOffset,
       columns,
       data,
       XZero,
@@ -115,15 +115,15 @@ class SPMComponent extends React.Component<Props, State> {
   render() {
     const {
       height,
-      XOffset,
+      // XOffset,
       width,
-      YOffset,
+      // YOffset,
       columns,
-      data,
+      // data,
       labels
     } = this.props;
 
-    const { pairs, brushDict } = this.state;
+    const { pairs } = this.state;
 
     const actualHeight = height / columns.length;
     const actualWidth = width / columns.length;
@@ -210,14 +210,14 @@ const RegularCircularMark = styled("circle")<Extend>`
   fill: #648fff;
 `;
 
-const SelectedCircularMark = styled("circle")<Extend>`
-  fill: #dc267f;
-  stroke-width: ${props => (props.thisSpace ? "2px" : 0)};
-  stroke: #b31964;
-`;
+// const SelectedCircularMark = styled("circle")<Extend>`
+//   fill: #dc267f;
+//   stroke-width: ${props => (props.thisSpace ? "2px" : 0)};
+//   stroke: #b31964;
+// `;
 
-const UnionCircularMark = styled("circle")<Extend>`
-  fill: #ffb000;
-  stroke-width: ${props => (props.thisSpace ? "2px" : 0)};
-  stroke: #bb840a;
-`;
+// const UnionCircularMark = styled("circle")<Extend>`
+//   fill: #ffb000;
+//   stroke-width: ${props => (props.thisSpace ? "2px" : 0)};
+//   stroke: #bb840a;
+// `;
