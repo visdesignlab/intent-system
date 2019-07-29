@@ -1,9 +1,11 @@
 from flask import Blueprint, jsonify, request, redirect
 
 import pandas as pd
+import json
 
 from .dataset import Dataset
 from .properties import Dimensions, Properties
+from .predict import predict
 from .algorithms.outlier import Outlier
 from .algorithms.skyline import Skyline
 from .vendor.interactions import interaction_history_from_dict
@@ -58,6 +60,8 @@ def route_dataset_info(dataset_name):  # type: ignore
 
 @views.route('/dataset/<dataset_name>/predict', methods=['POST'])
 def route_dataset_predict(dataset_name):  # type: ignore
-    interaction_history = interaction_history_from_dict(json.loads(request.json)
-    print(interaction_history)
-    return jsonify(request.json)
+    interaction_hist = interaction_history_from_dict(request.json)
+    ds = datasets[dataset_name]
+    props = Properties(ds, measures)
+    prediction = predict(ds, props, interaction_hist)
+    return jsonify(prediction.__dict__)

@@ -9,7 +9,7 @@ class Outlier(Measure):
         self.n_neighbors = n_neighbors
         self.contamination = contamination
 
-    def columnName(self) -> str:
+    def to_string(self) -> str:
         return 'Outlier:LOF:' + str(self.n_neighbors) + ':' + str(self.contamination)
 
     def compute(self, df: pd.DataFrame) -> pd.DataFrame:
@@ -18,4 +18,7 @@ class Outlier(Measure):
         df = df.fillna(df.mean())
 
         pred = clf.fit_predict(df)
-        return pd.DataFrame(data=pred, columns=[self.columnName()])
+        return pd.DataFrame(data=pred, columns=[self.to_string()])
+
+    def normalize(self, df: pd.DataFrame) -> pd.DataFrame:
+        return df.replace({-1: 1, 1: 0})

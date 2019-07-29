@@ -28,24 +28,24 @@ def from_list(f: Callable[[Any], T], x: Any) -> List[T]:
     return [f(y) for y in x]
 
 
+def from_float(x: Any) -> float:
+    assert isinstance(x, (float, int)) and not isinstance(x, bool)
+    return float(x)
+
+
 def from_str(x: Any) -> str:
     assert isinstance(x, str)
+    return x
+
+
+def to_float(x: Any) -> float:
+    assert isinstance(x, float)
     return x
 
 
 def to_enum(c: Type[EnumT], x: Any) -> EnumT:
     assert isinstance(x, c)
     return x.value
-
-
-def from_float(x: Any) -> float:
-    assert isinstance(x, (float, int)) and not isinstance(x, bool)
-    return float(x)
-
-
-def to_float(x: Any) -> float:
-    assert isinstance(x, float)
-    return x
 
 
 def from_none(x: Any) -> Any:
@@ -69,19 +69,19 @@ def to_class(c: Type[T], x: Any) -> dict:
 
 @dataclass
 class Selection:
-    data_ids: List[str]
+    data_ids: List[float]
     dimensions: List[str]
 
     @staticmethod
     def from_dict(obj: Any) -> 'Selection':
         assert isinstance(obj, dict)
-        data_ids = from_list(from_str, obj.get("dataIds"))
+        data_ids = from_list(from_float, obj.get("dataIds"))
         dimensions = from_list(from_str, obj.get("dimensions"))
         return Selection(data_ids, dimensions)
 
     def to_dict(self) -> dict:
         result: dict = {}
-        result["dataIds"] = from_list(from_str, self.data_ids)
+        result["dataIds"] = from_list(to_float, self.data_ids)
         result["dimensions"] = from_list(from_str, self.dimensions)
         return result
 
@@ -92,21 +92,21 @@ class PointSelectionKind(Enum):
 
 @dataclass
 class PointSelection:
-    data_ids: List[str]
+    data_ids: List[float]
     dimensions: List[str]
     kind: PointSelectionKind
 
     @staticmethod
     def from_dict(obj: Any) -> 'PointSelection':
         assert isinstance(obj, dict)
-        data_ids = from_list(from_str, obj.get("dataIds"))
+        data_ids = from_list(from_float, obj.get("dataIds"))
         dimensions = from_list(from_str, obj.get("dimensions"))
         kind = PointSelectionKind(obj.get("kind"))
         return PointSelection(data_ids, dimensions, kind)
 
     def to_dict(self) -> dict:
         result: dict = {}
-        result["dataIds"] = from_list(from_str, self.data_ids)
+        result["dataIds"] = from_list(to_float, self.data_ids)
         result["dimensions"] = from_list(from_str, self.dimensions)
         result["kind"] = to_enum(PointSelectionKind, self.kind)
         return result
@@ -118,21 +118,21 @@ class PointDeselectionKind(Enum):
 
 @dataclass
 class PointDeselection:
-    data_ids: List[str]
+    data_ids: List[float]
     dimensions: List[str]
     kind: PointDeselectionKind
 
     @staticmethod
     def from_dict(obj: Any) -> 'PointDeselection':
         assert isinstance(obj, dict)
-        data_ids = from_list(from_str, obj.get("dataIds"))
+        data_ids = from_list(from_float, obj.get("dataIds"))
         dimensions = from_list(from_str, obj.get("dimensions"))
         kind = PointDeselectionKind(obj.get("kind"))
         return PointDeselection(data_ids, dimensions, kind)
 
     def to_dict(self) -> dict:
         result: dict = {}
-        result["dataIds"] = from_list(from_str, self.data_ids)
+        result["dataIds"] = from_list(to_float, self.data_ids)
         result["dimensions"] = from_list(from_str, self.dimensions)
         result["kind"] = to_enum(PointDeselectionKind, self.kind)
         return result
@@ -142,7 +142,7 @@ class PointDeselection:
 class RectangularSelection:
     bottom: float
     brush_id: str
-    data_ids: List[str]
+    data_ids: List[float]
     dimensions: List[str]
     left: float
     right: float
@@ -153,7 +153,7 @@ class RectangularSelection:
         assert isinstance(obj, dict)
         bottom = from_float(obj.get("bottom"))
         brush_id = from_str(obj.get("brushId"))
-        data_ids = from_list(from_str, obj.get("dataIds"))
+        data_ids = from_list(from_float, obj.get("dataIds"))
         dimensions = from_list(from_str, obj.get("dimensions"))
         left = from_float(obj.get("left"))
         right = from_float(obj.get("right"))
@@ -164,7 +164,7 @@ class RectangularSelection:
         result: dict = {}
         result["bottom"] = to_float(self.bottom)
         result["brushId"] = from_str(self.brush_id)
-        result["dataIds"] = from_list(from_str, self.data_ids)
+        result["dataIds"] = from_list(to_float, self.data_ids)
         result["dimensions"] = from_list(from_str, self.dimensions)
         result["left"] = to_float(self.left)
         result["right"] = to_float(self.right)
@@ -195,7 +195,7 @@ class InteractionTypeKind(Enum):
 
 @dataclass
 class InteractionType:
-    data_ids: Optional[List[str]]
+    data_ids: Optional[List[float]]
     dimensions: List[str]
     kind: Optional[InteractionTypeKind]
     bottom: Optional[float]
@@ -207,7 +207,7 @@ class InteractionType:
     @staticmethod
     def from_dict(obj: Any) -> 'InteractionType':
         assert isinstance(obj, dict)
-        data_ids = from_union([lambda x: from_list(from_str, x), from_none], obj.get("dataIds"))
+        data_ids = from_union([lambda x: from_list(from_float, x), from_none], obj.get("dataIds"))
         dimensions = from_list(from_str, obj.get("dimensions"))
         kind = from_union([InteractionTypeKind, from_none], obj.get("kind"))
         bottom = from_union([from_float, from_none], obj.get("bottom"))
@@ -219,7 +219,7 @@ class InteractionType:
 
     def to_dict(self) -> dict:
         result: dict = {}
-        result["dataIds"] = from_union([lambda x: from_list(from_str, x), from_none], self.data_ids)
+        result["dataIds"] = from_union([lambda x: from_list(to_float, x), from_none], self.data_ids)
         result["dimensions"] = from_list(from_str, self.dimensions)
         result["kind"] = from_union([lambda x: to_enum(InteractionTypeKind, x), from_none], self.kind)
         result["bottom"] = from_union([to_float, from_none], self.bottom)
