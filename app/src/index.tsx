@@ -36,8 +36,8 @@ export const VisProvenance = initProvenanceRedux(
   VisStore.resetStore
 );
 
-// export const datasetName = "draft_combine";
-export const datasetName = "slc_housing";
+export const datasetName = "draft_combine";
+// export const datasetName = "slc_housing";
 // export const datasetName = "nba_players";
 
 VisStore.visStore().dispatch(loadDataset(`/dataset/${datasetName}`) as any);

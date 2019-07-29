@@ -6,6 +6,7 @@ import { BrushDictionary } from "../Data Types/BrushType";
 import { ScaleLinear, scaleLinear, min, max } from "d3";
 import Axis, { ScaleType } from "../Axis/Axis";
 import MarkSeries from "../MarkSeries/MarkSeries";
+import { Popup, Header } from "semantic-ui-react";
 
 interface DispatchProps {}
 interface StateProps {}
@@ -137,7 +138,7 @@ class SPMComponent extends React.Component<Props, State> {
             <g
               transform={`translate(${actualWidth * p[0].xPos}, ${actualHeight *
                 p[0].yPos})`}
-              key={Math.random()}
+              key={i}
             >
               {/* <rect
                 height={actualHeight}
@@ -148,22 +149,32 @@ class SPMComponent extends React.Component<Props, State> {
                 opacity="0.2"
               /> */}
               <g transform={`translate(${xoffset}, 0)`}>
-                <MarkSeries
-                  vis={VisualizationType.ScatterPlotMatrix}
-                  xLabel={p[0].label}
-                  yLabel={p[1].label}
-                  markSize={3}
-                  opacity={0.4}
-                  xValues={p[0].values}
-                  yValues={p[1].values}
-                  xScale={p[0].scale}
-                  yScale={p[1].scale}
-                  labels={labels}
-                  brushDict={brushDict}
-                  updateBrushDictionary={this.updateBrushDict}
-                  pointSelection={[]}
-                  updatePointSelection={points => {}}
-                />
+                <g>
+                  <g id={`brush-${p[0].label}-${p[1].label}`} />
+                  <g id="marks">
+                    {p[0].values.map((d, i) => {
+                      return (
+                        <Popup
+                          key={`${(JSON.stringify(d), i)}`}
+                          content={
+                            <div>
+                              <Header>{labels[i]}</Header>
+                            </div>
+                          }
+                          trigger={
+                            <RegularCircularMark
+                              cx={p[0].scale(d)}
+                              cy={p[1].scale(p[1].values[i])}
+                              r={3}
+                              opacity={0.6}
+                              thisSpace={false}
+                            />
+                          }
+                        />
+                      );
+                    })}
+                  </g>
+                </g>
               </g>
               <g transform={`translate(${xoffset}, ${actualHeight - yoffset})`}>
                 <Axis
@@ -190,3 +201,23 @@ class SPMComponent extends React.Component<Props, State> {
 }
 
 export default SPMComponent;
+
+interface Extend {
+  thisSpace: boolean;
+}
+
+const RegularCircularMark = styled("circle")<Extend>`
+  fill: #648fff;
+`;
+
+const SelectedCircularMark = styled("circle")<Extend>`
+  fill: #dc267f;
+  stroke-width: ${props => (props.thisSpace ? "2px" : 0)};
+  stroke: #b31964;
+`;
+
+const UnionCircularMark = styled("circle")<Extend>`
+  fill: #ffb000;
+  stroke-width: ${props => (props.thisSpace ? "2px" : 0)};
+  stroke: #bb840a;
+`;
