@@ -1,5 +1,5 @@
-[![Build Status](https://travis-ci.com/grtlr/intent-server.svg?token=M7qsxhpGdq7xqyuVznBq&branch=master)](https://travis-ci.com/grtlr/intent-server)
+[![Build Status](https://travis-ci.com/visdesignlab/intent-system.svg?branch=master)](https://travis-ci.com/visdesignlab/intent-system)
 
-# intent-server
+# intent-system
 
-The server is deployed to: https://intent-server.herokuapp.com/
+The server is deployed to: https://intent-system.herokuapp.com/
