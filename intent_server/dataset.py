@@ -2,6 +2,7 @@ import json
 
 import pandas as pd
 
+from .dimensions import Dimensions
 from typing import Dict
 
 
@@ -18,6 +19,9 @@ class Dataset:
 
     def numerical(self) -> pd.DataFrame:
         return self.data.select_dtypes(include='number')
+
+    def subset(self, dims: Dimensions) -> pd.DataFrame:
+        return self.data[dims.indices()]
 
     @staticmethod
     def from_json_file(filename: str, name: str) -> 'Dataset':
