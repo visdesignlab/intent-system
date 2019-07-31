@@ -60,11 +60,11 @@ const ScatterPlotComponent: React.FC<Props> = ({
   const [minY, maxY] = [min(Y.values) as number, max(Y.values) as number];
 
   const scaleX = scaleLinear()
-    .domain([XZero ? 0 : minX, maxX])
+    .domain([XZero ? 0 : minX * 0.9, maxX])
     .range([0, actualWidth]);
 
   const scaleY = scaleLinear()
-    .domain([maxY, YZero ? 0 : minY])
+    .domain([maxY, YZero ? 0 : minY * 0.9])
     .range([0, actualHeight]);
 
   return (

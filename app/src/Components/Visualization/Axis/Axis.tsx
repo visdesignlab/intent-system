@@ -23,11 +23,14 @@ interface Props {
   scale: ScaleLinear<number, number>;
   position: ScaleType;
   label?: string;
+  size?: number;
 }
 
-const Axis: React.FC<Props> = ({ scale, position, label }) => {
+const Axis: React.FC<Props> = ({ scale, position, label, size }) => {
   const ref: React.RefObject<SVGGElement> = React.createRef();
   const [axisDim, setAxisDim] = useState(0);
+
+  if (!size) size = 2;
 
   let axis: any;
   let xTranslate: number = axisDim;
@@ -82,6 +85,7 @@ const Axis: React.FC<Props> = ({ scale, position, label }) => {
       <g ref={ref} />
       {position === ScaleType.LEFT || position === ScaleType.RIGHT ? (
         <LabelTextY
+          size={size}
           right={position === ScaleType.RIGHT}
           transform={`translate(${xTranslate}, ${yTranslate})`}
         >
@@ -89,6 +93,7 @@ const Axis: React.FC<Props> = ({ scale, position, label }) => {
         </LabelTextY>
       ) : (
         <LabelTextX
+          size={size}
           top={position === ScaleType.TOP}
           transform={`translate(${xTranslate}, ${yTranslate})`}
         >
@@ -102,21 +107,23 @@ const Axis: React.FC<Props> = ({ scale, position, label }) => {
 export default Axis;
 
 interface LabelTextXProps {
+  size: number;
   top: boolean;
 }
 
 const LabelTextX = styled.text<LabelTextXProps>`
-  font-size: 2em;
+  font-size: ${props => props.size}em;
   text-anchor: middle;
   dominant-baseline: ${props => (props.top ? "baseline" : "hanging")};
 `;
 
 interface LabelTextYProps {
+  size: number;
   right: boolean;
 }
 
 const LabelTextY = styled.text<LabelTextYProps>`
-  font-size: 2em;
+  font-size: ${props => props.size}em;
   text-anchor: middle;
   writing-mode: vertical-rl;
   text-gravity: inverse;

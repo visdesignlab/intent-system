@@ -85,7 +85,13 @@ class MarkSeries extends React.Component<Props, State> {
     };
   }
 
-  componentDidUpdate() {
+  componentDidMount() {
+    this.setState({
+      brushDict: {}
+    });
+  }
+
+  componentDidUpdate(prevProps: Props) {
     const { brushRef } = this;
     const brushGElement = brushRef.current as SVGGElement;
     const {
@@ -99,7 +105,11 @@ class MarkSeries extends React.Component<Props, State> {
       vis
     } = this.props;
 
-    if (xLabel.length > 0 && yLabel.length > 0) {
+    if (
+      xLabel.length > 0 &&
+      yLabel.length > 0 &&
+      (prevProps.xLabel !== xLabel || prevProps.yLabel !== yLabel)
+    ) {
       const data = [xLabel, yLabel];
       axios
         .post(`/dataset/${datasetName}/info`, JSON.stringify(data), {
@@ -282,8 +292,10 @@ class MarkSeries extends React.Component<Props, State> {
     const data: MarkData[] = xValues.map((x, i) => ({
       rawX: x,
       rawY: yValues[i],
-      scaledX: xScale(x),
-      scaledY: yScale(yValues[i]),
+      // scaledX: xScale(x),
+      // scaledY: yScale(yValues[i]),
+      scaledX: x ? xScale(x) : 0,
+      scaledY: yValues[i] ? yScale(yValues[i]) : yScale.range()[1],
       label: labels[i]
     }));
 
