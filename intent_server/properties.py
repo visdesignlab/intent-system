@@ -39,7 +39,7 @@ class Measure(ABC):
         pass
 
     def evaluate(self, df: pd.DataFrame) -> pd.DataFrame:
-        self.normalize(self.compute(df))
+        return self.normalize(self.compute(df))
 
 class Properties:
     def __init__(self, dataset: Dataset, measures: List[Measure]) -> None:

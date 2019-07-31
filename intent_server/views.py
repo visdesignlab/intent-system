@@ -63,5 +63,7 @@ def route_dataset_predict(dataset_name):  # type: ignore
     interaction_hist = interaction_history_from_dict(request.json)
     ds = datasets[dataset_name]
     props = Properties(ds, measures)
-    prediction = predict(ds, props, interaction_hist)
-    return jsonify(prediction.__dict__)
+    print(predict(ds, props, interaction_hist))
+    predictions = list(map(lambda x: x.__dict__, predict(ds, props, interaction_hist)))
+    print(predictions)
+    return jsonify(predictions)
