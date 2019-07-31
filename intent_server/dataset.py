@@ -20,7 +20,7 @@ class Dataset:
     def numerical(self) -> pd.DataFrame:
         return self.data.select_dtypes(include='number')
 
-    def subset(self, dims: Dimensions):
+    def subset(self, dims: Dimensions) -> pd.DataFrame:
         return self.data[dims.indices()]
 
     @staticmethod

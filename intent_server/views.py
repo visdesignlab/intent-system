@@ -1,7 +1,6 @@
 from flask import Blueprint, jsonify, request, redirect
 
 import pandas as pd
-import json
 
 from .dataset import Dataset
 from .properties import Dimensions, Properties
@@ -63,7 +62,5 @@ def route_dataset_predict(dataset_name):  # type: ignore
     interaction_hist = interaction_history_from_dict(request.json)
     ds = datasets[dataset_name]
     props = Properties(ds, measures)
-    print(predict(ds, props, interaction_hist))
     predictions = list(map(lambda x: x.__dict__, predict(ds, props, interaction_hist)))
-    print(predictions)
     return jsonify(predictions)

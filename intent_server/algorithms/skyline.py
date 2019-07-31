@@ -26,11 +26,12 @@ class Skyline(Measure):
     def compute(self, df: pd.DataFrame) -> pd.DataFrame:
         data = df.values
         skyline = np.apply_along_axis(lambda x: belongs_to_skyline(data, x), 1, data)
-        return pd.DataFrame(data=skyline, columns=[self.to_string()]).applymap(lambda x: 1 if x else 0)
+        return pd.DataFrame(
+            data=skyline,
+            columns=[self.to_string()]).applymap(lambda x: 1 if x else 0)
 
     def normalize(self, df: pd.DataFrame) -> pd.DataFrame:
         return df
 
     def to_string(self) -> str:
         return 'Skyline'
-
