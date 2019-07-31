@@ -4,8 +4,10 @@ import pandas as pd
 
 from .dataset import Dataset
 from .properties import Dimensions, Properties
+from .predict import predict
 from .algorithms.outlier import Outlier
 from .algorithms.skyline import Skyline
+from .vendor.interactions import interaction_history_from_dict
 
 
 # Load and preprocess the dataset
@@ -57,4 +59,8 @@ def route_dataset_info(dataset_name):  # type: ignore
 
 @views.route('/dataset/<dataset_name>/predict', methods=['POST'])
 def route_dataset_predict(dataset_name):  # type: ignore
-    return jsonify(request.json)
+    interaction_hist = interaction_history_from_dict(request.json)
+    ds = datasets[dataset_name]
+    props = Properties(ds, measures)
+    predictions = list(map(lambda x: x.__dict__, predict(ds, props, interaction_hist)))
+    return jsonify(predictions)
