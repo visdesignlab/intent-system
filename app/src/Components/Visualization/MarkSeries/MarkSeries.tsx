@@ -341,7 +341,8 @@ class MarkSeries extends React.Component<Props, State> {
                 }
                 trigger={
                   higlightedIndices[i] > 0 || pointSelection.includes(i) ? (
-                    higlightedIndices[i] === highestIntersection ? (
+                    higlightedIndices[i] === highestIntersection ||
+                    pointSelection.includes(i) ? (
                       <UnionCircularMark
                         cx={d.scaledX}
                         cy={d.scaledY}
