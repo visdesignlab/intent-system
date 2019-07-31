@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import { Brush, BrushDictionary } from "../Data Types/BrushType";
-import { ScaleLinear, brush, brushSelection, select, max } from "d3";
+import { ScaleLinear, brush, brushSelection, select } from "d3";
 
 import { MarkData } from "../Data Types/MarkData";
 import { Popup, Header } from "semantic-ui-react";
@@ -277,12 +277,12 @@ class MarkSeries extends React.Component<Props, State> {
       yValues,
       xScale,
       yScale,
-      labels,
-      xLabel,
-      yLabel
+      labels
+      // xLabel,
+      // yLabel
     } = this.props;
 
-    const space = `${xLabel} ${yLabel}`;
+    // const space = `${xLabel} ${yLabel}`;
 
     const data: MarkData[] = xValues.map((x, i) => ({
       rawX: x,
@@ -306,12 +306,12 @@ class MarkSeries extends React.Component<Props, State> {
       p => (higlightedIndices[p] = higlightedIndices[p] + 1)
     );
 
-    const highestIntersection = max(higlightedIndices);
+    // const highestIntersection = max(higlightedIndices);
 
-    const thisSpacePoints = ([] as number[]).concat.apply(
-      [],
-      (brushDict[space] || []).map(b => b.selectedPoints)
-    );
+    // const thisSpacePoints = ([] as number[]).concat.apply(
+    //   [],
+    //   (brushDict[space] || []).map(b => b.selectedPoints)
+    // );
 
     const marksGroup = select(this.marksRef.current);
 
@@ -324,7 +324,7 @@ class MarkSeries extends React.Component<Props, State> {
 
   render() {
     const {
-      vis,
+      // vis,
       xValues,
       xScale,
       yValues,
@@ -336,10 +336,10 @@ class MarkSeries extends React.Component<Props, State> {
       yLabel,
       pointSelection,
       updatePointSelection,
-      addPointDeselection,
+      // addPointDeselection,
       addPointSelection
     } = this.props;
-    const { brushDict } = this.props;
+    // const { brushDict } = this.props;
     const { debugInfo } = this.state;
 
     const data: MarkData[] = xValues.map((x, i) => ({
