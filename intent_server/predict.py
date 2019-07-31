@@ -33,7 +33,7 @@ def predict(
     list_of_ids = map(lambda x: x.interaction_type.data_ids, filtered)
 
     # Python's weird way of flattening
-    ids: List[int] = [int(y) for x in list_of_ids for y in x] # type: ignore
+    ids: List[int] = [int(y) for x in list_of_ids for y in x]  # type: ignore
 
     sel_array = selection_array(dataset.data, ids)
 
