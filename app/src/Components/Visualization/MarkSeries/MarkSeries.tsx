@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import { Brush, BrushDictionary } from "../Data Types/BrushType";
-import { ScaleLinear, brush, brushSelection, select } from "d3";
+import { ScaleLinear, brush, brushSelection, select, max } from "d3";
 
 import { MarkData } from "../Data Types/MarkData";
 import { Popup, Header } from "semantic-ui-react";
@@ -266,23 +266,28 @@ class MarkSeries extends React.Component<Props, State> {
       newBrush();
     }
     drawBrush();
-
-    this.highlightPoints();
   }
 
-  highlightPoints() {
+  render() {
     const {
-      brushDict,
+      vis,
       xValues,
-      yValues,
       xScale,
+      yValues,
       yScale,
-      labels
-      // xLabel,
-      // yLabel
+      markSize,
+      opacity,
+      labels,
+      xLabel,
+      yLabel,
+      pointSelection,
+      updatePointSelection,
+      addPointDeselection,
+      addPointSelection
     } = this.props;
-
-    // const space = `${xLabel} ${yLabel}`;
+    const { brushDict } = this.props;
+    const { debugInfo } = this.state;
+    const space = `${xLabel} ${yLabel}`;
 
     const data: MarkData[] = xValues.map((x, i) => ({
       rawX: x,
@@ -306,51 +311,12 @@ class MarkSeries extends React.Component<Props, State> {
       p => (higlightedIndices[p] = higlightedIndices[p] + 1)
     );
 
-    // const highestIntersection = max(higlightedIndices);
+    const highestIntersection = max(higlightedIndices);
 
-    // const thisSpacePoints = ([] as number[]).concat.apply(
-    //   [],
-    //   (brushDict[space] || []).map(b => b.selectedPoints)
-    // );
-
-    const marksGroup = select(this.marksRef.current);
-
-    const marks = marksGroup.selectAll("circle");
-
-    marks.each(function(d, i) {
-      if (higlightedIndices[i] > 0) select(this).style("fill", "red");
-    });
-  }
-
-  render() {
-    const {
-      // vis,
-      xValues,
-      xScale,
-      yValues,
-      yScale,
-      markSize,
-      opacity,
-      labels,
-      xLabel,
-      yLabel,
-      pointSelection,
-      updatePointSelection,
-      // addPointDeselection,
-      addPointSelection
-    } = this.props;
-    // const { brushDict } = this.props;
-    const { debugInfo } = this.state;
-
-    const data: MarkData[] = xValues.map((x, i) => ({
-      rawX: x,
-      rawY: yValues[i],
-      // scaledX: xScale(x),
-      // scaledY: yScale(yValues[i]),
-      scaledX: x ? xScale(x) : 0,
-      scaledY: yValues[i] ? yScale(yValues[i]) : yScale.range()[1],
-      label: labels[i]
-    }));
+    const thisSpacePoints = ([] as number[]).concat.apply(
+      [],
+      (brushDict[space] || []).map(b => b.selectedPoints)
+    );
 
     return (
       <g>
@@ -374,22 +340,55 @@ class MarkSeries extends React.Component<Props, State> {
                   </div>
                 }
                 trigger={
-                  <RegularCircularMark
-                    cx={d.scaledX}
-                    cy={d.scaledY}
-                    r={markSize}
-                    opacity={opacity}
-                    onClick={() => {
-                      let sel = [...pointSelection];
-                      sel.push(i);
-                      updatePointSelection(sel);
-                      addPointSelection(
-                        VisualizationType.ScatterPlot,
-                        [xLabel, yLabel],
-                        i
-                      );
-                    }}
-                  />
+                  higlightedIndices[i] > 0 || pointSelection.includes(i) ? (
+                    higlightedIndices[i] === highestIntersection ? (
+                      <UnionCircularMark
+                        cx={d.scaledX}
+                        cy={d.scaledY}
+                        r={markSize}
+                        opacity={opacity}
+                        thisSpace={thisSpacePoints.includes(i)}
+                        onClick={() => {
+                          let sel = [...pointSelection];
+                          sel = sel.filter(idx => idx !== i);
+                          updatePointSelection(sel);
+                          addPointDeselection(vis, [xLabel, yLabel], i);
+                        }}
+                      />
+                    ) : (
+                      <SelectedCircularMark
+                        cx={d.scaledX}
+                        cy={d.scaledY}
+                        r={markSize}
+                        opacity={opacity}
+                        thisSpace={thisSpacePoints.includes(i)}
+                        onClick={() => {
+                          let sel = [...pointSelection];
+                          sel = sel.filter(idx => idx !== i);
+                          updatePointSelection(sel);
+                          addPointDeselection(vis, [xLabel, yLabel], i);
+                        }}
+                      />
+                    )
+                  ) : (
+                    <RegularCircularMark
+                      cx={d.scaledX}
+                      cy={d.scaledY}
+                      r={markSize}
+                      opacity={opacity}
+                      thisSpace={thisSpacePoints.includes(i)}
+                      onClick={() => {
+                        let sel = [...pointSelection];
+                        sel.push(i);
+                        updatePointSelection(sel);
+                        addPointSelection(
+                          VisualizationType.ScatterPlot,
+                          [xLabel, yLabel],
+                          i
+                        );
+                      }}
+                    />
+                  )
                 }
               />
             );
@@ -399,57 +398,6 @@ class MarkSeries extends React.Component<Props, State> {
     );
   }
 }
-
-// higlightedIndices[i] > 0 || pointSelection.includes(i) ? (
-//   higlightedIndices[i] === highestIntersection ||
-//   pointSelection.includes(i) ? (
-//     <UnionCircularMark
-//       cx={d.scaledX}
-//       cy={d.scaledY}
-//       r={markSize}
-//       opacity={opacity}
-//       thisSpace={thisSpacePoints.includes(i)}
-//       onClick={() => {
-//         let sel = [...pointSelection];
-//         sel = sel.filter(idx => idx !== i);
-//         updatePointSelection(sel);
-//         addPointDeselection(vis, [xLabel, yLabel], i);
-//       }}
-//     />
-//   ) : (
-//     <SelectedCircularMark
-//       cx={d.scaledX}
-//       cy={d.scaledY}
-//       r={markSize}
-//       opacity={opacity}
-//       thisSpace={thisSpacePoints.includes(i)}
-//       onClick={() => {
-//         let sel = [...pointSelection];
-//         sel = sel.filter(idx => idx !== i);
-//         updatePointSelection(sel);
-//         addPointDeselection(vis, [xLabel, yLabel], i);
-//       }}
-//     />
-//   )
-// ) : (
-//   <RegularCircularMark
-//     cx={d.scaledX}
-//     cy={d.scaledY}
-//     r={markSize}
-//     opacity={opacity}
-//     thisSpace={thisSpacePoints.includes(i)}
-//     onClick={() => {
-//       let sel = [...pointSelection];
-//       sel.push(i);
-//       updatePointSelection(sel);
-//       addPointSelection(
-//         VisualizationType.ScatterPlot,
-//         [xLabel, yLabel],
-//         i
-//       );
-//     }}
-//   />
-// )
 
 const mapDispatchToProp = (
   dispatch: Dispatch<InteractionHistoryAction>
@@ -518,18 +466,22 @@ export default connect(
   mapDispatchToProp
 )(MarkSeries);
 
-const RegularCircularMark = styled("circle")`
+interface Extend {
+  thisSpace: boolean;
+}
+
+const RegularCircularMark = styled("circle")<Extend>`
   fill: #648fff;
 `;
 
-// const SelectedCircularMark = styled("circle")<Extend>`
-//   fill: #dc267f;
-//   stroke-width: ${props => (props.thisSpace ? "2px" : 0)};
-//   stroke: #b31964;
-// `;
+const SelectedCircularMark = styled("circle")<Extend>`
+  fill: #dc267f;
+  stroke-width: ${props => (props.thisSpace ? "2px" : 0)};
+  stroke: #b31964;
+`;
 
-// const UnionCircularMark = styled("circle")<Extend>`
-//   fill: #ffb000;
-//   stroke-width: ${props => (props.thisSpace ? "2px" : 0)};
-//   stroke: #bb840a;
-// `;
+const UnionCircularMark = styled("circle")<Extend>`
+  fill: #ffb000;
+  stroke-width: ${props => (props.thisSpace ? "2px" : 0)};
+  stroke: #bb840a;
+`;
