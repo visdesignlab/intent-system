@@ -1,16 +1,16 @@
 from .properties import Measure, Properties
 from .dataset import Dataset
 from .dimensions import Dimensions
-from .vendor.interactions import Interaction, Prediction
+from .vendor.interactions import Interaction, InteractionTypeKind, Prediction
 
 import numpy as np
 import pandas as pd
 
 from scipy.spatial.distance import jaccard
-from typing import List
+from typing import List, Set
 
 
-def selection_array(df: pd.DataFrame, ids: List[int]) -> np.ndarray:
+def selection_array(df: pd.DataFrame, ids: Set[int]) -> np.ndarray:
     arr = np.zeros((len(df), 1))
     for i in ids:
         arr.itemset((i, 0), 1)
@@ -22,22 +22,26 @@ def rank(selection: np.ndarray, measure: Measure, df: pd.DataFrame) -> float:
     return float(1 - jaccard(selection, measure_arr))
 
 
+def relevant_ids(interactions: List[Interaction]) -> Set[int]:
+    active_ids: Set[int] = set()
+    for ix in interactions:
+        if ix.interaction_type.kind is InteractionTypeKind.SELECTION:
+            active_ids.update(ix.interaction_type.data_ids)  # type: ignore
+        elif ix.interaction_type.kind is InteractionTypeKind.DESELECTION:
+            for id in ix.interaction_type.data_ids:  # type: ignore
+                active_ids.remove(int(id))
+    return active_ids
+
+
 def predict(
         dataset: Dataset,
         properties: Properties,
         interactions: List[Interaction]) -> List[Prediction]:
 
-    # TODO: respect deselections
-    # TODO: Use sets
-    filtered = list(filter(lambda x: x.interaction_type.data_ids, interactions))
-    list_of_ids = map(lambda x: x.interaction_type.data_ids, filtered)
-
-    # Python's weird way of flattening
-    ids: List[int] = [int(y) for x in list_of_ids for y in x]  # type: ignore
-
+    ids = relevant_ids(interactions)
     sel_array = selection_array(dataset.data, ids)
 
-    # TODO extract dimensions
+    filtered = list(filter(lambda x: x.interaction_type.data_ids, interactions))
     list_of_dims = map(lambda x: x.interaction_type.dimensions, filtered)
     dims = Dimensions(list(set([y for x in list_of_dims for y in x])))
 
