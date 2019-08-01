@@ -26,7 +26,7 @@ def relevant_ids(interactions: List[Interaction]) -> Set[int]:
     active_ids: Set[int] = set()
     for ix in interactions:
         if ix.interaction_type.kind is InteractionTypeKind.SELECTION:
-            active_ids.update(ix.interaction_type.data_ids)  # type: ignore
+            active_ids.update([int(x) for x in ix.interaction_type.data_ids])  # type: ignore
         elif ix.interaction_type.kind is InteractionTypeKind.DESELECTION:
             for id in ix.interaction_type.data_ids:  # type: ignore
                 active_ids.remove(int(id))
@@ -39,6 +39,9 @@ def predict(
         interactions: List[Interaction]) -> List[Prediction]:
 
     ids = relevant_ids(interactions)
+    if len(ids) == 0:
+        return []
+
     sel_array = selection_array(dataset.data, ids)
 
     filtered = list(filter(lambda x: x.interaction_type.data_ids, interactions))
