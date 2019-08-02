@@ -1,7 +1,9 @@
+import { VisStore } from "./../../index";
 import { Action, Reducer } from "redux";
 import { Interaction, InteractionHistory } from "@visdesignlab/intent-contract";
 import axios from "axios";
 import { datasetName } from "../..";
+import { PredictionActions } from "./PredictionsReducer";
 
 export enum InteractionHistoryActions {
   ADD_INTERACTION = "ADD_INTERACTION"
@@ -21,7 +23,11 @@ export const InteractionHistoryReducer: Reducer<
     case InteractionHistoryActions.ADD_INTERACTION:
       current = [...current, action.args];
       axios.post(`/dataset/${datasetName}/predict`, current).then(response => {
-        console.log("Predictions", response.data);
+        VisStore.visStore().dispatch({
+          type: PredictionActions.UPDATE_PREDICATION,
+          args: response.data
+        });
+        console.log("Preds", response.data);
       });
       return [...current];
     default:

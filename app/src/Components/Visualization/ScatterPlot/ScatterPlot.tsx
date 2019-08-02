@@ -14,6 +14,7 @@ import { VisualizationType } from "@visdesignlab/intent-contract";
 import { connect } from "react-redux";
 import styled from "styled-components";
 import FullSizeSVG from "../ReusableComponents/FullSizeSVG";
+import { Segment, Label, Header, Dropdown } from "semantic-ui-react";
 
 interface State {
   svgHeight: number;
@@ -22,6 +23,10 @@ interface State {
   selectedY: string;
   brushDict: BrushDictionary;
   pointSelection: number[];
+  debugOptions: any[];
+  isLoadingDebugInfo: boolean;
+  debugMode: boolean;
+  debugKey: string;
 }
 
 interface DispatchProps {
@@ -49,7 +54,11 @@ class ScatterPlot extends React.Component<Props, State> {
     selectedX: "",
     selectedY: "",
     brushDict: {},
-    pointSelection: []
+    pointSelection: [],
+    debugOptions: [],
+    isLoadingDebugInfo: true,
+    debugMode: false,
+    debugKey: ""
   };
 
   componentWillMount() {
@@ -110,7 +119,17 @@ class ScatterPlot extends React.Component<Props, State> {
   }
 
   render() {
-    const { svgHeight, svgWidth, selectedX, selectedY, brushDict } = this.state;
+    const {
+      svgHeight,
+      svgWidth,
+      selectedX,
+      selectedY,
+      brushDict,
+      debugOptions,
+      isLoadingDebugInfo,
+      debugKey,
+      debugMode
+    } = this.state;
     const { data, dimensions, labelColumn } = this.props;
 
     const labels = data.map(r => r[labelColumn]);
@@ -147,6 +166,34 @@ class ScatterPlot extends React.Component<Props, State> {
             notifyColumnChange={(col: string) => this.changeY(col)}
           />
         </DimensionSelectorGrid>
+        <Segment>
+          <Header>Test</Header>
+          <Dropdown
+            placeholder={
+              isLoadingDebugInfo ? "Loading info" : "Select debugging info"
+            }
+            selection
+            options={debugOptions.map(k => ({
+              key: k,
+              text: k,
+              value: k
+            }))}
+            onChange={(e, data) => {
+              if (data.value === "Off") {
+                this.setState({
+                  debugKey: "",
+                  debugMode: false
+                });
+              } else {
+                this.setState({
+                  debugKey: data.value as string,
+                  debugMode: true
+                });
+              }
+            }}
+            loading={isLoadingDebugInfo}
+          />
+        </Segment>
         <FullSizeSVG ref={this.ref}>
           <g transform={`translate(100, 100)`}>
             <ScatterPlotComponent
@@ -162,6 +209,14 @@ class ScatterPlot extends React.Component<Props, State> {
               updateBrushDictionary={this.updateBrushDict}
               pointSelection={this.state.pointSelection}
               updatePointSelection={this.updatePointSelection}
+              debugMode={debugMode}
+              debugKey={debugKey}
+              updateDebugKeys={(keys: string[]) => {
+                this.setState({
+                  isLoadingDebugInfo: false,
+                  debugOptions: keys
+                });
+              }}
             />
           </g>
         </FullSizeSVG>
@@ -206,7 +261,7 @@ const ScatterPlotDiv = styled.div`
   height: 100%;
   width: 100%;
   display: grid;
-  grid-template-rows: 1fr 15fr;
+  grid-template-rows: 1fr 1fr 15fr;
 `;
 
 const DimensionSelectorGrid = styled.div`

@@ -16,9 +16,12 @@ interface RequiredProps {
   X: Dimension<number>;
   Y: Dimension<number>;
   brushDict: BrushDictionary;
+  debugMode: boolean;
+  debugKey: string;
   updateBrushDictionary: (dict: BrushDictionary) => void;
   pointSelection: number[];
   updatePointSelection: (points: number[]) => void;
+  updateDebugKeys: (keys: string[]) => void;
 }
 
 interface OptionalProps {
@@ -51,7 +54,10 @@ const ScatterPlotComponent: React.FC<Props> = ({
   brushDict,
   updateBrushDictionary,
   pointSelection,
-  updatePointSelection
+  updatePointSelection,
+  updateDebugKeys,
+  debugKey,
+  debugMode
 }) => {
   const actualHeight = height - 2 * (YOffset as number);
   const actualWidth = width - 2 * (XOffset as number);
@@ -85,6 +91,9 @@ const ScatterPlotComponent: React.FC<Props> = ({
           updateBrushDictionary={updateBrushDictionary}
           pointSelection={pointSelection}
           updatePointSelection={updatePointSelection}
+          updateDebugKeys={updateDebugKeys}
+          debugKey={debugKey}
+          debugMode={debugMode}
         />
       </g>
       <g transform={`translate(${XOffset}, ${actualHeight})`}>

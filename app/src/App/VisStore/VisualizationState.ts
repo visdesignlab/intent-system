@@ -10,4 +10,5 @@ export interface VisualizationState {
   dataset: Dataset;
   visualization: VisualizationType;
   interactions: InteractionHistory;
+  predictions: any[];
 }
