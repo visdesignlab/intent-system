@@ -25,7 +25,7 @@ def rank(selection: np.ndarray, measure: Measure, df: pd.DataFrame) -> float:
 def is_selection(interaction: Interaction) -> bool:
     return (
         interaction.interaction_type.kind is InteractionTypeKind.SELECTION) or (
-        interaction.interaction_type.brush_id)
+        interaction.interaction_type.brush_id is not None)
 
 
 def relevant_ids(interactions: List[Interaction]) -> Set[int]:
