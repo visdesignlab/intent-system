@@ -28,6 +28,7 @@ interface StateProps {
   numericColumns: string[];
   labelColumn: string;
   visualization: VisualizationType;
+  predictions: any[];
 }
 
 interface DispatchProps {
@@ -42,7 +43,8 @@ const App: React.FC<Props> = ({
   numericColumns,
   labelColumn,
   visualization,
-  changeVisualization
+  changeVisualization,
+  predictions
 }) => {
   return data ? (
     <PageGrid>
@@ -100,7 +102,13 @@ const App: React.FC<Props> = ({
           </Button>
         )}
       </VisualizationGrid>
-      <ResultsGrid>Test2</ResultsGrid>
+      <ResultsGrid>
+        {predictions
+          .sort((a, b) => b.rank - a.rank)
+          .map((pred, i) => (
+            <pre key={i}>{JSON.stringify(pred, null, 2)}</pre>
+          ))}
+      </ResultsGrid>
       <SubmitGrid>Test3</SubmitGrid>
     </PageGrid>
   ) : (
@@ -113,7 +121,8 @@ const mapStateToProps = (state: VisualizationState): StateProps => ({
   columns: state.dataset.columns,
   numericColumns: state.dataset.numericColumns,
   labelColumn: state.dataset.labelColumn,
-  visualization: state.visualization
+  visualization: state.visualization,
+  predictions: state.predictions
 });
 
 const mapDispatchToProps = (

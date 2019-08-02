@@ -26,9 +26,12 @@ interface RequiredProps {
   xScale: ScaleLinear<number, number>;
   yScale: ScaleLinear<number, number>;
   brushDict: BrushDictionary;
+  debugMode: boolean;
+  debugKey: string;
   updateBrushDictionary: (dict: BrushDictionary) => void;
   pointSelection: number[];
   updatePointSelection: (points: number[]) => void;
+  updateDebugKeys: (keys: string[]) => void;
 }
 
 interface StateProps {}
@@ -102,7 +105,8 @@ class MarkSeries extends React.Component<Props, State> {
       xValues,
       yValues,
       addRectangularSelection,
-      vis
+      vis,
+      updateDebugKeys
     } = this.props;
 
     if (
@@ -121,6 +125,13 @@ class MarkSeries extends React.Component<Props, State> {
           this.setState({
             debugInfo: res.data
           });
+          if (Object.values(res.data.measures).length > 0) {
+            const measure = res.data.measures[0];
+            const keys = Object.keys(measure).filter(
+              key => !isNaN(measure[key])
+            );
+            updateDebugKeys(["Off", ...keys]);
+          }
         })
         .catch(err => console.log(err));
     }
@@ -283,7 +294,9 @@ class MarkSeries extends React.Component<Props, State> {
       pointSelection,
       updatePointSelection,
       addPointDeselection,
-      addPointSelection
+      addPointSelection,
+      debugMode,
+      debugKey
     } = this.props;
     const { brushDict } = this.props;
     const { debugInfo } = this.state;
@@ -318,7 +331,7 @@ class MarkSeries extends React.Component<Props, State> {
       (brushDict[space] || []).map(b => b.selectedPoints)
     );
 
-    return (
+    return !debugMode ? (
       <g>
         <g ref={this.brushRef} />
         <g ref={this.marksRef}>
@@ -386,6 +399,57 @@ class MarkSeries extends React.Component<Props, State> {
                           [xLabel, yLabel],
                           i
                         );
+                      }}
+                    />
+                  )
+                }
+              />
+            );
+          })}
+        </g>
+      </g>
+    ) : (
+      <g>
+        <g ref={this.brushRef} />
+        <g ref={this.marksRef}>
+          {data.map((d, i) => {
+            return (
+              <Popup
+                key={`${JSON.stringify(d)} ${i}`}
+                content={
+                  <div>
+                    <Header>{labels[i]}</Header>
+                    <pre>{debugInfo ? debugInfo["dimensions"] : ""}</pre>
+                    <pre>
+                      {JSON.stringify(
+                        debugInfo["measures"] ? debugInfo["measures"][i] : {},
+                        null,
+                        2
+                      )}
+                    </pre>
+                  </div>
+                }
+                trigger={
+                  debugInfo.measures[i][debugKey] === 0 ? (
+                    <RegularCircularMark
+                      cx={d.scaledX}
+                      cy={d.scaledY}
+                      r={markSize}
+                      opacity={opacity}
+                      thisSpace={thisSpacePoints.includes(i)}
+                    />
+                  ) : (
+                    <SelectedCircularMark
+                      cx={d.scaledX}
+                      cy={d.scaledY}
+                      r={markSize}
+                      opacity={opacity}
+                      thisSpace={thisSpacePoints.includes(i)}
+                      onClick={() => {
+                        let sel = [...pointSelection];
+                        sel = sel.filter(idx => idx !== i);
+                        updatePointSelection(sel);
+                        addPointDeselection(vis, [xLabel, yLabel], i);
                       }}
                     />
                   )
