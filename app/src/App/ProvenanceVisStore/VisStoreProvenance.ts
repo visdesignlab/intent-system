@@ -6,6 +6,7 @@ import { VisualizationReducer } from "../VisStore/VisualizationReducer";
 import { VisualizationState } from "../VisStore/VisualizationState";
 import { combineReducers } from "redux";
 import thunk from "redux-thunk";
+import { PredictionActionReducer } from "../VisStore/PredictionsReducer";
 
 export function initVisStoreWithProvenance() {
   let store = initVisStore();
@@ -26,6 +27,7 @@ const reducer = () => {
   return combineReducers<VisualizationState>({
     dataset: DatasetReducer,
     visualization: VisualizationReducer,
-    interactions: InteractionHistoryReducer
+    interactions: InteractionHistoryReducer,
+    predictions: PredictionActionReducer
   });
 };
