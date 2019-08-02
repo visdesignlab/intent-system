@@ -22,10 +22,16 @@ def rank(selection: np.ndarray, measure: Measure, df: pd.DataFrame) -> float:
     return float(1 - jaccard(selection, measure_arr))
 
 
+def is_selection(interaction: Interaction) -> bool:
+    return (
+        interaction.interaction_type.kind is InteractionTypeKind.SELECTION) or (
+        interaction.interaction_type.brush_id)
+
+
 def relevant_ids(interactions: List[Interaction]) -> Set[int]:
     active_ids: Set[int] = set()
     for ix in interactions:
-        if ix.interaction_type.kind is InteractionTypeKind.SELECTION:
+        if is_selection(ix):
             active_ids.update([int(x) for x in ix.interaction_type.data_ids])  # type: ignore
         elif ix.interaction_type.kind is InteractionTypeKind.DESELECTION:
             for id in ix.interaction_type.data_ids:  # type: ignore
@@ -52,8 +58,8 @@ def predict(
 
     # Perform ranking
     ranks = map(lambda m: Prediction(
-      m.to_string(),
-      rank(sel_array, m, relevant_data),
-      ), properties.measures)
+        m.to_string(),
+        rank(sel_array, m, relevant_data),
+    ), properties.measures)
 
     return list(ranks)

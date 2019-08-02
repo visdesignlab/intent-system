@@ -9,7 +9,6 @@ from .algorithms.outlier import Outlier
 from .algorithms.skyline import Skyline
 from .vendor.interactions import interaction_history_from_dict
 
-
 # Load and preprocess the dataset
 datasets = {
     'slc_housing': Dataset.load_housing_data(),
