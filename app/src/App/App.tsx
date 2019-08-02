@@ -103,9 +103,11 @@ const App: React.FC<Props> = ({
         )}
       </VisualizationGrid>
       <ResultsGrid>
-        {predictions.map((pred, i) => (
-          <pre key={i}>{JSON.stringify(pred, null, 2)}</pre>
-        ))}
+        {predictions
+          .sort((a, b) => b.rank - a.rank)
+          .map((pred, i) => (
+            <pre key={i}>{JSON.stringify(pred, null, 2)}</pre>
+          ))}
       </ResultsGrid>
       <SubmitGrid>Test3</SubmitGrid>
     </PageGrid>
