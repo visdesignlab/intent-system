@@ -14,7 +14,7 @@ import { VisualizationType } from "@visdesignlab/intent-contract";
 import { connect } from "react-redux";
 import styled from "styled-components";
 import FullSizeSVG from "../ReusableComponents/FullSizeSVG";
-import { Segment, Label, Header, Dropdown } from "semantic-ui-react";
+import { Segment, Header, Dropdown } from "semantic-ui-react";
 
 interface State {
   svgHeight: number;
