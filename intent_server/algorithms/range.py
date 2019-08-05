@@ -1,11 +1,10 @@
 from sklearn.neighbors import LocalOutlierFactor
-
-from ..intent import IntentBinary
+from ..properties import Measure
 
 import pandas as pd
 
 
-class Outlier(IntentBinary):
+class Outlier(Measure):
     def __init__(self, n_neighbors: int, contamination: float) -> None:
         self.n_neighbors = n_neighbors
         self.contamination = contamination
@@ -19,4 +18,7 @@ class Outlier(IntentBinary):
         df = df.fillna(df.mean())
 
         pred = clf.fit_predict(df)
-        return pd.DataFrame(data=pred, columns=[self.to_string()]).replace({-1: 1, 1: 0})
+        return pd.DataFrame(data=pred, columns=[self.to_string()])
+
+    def normalize(self, df: pd.DataFrame) -> pd.DataFrame:
+        return df.replace({-1: 1, 1: 0})
