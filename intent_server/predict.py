@@ -2,19 +2,13 @@ from .properties import Measure, Properties
 from .dataset import Dataset
 from .dimensions import Dimensions
 from .vendor.interactions import Interaction, InteractionTypeKind, Prediction
+from .interactions import selection_array
 
 import numpy as np
 import pandas as pd
 
 from scipy.spatial.distance import jaccard
 from typing import List, Set
-
-
-def selection_array(df: pd.DataFrame, ids: Set[int]) -> np.ndarray:
-    arr = np.zeros((len(df), 1))
-    for i in ids:
-        arr.itemset((i, 0), 1)
-    return arr
 
 
 def rank(selection: np.ndarray, measure: Measure, df: pd.DataFrame) -> float:
