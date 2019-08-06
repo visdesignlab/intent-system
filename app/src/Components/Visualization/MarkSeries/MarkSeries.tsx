@@ -147,7 +147,7 @@ class MarkSeries extends React.Component<Props, State> {
       const instance = this;
 
       const nBrush = brush()
-        .extent([[0, 0], [width, height]])
+        .extent([[-10, -10], [width + 10, height + 10]])
         .on("end", function() {
           if (instance.programMove) return;
           const id = brushes[brushes.length - 1].id;
@@ -175,6 +175,22 @@ class MarkSeries extends React.Component<Props, State> {
                 yScale(yValues[i]) <= bottom
               )
                 selectedIndices.push(i);
+              else if (
+                (!x &&
+                  left < xScale.range()[0] &&
+                  yScale(yValues[i]) >= top &&
+                  yScale(yValues[i]) <= bottom) ||
+                (!yValues[i] &&
+                  bottom > yScale.range()[1] &&
+                  xScale(x) >= left &&
+                  xScale(x) <= right) ||
+                (!x &&
+                  !yValues[i] &&
+                  left < xScale.range()[0] &&
+                  bottom > yScale.range()[1])
+              ) {
+                selectedIndices.push(i);
+              }
             });
 
             const br: Brush = {
@@ -305,8 +321,6 @@ class MarkSeries extends React.Component<Props, State> {
     const data: MarkData[] = xValues.map((x, i) => ({
       rawX: x,
       rawY: yValues[i],
-      // scaledX: xScale(x),
-      // scaledY: yScale(yValues[i]),
       scaledX: x ? xScale(x) : 0,
       scaledY: yValues[i] ? yScale(yValues[i]) : yScale.range()[1],
       label: labels[i]

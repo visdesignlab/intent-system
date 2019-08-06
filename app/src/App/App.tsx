@@ -21,6 +21,7 @@ import { VisualizationType } from "@visdesignlab/intent-contract";
 import { connect } from "react-redux";
 import styled from "styled-components";
 import ScatterPlotMatrix from "../Components/Visualization/ScatterPlotMatrix/ScatterPlotMatrix";
+import styles from "./test.module.css";
 
 interface StateProps {
   data: any[];
@@ -47,8 +48,8 @@ const App: React.FC<Props> = ({
   predictions
 }) => {
   return data ? (
-    <PageGrid>
-      <TitleBar tasks={TaskList} />
+    <PageGrid className={""}>
+      {/* <TitleBar tasks={TaskList} /> */}
       <VisualizationGrid>
         {(() => {
           switch (VisualizationType[visualization]) {
@@ -90,16 +91,17 @@ const App: React.FC<Props> = ({
           }
         })()}
         {visualization !== VisualizationType.None && (
-          <Button
-            style={{
-              position: "absolute",
-              bottom: "0",
-              left: "0"
-            }}
-            onClick={() => changeVisualization(VisualizationType.None)}
-          >
-            Home
-          </Button>
+          <div />
+          // <Button
+          //   style={{
+          //     position: "absolute",
+          //     bottom: "0",
+          //     left: "0"
+          //   }}
+          //   onClick={() => changeVisualization(VisualizationType.None)}
+          // >
+          //   Home
+          // </Button>
         )}
       </VisualizationGrid>
       <ResultsGrid>
@@ -149,13 +151,13 @@ const SubmitGrid = styled.div`
 
 const ResultsGrid = styled.div`
   grid-column: 16/-1;
-  grid-row: 2/16;
+  grid-row: 1/16;
   border: 0.5px dashed blue;
 `;
 
 const VisualizationGrid = styled.div`
   grid-column: 1 / 16;
-  grid-row: 2/-1;
+  grid-row: 1/-1;
   border: 0.5px dashed red;
 `;
 
