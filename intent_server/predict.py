@@ -51,9 +51,6 @@ def predict(
     relevant_data = dataset.subset(dims)
 
     # Perform ranking
-    ranks = map(lambda m: Prediction(
-        m.to_string(),
-        m.rank(sel_array, relevant_data),
-    ), properties.measures)
+    ranks = map(lambda m: m.to_prediction(sel_array, relevant_data), properties.measures)
 
     return list(ranks)

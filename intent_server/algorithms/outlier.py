@@ -1,8 +1,10 @@
 from sklearn.neighbors import LocalOutlierFactor
 
 from ..intent import IntentBinary
+from ..vendor.interactions import Prediction
 
 import pandas as pd
+import numpy as np
 
 
 class Outlier(IntentBinary):
@@ -20,3 +22,8 @@ class Outlier(IntentBinary):
 
         pred = clf.fit_predict(df)
         return pd.DataFrame(data=pred, columns=[self.to_string()]).replace({-1: 1, 1: 0})
+
+    def to_prediction(self, selection: np.ndarray, df: pd.DataFrame) -> Prediction:
+        return Prediction(
+            self.to_string(),
+            self.rank(selection, df))
