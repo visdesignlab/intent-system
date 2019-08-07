@@ -59,6 +59,6 @@ class Range(Intent):
 
             paths.add(tuple(rules))
 
-        return Prediction(self.to_string() + ',' + str(list(paths)), 42)
+        return Prediction(self.to_string(), 42, info={"rules": list(paths)})
 
 
