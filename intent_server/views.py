@@ -5,9 +5,13 @@ import pandas as pd
 from .dataset import Dataset
 from .properties import Dimensions, Properties
 from .predict import predict
+from .intent import Intent
 from .algorithms.outlier import Outlier
 from .algorithms.skyline import Skyline
+from .algorithms.range import Range
 from .vendor.interactions import interaction_history_from_dict
+
+from typing import List
 
 # Load and preprocess the dataset
 datasets = {
@@ -18,10 +22,11 @@ datasets = {
 
 views = Blueprint('views', __name__)
 
-measures = [
+measures: List[Intent] = [
     Outlier(1, 0.1),
     Outlier(2, 0.1),
     Skyline(),
+    Range(),
 ]
 
 
