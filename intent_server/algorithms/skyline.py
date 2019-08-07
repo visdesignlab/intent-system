@@ -3,6 +3,8 @@ from ..intent import IntentBinary
 import pandas as pd
 import numpy as np
 
+from typing import Optional, Dict, Any
+
 
 def dominates(slf: np.ndarray, other: np.ndarray) -> bool:
     if np.isnan(slf).any():
@@ -32,3 +34,6 @@ class Skyline(IntentBinary):
         return pd.DataFrame(
             data=skyline,
             columns=[self.to_string()]).applymap(lambda x: 1 if x else 0)
+
+    def info(self) -> Optional[Dict[str,Any]]:
+        return None
