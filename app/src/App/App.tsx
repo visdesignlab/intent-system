@@ -73,9 +73,8 @@ class App extends React.Component<Props, State> {
     } = this.props;
 
     const { width } = this.state;
-    const predictionRanks = predictions.map(p => p.rank);
     const scale = scaleLinear()
-      .domain([min(predictionRanks) as number, max(predictionRanks) as number])
+      .domain([0, 1])
       .range([0, width]);
 
     const barHeight = 50;
