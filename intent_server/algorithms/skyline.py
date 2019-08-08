@@ -35,5 +35,5 @@ class Skyline(IntentBinary):
             data=skyline,
             columns=[self.to_string()]).applymap(lambda x: 1 if x else 0)
 
-    def info(self) -> Optional[Dict[str,Any]]:
+    def info(self) -> Optional[Dict[str, Any]]:
         return None
