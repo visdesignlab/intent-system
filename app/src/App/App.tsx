@@ -19,7 +19,7 @@ import { VisualizationType, Prediction } from "@visdesignlab/intent-contract";
 import { connect } from "react-redux";
 import styled from "styled-components";
 import ScatterPlotMatrix from "../Components/Visualization/ScatterPlotMatrix/ScatterPlotMatrix";
-import { select, scaleLinear, max, min } from "d3";
+import { select, scaleLinear } from "d3";
 
 interface StateProps {
   data: any[];
