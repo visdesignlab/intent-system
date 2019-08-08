@@ -108,10 +108,12 @@ const App: React.FC<Props> = ({
         {predictions
           .sort((a, b) => b.rank - a.rank)
           .map((pred, i) => (
-            <pre key={i}>{JSON.stringify(pred, null, 2)}</pre>
+            <pre key={i} style={{ padding: "1rem" }}>
+              {JSON.stringify(pred, null, 2)}
+            </pre>
           ))}
       </ResultsGrid>
-      <SubmitGrid>Test3</SubmitGrid>
+      <SubmitGrid />
     </PageGrid>
   ) : (
     <div />
@@ -146,19 +148,22 @@ export default connect(
 const SubmitGrid = styled.div`
   grid-column: 16/-1;
   grid-row: 16/-1;
-  border: 0.5px dashed black;
+  border: 0.5px dashed white;
+  background-color: rgba(128, 128, 128, 0.05);
 `;
 
 const ResultsGrid = styled.div`
   grid-column: 16/-1;
   grid-row: 1/16;
-  border: 0.5px dashed blue;
+  border: 0.5px dashed white;
+  background-color: rgba(128, 128, 128, 0.05);
+  padding: 1em;
 `;
 
 const VisualizationGrid = styled.div`
   grid-column: 1 / 16;
   grid-row: 1/-1;
-  border: 0.5px dashed red;
+  border: 0.5px dashed white;
 `;
 
 const PageGrid = styled.div`

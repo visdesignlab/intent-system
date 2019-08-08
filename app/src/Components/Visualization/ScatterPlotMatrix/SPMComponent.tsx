@@ -108,7 +108,7 @@ class SPMComponent extends React.Component<Props, State> {
       this.setState({
         pairs: pairs
       });
-      console.log(pairs);
+      // console.log(pairs);
     }
   }
 

@@ -283,7 +283,7 @@ const ScatterPlotDiv = styled.div`
   height: 100%;
   width: 100%;
   display: grid;
-  grid-template-rows: 1fr 1fr 15fr;
+  grid-template-rows: 1fr 0.75fr 15fr;
 `;
 
 const DimensionSelectorGrid = styled.div`
