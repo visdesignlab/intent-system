@@ -4,11 +4,11 @@ from ..intent import IntentBinary
 
 import pandas as pd
 
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, Union
 
 
 class Outlier(IntentBinary):
-    def __init__(self, n_neighbors: int, contamination: float) -> None:
+    def __init__(self, n_neighbors: int = 20, contamination: Union[float,str] = 'auto') -> None:
         self.clf = LocalOutlierFactor(n_neighbors=n_neighbors, contamination=contamination)
 
     def to_string(self) -> str:
