@@ -2,6 +2,11 @@
 # yarn lockfile v1
 
 
+"@visdesignlab/intent-contract@^4.1.1":
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/@visdesignlab/intent-contract/-/intent-contract-4.1.1.tgz#c4fe8b603b2fa897a505af5512b19258f1e4f0dd"
+  integrity sha512-jFdGs+y0INY7S3XVrvTr+3M5JtOwgct+d27znVWR400NS1qwe7XXJshpSqt0ie1Jzhxj4XaGAXF5WdxLQBBWcQ==
+
 ansi-regex@^2.0.0:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/ansi-regex/-/ansi-regex-2.1.1.tgz#c3b33ab5ee360d86e0e628f0468ae7ef27d654df"

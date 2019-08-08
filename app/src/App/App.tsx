@@ -1,10 +1,10 @@
 import {
-  Button,
   Container,
   ContainerProps,
   Header,
   Segment,
-  SegmentProps
+  SegmentProps,
+  Popup
 } from "semantic-ui-react";
 import {
   VisualizationChangeAction,
@@ -14,14 +14,12 @@ import {
 import { Dispatch } from "redux";
 import React from "react";
 import ScatterPlot from "../Components/Visualization/ScatterPlot/ScatterPlot";
-import { TaskList } from "../Study Data/Tasks";
-import TitleBar from "../Components/TitleBar/TitleBar";
 import { VisualizationState } from "./VisStore/VisualizationState";
-import { VisualizationType } from "@visdesignlab/intent-contract";
+import { VisualizationType, Prediction } from "@visdesignlab/intent-contract";
 import { connect } from "react-redux";
 import styled from "styled-components";
 import ScatterPlotMatrix from "../Components/Visualization/ScatterPlotMatrix/ScatterPlotMatrix";
-import styles from "./test.module.css";
+import { select, scaleLinear, max, min } from "d3";
 
 interface StateProps {
   data: any[];
@@ -29,96 +27,169 @@ interface StateProps {
   numericColumns: string[];
   labelColumn: string;
   visualization: VisualizationType;
-  predictions: any[];
+  predictions: Prediction[];
 }
 
 interface DispatchProps {
   changeVisualization: (vis: VisualizationType) => void;
 }
 
+interface State {
+  height: number;
+  width: number;
+}
+
 type Props = StateProps & DispatchProps;
 
-const App: React.FC<Props> = ({
-  data,
-  columns,
-  numericColumns,
-  labelColumn,
-  visualization,
-  changeVisualization,
-  predictions
-}) => {
-  return data ? (
-    <PageGrid className={""}>
-      {/* <TitleBar tasks={TaskList} /> */}
-      <VisualizationGrid>
-        {(() => {
-          switch (VisualizationType[visualization]) {
-            case VisualizationType.ScatterPlot:
-              return (
-                data.length > 0 && (
-                  <ScatterPlot
-                    data={data}
-                    dimensions={numericColumns}
-                    labelColumn={labelColumn}
-                  />
-                )
-              );
-            case VisualizationType.ScatterPlotMatrix:
-              return (
-                data.length > 0 && (
-                  <ScatterPlotMatrix
-                    data={data}
-                    dimensions={numericColumns}
-                    labelColumn={labelColumn}
-                  />
-                )
-              );
-            default:
-              return (
-                <PaddedContainer textAlign="center">
-                  <Header>Select Visualization</Header>
-                  <VisSegment
-                    placeholder
-                    onClick={() =>
-                      changeVisualization(VisualizationType.ScatterPlot)
-                    }
-                  >
-                    Scatterplot
-                  </VisSegment>
-                  <VisSegment placeholder>Scatterplot Matrix</VisSegment>
-                </PaddedContainer>
-              );
-          }
-        })()}
-        {visualization !== VisualizationType.None && (
-          <div />
-          // <Button
-          //   style={{
-          //     position: "absolute",
-          //     bottom: "0",
-          //     left: "0"
-          //   }}
-          //   onClick={() => changeVisualization(VisualizationType.None)}
-          // >
-          //   Home
-          // </Button>
-        )}
-      </VisualizationGrid>
-      <ResultsGrid>
-        {predictions
-          .sort((a, b) => b.rank - a.rank)
-          .map((pred, i) => (
-            <pre key={i} style={{ padding: "1rem" }}>
-              {JSON.stringify(pred, null, 2)}
-            </pre>
-          ))}
-      </ResultsGrid>
-      <SubmitGrid />
-    </PageGrid>
-  ) : (
-    <div />
-  );
-};
+class App extends React.Component<Props, State> {
+  predictionResultsRef: React.RefObject<HTMLDivElement> = React.createRef();
+  predictionsResultsSvgRef: React.RefObject<SVGSVGElement> = React.createRef();
+
+  readonly state: State = {
+    height: 0,
+    width: 0
+  };
+
+  componentDidMount() {
+    const predSvg = this.predictionsResultsSvgRef.current as SVGSVGElement;
+    const predSvgSelection = select(predSvg);
+
+    predSvgSelection.style("height", `100%`).style("width", `100%`);
+
+    this.setState({
+      height: predSvg.clientHeight,
+      width: predSvg.clientWidth
+    });
+  }
+
+  render() {
+    const {
+      data,
+      numericColumns,
+      labelColumn,
+      visualization,
+      changeVisualization,
+      predictions
+    } = this.props;
+
+    const { width } = this.state;
+    const predictionRanks = predictions.map(p => p.rank);
+    const scale = scaleLinear()
+      .domain([min(predictionRanks) as number, max(predictionRanks) as number])
+      .range([0, width]);
+
+    const barHeight = 50;
+
+    return data ? (
+      <PageGrid className={""}>
+        {/* <TitleBar tasks={TaskList} /> */}
+        <VisualizationGrid>
+          {(() => {
+            switch (VisualizationType[visualization]) {
+              case VisualizationType.ScatterPlot:
+                return (
+                  data.length > 0 && (
+                    <ScatterPlot
+                      data={data}
+                      dimensions={numericColumns}
+                      labelColumn={labelColumn}
+                    />
+                  )
+                );
+              case VisualizationType.ScatterPlotMatrix:
+                return (
+                  data.length > 0 && (
+                    <ScatterPlotMatrix
+                      data={data}
+                      dimensions={numericColumns}
+                      labelColumn={labelColumn}
+                    />
+                  )
+                );
+              default:
+                return (
+                  <PaddedContainer textAlign="center">
+                    <Header>Select Visualization</Header>
+                    <VisSegment
+                      placeholder
+                      onClick={() =>
+                        changeVisualization(VisualizationType.ScatterPlot)
+                      }
+                    >
+                      Scatterplot
+                    </VisSegment>
+                    <VisSegment placeholder>Scatterplot Matrix</VisSegment>
+                  </PaddedContainer>
+                );
+            }
+          })()}
+          {visualization !== VisualizationType.None && (
+            <div />
+            // <Button
+            //   style={{
+            //     position: "absolute",
+            //     bottom: "0",
+            //     left: "0"
+            //   }}
+            //   onClick={() => changeVisualization(VisualizationType.None)}
+            // >
+            //   Home
+            // </Button>
+          )}
+        </VisualizationGrid>
+        <ResultsGrid ref={this.predictionResultsRef}>
+          <Segment>
+            <Header textAlign="center" size="huge">
+              Predictions
+            </Header>
+          </Segment>
+          {(!predictions || predictions.length <= 0) && (
+            <Header textAlign="center"> Please Make Selection</Header>
+          )}
+          <div style={{ padding: "1em", height: "100%", width: "100%" }}>
+            <svg id="predictions-svg" ref={this.predictionsResultsSvgRef}>
+              {predictions &&
+                predictions.length > 0 &&
+                predictions.map((pred, i) => {
+                  return (
+                    <Popup
+                      key={i}
+                      trigger={
+                        <g transform={`translate(0, ${(barHeight + 2) * i})`}>
+                          <BackgroundRect
+                            height={barHeight}
+                            width={scale.range()[1]}
+                          />
+                          <ForegroundRect
+                            height={barHeight}
+                            width={scale(pred.rank)}
+                          />
+                          <PredictionText
+                            transform={`translate(20, ${barHeight / 2})`}
+                          >
+                            {pred.intent}
+                          </PredictionText>
+                        </g>
+                      }
+                      content={
+                        <div>
+                          Confidence: {pred.rank}
+                          <pre>{JSON.stringify(pred.info, null, 2)}</pre>
+                        </div>
+                      }
+                    />
+                  );
+                })}
+            </svg>
+          </div>
+        </ResultsGrid>
+        <SubmitGrid />
+      </PageGrid>
+    ) : (
+      <div />
+    );
+  }
+}
 
 const mapStateToProps = (state: VisualizationState): StateProps => ({
   data: state.dataset.data,
@@ -149,14 +220,12 @@ const SubmitGrid = styled.div`
   grid-column: 16/-1;
   grid-row: 16/-1;
   border: 0.5px dashed white;
-  background-color: rgba(128, 128, 128, 0.05);
 `;
 
 const ResultsGrid = styled.div`
   grid-column: 16/-1;
   grid-row: 1/16;
   border: 0.5px dashed white;
-  background-color: rgba(128, 128, 128, 0.05);
   padding: 1em;
 `;
 
@@ -181,3 +250,19 @@ const VisSegment = styled(Segment)<SegmentProps>`
   font-size: 2em !important;
   cursor: pointer;
 `;
+
+const BackgroundRect = styled.rect`
+  fill: #bde1dd;
+`;
+
+const ForegroundRect = styled.rect`
+  fill: #49bdb6;
+`;
+
+const PredictionText = styled.text`
+  dominant-baseline: middle;
+  font-size: 1.2em;
+  font-color: white;
+`;
+
+// background-color: rgba(128, 128, 128, 0.05);
