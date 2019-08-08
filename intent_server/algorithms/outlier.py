@@ -1,24 +1,27 @@
 from sklearn.neighbors import LocalOutlierFactor
-from ..properties import Measure
+
+from ..intent import IntentBinary
 
 import pandas as pd
 
+from typing import Optional, Dict, Any
 
-class Outlier(Measure):
+
+class Outlier(IntentBinary):
     def __init__(self, n_neighbors: int, contamination: float) -> None:
-        self.n_neighbors = n_neighbors
-        self.contamination = contamination
+        self.clf = LocalOutlierFactor(n_neighbors=n_neighbors, contamination=contamination)
 
     def to_string(self) -> str:
-        return 'Outlier:LOF:' + str(self.n_neighbors) + ':' + str(self.contamination)
+        return 'Outlier'
 
     def compute(self, df: pd.DataFrame) -> pd.DataFrame:
-        clf = LocalOutlierFactor(n_neighbors=self.n_neighbors, contamination=self.contamination)
 
         df = df.fillna(df.mean())
 
-        pred = clf.fit_predict(df)
-        return pd.DataFrame(data=pred, columns=[self.to_string()])
+        pred = self.clf.fit_predict(df)
+        return pd.DataFrame(data=pred, columns=[self.to_string()]).replace({-1: 1, 1: 0})
 
-    def normalize(self, df: pd.DataFrame) -> pd.DataFrame:
-        return df.replace({-1: 1, 1: 0})
+    def info(self) -> Optional[Dict[str, Any]]:
+        return {
+            "type": "Local Outlier Factory",
+            "params": self.clf.get_params()}

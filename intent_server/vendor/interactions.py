@@ -15,7 +15,7 @@
 #     result = prediction_from_dict(json.loads(json_string))
 
 from dataclasses import dataclass
-from typing import List, Any, Optional, TypeVar, Callable, Type, cast
+from typing import List, Any, Optional, Dict, TypeVar, Callable, Type, cast
 from enum import Enum
 
 
@@ -65,6 +65,11 @@ def from_union(fs, x):
 def to_class(c: Type[T], x: Any) -> dict:
     assert isinstance(x, c)
     return cast(Any, x).to_dict()
+
+
+def from_dict(f: Callable[[Any], T], x: Any) -> Dict[str, T]:
+    assert isinstance(x, dict)
+    return { k: f(v) for (k, v) in x.items() }
 
 
 @dataclass
@@ -195,32 +200,32 @@ class InteractionTypeKind(Enum):
 
 @dataclass
 class InteractionType:
-    data_ids: Optional[List[float]]
     dimensions: List[str]
-    kind: Optional[InteractionTypeKind]
-    bottom: Optional[float]
-    brush_id: Optional[str]
-    left: Optional[float]
-    right: Optional[float]
-    top: Optional[float]
+    data_ids: Optional[List[float]] = None
+    kind: Optional[InteractionTypeKind] = None
+    bottom: Optional[float] = None
+    brush_id: Optional[str] = None
+    left: Optional[float] = None
+    right: Optional[float] = None
+    top: Optional[float] = None
 
     @staticmethod
     def from_dict(obj: Any) -> 'InteractionType':
         assert isinstance(obj, dict)
-        data_ids = from_union([lambda x: from_list(from_float, x), from_none], obj.get("dataIds"))
         dimensions = from_list(from_str, obj.get("dimensions"))
+        data_ids = from_union([lambda x: from_list(from_float, x), from_none], obj.get("dataIds"))
         kind = from_union([InteractionTypeKind, from_none], obj.get("kind"))
         bottom = from_union([from_float, from_none], obj.get("bottom"))
         brush_id = from_union([from_str, from_none], obj.get("brushId"))
         left = from_union([from_float, from_none], obj.get("left"))
         right = from_union([from_float, from_none], obj.get("right"))
         top = from_union([from_float, from_none], obj.get("top"))
-        return InteractionType(data_ids, dimensions, kind, bottom, brush_id, left, right, top)
+        return InteractionType(dimensions, data_ids, kind, bottom, brush_id, left, right, top)
 
     def to_dict(self) -> dict:
         result: dict = {}
-        result["dataIds"] = from_union([lambda x: from_list(to_float, x), from_none], self.data_ids)
         result["dimensions"] = from_list(from_str, self.dimensions)
+        result["dataIds"] = from_union([lambda x: from_list(to_float, x), from_none], self.data_ids)
         result["kind"] = from_union([lambda x: to_enum(InteractionTypeKind, x), from_none], self.kind)
         result["bottom"] = from_union([to_float, from_none], self.bottom)
         result["brushId"] = from_union([from_str, from_none], self.brush_id)
@@ -260,18 +265,21 @@ class Interaction:
 class Prediction:
     intent: str
     rank: float
+    info: Optional[Dict[str, Any]] = None
 
     @staticmethod
     def from_dict(obj: Any) -> 'Prediction':
         assert isinstance(obj, dict)
         intent = from_str(obj.get("intent"))
         rank = from_float(obj.get("rank"))
-        return Prediction(intent, rank)
+        info = from_union([lambda x: from_dict(lambda x: x, x), from_none], obj.get("info"))
+        return Prediction(intent, rank, info)
 
     def to_dict(self) -> dict:
         result: dict = {}
         result["intent"] = from_str(self.intent)
         result["rank"] = to_float(self.rank)
+        result["info"] = from_union([lambda x: from_dict(lambda x: x, x), from_none], self.info)
         return result
 
 

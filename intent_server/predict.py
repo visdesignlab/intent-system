@@ -1,4 +1,4 @@
-from .properties import Measure, Properties
+from .properties import Properties
 from .dataset import Dataset
 from .dimensions import Dimensions
 from .vendor.interactions import Interaction, InteractionTypeKind, Prediction
@@ -6,8 +6,13 @@ from .vendor.interactions import Interaction, InteractionTypeKind, Prediction
 import numpy as np
 import pandas as pd
 
-from scipy.spatial.distance import jaccard
 from typing import List, Set
+
+
+def is_selection(interaction: Interaction) -> bool:
+    return (
+        interaction.interaction_type.kind is InteractionTypeKind.SELECTION) or (
+        interaction.interaction_type.brush_id is not None)
 
 
 def selection_array(df: pd.DataFrame, ids: Set[int]) -> np.ndarray:
@@ -15,17 +20,6 @@ def selection_array(df: pd.DataFrame, ids: Set[int]) -> np.ndarray:
     for i in ids:
         arr.itemset((i, 0), 1)
     return arr
-
-
-def rank(selection: np.ndarray, measure: Measure, df: pd.DataFrame) -> float:
-    measure_arr = measure.evaluate(df)
-    return float(1 - jaccard(selection, measure_arr))
-
-
-def is_selection(interaction: Interaction) -> bool:
-    return (
-        interaction.interaction_type.kind is InteractionTypeKind.SELECTION) or (
-        interaction.interaction_type.brush_id is not None)
 
 
 def relevant_ids(interactions: List[Interaction]) -> Set[int]:
@@ -57,9 +51,6 @@ def predict(
     relevant_data = dataset.subset(dims)
 
     # Perform ranking
-    ranks = map(lambda m: Prediction(
-        m.to_string(),
-        rank(sel_array, m, relevant_data),
-    ), properties.measures)
+    ranks = map(lambda m: m.to_prediction(sel_array, relevant_data), properties.measures)
 
     return list(ranks)
