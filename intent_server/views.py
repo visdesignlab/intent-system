@@ -23,8 +23,7 @@ datasets = {
 views = Blueprint('views', __name__)
 
 measures: List[Intent] = [
-    Outlier(1, 0.1),
-    Outlier(2, 0.1),
+    Outlier(),
     Skyline(),
     Range(),
 ]
