@@ -19,7 +19,7 @@ import { VisualizationType, Prediction } from "@visdesignlab/intent-contract";
 import { connect } from "react-redux";
 import styled from "styled-components";
 import ScatterPlotMatrix from "../Components/Visualization/ScatterPlotMatrix/ScatterPlotMatrix";
-import { select, scaleLinear, max, min } from "d3";
+import { select, scaleLinear } from "d3";
 
 interface StateProps {
   data: any[];
@@ -73,9 +73,8 @@ class App extends React.Component<Props, State> {
     } = this.props;
 
     const { width } = this.state;
-    const predictionRanks = predictions.map(p => p.rank);
     const scale = scaleLinear()
-      .domain([min(predictionRanks) as number, max(predictionRanks) as number])
+      .domain([0, 1])
       .range([0, width]);
 
     const barHeight = 50;
