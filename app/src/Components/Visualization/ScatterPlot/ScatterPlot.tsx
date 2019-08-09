@@ -16,6 +16,9 @@ import styled from "styled-components";
 import FullSizeSVG from "../ReusableComponents/FullSizeSVG";
 import { Segment, Header, Dropdown } from "semantic-ui-react";
 
+import styles from "./scatterplot.module.css";
+import { select } from "d3";
+
 interface State {
   svgHeight: number;
   svgWidth: number;
@@ -46,7 +49,7 @@ interface OwnProps {
 type Props = OwnProps & DispatchProps;
 
 class ScatterPlot extends React.Component<Props, State> {
-  ref: React.RefObject<SVGSVGElement> = React.createRef();
+  divRef: React.RefObject<HTMLDivElement> = React.createRef();
 
   readonly state: State = {
     svgHeight: 0,
@@ -71,9 +74,18 @@ class ScatterPlot extends React.Component<Props, State> {
 
   componentDidMount() {
     const { dimensions } = this.props;
+
+    const divHeight = (this.divRef.current as HTMLDivElement).clientHeight;
+    const divWidth = (this.divRef.current as HTMLDivElement).clientWidth;
+    const lesser = divHeight < divWidth ? divHeight : divWidth;
+
+    select(this.divRef.current)
+      .style("height", `${lesser}px`)
+      .style("width", `${lesser}px`);
+
     this.setState({
-      svgHeight: (this.ref.current as SVGSVGElement).clientHeight,
-      svgWidth: (this.ref.current as SVGSVGElement).clientWidth,
+      svgHeight: lesser,
+      svgWidth: lesser,
       selectedX: dimensions[0],
       selectedY: dimensions[1]
     });
@@ -112,9 +124,17 @@ class ScatterPlot extends React.Component<Props, State> {
   };
 
   resize() {
+    const divHeight = (this.divRef.current as HTMLDivElement).clientHeight;
+    const divWidth = (this.divRef.current as HTMLDivElement).clientWidth;
+    const lesser = divHeight < divWidth ? divHeight : divWidth;
+
+    select(this.divRef.current)
+      .style("height", `${lesser}px`)
+      .style("width", `${lesser}px`);
+
     this.setState({
-      svgHeight: (this.ref.current as SVGSVGElement).clientHeight,
-      svgWidth: (this.ref.current as SVGSVGElement).clientWidth
+      svgHeight: lesser,
+      svgWidth: lesser
     });
   }
 
@@ -194,32 +214,34 @@ class ScatterPlot extends React.Component<Props, State> {
             loading={isLoadingDebugInfo}
           />
         </Segment>
-        <FullSizeSVG ref={this.ref}>
-          <g transform={`translate(100, 100)`}>
-            <ScatterPlotComponent
-              vis={VisualizationType.ScatterPlot}
-              height={lesserDim - 100}
-              width={lesserDim - 100}
-              X={X}
-              Y={Y}
-              YOffset={lesserDim * 0.05}
-              XOffset={lesserDim * 0.06}
-              labels={labels}
-              brushDict={brushDict}
-              updateBrushDictionary={this.updateBrushDict}
-              pointSelection={this.state.pointSelection}
-              updatePointSelection={this.updatePointSelection}
-              debugMode={debugMode}
-              debugKey={debugKey}
-              updateDebugKeys={(keys: string[]) => {
-                this.setState({
-                  isLoadingDebugInfo: false,
-                  debugOptions: keys
-                });
-              }}
-            />
-          </g>
-        </FullSizeSVG>
+        <div ref={this.divRef} className={styles.square}>
+          <FullSizeSVG>
+            <g transform={`translate(100, 100)`}>
+              <ScatterPlotComponent
+                vis={VisualizationType.ScatterPlot}
+                height={lesserDim - 100}
+                width={lesserDim - 100}
+                X={X}
+                Y={Y}
+                YOffset={lesserDim * 0.05}
+                XOffset={lesserDim * 0.06}
+                labels={labels}
+                brushDict={brushDict}
+                updateBrushDictionary={this.updateBrushDict}
+                pointSelection={this.state.pointSelection}
+                updatePointSelection={this.updatePointSelection}
+                debugMode={debugMode}
+                debugKey={debugKey}
+                updateDebugKeys={(keys: string[]) => {
+                  this.setState({
+                    isLoadingDebugInfo: false,
+                    debugOptions: keys
+                  });
+                }}
+              />
+            </g>
+          </FullSizeSVG>
+        </div>
       </ScatterPlotDiv>
     );
   }
@@ -261,7 +283,7 @@ const ScatterPlotDiv = styled.div`
   height: 100%;
   width: 100%;
   display: grid;
-  grid-template-rows: 1fr 1fr 15fr;
+  grid-template-rows: 1fr 0.75fr 15fr;
 `;
 
 const DimensionSelectorGrid = styled.div`
