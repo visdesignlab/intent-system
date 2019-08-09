@@ -36,11 +36,18 @@ export const VisProvenance = initProvenanceRedux(
   VisStore.resetStore
 );
 
-export const datasetName = "draft_combine";
-// export const datasetName = "slc_housing";
+export const datasets = ["draft_combine", "slc_housing", "nba_players"];
+
+// export const datasetName = "draft_combine";
+export let datasetName = "draft_combine";
 // export const datasetName = "nba_players";
 
 VisStore.visStore().dispatch(loadDataset(`/dataset/${datasetName}`) as any);
+
+export function changeDataset(dsName: string) {
+  datasetName = dsName;
+  VisStore.visStore().dispatch(loadDataset(`/dataset/${datasetName}`) as any);
+}
 
 ReactDOM.render(
   <Provider store={studyStore.store()}>

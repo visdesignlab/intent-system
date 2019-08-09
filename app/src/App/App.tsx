@@ -69,7 +69,8 @@ class App extends React.Component<Props, State> {
       labelColumn,
       visualization,
       changeVisualization,
-      predictions
+      predictions,
+      columns
     } = this.props;
 
     const { width } = this.state;
@@ -80,7 +81,7 @@ class App extends React.Component<Props, State> {
     const barHeight = 50;
 
     return data ? (
-      <PageGrid className={""}>
+      <PageGrid key={JSON.stringify(columns)} className={""}>
         {/* <TitleBar tasks={TaskList} /> */}
         <VisualizationGrid>
           {(() => {

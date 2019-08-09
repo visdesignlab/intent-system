@@ -18,6 +18,7 @@ import { Segment, Header, Dropdown } from "semantic-ui-react";
 
 import styles from "./scatterplot.module.css";
 import { select } from "d3";
+import { datasets, changeDataset } from "../../..";
 
 interface State {
   svgHeight: number;
@@ -187,7 +188,7 @@ class ScatterPlot extends React.Component<Props, State> {
           />
         </DimensionSelectorGrid>
         <Segment>
-          <Header>Test</Header>
+          <Header>Debug</Header>
           <Dropdown
             placeholder={
               isLoadingDebugInfo ? "Loading info" : "Select debugging info"
@@ -212,6 +213,18 @@ class ScatterPlot extends React.Component<Props, State> {
               }
             }}
             loading={isLoadingDebugInfo}
+          />
+          <Dropdown
+            placeholder="Change Dataset"
+            selection
+            options={datasets.map(k => ({
+              key: k,
+              text: k,
+              value: k
+            }))}
+            onChange={(e, data) => {
+              changeDataset(data.value as string);
+            }}
           />
         </Segment>
         <div ref={this.divRef} className={styles.square}>

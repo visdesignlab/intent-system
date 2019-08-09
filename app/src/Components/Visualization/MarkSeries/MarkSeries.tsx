@@ -125,6 +125,7 @@ class MarkSeries extends React.Component<Props, State> {
           this.setState({
             debugInfo: res.data
           });
+
           if (Object.values(res.data.measures).length > 0) {
             const measure = res.data.measures[0];
             const keys = Object.keys(measure).filter(
