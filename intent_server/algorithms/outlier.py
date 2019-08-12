@@ -15,7 +15,7 @@ class Outlier(IntentBinary):
         return 'Outlier'
 
     def compute(self, df: pd.DataFrame) -> pd.DataFrame:
-        nan_dropped = df.dropna()
+        nan_dropped = df.select_dtypes(include=['number']).dropna()
         outliers = self.clf.fit_predict(nan_dropped)
         result = pd.DataFrame(data=outliers, index=nan_dropped.index, columns=[
                               self.to_string()]).replace({-1: 1, 1: 0})
