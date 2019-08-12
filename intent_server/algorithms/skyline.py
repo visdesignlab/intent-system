@@ -29,9 +29,10 @@ class Skyline(IntentBinary):
         return 'Skyline'
 
     def compute(self, df: pd.DataFrame) -> pd.DataFrame:
-        data = df.values
+        data = df.select_dtypes(include=['number']).values
         skyline = np.apply_along_axis(lambda x: belongs_to_skyline(data, x), 1, data)
         return pd.DataFrame(
+            index=df.index,
             data=skyline,
             columns=[self.to_string()]).applymap(lambda x: 1 if x else 0)
 
