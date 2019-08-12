@@ -36,7 +36,7 @@ class Dataset:
         df = pd.concat([
             pd.read_csv('data/housing/train1.csv', thousands=','),
             pd.read_csv('data/housing/train2.csv', thousands=','),
-        ])
+        ], ignore_index=True)
         selection = df[[
             'ListNo',
             'Acres',
