@@ -62,6 +62,22 @@ class App extends React.Component<Props, State> {
     });
   }
 
+  componentDidUpdate() {
+    const predSvg = this.predictionsResultsSvgRef.current as SVGSVGElement;
+    const predSvgSelection = select(predSvg);
+
+    if (
+      this.state.height !== predSvg.clientHeight ||
+      this.state.width !== predSvg.clientWidth
+    ) {
+      predSvgSelection.style("height", `100%`).style("width", `100%`);
+      this.setState({
+        height: predSvg.clientHeight,
+        width: predSvg.clientWidth
+      });
+    }
+  }
+
   render() {
     const {
       data,
