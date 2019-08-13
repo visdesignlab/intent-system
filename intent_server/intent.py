@@ -36,3 +36,20 @@ class IntentBinary(Intent, ABC):
             self.to_string(),
             self.rank(selection, df),
             info=self.info())
+
+
+class IntentMulticlassInstance(IntentBinary):
+    def __init__(self, reference: pd.DataFrame, description: str):
+        self.reference = reference
+        self.description = description
+
+    def to_string(self) -> str:
+        return self.description
+
+    def compute(self, df: pd.DataFrame) -> pd.DataFrame:
+        res = pd.DataFrame(data=self.reference.astype('int').values,
+                           index=df.index, columns=[self.to_string()])
+        return res
+
+    def info(self) -> Optional[Dict[str, Any]]:
+        return None

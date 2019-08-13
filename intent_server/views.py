@@ -9,6 +9,7 @@ from .intent import Intent
 from .algorithms.outlier import Outlier
 from .algorithms.skyline import Skyline
 from .algorithms.range import Range
+from .algorithms.categories import CategoriesBuilder
 from .vendor.interactions import interaction_history_from_dict
 
 from typing import List
@@ -29,6 +30,12 @@ measures: List[Intent] = [
 ]
 
 
+def all_measures(data: Dataset) -> List[Intent]:
+    categories = CategoriesBuilder.build(data.categorical())
+    all = measures + categories  # type: ignore
+    return all
+
+
 @views.route('/')
 def index():  # type: ignore
     return redirect('index.html')
@@ -47,15 +54,15 @@ def route_dataset(dataset_name):  # type: ignore
 @views.route('/dataset/<dataset_name>/info', methods=['POST'])
 def route_dataset_info(dataset_name):  # type: ignore
     ds = datasets[dataset_name]
-    props = Properties(ds, measures)
+    props = Properties(ds, all_measures(ds))
     dims = Dimensions(request.json)
     df = pd.concat([
         props.labels(),
         props.for_dims(dims),
     ], axis='columns')
     dct = {
-       'measures': df.T.to_dict(),
-       'dimensions': dims.to_string(),
+        'measures': df.T.to_dict(),
+        'dimensions': dims.to_string(),
     }
     return jsonify(dct)
 
@@ -64,6 +71,6 @@ def route_dataset_info(dataset_name):  # type: ignore
 def route_dataset_predict(dataset_name):  # type: ignore
     interaction_hist = interaction_history_from_dict(request.json)
     ds = datasets[dataset_name]
-    props = Properties(ds, measures)
+    props = Properties(ds, all_measures(ds))
     predictions = list(map(lambda x: x.__dict__, predict(ds, props, interaction_hist)))
     return jsonify(predictions)

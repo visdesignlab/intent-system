@@ -16,7 +16,8 @@ class Properties:
         sel = self.dataset.data[dims.indices()]
         fn: Callable[[IntentBinary], pd.DataFrame] = lambda m: m.compute(sel)
         comp_measures = map(fn, filter(lambda x: isinstance(x, IntentBinary), self.measures))
-        return pd.concat(comp_measures, axis='columns')
+        concated = pd.concat(comp_measures, axis='columns')
+        return concated
 
     def labels(self) -> pd.DataFrame:
         return self.dataset.data[self.dataset.label]

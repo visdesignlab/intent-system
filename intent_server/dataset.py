@@ -20,6 +20,11 @@ class Dataset:
     def numerical(self) -> pd.DataFrame:
         return self.data.select_dtypes(include='number')
 
+    def categorical(self) -> pd.DataFrame:
+        cats = list(self.data.select_dtypes(exclude='number').columns)
+        cats.remove(self.label)
+        return self.data[cats]
+
     def subset(self, dims: Dimensions) -> pd.DataFrame:
         return self.data[dims.indices()]
 
@@ -42,6 +47,7 @@ class Dataset:
             'Acres',
             'BsmntFin',
             'Deck',
+            'Style',
             'EWCoord',
             'GaragCap',
             'HouseNbr',
@@ -63,8 +69,9 @@ class Dataset:
             'Unnamed: 0',
             'season',
             'college',
+            'country',
+            'team_abbreviation',
             'draft_year',
-            'draft_round',
             'draft_number',
         ]), 'NBA Players')
 
@@ -90,5 +97,4 @@ class Dataset:
             ],
         )
         df['Name'] = df['Name'] + ' (' + df['Position'] + ')'
-        df = df.drop(columns=['Position'])
         return Dataset('Name', df, 'NFL Draft Combine')
