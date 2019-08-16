@@ -1,25 +1,15 @@
-import {
-  Container,
-  ContainerProps,
-  Header,
-  Segment,
-  SegmentProps,
-  Popup
-} from "semantic-ui-react";
-import {
-  VisualizationChangeAction,
-  VisualizationChangeActions
-} from "./VisStore/VisualizationReducer";
+import { Prediction, VisualizationType } from '@visdesignlab/intent-contract';
+import { scaleLinear, select } from 'd3';
+import React from 'react';
+import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
+import { Container, ContainerProps, Header, Popup, Segment, SegmentProps } from 'semantic-ui-react';
+import styled from 'styled-components';
 
-import { Dispatch } from "redux";
-import React from "react";
-import ScatterPlot from "../Components/Visualization/ScatterPlot/ScatterPlot";
-import { VisualizationState } from "./VisStore/VisualizationState";
-import { VisualizationType, Prediction } from "@visdesignlab/intent-contract";
-import { connect } from "react-redux";
-import styled from "styled-components";
-import ScatterPlotMatrix from "../Components/Visualization/ScatterPlotMatrix/ScatterPlotMatrix";
-import { select, scaleLinear } from "d3";
+import ScatterPlot from '../Components/Visualization/ScatterPlot/ScatterPlot';
+import ScatterPlotMatrix from '../Components/Visualization/ScatterPlotMatrix/ScatterPlotMatrix';
+import { VisualizationChangeAction, VisualizationChangeActions } from './VisStore/VisualizationReducer';
+import { VisualizationState } from './VisStore/VisualizationState';
 
 interface StateProps {
   data: any[];
@@ -62,15 +52,20 @@ class App extends React.Component<Props, State> {
     });
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps: Props) {
     const predSvg = this.predictionsResultsSvgRef.current as SVGSVGElement;
     const predSvgSelection = select(predSvg);
 
+    const { predictions } = this.props;
+
     if (
       this.state.height !== predSvg.clientHeight ||
-      this.state.width !== predSvg.clientWidth
+      this.state.width !== predSvg.clientWidth ||
+      predictions.length !== prevProps.predictions.length
     ) {
-      predSvgSelection.style("height", `100%`).style("width", `100%`);
+      predSvgSelection
+        .style("height", `${predictions.length * 50}px`)
+        .style("width", `100%`);
       this.setState({
         height: predSvg.clientHeight,
         width: predSvg.clientWidth
@@ -94,7 +89,7 @@ class App extends React.Component<Props, State> {
       .domain([0, 1])
       .range([0, width]);
 
-    const barHeight = 50;
+    const barHeight = 30;
 
     return data ? (
       <PageGrid key={JSON.stringify(columns)} className={""}>
@@ -162,7 +157,14 @@ class App extends React.Component<Props, State> {
           {(!predictions || predictions.length <= 0) && (
             <Header textAlign="center"> Please Make Selection</Header>
           )}
-          <div style={{ padding: "1em", height: "100%", width: "100%" }}>
+          <div
+            style={{
+              padding: "1em",
+              height: "100%",
+              width: "100%",
+              overflow: "auto"
+            }}
+          >
             <svg id="predictions-svg" ref={this.predictionsResultsSvgRef}>
               {predictions &&
                 predictions.length > 0 &&
