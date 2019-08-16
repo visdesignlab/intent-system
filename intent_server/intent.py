@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 from .vendor.interactions import Prediction
-from .dataset import Dataset
 
 import numpy as np
 import pandas as pd
@@ -54,6 +53,7 @@ class IntentMulticlassInstance(IntentBinary):
 
     def info(self) -> Optional[Dict[str, Any]]:
         return None
+
 
 class IntentMulticlass(Intent, ABC):
     @abstractmethod

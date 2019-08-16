@@ -15,10 +15,14 @@ class Properties:
     def for_dims(self, dims: Dimensions) -> pd.DataFrame:
         sel = self.dataset.data[dims.indices()]
         fn: Callable[[IntentBinary], pd.DataFrame] = lambda m: m.compute(sel)
-        bin_comp_measures = map(fn, filter(lambda x: isinstance(x, IntentBinary), self.measures))
+        bin_comp_measures = map(fn,
+                                filter(lambda x: isinstance(x, IntentBinary),
+                                       self.measures))  # type: ignore
 
         multiclass = filter(lambda x: isinstance(x, IntentMulticlass), self.measures)
-        multiclass_instances = [item for sublist in map(lambda x: x.instances(sel), multiclass) for item in sublist]
+        multiclass_instances = [item for sublist in
+                                map(lambda x: x.instances(sel),
+                                    multiclass) for item in sublist]  # type: ignore
         multi_comp_measures = map(fn, multiclass_instances)
 
         comp_measures = list(bin_comp_measures) + list(multi_comp_measures)
