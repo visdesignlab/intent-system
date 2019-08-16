@@ -3,7 +3,7 @@ import { scaleLinear, select } from 'd3';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
-import { Container, ContainerProps, Header, Popup, Segment, SegmentProps } from 'semantic-ui-react';
+import { Checkbox, Container, ContainerProps, Header, Popup, Segment, SegmentProps } from 'semantic-ui-react';
 import styled from 'styled-components';
 
 import ScatterPlot from '../Components/Visualization/ScatterPlot/ScatterPlot';
@@ -27,6 +27,7 @@ interface DispatchProps {
 interface State {
   height: number;
   width: number;
+  hideZero: boolean;
 }
 
 type Props = StateProps & DispatchProps;
@@ -37,7 +38,8 @@ class App extends React.Component<Props, State> {
 
   readonly state: State = {
     height: 0,
-    width: 0
+    width: 0,
+    hideZero: false
   };
 
   componentDidMount() {
@@ -80,11 +82,14 @@ class App extends React.Component<Props, State> {
       labelColumn,
       visualization,
       changeVisualization,
-      predictions,
       columns
     } = this.props;
+    const { width, hideZero } = this.state;
 
-    const { width } = this.state;
+    let { predictions } = this.props;
+
+    if (hideZero) predictions = predictions.filter(p => p.rank !== 0);
+
     const scale = scaleLinear()
       .domain([0, 1])
       .range([0, width]);
@@ -153,6 +158,16 @@ class App extends React.Component<Props, State> {
             <Header textAlign="center" size="huge">
               Predictions
             </Header>
+            <Checkbox
+              label="Hide 0"
+              toggle
+              checked={hideZero}
+              onChange={() =>
+                this.setState({
+                  hideZero: !hideZero
+                })
+              }
+            />
           </Segment>
           {(!predictions || predictions.length <= 0) && (
             <Header textAlign="center"> Please Make Selection</Header>
