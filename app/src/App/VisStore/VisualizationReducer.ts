@@ -1,6 +1,5 @@
-import { Action, Reducer } from "redux";
-
-import { VisualizationType } from "@visdesignlab/intent-contract/";
+import { VisualizationType } from '@visdesignlab/intent-contract/';
+import { Action, Reducer } from 'redux';
 
 export enum VisualizationChangeActions {
   CHANGE_VISUALIZATION = "CHANGE_VISUALIZATION"
