@@ -53,4 +53,4 @@ def predict(
     # Perform ranking
     ranks = map(lambda m: m.to_prediction(sel_array, relevant_data), properties.measures)
 
-    return list(ranks)
+    return [p for preds in ranks for p in preds]
