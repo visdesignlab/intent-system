@@ -9,7 +9,8 @@ from .intent import Intent
 from .algorithms.outlier import Outlier
 from .algorithms.skyline import Skyline
 from .algorithms.range import Range
-from .algorithms.categories import CategoriesBuilder
+from .algorithms.categories import Categories
+from .algorithms.clusters import KMeansCluster
 from .vendor.interactions import interaction_history_from_dict
 
 from typing import List
@@ -22,18 +23,6 @@ datasets = {
 }
 
 views = Blueprint('views', __name__)
-
-measures: List[Intent] = [
-    Outlier(),
-    Skyline(),
-    Range(),
-]
-
-
-def all_measures(data: Dataset) -> List[Intent]:
-    categories = CategoriesBuilder.build(data.categorical())
-    all = measures + categories  # type: ignore
-    return all
 
 
 @views.route('/')
@@ -54,7 +43,15 @@ def route_dataset(dataset_name):  # type: ignore
 @views.route('/dataset/<dataset_name>/info', methods=['POST'])
 def route_dataset_info(dataset_name):  # type: ignore
     ds = datasets[dataset_name]
-    props = Properties(ds, all_measures(ds))
+
+    measures: List[Intent] = [
+        Outlier(),
+        Skyline(),
+        KMeansCluster(),
+        Categories(ds),
+    ]
+
+    props = Properties(ds, measures)
     dims = Dimensions(request.json)
     df = pd.concat([
         props.labels(),
@@ -71,6 +68,15 @@ def route_dataset_info(dataset_name):  # type: ignore
 def route_dataset_predict(dataset_name):  # type: ignore
     interaction_hist = interaction_history_from_dict(request.json)
     ds = datasets[dataset_name]
-    props = Properties(ds, all_measures(ds))
+
+    measures: List[Intent] = [
+        Outlier(),
+        Skyline(),
+        Range(),
+        KMeansCluster(),
+        Categories(ds),
+    ]
+
+    props = Properties(ds, measures)
     predictions = list(map(lambda x: x.__dict__, predict(ds, props, interaction_hist)))
     return jsonify(predictions)

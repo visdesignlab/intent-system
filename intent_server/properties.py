@@ -1,6 +1,6 @@
 from .dataset import Dataset
 from .dimensions import Dimensions
-from .intent import IntentBinary
+from .intent import IntentBinary, IntentMulticlass
 
 from typing import Callable, List
 
@@ -15,7 +15,13 @@ class Properties:
     def for_dims(self, dims: Dimensions) -> pd.DataFrame:
         sel = self.dataset.data[dims.indices()]
         fn: Callable[[IntentBinary], pd.DataFrame] = lambda m: m.compute(sel)
-        comp_measures = map(fn, filter(lambda x: isinstance(x, IntentBinary), self.measures))
+        bin_comp_measures = map(fn, filter(lambda x: isinstance(x, IntentBinary), self.measures))
+
+        multiclass = filter(lambda x: isinstance(x, IntentMulticlass), self.measures)
+        multiclass_instances = [item for sublist in map(lambda x: x.instances(sel), multiclass) for item in sublist]
+        multi_comp_measures = map(fn, multiclass_instances)
+
+        comp_measures = list(bin_comp_measures) + list(multi_comp_measures)
         concated = pd.concat(comp_measures, axis='columns')
         return concated
 

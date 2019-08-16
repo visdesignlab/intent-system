@@ -1,16 +1,17 @@
 from abc import ABC, abstractmethod
 from .vendor.interactions import Prediction
+from .dataset import Dataset
 
 import numpy as np
 import pandas as pd
 
 from scipy.spatial.distance import jaccard
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, List
 
 
 class Intent(ABC):
     @abstractmethod
-    def to_prediction(self, selection: np.ndarray, df: pd.DataFrame) -> Prediction:
+    def to_prediction(self, selection: np.ndarray, df: pd.DataFrame) -> List[Prediction]:
         pass
 
 
@@ -31,11 +32,11 @@ class IntentBinary(Intent, ABC):
         belongs_to = self.compute(df)
         return float(1 - jaccard(belongs_to, selection))
 
-    def to_prediction(self, selection: np.ndarray, df: pd.DataFrame) -> Prediction:
-        return Prediction(
+    def to_prediction(self, selection: np.ndarray, df: pd.DataFrame) -> List[Prediction]:
+        return [Prediction(
             self.to_string(),
             self.rank(selection, df),
-            info=self.info())
+            info=self.info())]
 
 
 class IntentMulticlassInstance(IntentBinary):
@@ -53,3 +54,12 @@ class IntentMulticlassInstance(IntentBinary):
 
     def info(self) -> Optional[Dict[str, Any]]:
         return None
+
+class IntentMulticlass(Intent, ABC):
+    @abstractmethod
+    def instances(self, df: pd.DataFrame) -> List[IntentMulticlassInstance]:
+        pass
+
+    def to_prediction(self, selection: np.ndarray, df: pd.DataFrame) -> List[Prediction]:
+        preds = map(lambda i: i.to_prediction(selection, df), self.instances(df))
+        return [item for sublist in preds for item in sublist]

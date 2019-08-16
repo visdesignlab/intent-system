@@ -6,6 +6,8 @@ from ..vendor.interactions import Prediction
 import pandas as pd
 import numpy as np
 
+from typing import List
+
 
 class Range(Intent):
     def __init__(self) -> None:
@@ -14,7 +16,7 @@ class Range(Intent):
     def to_string(self) -> str:
         return 'Range'
 
-    def to_prediction(self, selection: np.ndarray, df: pd.DataFrame) -> Prediction:
+    def to_prediction(self, selection: np.ndarray, df: pd.DataFrame) -> List[Prediction]:
 
         # TODO: Revise this assumption
         df = df.fillna(0)
@@ -56,4 +58,4 @@ class Range(Intent):
 
             paths.add(tuple(rules))
 
-        return Prediction(self.to_string(), 0.3, info={"rules": list(paths)})
+        return [Prediction(self.to_string(), 0.3, info={"rules": list(paths)})]
