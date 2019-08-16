@@ -21,8 +21,8 @@ class Properties:
 
         multiclass = filter(lambda x: isinstance(x, IntentMulticlass), self.measures)
         multiclass_instances = [item for sublist in
-                                map(lambda x: x.instances(sel),
-                                    multiclass) for item in sublist]  # type: ignore
+                                map(lambda x: x.instances(sel),  # type: ignore
+                                    multiclass) for item in sublist]
         multi_comp_measures = map(fn, multiclass_instances)
 
         comp_measures = list(bin_comp_measures) + list(multi_comp_measures)
