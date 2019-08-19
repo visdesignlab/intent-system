@@ -3,7 +3,7 @@ from flask import Blueprint, jsonify, request, redirect
 import pandas as pd
 
 from .dataset import Dataset
-from .properties import Dimensions, Properties
+from .dimensions import Dimensions
 from .inference import Inference
 from .intent import Intent
 from .algorithms import *
@@ -39,22 +39,10 @@ def route_dataset(dataset_name):  # type: ignore
 @views.route('/dataset/<dataset_name>/info', methods=['POST'])
 def route_dataset_info(dataset_name):  # type: ignore
     ds = datasets[dataset_name]
-
-    measures: List[Intent] = [
-        Outlier(),
-        Skyline(),
-        KMeansCluster(),
-        Categories(ds),
-    ]
-
-    props = Properties(ds, measures)
     dims = Dimensions(request.json)
-    df = pd.concat([
-        props.labels(),
-        props.for_dims(dims),
-    ], axis='columns')
+    info = Inference(ds).info(dims)
     dct = {
-        'measures': df.T.to_dict(),
+        'measures': info.T.to_dict(),
         'dimensions': dims.to_string(),
     }
     return jsonify(dct)

@@ -1,6 +1,6 @@
 from .dataset import Dataset
 from .dimensions import Dimensions
-from .intent import Intent
+from .intent import Intent, IntentBinary, IntentMulticlass
 from .algorithms import *
 
 from .vendor.interactions import Interaction, InteractionTypeKind, Prediction
@@ -55,5 +55,22 @@ class Inference:
 
         # Perform ranking
         ranks = map(lambda m: m.to_prediction(sel_array, relevant_data), self.intents)
-
         return [p for preds in ranks for p in preds]
+
+    def info(self, dims: Dimensions) -> pd.DataFrame:
+        sel = self.dataset.data[dims.indices()]
+        fn: Callable[[IntentBinary], pd.DataFrame] = lambda m: m.compute(sel)
+        bin_comp_measures = map(fn,
+                                filter(lambda x: isinstance(x, IntentBinary),
+                                       self.intents))  # type: ignore
+
+        multiclass = filter(lambda x: isinstance(x, IntentMulticlass), self.intents)
+        multiclass_instances = [item for sublist in
+                                map(lambda x: x.instances(sel),  # type: ignore
+                                    multiclass) for item in sublist]
+        multi_comp_measures = map(fn, multiclass_instances)
+
+        comp_measures = list(bin_comp_measures) + list(multi_comp_measures) + [self.dataset.labels()]
+        concated = pd.concat(comp_measures, axis='columns')
+        return concated
+
