@@ -17,13 +17,6 @@ def is_selection(interaction: Interaction) -> bool:
         interaction.interaction_type.brush_id is not None)
 
 
-def selection_array(df: pd.DataFrame, ids: Set[int]) -> np.ndarray:
-    arr = np.zeros((len(df), 1))
-    for i in ids:
-        arr.itemset((i, 0), 1)
-    return arr
-
-
 def relevant_ids(interactions: List[Interaction]) -> Set[int]:
     active_ids: Set[int] = set()
     for ix in interactions:
@@ -52,7 +45,7 @@ class Inference:
         if len(ids) == 0:
             return []
 
-        sel_array = selection_array(self.dataset.data, ids)
+        sel_array = self.dataset.selection(ids)
 
         filtered = list(filter(lambda x: x.interaction_type.data_ids, interactions))
         list_of_dims = map(lambda x: x.interaction_type.dimensions, filtered)
