@@ -4,7 +4,7 @@ import pandas as pd
 
 from .dataset import Dataset
 from .properties import Dimensions, Properties
-from .predict import predict
+from .inference import Inference
 from .intent import Intent
 from .algorithms import *
 from .vendor.interactions import interaction_history_from_dict
@@ -64,15 +64,6 @@ def route_dataset_info(dataset_name):  # type: ignore
 def route_dataset_predict(dataset_name):  # type: ignore
     interaction_hist = interaction_history_from_dict(request.json)
     ds = datasets[dataset_name]
-
-    measures: List[Intent] = [
-        Outlier(),
-        Skyline(),
-        Range(),
-        KMeansCluster(),
-        Categories(ds),
-    ]
-
-    props = Properties(ds, measures)
-    predictions = list(map(lambda x: x.__dict__, predict(ds, props, interaction_hist)))
+    intent_predictions = Inference(ds).predict(interaction_hist)
+    predictions = list(map(lambda x: x.__dict__, intent_predictions))
     return jsonify(predictions)
