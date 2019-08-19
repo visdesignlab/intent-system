@@ -1,13 +1,14 @@
-import React from "react";
-import styled from "styled-components";
-import { VisualizationType } from "@visdesignlab/intent-contract";
-import { Dimension, DimensionType } from "../Data Types/Dimension";
-import { BrushDictionary } from "../Data Types/BrushType";
-import { ScaleLinear, scaleLinear, min, max } from "d3";
-import Axis, { ScaleType } from "../Axis/Axis";
-// import MarkSeries from "../MarkSeries/MarkSeries";
-import { Popup, Header } from "semantic-ui-react";
+import { VisualizationType } from '@visdesignlab/intent-contract';
+import { axisBottom, axisLeft, brush, brushSelection, max, min, ScaleLinear, scaleLinear, select, values } from 'd3';
+import React from 'react';
 
+import { Brush, BrushDictionary } from '../Data Types/BrushType';
+import { Dimension, DimensionType } from '../Data Types/Dimension';
+import styles from './scatterplotmatrix.module.css';
+
+const emptyRegex = /[\n\r\s\t]+/g;
+
+// import MarkSeries from "../MarkSeries/MarkSeries";
 interface DispatchProps {}
 interface StateProps {}
 interface OwnProps {
@@ -18,206 +19,364 @@ interface OwnProps {
   columns: string[];
   XZero?: boolean;
   YZero?: boolean;
-  XOffset: number;
-  YOffset: number;
   data: any[];
-  // brushDict: BrushDictionary;
-  // updateBrushDictionary: (dict: BrushDictionary)=>void;
+  brushDict: BrushDictionary;
+  updateBrushDictionary: (dict: BrushDictionary) => void;
   // pointSelection: number[];
   // updatePointSelection: (points: number[]) => void;
 }
 
 interface SPMDimension extends Dimension<number> {
   scale: ScaleLinear<number, number>;
-  xPos: number;
-  yPos: number;
+  scaledValues: number[];
+  idx: number;
+}
+
+interface Pairs {
+  X: SPMDimension;
+  Y: SPMDimension;
 }
 
 interface State {
-  pairs: SPMDimension[][];
+  pairs: Pairs[];
   brushDict: BrushDictionary;
+  cellHeight: number;
+  cellWidth: number;
+  padding: number;
+  paddedCellHeight: number;
+  paddedCellWidth: number;
+  shouldUpdate: number;
 }
 
 type Props = OwnProps & StateProps & DispatchProps;
 
 class SPMComponent extends React.Component<Props, State> {
+  ref: React.RefObject<SVGGElement> = React.createRef();
+  programMove: boolean = false;
   readonly state: State = {
     pairs: [],
-    brushDict: {}
-  };
-
-  updateBrushDict = (brushDict: BrushDictionary) => {
-    this.setState({ brushDict });
+    brushDict: {},
+    cellHeight: 0,
+    cellWidth: 0,
+    padding: 0,
+    paddedCellHeight: 0,
+    paddedCellWidth: 0,
+    shouldUpdate: 2
   };
 
   componentDidUpdate(prevProps: Props) {
-    const {
-      height,
-      // XOffset,
-      width,
-      // YOffset,
-      columns,
-      data,
-      XZero,
-      YZero
-    } = this.props;
+    const { columns, height, width, data } = this.props;
+    if (columns === prevProps.columns && this.state.shouldUpdate <= 0) return;
 
-    const actualHeight = height / columns.length;
-    const actualWidth = width / columns.length;
+    const cellHeight = height / columns.length;
+    const cellWidth = width / columns.length;
+    const padding = height * 0.02;
 
-    const xoffset = actualWidth * 0.1;
-    const yoffset = actualHeight * 0.1;
+    const paddedCellHeight = cellHeight - 2 * padding;
+    const paddedCellWidth = cellWidth - 2 * padding;
 
-    const pairs: SPMDimension[][] = [];
+    const pairs: Pairs[] = [];
 
-    columns.forEach((c1, i1) => {
-      columns.forEach((c2, i2) => {
-        if (i1 <= i2) {
-          const X = data.map(d => d[c1]) as number[];
-          const Y = data.map(d => d[c2]) as number[];
-          const [minX, maxX] = [min(X) as number, max(X) as number];
-          const [minY, maxY] = [min(Y) as number, max(Y) as number];
+    columns.forEach((col1, idx1) => {
+      const xValues = data.map(d => d[col1]) as number[];
+      const xScale = scaleLinear()
+        .domain([min(xValues) as number, max(xValues) as number])
+        .range([0, paddedCellWidth]);
 
-          pairs.push([
-            {
-              label: c1,
-              type: DimensionType.X,
-              values: X,
-              scale: scaleLinear()
-                .domain([XZero ? 0 : minX, maxX])
-                .range([0, actualWidth - xoffset]),
-              xPos: i2 % columns.length,
-              yPos: i1 % columns.length
+      columns.forEach((col2, idx2) => {
+        if (idx1 <= idx2) {
+          const yValues = data.map(d => d[col2]) as number[];
+          const yScale = scaleLinear()
+            .domain([min(yValues) as number, max(yValues) as number])
+            .range([paddedCellHeight, 0]);
+
+          pairs.push({
+            X: {
+              label: col1,
+              idx: idx1,
+              values: xValues,
+              scale: xScale,
+              scaledValues: xValues.map(v => (v ? xScale(v) : 0)),
+              type: DimensionType.SPM
             },
-            {
-              label: c2,
-              type: DimensionType.Y,
-              values: Y,
-              scale: scaleLinear()
-                .domain([maxY, YZero ? 0 : minY])
-                .range([0, actualHeight - yoffset]),
-              xPos: i2 % columns.length,
-              yPos: i1 % columns.length
+            Y: {
+              label: col2,
+              idx: idx2,
+              values: yValues,
+              scale: yScale,
+              scaledValues: yValues.map(v =>
+                v ? yScale(v) : yScale.range()[0]
+              ),
+              type: DimensionType.SPM
             }
-          ]);
+          });
         }
       });
     });
 
-    if (columns !== prevProps.columns) {
-      this.setState({
-        pairs: pairs
+    const spm = select(this.ref.current);
+
+    pairs.forEach(pair => {
+      const id = `#id-${pair.X.label.replace(
+        emptyRegex,
+        "-"
+      )}-${pair.Y.label.replace(emptyRegex, "-")}`;
+
+      const plot = spm.select(id);
+
+      const axesGroup = plot.select(`.${styles.axes}`);
+      const xAxis = axesGroup.select(`.${styles.x_axis}`);
+      const yAxis = axesGroup.select(`.${styles.y_axis}`);
+
+      xAxis.call(axisBottom(pair.X.scale) as any);
+      yAxis.call(axisLeft(pair.Y.scale) as any);
+
+      const marksGroup = plot.select(`.${styles.marks}`);
+
+      let marks = marksGroup
+        .selectAll(`.${styles.circular_mark}`)
+        .data(pair.X.scaledValues);
+
+      marks = marks.join(
+        enter =>
+          enter
+            .append("circle")
+            .classed(styles.circular_mark, true)
+            .classed(styles.regular_circular_mark, true)
+            .attr("r", 3)
+            .attr("cx", d => d)
+            .attr("cy", (_, i) => pair.Y.scaledValues[i]),
+        update =>
+          update
+            .classed(styles.circular_mark, true)
+            .classed(styles.regular_circular_mark, true)
+            .attr("r", 3)
+            .attr("cx", d => d)
+            .attr("cy", (_, i) => pair.Y.scaledValues[i]),
+        exit => exit.remove()
+      );
+
+      const instance = this;
+      const space = `${pair.X.label} ${pair.Y.label}`;
+
+      const xScale = pair.X.scale;
+      const yScale = pair.Y.scale;
+
+      const brushGroup = plot.select(`.${styles.brush}`);
+      const nBrush = brush()
+        .extent([[-10, -10], [paddedCellWidth + 5, paddedCellHeight + 5]])
+        .on("end", function() {
+          if (instance.programMove) return;
+
+          const selection = brushSelection(this);
+
+          if (selection) {
+            const [[left, top], [right, bottom]] = selection;
+            const selectedIndices: number[] = [];
+
+            pair.X.values.forEach((x, i) => {
+              if (
+                xScale(x) >= left &&
+                xScale(x) <= right &&
+                yScale(pair.Y.values[i]) >= top &&
+                yScale(pair.Y.values[i]) <= bottom
+              )
+                selectedIndices.push(i);
+              else if (
+                (!x &&
+                  left < xScale.range()[0] &&
+                  yScale(pair.Y.values[i]) >= top &&
+                  yScale(pair.Y.values[i]) <= bottom) ||
+                (!pair.Y.values[i] &&
+                  bottom > yScale.range()[1] &&
+                  xScale(x) >= left &&
+                  xScale(x) <= right) ||
+                (!x &&
+                  !pair.Y.values[i] &&
+                  left < xScale.range()[0] &&
+                  bottom > yScale.range()[1])
+              )
+                selectedIndices.push(i);
+            });
+
+            const br: Brush = {
+              id: id,
+              brush: nBrush,
+              selectedPoints: selectedIndices,
+              extents: [
+                [xScale.invert(left), yScale.invert(top)],
+                [xScale.invert(right), yScale.invert(bottom)]
+              ]
+            };
+
+            const { brushDict } = instance.props;
+            brushDict[space] = [br];
+            instance.props.updateBrushDictionary(brushDict);
+            instance.setState({ shouldUpdate: 2 });
+          }
+        });
+
+      const brs = this.props.brushDict[space];
+      let brsSelection = brushGroup
+        .selectAll(".brush")
+        .data(brs, (b: any) => b.id);
+
+      brsSelection = brsSelection.join(
+        enter =>
+          enter
+            .insert("g", ".brush")
+            .classed("brush", true)
+            .attr("id", brush => `brush-${brush.id}`)
+            .each(function(brushObject) {
+              brushObject.brush(select(this));
+              const brs = instance.props.brushDict[space];
+              if (brs.length === 1) {
+                const br = brs[0];
+                instance.programMove = true;
+                select(this).call(brushObject.brush.move, [
+                  [xScale(br.extents[0][0]), yScale(br.extents[0][1])],
+                  [xScale(br.extents[1][0]), yScale(br.extents[1][1])]
+                ]);
+                instance.programMove = false;
+              }
+            }),
+        update =>
+          update
+            .attr("id", brush => `brush-${brush.id}`)
+            .each(function(brushObject) {
+              brushObject.brush(select(this as any));
+              const brs = instance.props.brushDict[space];
+              if (brs.length === 1) {
+                const br = brs[0];
+                instance.programMove = true;
+                select(this).call((brushObject as any).brush.move, [
+                  [xScale(br.extents[0][0]), yScale(br.extents[0][1])],
+                  [xScale(br.extents[1][0]), yScale(br.extents[1][1])]
+                ]);
+                instance.programMove = false;
+              }
+            }),
+        exit => exit.remove()
+      );
+
+      const allSelectedPointsArr = Object.values(this.props.brushDict).map(
+        c => c[0].selectedPoints
+      );
+
+      const sel = ([] as number[]).concat.apply(
+        [] as number[],
+        allSelectedPointsArr
+      );
+
+      const highlightIndices = new Uint8Array(pair.X.values.length);
+
+      sel.forEach(s => (highlightIndices[s] = highlightIndices[s] + 1));
+      console.log(
+        "TCL: SPMComponent -> componentDidUpdate -> highlightIndices",
+        highlightIndices
+      );
+
+      marks.each(function(_, i) {
+        select(this).classed(styles.regular_circular_mark, true);
+        select(this).classed(styles.union_circular_mark, false);
+        select(this).classed(styles.selected_circular_mark, false);
+
+        if (highlightIndices[i] > 1) {
+          select(this).classed(styles.regular_circular_mark, false);
+          select(this).classed(styles.union_circular_mark, true);
+        } else if (highlightIndices[i] > 0) {
+          select(this).classed(styles.regular_circular_mark, false);
+          select(this).classed(styles.selected_circular_mark, true);
+        }
       });
-      // console.log(pairs);
-    }
+
+      if (!instance.props.brushDict[space]) {
+        brushGroup
+          .append("g")
+          .classed(".brush", true)
+          .attr("id", "temp")
+          .call(nBrush as any);
+      } else {
+        brushGroup.selectAll("#temp").remove();
+      }
+    });
+
+    if (this.state.shouldUpdate <= 0) this.setState({ shouldUpdate: 2 });
+
+    if (this.state.shouldUpdate > 0)
+      this.setState({
+        cellHeight,
+        cellWidth,
+        padding,
+        pairs,
+        paddedCellHeight,
+        paddedCellWidth,
+        shouldUpdate: this.state.shouldUpdate - 1
+      });
+    else
+      this.setState({
+        cellHeight,
+        cellWidth,
+        padding,
+        pairs,
+        paddedCellHeight,
+        paddedCellWidth
+      });
   }
 
   render() {
+    const { height, width, labels } = this.props;
     const {
-      height,
-      // XOffset,
-      width,
-      // YOffset,
-      columns,
-      // data,
-      labels
-    } = this.props;
-
-    const { pairs } = this.state;
-
-    const actualHeight = height / columns.length;
-    const actualWidth = width / columns.length;
-
-    const xoffset = actualWidth * 0.1;
-    const yoffset = actualHeight * 0.1;
+      cellHeight,
+      cellWidth,
+      padding,
+      pairs,
+      paddedCellHeight,
+      paddedCellWidth
+    } = this.state;
 
     return (
-      <g>
-        {pairs.map((p, i) => {
-          return (
-            <g
-              transform={`translate(${actualWidth * p[0].xPos}, ${actualHeight *
-                p[0].yPos})`}
-              key={i}
-            >
-              {/* <rect
-                height={actualHeight}
-                width={actualWidth}
-                fill="none"
-                stroke="black"
-                strokeWidth="1px"
-                opacity="0.2"
-              /> */}
-              <g transform={`translate(${xoffset}, 0)`}>
-                <g>
-                  <g id={`brush-${p[0].label}-${p[1].label}`} />
-                  <g id="marks">
-                    {p[0].values.map((d, i) => {
-                      return (
-                        <Popup
-                          key={`${(JSON.stringify(d), i)}`}
-                          content={
-                            <div>
-                              <Header>{labels[i]}</Header>
-                            </div>
-                          }
-                          trigger={
-                            <RegularCircularMark
-                              cx={p[0].scale(d)}
-                              cy={p[1].scale(p[1].values[i])}
-                              r={3}
-                              opacity={0.6}
-                              thisSpace={false}
-                            />
-                          }
-                        />
-                      );
-                    })}
-                  </g>
-                </g>
-              </g>
-              <g transform={`translate(${xoffset}, ${actualHeight - yoffset})`}>
-                <Axis
-                  scale={p[0].scale}
-                  position={ScaleType.BOTTOM}
-                  label={p[0].label}
-                  size={1}
+      <g ref={this.ref}>
+        {pairs.map((p: Pairs, idx: number) => (
+          <g
+            key={idx}
+            className="scatterplot"
+            id={`id-${p.X.label.replace(emptyRegex, "-")}-${p.Y.label.replace(
+              emptyRegex,
+              "-"
+            )}`}
+            transform={`translate(${cellWidth * p.X.idx}, ${cellHeight *
+              p.Y.idx})`}
+          >
+            <rect
+              className={styles.border_rect}
+              height={cellHeight}
+              width={cellWidth}
+            />
+            <g transform={`translate(${padding}, ${padding})`}>
+              <rect
+                className={styles.border_rect_red}
+                height={paddedCellHeight}
+                width={paddedCellWidth}
+              />
+              <g className={styles.axes}>
+                <g
+                  transform={`translate(0, ${paddedCellHeight})`}
+                  className={styles.x_axis}
                 />
+                <g className={styles.y_axis} />
               </g>
-              <g transform={`translate(${yoffset}, ${0})`}>
-                <Axis
-                  scale={p[1].scale}
-                  position={ScaleType.LEFT}
-                  label={p[1].label}
-                  size={1}
-                />
-              </g>
+              <g className={styles.marks} />
+              <g className={styles.brush} />
             </g>
-          );
-        })}
+            <text transform={`translate(0, ${padding})`}>
+              {p.X.label} {p.Y.label}
+            </text>
+          </g>
+        ))}
       </g>
     );
   }
 }
 
 export default SPMComponent;
-
-interface Extend {
-  thisSpace: boolean;
-}
-
-const RegularCircularMark = styled("circle")<Extend>`
-  fill: #648fff;
-`;
-
-// const SelectedCircularMark = styled("circle")<Extend>`
-//   fill: #dc267f;
-//   stroke-width: ${props => (props.thisSpace ? "2px" : 0)};
-//   stroke: #b31964;
-// `;
-
-// const UnionCircularMark = styled("circle")<Extend>`
-//   fill: #ffb000;
-//   stroke-width: ${props => (props.thisSpace ? "2px" : 0)};
-//   stroke: #bb840a;
-// `;
