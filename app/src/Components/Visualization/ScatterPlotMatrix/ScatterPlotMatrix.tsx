@@ -1,16 +1,19 @@
-import React from "react";
-import styled from "styled-components";
-import DimensionSelector from "../../DimensionSelector/DimensionSelector";
-import SPMComponent from "./SPMComponent";
-import FullSizeSVG from "../ReusableComponents/FullSizeSVG";
-import { VisualizationType } from "@visdesignlab/intent-contract";
-import styles from "./scatterplotmatrix.module.css";
-import { select } from "d3";
+import { VisualizationType } from '@visdesignlab/intent-contract';
+import { select } from 'd3';
+import React from 'react';
+import styled from 'styled-components';
+
+import DimensionSelector from '../../DimensionSelector/DimensionSelector';
+import { BrushDictionary } from '../Data Types/BrushType';
+import FullSizeSVG from '../ReusableComponents/FullSizeSVG';
+import styles from './scatterplotmatrix.module.css';
+import SPMComponent from './SPMComponent';
 
 interface State {
   svgHeight: number;
   svgWidth: number;
   selectedDimensions: string[];
+  brushDict: BrushDictionary;
 }
 
 interface DispatchProps {}
@@ -31,7 +34,8 @@ class ScatterPlotMatrix extends React.Component<Props, State> {
   readonly state: State = {
     svgHeight: 0,
     svgWidth: 0,
-    selectedDimensions: []
+    selectedDimensions: [],
+    brushDict: {}
   };
 
   componentDidMount() {
@@ -83,9 +87,13 @@ class ScatterPlotMatrix extends React.Component<Props, State> {
     this.setState({ selectedDimensions });
   };
 
+  updateBrushDict = (brushDict: BrushDictionary) => {
+    this.setState({ brushDict });
+  };
+
   render() {
     const { dimensions, data, labelColumn } = this.props;
-    const { selectedDimensions, svgHeight, svgWidth } = this.state;
+    const { selectedDimensions, svgHeight, svgWidth, brushDict } = this.state;
 
     const labels = data.map(r => r[labelColumn]);
 
@@ -109,11 +117,7 @@ class ScatterPlotMatrix extends React.Component<Props, State> {
             });
           }}
         />
-        <div
-          ref={this.divRef}
-          className={styles.square}
-          style={{ border: "1px solid red" }}
-        >
+        <div ref={this.divRef} className={styles.square}>
           <FullSizeSVG ref={this.ref}>
             <g transform={`translate(50,50)`}>
               <SPMComponent
@@ -125,8 +129,8 @@ class ScatterPlotMatrix extends React.Component<Props, State> {
                 columns={selectedDimensions}
                 XZero={false}
                 YZero={false}
-                XOffset={lesserDim * 0.05}
-                YOffset={lesserDim * 0.06}
+                brushDict={brushDict}
+                updateBrushDictionary={this.updateBrushDict}
               />
             </g>
           </FullSizeSVG>
