@@ -13,8 +13,6 @@ class Intent(ABC):
     def to_prediction(self, selection: np.ndarray, df: pd.DataFrame) -> List[Prediction]:
         pass
 
-
-class IntentBinary(Intent, ABC):
     @abstractmethod
     def compute(self, df: pd.DataFrame) -> pd.DataFrame:
         pass
@@ -23,6 +21,8 @@ class IntentBinary(Intent, ABC):
     def to_string(self) -> str:
         pass
 
+
+class IntentBinary(Intent, ABC):
     @abstractmethod
     def info(self) -> Optional[Dict[str, Any]]:
         pass
@@ -39,17 +39,14 @@ class IntentBinary(Intent, ABC):
 
 
 class IntentMulticlassInstance(IntentBinary):
-    def __init__(self, reference: pd.DataFrame, description: str):
+    def __init__(self, reference: pd.DataFrame):
         self.reference = reference
-        self.description = description
 
     def to_string(self) -> str:
-        return self.description
+        return self.reference.columns[0]
 
     def compute(self, df: pd.DataFrame) -> pd.DataFrame:
-        res = pd.DataFrame(data=self.reference.astype('int').values,
-                           index=df.index, columns=[self.to_string()])
-        return res
+        return self.reference.applymap(int)
 
     def info(self) -> Optional[Dict[str, Any]]:
         return None

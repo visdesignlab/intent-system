@@ -1,24 +1,39 @@
 import pandas as pd
+import numpy as np
 
-from ..intent import IntentMulticlass, IntentMulticlassInstance
+from ..intent import Intent, IntentMulticlassInstance
 from ..dataset import Dataset
+from ..vendor.interactions import Prediction
 
 from typing import List
 
 
-def build_instances(df: pd.DataFrame, column: str) -> List[IntentMulticlassInstance]:
-    values = df[column].unique()
-    return list(
-        map(
-            lambda v: IntentMulticlassInstance(df[column] == v, 'Category:' + column + ':' + v),
-            values))
+def expand_column(col: pd.DataFrame, description: str) -> pd.DataFrame:
+    values = col.iloc[:,0].unique()
+    result = pd.concat(map(lambda v: pd.DataFrame(data=(col.iloc[:,0] == v).astype('int').values,
+                                                  columns=[description + ":" + v],
+                                                  index=col.index, dtype=int),
+                           values), axis='columns')
+    return result
 
 
-class Categories(IntentMulticlass):
+class Categories(Intent):
     def __init__(self, data: Dataset) -> None:
+        baseName = 'Category'
+        self.baseName = baseName
         cats = data.categorical()
-        instancesList = map(lambda c: build_instances(data.data, c), cats)
-        self.insts = [item for sublist in instancesList for item in sublist]
+        self.expanded = pd.concat(map(lambda c: expand_column(cats[[c]], baseName + ":" + c + ":"), cats.columns), axis='columns')
 
-    def instances(self, df: pd.DataFrame) -> List[IntentMulticlassInstance]:
-        return self.insts
+    def to_string(self) -> str:
+        return self.baseName
+
+    def compute(self, df: pd.DataFrame) -> pd.DataFrame:
+        return self.expanded
+
+    def to_prediction(self, selection: np.ndarray, df: pd.DataFrame) -> List[Prediction]:
+        computed = self.compute(df)
+        instances = map(lambda i: IntentMulticlassInstance(computed[i]).to_prediction(selection, df),
+                        computed.columns) 
+
+
+

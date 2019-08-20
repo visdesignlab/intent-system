@@ -16,6 +16,9 @@ class Range(Intent):
     def to_string(self) -> str:
         return 'Range'
 
+    def compute(self, df: pd.DataFrame) -> pd.DataFrame:
+        return pd.DataFrame(index=df.index)
+
     def to_prediction(self, selection: np.ndarray, df: pd.DataFrame) -> List[Prediction]:
 
         # TODO: Revise this assumption

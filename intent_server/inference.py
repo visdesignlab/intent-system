@@ -57,18 +57,6 @@ class Inference:
         return [p for preds in ranks for p in preds]
 
     def info(self, dims: Dimensions) -> pd.DataFrame:
-        sel = self.dataset.data[dims.indices()]
-        bin_comp_measures = map(lambda i: i.compute(sel),  # type: ignore
-                                filter(lambda x: isinstance(x, IntentBinary),
-                                       self.intents))  # type: ignore
-
-        multiclass = filter(lambda x: isinstance(x, IntentMulticlass), self.intents)
-        multiclass_instances = [item for sublist in
-                                map(lambda x: x.instances(sel),  # type: ignore
-                                    multiclass) for item in sublist]
-        multi_comp_measures = map(lambda i: i.compute(sel), multiclass_instances)  # type: ignore
-
-        comp_measures = list(bin_comp_measures) + list(multi_comp_measures) + \
-            [self.dataset.labels()]
-        concated = pd.concat(comp_measures, axis='columns')
-        return concated
+        subset = self.dataset.data[dims.indices()]
+        computed = pd.concat(map(lambda intent: intent.compute(subset), self.intents), axis='columns')
+        return pd.concat([computed, self.dataset.labels()], axis='columns')
