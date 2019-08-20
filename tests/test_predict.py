@@ -1,5 +1,5 @@
 from intent_server.vendor.interactions import Interaction, InteractionType, InteractionTypeKind
-from intent_server.predict import relevant_ids
+from intent_server.inference import relevant_ids
 
 from typing import List
 

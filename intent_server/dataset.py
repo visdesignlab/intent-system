@@ -1,9 +1,10 @@
 import json
 
 import pandas as pd
+import numpy as np
 
 from .dimensions import Dimensions
-from typing import Dict
+from typing import Dict, Set
 
 
 class Dataset:
@@ -17,6 +18,9 @@ class Dataset:
         output['values'] = self.data.T.to_dict()
         return output
 
+    def labels(self) -> pd.DataFrame:
+        return self.data[self.label]
+
     def numerical(self) -> pd.DataFrame:
         return self.data.select_dtypes(include='number')
 
@@ -27,6 +31,12 @@ class Dataset:
 
     def subset(self, dims: Dimensions) -> pd.DataFrame:
         return self.data[dims.indices()]
+
+    def selection(self, rows: Set[int]) -> np.ndarray:
+        arr = np.zeros((len(self.data), 1))
+        for r in rows:
+            arr.itemset((r, 0), 1)
+        return arr
 
     @staticmethod
     def from_json_file(filename: str, name: str) -> 'Dataset':
