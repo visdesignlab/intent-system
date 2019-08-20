@@ -1,6 +1,5 @@
 from .dataset import Dataset
 from .dimensions import Dimensions
-from .intent import IntentBinary, IntentMulticlass
 from .algorithms import Outlier, Skyline, Range, KMeansCluster, Categories
 
 from .vendor.interactions import Interaction, InteractionTypeKind, Prediction
@@ -58,5 +57,6 @@ class Inference:
 
     def info(self, dims: Dimensions) -> pd.DataFrame:
         subset = self.dataset.data[dims.indices()]
-        computed = pd.concat(map(lambda intent: intent.compute(subset), self.intents), axis='columns')
+        computed = pd.concat(map(lambda intent: intent.compute(subset),  # type: ignore
+                                 self.intents), axis='columns')
         return pd.concat([computed, self.dataset.labels()], axis='columns')
