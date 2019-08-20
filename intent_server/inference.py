@@ -1,6 +1,6 @@
 from .dataset import Dataset
 from .dimensions import Dimensions
-from .intent import IntentBinary, IntentMulticlass
+from .intent import Intent, IntentBinary, IntentMulticlass
 from .algorithms import Outlier, Skyline, Range, KMeansCluster, Categories
 
 from .vendor.interactions import Interaction, InteractionTypeKind, Prediction
