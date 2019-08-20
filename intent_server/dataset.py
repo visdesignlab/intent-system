@@ -10,7 +10,7 @@ from typing import Dict, Set
 class Dataset:
     def __init__(self, label: str, data: pd.DataFrame, name: str) -> None:
         self.label: str = label
-        self.data: pd.DataFrame = data
+        self.data: pd.DataFrame = data.reset_index()
         self.name: str = name
 
     def to_dict(self) -> Dict:
