@@ -1,4 +1,4 @@
-from intent_server.properties import Dimensions
+from intent_server.Dimensions import Dimensions
 
 
 def test_hash_equal():

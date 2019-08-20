@@ -58,7 +58,7 @@ class Inference:
 
     def info(self, dims: Dimensions) -> pd.DataFrame:
         sel = self.dataset.data[dims.indices()]
-        fn: Callable[[IntentBinary], pd.DataFrame] = lambda m: m.compute(sel)
+        fn: Callable[[Intent], pd.DataFrame] = lambda m: m.compute(sel)
         bin_comp_measures = map(fn,
                                 filter(lambda x: isinstance(x, IntentBinary),
                                        self.intents))  # type: ignore
