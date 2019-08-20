@@ -1,15 +1,9 @@
 from flask import Blueprint, jsonify, request, redirect
 
-import pandas as pd
-
 from .dataset import Dataset
 from .dimensions import Dimensions
 from .inference import Inference
-from .intent import Intent
-from .algorithms import *
 from .vendor.interactions import interaction_history_from_dict
-
-from typing import List
 
 # Load and preprocess the dataset
 datasets = {

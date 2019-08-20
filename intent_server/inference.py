@@ -1,14 +1,13 @@
 from .dataset import Dataset
 from .dimensions import Dimensions
-from .intent import Intent, IntentBinary, IntentMulticlass
-from .algorithms import *
+from .intent import IntentBinary, IntentMulticlass
+from .algorithms import Outlier, Skyline, Range, KMeansCluster, Categories
 
 from .vendor.interactions import Interaction, InteractionTypeKind, Prediction
 
-from typing import List, Set
+from typing import Callable, List, Set
 
 import pandas as pd
-import numpy as np
 
 
 def is_selection(interaction: Interaction) -> bool:
@@ -31,7 +30,7 @@ def relevant_ids(interactions: List[Interaction]) -> Set[int]:
 class Inference:
     def __init__(self, dataset: Dataset) -> None:
         self.dataset = dataset
-        self.intents = [ 
+        self.intents = [
             Outlier(),
             Skyline(),
             Range(),
@@ -70,7 +69,7 @@ class Inference:
                                     multiclass) for item in sublist]
         multi_comp_measures = map(fn, multiclass_instances)
 
-        comp_measures = list(bin_comp_measures) + list(multi_comp_measures) + [self.dataset.labels()]
+        comp_measures = list(bin_comp_measures) + list(multi_comp_measures) + \
+            [self.dataset.labels()]
         concated = pd.concat(comp_measures, axis='columns')
         return concated
-
