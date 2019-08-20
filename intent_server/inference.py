@@ -1,11 +1,11 @@
 from .dataset import Dataset
 from .dimensions import Dimensions
-from .intent import Intent, IntentBinary, IntentMulticlass
+from .intent import IntentBinary, IntentMulticlass
 from .algorithms import Outlier, Skyline, Range, KMeansCluster, Categories
 
 from .vendor.interactions import Interaction, InteractionTypeKind, Prediction
 
-from typing import Callable, List, Set
+from typing import List, Set
 
 import pandas as pd
 
@@ -58,8 +58,7 @@ class Inference:
 
     def info(self, dims: Dimensions) -> pd.DataFrame:
         sel = self.dataset.data[dims.indices()]
-        fn: Callable[[Intent], pd.DataFrame] = lambda m: m.compute(sel)
-        bin_comp_measures = map(fn,
+        bin_comp_measures = map(lambda i: i.compute(sel),  # type: ignore
                                 filter(lambda x: isinstance(x, IntentBinary),
                                        self.intents))  # type: ignore
 
@@ -67,7 +66,7 @@ class Inference:
         multiclass_instances = [item for sublist in
                                 map(lambda x: x.instances(sel),  # type: ignore
                                     multiclass) for item in sublist]
-        multi_comp_measures = map(fn, multiclass_instances)
+        multi_comp_measures = map(lambda i: i.compute(sel), multiclass_instances)  # type: ignore
 
         comp_measures = list(bin_comp_measures) + list(multi_comp_measures) + \
             [self.dataset.labels()]
