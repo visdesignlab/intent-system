@@ -174,27 +174,27 @@ class SPMComponent extends React.Component<Props, State> {
             const [[left, top], [right, bottom]] = selection;
             const selectedIndices: number[] = [];
 
-            pair.X.values.forEach((x, i) => {
+            pair.X.scaledValues.forEach((x, i) => {
               if (
-                xScale(x) >= left &&
-                xScale(x) <= right &&
-                yScale(pair.Y.values[i]) >= top &&
-                yScale(pair.Y.values[i]) <= bottom
+                x >= left &&
+                x <= right &&
+                pair.Y.scaledValues[i] >= top &&
+                pair.Y.scaledValues[i] <= bottom
               )
                 selectedIndices.push(i);
               else if (
                 (!x &&
                   left < xScale.range()[0] &&
-                  yScale(pair.Y.values[i]) >= top &&
-                  yScale(pair.Y.values[i]) <= bottom) ||
+                  pair.Y.scaledValues[i] >= top &&
+                  pair.Y.scaledValues[i] <= bottom) ||
                 (!pair.Y.values[i] &&
-                  bottom > yScale.range()[1] &&
-                  xScale(x) >= left &&
-                  xScale(x) <= right) ||
+                  bottom > yScale.range()[0] &&
+                  x >= left &&
+                  x <= right) ||
                 (!x &&
                   !pair.Y.values[i] &&
                   left < xScale.range()[0] &&
-                  bottom > yScale.range()[1])
+                  bottom > yScale.range()[0])
               )
                 selectedIndices.push(i);
             });
@@ -282,6 +282,7 @@ class SPMComponent extends React.Component<Props, State> {
           .attr("id", "temp")
           .call(nBrush as any);
       } else {
+        console.log(brushGroup.node(), instance.props.brushDict[space]);
         brushGroup.selectAll(".brush").remove();
       }
     });
