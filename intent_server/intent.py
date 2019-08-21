@@ -21,6 +21,9 @@ class Intent(ABC):
     def to_string(self) -> str:
         pass
 
+    def to_unique_string(self) -> str:
+        return str(hash(self)) + "|" + self.to_string()
+
 
 class IntentBinary(Intent, ABC):
     @abstractmethod
@@ -33,7 +36,7 @@ class IntentBinary(Intent, ABC):
 
     def to_prediction(self, selection: np.ndarray, df: pd.DataFrame) -> List[Prediction]:
         return [Prediction(
-            self.to_string(),
+            self.to_unique_string(),
             self.rank(selection, df),
             info=self.info())]
 
