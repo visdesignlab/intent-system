@@ -10,6 +10,7 @@
 #     result = point_deselection_from_dict(json.loads(json_string))
 #     result = rectangular_selection_from_dict(json.loads(json_string))
 #     result = change_axis_from_dict(json.loads(json_string))
+#     result = clear_all_selections_from_dict(json.loads(json_string))
 #     result = interaction_from_dict(json.loads(json_string))
 #     result = interaction_history_from_dict(json.loads(json_string))
 #     result = prediction_from_dict(json.loads(json_string))
@@ -193,7 +194,34 @@ class ChangeAxis:
         return result
 
 
+class ClearAllSelectionsKind(Enum):
+    CLEARALL = "clearall"
+
+
+@dataclass
+class ClearAllSelections:
+    data_ids: List[float]
+    dimensions: List[str]
+    kind: ClearAllSelectionsKind
+
+    @staticmethod
+    def from_dict(obj: Any) -> 'ClearAllSelections':
+        assert isinstance(obj, dict)
+        data_ids = from_list(from_float, obj.get("dataIds"))
+        dimensions = from_list(from_str, obj.get("dimensions"))
+        kind = ClearAllSelectionsKind(obj.get("kind"))
+        return ClearAllSelections(data_ids, dimensions, kind)
+
+    def to_dict(self) -> dict:
+        result: dict = {}
+        result["dataIds"] = from_list(to_float, self.data_ids)
+        result["dimensions"] = from_list(from_str, self.dimensions)
+        result["kind"] = to_enum(ClearAllSelectionsKind, self.kind)
+        return result
+
+
 class InteractionTypeKind(Enum):
+    CLEARALL = "clearall"
     DESELECTION = "deselection"
     SELECTION = "selection"
 
@@ -263,22 +291,28 @@ class Interaction:
 
 @dataclass
 class Prediction:
+    dimensions: List[str]
     intent: str
     rank: float
+    data_ids: Optional[List[float]] = None
     info: Optional[Dict[str, Any]] = None
 
     @staticmethod
     def from_dict(obj: Any) -> 'Prediction':
         assert isinstance(obj, dict)
+        dimensions = from_list(from_str, obj.get("dimensions"))
         intent = from_str(obj.get("intent"))
         rank = from_float(obj.get("rank"))
+        data_ids = from_union([lambda x: from_list(from_float, x), from_none], obj.get("dataIds"))
         info = from_union([lambda x: from_dict(lambda x: x, x), from_none], obj.get("info"))
-        return Prediction(intent, rank, info)
+        return Prediction(dimensions, intent, rank, data_ids, info)
 
     def to_dict(self) -> dict:
         result: dict = {}
+        result["dimensions"] = from_list(from_str, self.dimensions)
         result["intent"] = from_str(self.intent)
         result["rank"] = to_float(self.rank)
+        result["dataIds"] = from_union([lambda x: from_list(to_float, x), from_none], self.data_ids)
         result["info"] = from_union([lambda x: from_dict(lambda x: x, x), from_none], self.info)
         return result
 
@@ -329,6 +363,14 @@ def change_axis_from_dict(s: Any) -> ChangeAxis:
 
 def change_axis_to_dict(x: ChangeAxis) -> Any:
     return to_class(ChangeAxis, x)
+
+
+def clear_all_selections_from_dict(s: Any) -> ClearAllSelections:
+    return ClearAllSelections.from_dict(s)
+
+
+def clear_all_selections_to_dict(x: ClearAllSelections) -> Any:
+    return to_class(ClearAllSelections, x)
 
 
 def interaction_from_dict(s: Any) -> Interaction:
