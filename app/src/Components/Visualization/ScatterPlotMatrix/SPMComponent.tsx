@@ -213,52 +213,36 @@ class SPMComponent extends React.Component<Props, State> {
             brushDict[space] = [br];
             instance.props.updateBrushDictionary(brushDict);
             instance.setState({ shouldUpdate: 2 });
+          } else {
+            const br: Brush = {
+              id: id,
+              brush: nBrush,
+              selectedPoints: [],
+              extents: [[], []]
+            };
+            const { brushDict } = instance.props;
+            brushDict[space] = [br];
+            instance.props.updateBrushDictionary(brushDict);
+            instance.setState({ shouldUpdate: 2 });
           }
         });
 
       const brs = this.props.brushDict[space];
-      let brsSelection = brushGroup
-        .selectAll(".brush")
-        .data(brs, (b: any) => b.id);
+      if (brs && brs.length === 1) {
+        const core_brush = brs[0];
+        brushGroup.html("");
 
-      brsSelection = brsSelection.join(
-        enter =>
-          enter
-            .insert("g", ".brush")
-            .classed("brush", true)
-            .attr("id", brush => `brush-${brush.id}`)
-            .each(function(brushObject) {
-              brushObject.brush(select(this));
-              const brs = instance.props.brushDict[space];
-              if (brs.length === 1) {
-                const br = brs[0];
-                instance.programMove = true;
-                select(this).call(brushObject.brush.move, [
-                  [xScale(br.extents[0][0]), yScale(br.extents[0][1])],
-                  [xScale(br.extents[1][0]), yScale(br.extents[1][1])]
-                ]);
-                instance.programMove = false;
-              }
-            }),
-        update =>
-          update
-            .attr("id", brush => `brush-${brush.id}`)
-            .each(function(brushObject) {
-              brushObject.brush(select(this as any));
-              const brs = instance.props.brushDict[space];
-              if (brs.length === 1) {
-                const br = brs[0];
-                instance.programMove = true;
-                select(this).call((brushObject as any).brush.move, [
-                  [xScale(br.extents[0][0]), yScale(br.extents[0][1])],
-                  [xScale(br.extents[1][0]), yScale(br.extents[1][1])]
-                ]);
-                instance.programMove = false;
-              }
-            }),
-        exit => exit.remove()
-      );
-
+        const coreBrushGroup = brushGroup
+          .append("g")
+          .classed(styles.core_brush, true);
+        this.programMove = true;
+        core_brush.brush(coreBrushGroup);
+        coreBrushGroup.call(core_brush.brush.move, [
+          [xScale(core_brush.extents[0][0]), yScale(core_brush.extents[0][1])],
+          [xScale(core_brush.extents[1][0]), yScale(core_brush.extents[1][1])]
+        ]);
+        this.programMove = false;
+      }
       const allSelectedPointsArr = Object.values(this.props.brushDict).map(
         c => c[0].selectedPoints
       );
@@ -271,10 +255,6 @@ class SPMComponent extends React.Component<Props, State> {
       const highlightIndices = new Uint8Array(pair.X.values.length);
 
       sel.forEach(s => (highlightIndices[s] = highlightIndices[s] + 1));
-      console.log(
-        "TCL: SPMComponent -> componentDidUpdate -> highlightIndices",
-        highlightIndices
-      );
 
       marks.each(function(_, i) {
         select(this).classed(styles.regular_circular_mark, true);
@@ -284,20 +264,25 @@ class SPMComponent extends React.Component<Props, State> {
         if (highlightIndices[i] > 1) {
           select(this).classed(styles.regular_circular_mark, false);
           select(this).classed(styles.union_circular_mark, true);
+          select(this).raise();
         } else if (highlightIndices[i] > 0) {
           select(this).classed(styles.regular_circular_mark, false);
           select(this).classed(styles.selected_circular_mark, true);
+          select(this).raise();
         }
       });
 
-      if (!instance.props.brushDict[space]) {
+      if (
+        !instance.props.brushDict[space] ||
+        instance.props.brushDict[space].length !== 1
+      ) {
         brushGroup
           .append("g")
-          .classed(".brush", true)
+          .classed("brush", true)
           .attr("id", "temp")
           .call(nBrush as any);
       } else {
-        brushGroup.selectAll("#temp").remove();
+        brushGroup.selectAll(".brush").remove();
       }
     });
 
