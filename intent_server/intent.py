@@ -13,8 +13,6 @@ class Intent(ABC):
     def to_prediction(self, selection: np.ndarray, df: pd.DataFrame) -> List[Prediction]:
         pass
 
-
-class IntentBinary(Intent, ABC):
     @abstractmethod
     def compute(self, df: pd.DataFrame) -> pd.DataFrame:
         pass
@@ -23,6 +21,8 @@ class IntentBinary(Intent, ABC):
     def to_string(self) -> str:
         pass
 
+
+class IntentBinary(Intent, ABC):
     @abstractmethod
     def info(self) -> Optional[Dict[str, Any]]:
         pass
@@ -39,27 +39,22 @@ class IntentBinary(Intent, ABC):
 
 
 class IntentMulticlassInstance(IntentBinary):
-    def __init__(self, reference: pd.DataFrame, description: str):
+    def __init__(self, reference: pd.DataFrame):
         self.reference = reference
-        self.description = description
 
     def to_string(self) -> str:
-        return self.description
+        return self.reference.columns[0]  # type: ignore
 
     def compute(self, df: pd.DataFrame) -> pd.DataFrame:
-        res = pd.DataFrame(data=self.reference.astype('int').values,
-                           index=df.index, columns=[self.to_string()])
-        return res
+        return self.reference.applymap(int)
 
     def info(self) -> Optional[Dict[str, Any]]:
         return None
 
 
 class IntentMulticlass(Intent, ABC):
-    @abstractmethod
-    def instances(self, df: pd.DataFrame) -> List[IntentMulticlassInstance]:
-        pass
-
     def to_prediction(self, selection: np.ndarray, df: pd.DataFrame) -> List[Prediction]:
-        preds = map(lambda i: i.to_prediction(selection, df), self.instances(df))
-        return [item for sublist in preds for item in sublist]
+        computed = self.compute(df)
+        outputs = map(lambda i: IntentMulticlassInstance(
+            computed[[i]]).to_prediction(selection, df), computed.columns)
+        return [x for y in outputs for x in y]
