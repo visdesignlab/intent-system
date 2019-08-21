@@ -32,10 +32,14 @@ class IntentBinary(Intent, ABC):
         return float(1 - jaccard(belongs_to, selection))
 
     def to_prediction(self, selection: np.ndarray, df: pd.DataFrame) -> List[Prediction]:
+        belongs_to = self.compute(df)
+        ids = belongs_to.loc[belongs_to.iloc[:, 0] == 1].index.values
+
         return [Prediction(
-            self.to_string(),
-            self.rank(selection, df),
-            info=self.info())]
+            intent=self.to_string(),
+            rank=self.rank(selection, df),
+            info=self.info(),
+            data_ids=list(map(float, ids)))]
 
 
 class IntentMulticlassInstance(IntentBinary):

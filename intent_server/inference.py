@@ -2,7 +2,7 @@ from .dataset import Dataset
 from .dimensions import Dimensions
 from .algorithms import Outlier, Skyline, Range, KMeansCluster, Categories
 
-from .vendor.interactions import Interaction, InteractionTypeKind, Prediction
+from .vendor.interactions import Interaction, InteractionTypeKind, PredictionSet
 
 from typing import List, Set
 
@@ -37,23 +37,30 @@ class Inference:
             Categories(dataset),
         ]
 
-    def predict(self, interactions: List[Interaction]) -> List[Prediction]:
+    def predict(self, interactions: List[Interaction]) -> PredictionSet:
 
         ids = relevant_ids(interactions)
-        if len(ids) == 0:
-            return []
-
-        sel_array = self.dataset.selection(ids)
 
         filtered = list(filter(lambda x: x.interaction_type.data_ids, interactions))
         list_of_dims = map(lambda x: x.interaction_type.dimensions, filtered)
         dims = Dimensions(list(set([y for x in list_of_dims for y in x])))
 
+        if len(ids) == 0:
+            return PredictionSet(
+                predictions=[],
+                dimensions=dims.dims,
+                selected_ids=list(map(float, ids)))
+
+        sel_array = self.dataset.selection(ids)
+
         relevant_data = self.dataset.subset(dims)
 
         # Perform ranking
         ranks = map(lambda m: m.to_prediction(sel_array, relevant_data), self.intents)
-        return [p for preds in ranks for p in preds]
+        return PredictionSet(
+            predictions=[p for preds in ranks for p in preds],
+            dimensions=dims.dims,
+            selected_ids=list(map(float, ids)))
 
     def info(self, dims: Dimensions) -> pd.DataFrame:
         subset = self.dataset.data[dims.indices()]

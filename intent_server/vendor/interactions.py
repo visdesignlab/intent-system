@@ -14,6 +14,7 @@
 #     result = interaction_from_dict(json.loads(json_string))
 #     result = interaction_history_from_dict(json.loads(json_string))
 #     result = prediction_from_dict(json.loads(json_string))
+#     result = prediction_set_from_dict(json.loads(json_string))
 
 from dataclasses import dataclass
 from typing import List, Any, Optional, Dict, TypeVar, Callable, Type, cast
@@ -291,7 +292,6 @@ class Interaction:
 
 @dataclass
 class Prediction:
-    dimensions: List[str]
     intent: str
     rank: float
     data_ids: Optional[List[float]] = None
@@ -300,20 +300,40 @@ class Prediction:
     @staticmethod
     def from_dict(obj: Any) -> 'Prediction':
         assert isinstance(obj, dict)
-        dimensions = from_list(from_str, obj.get("dimensions"))
         intent = from_str(obj.get("intent"))
         rank = from_float(obj.get("rank"))
         data_ids = from_union([lambda x: from_list(from_float, x), from_none], obj.get("dataIds"))
         info = from_union([lambda x: from_dict(lambda x: x, x), from_none], obj.get("info"))
-        return Prediction(dimensions, intent, rank, data_ids, info)
+        return Prediction(intent, rank, data_ids, info)
 
     def to_dict(self) -> dict:
         result: dict = {}
-        result["dimensions"] = from_list(from_str, self.dimensions)
         result["intent"] = from_str(self.intent)
         result["rank"] = to_float(self.rank)
         result["dataIds"] = from_union([lambda x: from_list(to_float, x), from_none], self.data_ids)
         result["info"] = from_union([lambda x: from_dict(lambda x: x, x), from_none], self.info)
+        return result
+
+
+@dataclass
+class PredictionSet:
+    dimensions: List[str]
+    predictions: List[Prediction]
+    selected_ids: List[float]
+
+    @staticmethod
+    def from_dict(obj: Any) -> 'PredictionSet':
+        assert isinstance(obj, dict)
+        dimensions = from_list(from_str, obj.get("dimensions"))
+        predictions = from_list(Prediction.from_dict, obj.get("predictions"))
+        selected_ids = from_list(from_float, obj.get("selectedIds"))
+        return PredictionSet(dimensions, predictions, selected_ids)
+
+    def to_dict(self) -> dict:
+        result: dict = {}
+        result["dimensions"] = from_list(from_str, self.dimensions)
+        result["predictions"] = from_list(lambda x: to_class(Prediction, x), self.predictions)
+        result["selectedIds"] = from_list(to_float, self.selected_ids)
         return result
 
 
@@ -395,3 +415,11 @@ def prediction_from_dict(s: Any) -> Prediction:
 
 def prediction_to_dict(x: Prediction) -> Any:
     return to_class(Prediction, x)
+
+
+def prediction_set_from_dict(s: Any) -> PredictionSet:
+    return PredictionSet.from_dict(s)
+
+
+def prediction_set_to_dict(x: PredictionSet) -> Any:
+    return to_class(PredictionSet, x)

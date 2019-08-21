@@ -46,6 +46,5 @@ def route_dataset_info(dataset_name):  # type: ignore
 def route_dataset_predict(dataset_name):  # type: ignore
     interaction_hist = interaction_history_from_dict(request.json)
     ds = datasets[dataset_name]
-    intent_predictions = Inference(ds).predict(interaction_hist)
-    predictions = list(map(lambda x: x.__dict__, intent_predictions))
-    return jsonify(predictions)
+    predictions = Inference(ds).predict(interaction_hist)
+    return jsonify(predictions.to_dict())
