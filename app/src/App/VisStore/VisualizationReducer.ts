@@ -15,7 +15,7 @@ export const VisualizationReducer: Reducer<
   VisualizationType,
   VisualizationChangeAction
 > = (
-  current: VisualizationType = VisualizationType.ScatterPlot,
+  current: VisualizationType = VisualizationType.ScatterPlotMatrix,
   action: VisualizationChangeAction
 ) => {
   switch (action.type) {

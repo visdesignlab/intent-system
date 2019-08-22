@@ -1,19 +1,29 @@
-import React from "react";
-import styled from "styled-components";
-import DimensionSelector from "../../DimensionSelector/DimensionSelector";
-import SPMComponent from "./SPMComponent";
-import FullSizeSVG from "../ReusableComponents/FullSizeSVG";
-import { VisualizationType } from "@visdesignlab/intent-contract";
-import styles from "./scatterplotmatrix.module.css";
-import { select } from "d3";
+import { VisualizationType } from '@visdesignlab/intent-contract';
+import { select } from 'd3';
+import React from 'react';
+import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
+import styled from 'styled-components';
+
+import { InteractionHistoryAction, InteractionHistoryActions } from '../../../App/VisStore/InteractionHistoryReducer';
+import DimensionSelector from '../../DimensionSelector/DimensionSelector';
+import { BrushDictionary } from '../Data Types/BrushType';
+import FullSizeSVG from '../ReusableComponents/FullSizeSVG';
+import styles from './scatterplotmatrix.module.css';
+import SPMComponent from './SPMComponent';
 
 interface State {
   svgHeight: number;
   svgWidth: number;
   selectedDimensions: string[];
+  brushDict: BrushDictionary;
+  pointSelection: number[];
 }
 
-interface DispatchProps {}
+interface DispatchProps {
+  addEmptyInteraction: (dimensions: string[]) => void;
+  addChangeAxisInteraction: (dimensions: string[]) => void;
+}
 interface StateProps {}
 
 interface OwnProps {
@@ -31,7 +41,9 @@ class ScatterPlotMatrix extends React.Component<Props, State> {
   readonly state: State = {
     svgHeight: 0,
     svgWidth: 0,
-    selectedDimensions: []
+    selectedDimensions: [],
+    brushDict: {},
+    pointSelection: []
   };
 
   componentDidMount() {
@@ -44,16 +56,14 @@ class ScatterPlotMatrix extends React.Component<Props, State> {
     select(this.divRef.current)
       .style("height", `${lesser}px`)
       .style("width", `${lesser}px`);
+    const dims = dimensions.slice(0, 3);
 
     this.setState({
       svgHeight: lesser,
       svgWidth: lesser,
-      selectedDimensions: dimensions.slice(0, 3)
+      selectedDimensions: dims
     });
-    // this.props.addEmptyInteraction(VisualizationType.ScatterPlot, [
-    //   dimensions[0],
-    //   dimensions[1]
-    // ]);
+    this.props.addEmptyInteraction(dims);
   }
 
   componentWillMount() {
@@ -81,16 +91,25 @@ class ScatterPlotMatrix extends React.Component<Props, State> {
 
   updateSelection = (selectedDimensions: string[]) => {
     this.setState({ selectedDimensions });
+    console.log("Hello");
+    this.props.addChangeAxisInteraction(selectedDimensions);
+  };
+
+  updateBrushDict = (brushDict: BrushDictionary) => {
+    this.setState({ brushDict });
+  };
+
+  updatePointSelection = (pointSelection: number[]) => {
+    this.setState({ pointSelection });
   };
 
   render() {
     const { dimensions, data, labelColumn } = this.props;
-    const { selectedDimensions, svgHeight, svgWidth } = this.state;
+    const { selectedDimensions, svgHeight, svgWidth, brushDict } = this.state;
 
     const labels = data.map(r => r[labelColumn]);
 
     const lesserDim = svgHeight > svgWidth ? svgWidth : svgHeight;
-
     return (
       <ScatterPlotDiv>
         <DimensionSelector
@@ -104,16 +123,10 @@ class ScatterPlotMatrix extends React.Component<Props, State> {
               selDims = selectedDimensions.filter(d => d !== col);
             else selDims = [...selectedDimensions, col];
 
-            this.setState({
-              selectedDimensions: selDims
-            });
+            this.updateSelection(selDims);
           }}
         />
-        <div
-          ref={this.divRef}
-          className={styles.square}
-          style={{ border: "1px solid red" }}
-        >
+        <div ref={this.divRef} className={styles.square}>
           <FullSizeSVG ref={this.ref}>
             <g transform={`translate(50,50)`}>
               <SPMComponent
@@ -125,8 +138,10 @@ class ScatterPlotMatrix extends React.Component<Props, State> {
                 columns={selectedDimensions}
                 XZero={false}
                 YZero={false}
-                XOffset={lesserDim * 0.05}
-                YOffset={lesserDim * 0.06}
+                brushDict={brushDict}
+                updateBrushDictionary={this.updateBrushDict}
+                pointSelection={this.state.pointSelection}
+                updatePointSelection={this.updatePointSelection}
               />
             </g>
           </FullSizeSVG>
@@ -136,7 +151,36 @@ class ScatterPlotMatrix extends React.Component<Props, State> {
   }
 }
 
-export default ScatterPlotMatrix;
+const mapDispatchToProps = (
+  dispatch: Dispatch<InteractionHistoryAction>
+): DispatchProps => ({
+  addEmptyInteraction: (dimensions: string[]) => {
+    dispatch({
+      type: InteractionHistoryActions.ADD_INTERACTION,
+      args: {
+        visualizationType: VisualizationType.ScatterPlotMatrix,
+        interactionType: {
+          dimensions: dimensions
+        }
+      }
+    });
+  },
+  addChangeAxisInteraction: (dimensions: string[]) => {
+    dispatch({
+      type: InteractionHistoryActions.ADD_INTERACTION,
+      args: {
+        visualizationType: VisualizationType.ScatterPlotMatrix,
+        interactionType: {
+          dimensions: dimensions
+        }
+      }
+    });
+  }
+});
+export default connect(
+  null,
+  mapDispatchToProps
+)(ScatterPlotMatrix);
 
 const ScatterPlotDiv = styled.div`
   height: 100%;

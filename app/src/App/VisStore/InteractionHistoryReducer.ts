@@ -1,9 +1,10 @@
-import { VisStore } from "./../../index";
-import { Action, Reducer } from "redux";
-import { Interaction, InteractionHistory } from "@visdesignlab/intent-contract";
-import axios from "axios";
-import { datasetName } from "../..";
-import { PredictionActions } from "./PredictionsReducer";
+import { Interaction, InteractionHistory } from '@visdesignlab/intent-contract';
+import axios from 'axios';
+import { Action, Reducer } from 'redux';
+
+import { datasetName } from '../..';
+import { VisStore } from './../..';
+import { PredictionActions } from './PredictionsReducer';
 
 export enum InteractionHistoryActions {
   ADD_INTERACTION = "ADD_INTERACTION"
@@ -27,6 +28,7 @@ export const InteractionHistoryReducer: Reducer<
           type: PredictionActions.UPDATE_PREDICATION,
           args: response.data
         });
+        console.log("Arguments", action.args);
         console.log("Preds", response.data);
       });
       return [...current];
