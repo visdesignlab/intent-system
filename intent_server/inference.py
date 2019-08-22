@@ -12,11 +12,14 @@ import pandas as pd
 def is_point_selection(interaction: Interaction) -> bool:
     return interaction.interaction_type.kind is InteractionTypeKind.SELECTION
 
+
 def is_point_deselection(interaction: Interaction) -> bool:
     return interaction.interaction_type.kind is InteractionTypeKind.DESELECTION
 
+
 def is_brush_selection(interaction: Interaction) -> bool:
     return interaction.interaction_type.brush_id is not None
+
 
 def relevant_ids(interactions: List[Interaction]) -> Set[int]:
     points: Set[int] = set()
@@ -26,9 +29,9 @@ def relevant_ids(interactions: List[Interaction]) -> Set[int]:
         if is_point_selection(ix):
             points.update([int(x) for x in ix.interaction_type.data_ids])  # type: ignore
         elif is_point_deselection(ix):
+            # should actually be only one point :)
             for id in ix.interaction_type.data_ids:  # type: ignore
-                print(len(ix.interaction_type.data_ids))
-                active_ids.remove(int(id))
+                points.remove(int(id))
         elif is_brush_selection(ix):
             rects.update({ix.interaction_type.brush_id: ix})
 
