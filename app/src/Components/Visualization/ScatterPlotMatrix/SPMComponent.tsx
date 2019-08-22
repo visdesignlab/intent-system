@@ -35,6 +35,7 @@ interface OwnProps {
   updateBrushDictionary: (dict: BrushDictionary) => void;
   pointSelection: number[];
   updatePointSelection: (points: number[]) => void;
+  debugIndices: number[];
 }
 
 interface SPMDimension extends Dimension<number> {
@@ -82,7 +83,9 @@ class SPMComponent extends React.Component<Props, State> {
       columns === prevProps.columns &&
       this.state.shouldUpdate <= 0 &&
       JSON.stringify(this.props.pointSelection) ===
-        JSON.stringify(prevProps.pointSelection)
+        JSON.stringify(prevProps.pointSelection) &&
+      JSON.stringify(this.props.debugIndices) ===
+        JSON.stringify(prevProps.debugIndices)
     )
       return;
 
@@ -307,6 +310,7 @@ class SPMComponent extends React.Component<Props, State> {
         select(this).classed(styles.regular_circular_mark, true);
         select(this).classed(styles.union_circular_mark, false);
         select(this).classed(styles.selected_circular_mark, false);
+        select(this).classed(styles.circular_mark_debug, false);
 
         if (highlightIndices[i] > 1) {
           select(this).classed(styles.regular_circular_mark, false);
@@ -316,6 +320,13 @@ class SPMComponent extends React.Component<Props, State> {
           select(this).classed(styles.regular_circular_mark, false);
           select(this).classed(styles.selected_circular_mark, true);
           select(this).raise();
+        }
+
+        if (
+          instance.props.debugIndices &&
+          instance.props.debugIndices.includes(i)
+        ) {
+          select(this).classed(styles.circular_mark_debug, true);
         }
       });
 
@@ -329,7 +340,6 @@ class SPMComponent extends React.Component<Props, State> {
           .attr("id", "temp")
           .call(nBrush as any);
       } else {
-        console.log(brushGroup.node(), instance.props.brushDict[space]);
         brushGroup.selectAll(".brush").remove();
       }
     });

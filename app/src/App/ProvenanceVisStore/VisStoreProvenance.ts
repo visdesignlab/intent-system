@@ -1,12 +1,11 @@
-import { Store, applyMiddleware, createStore } from "redux";
+import { applyMiddleware, combineReducers, createStore, Store } from 'redux';
+import thunk from 'redux-thunk';
 
-import { DatasetReducer } from "../VisStore/DatasetReducers";
-import { InteractionHistoryReducer } from "../VisStore/InteractionHistoryReducer";
-import { VisualizationReducer } from "../VisStore/VisualizationReducer";
-import { VisualizationState } from "../VisStore/VisualizationState";
-import { combineReducers } from "redux";
-import thunk from "redux-thunk";
-import { PredictionActionReducer } from "../VisStore/PredictionsReducer";
+import { DatasetReducer } from '../VisStore/DatasetReducers';
+import { InteractionHistoryReducer } from '../VisStore/InteractionHistoryReducer';
+import { PredictionActionReducer } from '../VisStore/PredictionsReducer';
+import { VisualizationReducer } from '../VisStore/VisualizationReducer';
+import { VisualizationState } from '../VisStore/VisualizationState';
 
 export function initVisStoreWithProvenance() {
   let store = initVisStore();
@@ -28,6 +27,6 @@ const reducer = () => {
     dataset: DatasetReducer,
     visualization: VisualizationReducer,
     interactions: InteractionHistoryReducer,
-    predictions: PredictionActionReducer
+    predictionSet: PredictionActionReducer
   });
 };

@@ -1,4 +1,4 @@
-import { Prediction, VisualizationType } from '@visdesignlab/intent-contract';
+import { PredictionSet, VisualizationType } from '@visdesignlab/intent-contract';
 import { scaleLinear, select } from 'd3';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -17,7 +17,7 @@ interface StateProps {
   numericColumns: string[];
   labelColumn: string;
   visualization: VisualizationType;
-  predictions: Prediction[];
+  predictionSet: PredictionSet;
 }
 
 interface DispatchProps {
@@ -28,6 +28,7 @@ interface State {
   height: number;
   width: number;
   hideZero: boolean;
+  debugIndices: number[];
 }
 
 type Props = StateProps & DispatchProps;
@@ -39,13 +40,13 @@ class App extends React.Component<Props, State> {
   readonly state: State = {
     height: 0,
     width: 0,
-    hideZero: false
+    hideZero: false,
+    debugIndices: []
   };
 
   componentDidMount() {
     const predSvg = this.predictionsResultsSvgRef.current as SVGSVGElement;
     const predSvgSelection = select(predSvg);
-
     predSvgSelection.style("height", `100%`).style("width", `100%`);
 
     this.setState({
@@ -58,12 +59,14 @@ class App extends React.Component<Props, State> {
     const predSvg = this.predictionsResultsSvgRef.current as SVGSVGElement;
     const predSvgSelection = select(predSvg);
 
-    const { predictions } = this.props;
+    const { predictionSet } = this.props;
+    const { predictions } = predictionSet;
 
     if (
       this.state.height !== predSvg.clientHeight ||
       this.state.width !== predSvg.clientWidth ||
-      predictions.length !== prevProps.predictions.length
+      predictionSet.predictions.length !==
+        prevProps.predictionSet.predictions.length
     ) {
       predSvgSelection
         .style("height", `${predictions.length * 50}px`)
@@ -86,8 +89,8 @@ class App extends React.Component<Props, State> {
     } = this.props;
     const { width, hideZero } = this.state;
 
-    let { predictions } = this.props;
-
+    let { predictionSet } = this.props;
+    let { predictions } = predictionSet;
     if (hideZero) predictions = predictions.filter(p => p.rank !== 0);
 
     const scale = scaleLinear()
@@ -119,6 +122,7 @@ class App extends React.Component<Props, State> {
                       data={data}
                       dimensions={numericColumns}
                       labelColumn={labelColumn}
+                      debugIndices={this.state.debugIndices}
                     />
                   )
                 );
@@ -188,7 +192,19 @@ class App extends React.Component<Props, State> {
                     <Popup
                       key={i}
                       trigger={
-                        <g transform={`translate(0, ${(barHeight + 2) * i})`}>
+                        <g
+                          transform={`translate(0, ${(barHeight + 2) * i})`}
+                          onMouseEnter={() => {
+                            this.setState({
+                              debugIndices: pred.dataIds as number[]
+                            });
+                          }}
+                          onMouseLeave={() => {
+                            this.setState({
+                              debugIndices: []
+                            });
+                          }}
+                        >
                           <BackgroundRect
                             height={barHeight}
                             width={scale.range()[1]}
@@ -230,7 +246,7 @@ const mapStateToProps = (state: VisualizationState): StateProps => ({
   numericColumns: state.dataset.numericColumns,
   labelColumn: state.dataset.labelColumn,
   visualization: state.visualization,
-  predictions: state.predictions
+  predictionSet: state.predictionSet
 });
 
 const mapDispatchToProps = (

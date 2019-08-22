@@ -26,7 +26,6 @@
   },
   "homepage": "https://github.com/grtlr/intent-server#readme",
   "dependencies": {
-    "@visdesignlab/intent-contract": "^4.1.1",
     "concurrently": "^4.1.1",
     "kill-port": "^1.5.1"
   }

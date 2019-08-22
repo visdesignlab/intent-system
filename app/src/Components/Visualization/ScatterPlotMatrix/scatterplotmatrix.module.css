@@ -53,3 +53,8 @@
   fill: #ffb000 !important;
   opacity: 0.5;
 }
+
+.circular_mark_debug {
+  stroke: black;
+  stroke-width: 3px;
+}

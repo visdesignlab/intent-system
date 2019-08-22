@@ -30,6 +30,7 @@ interface OwnProps {
   data: any[];
   dimensions: string[];
   labelColumn: string;
+  debugIndices: number[];
 }
 
 type Props = OwnProps & DispatchProps & StateProps;
@@ -142,6 +143,7 @@ class ScatterPlotMatrix extends React.Component<Props, State> {
                 updateBrushDictionary={this.updateBrushDict}
                 pointSelection={this.state.pointSelection}
                 updatePointSelection={this.updatePointSelection}
+                debugIndices={this.props.debugIndices}
               />
             </g>
           </FullSizeSVG>
