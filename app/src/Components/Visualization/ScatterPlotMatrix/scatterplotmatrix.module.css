@@ -58,3 +58,10 @@
   stroke: black;
   stroke-width: 3px;
 }
+
+.circular_selection_debug {
+  fill: green;
+  stroke: darkgreen;
+  opacity: 1;
+  stroke-width: 1.5px;
+}
