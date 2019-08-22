@@ -36,6 +36,8 @@ interface OwnProps {
   pointSelection: number[];
   updatePointSelection: (points: number[]) => void;
   debugIndices: number[];
+  debugShowSelected: boolean;
+  debugSelectedPoints: number[];
 }
 
 interface SPMDimension extends Dimension<number> {
@@ -85,7 +87,10 @@ class SPMComponent extends React.Component<Props, State> {
       JSON.stringify(this.props.pointSelection) ===
         JSON.stringify(prevProps.pointSelection) &&
       JSON.stringify(this.props.debugIndices) ===
-        JSON.stringify(prevProps.debugIndices)
+        JSON.stringify(prevProps.debugIndices) &&
+      JSON.stringify(this.props.debugSelectedPoints) ===
+        JSON.stringify(prevProps.debugSelectedPoints) &&
+      this.props.debugShowSelected === prevProps.debugShowSelected
     )
       return;
 
@@ -311,22 +316,28 @@ class SPMComponent extends React.Component<Props, State> {
         select(this).classed(styles.union_circular_mark, false);
         select(this).classed(styles.selected_circular_mark, false);
         select(this).classed(styles.circular_mark_debug, false);
+        select(this).classed(styles.circular_selection_debug, false);
 
-        if (highlightIndices[i] > 1) {
-          select(this).classed(styles.regular_circular_mark, false);
-          select(this).classed(styles.union_circular_mark, true);
-          select(this).raise();
-        } else if (highlightIndices[i] > 0) {
-          select(this).classed(styles.regular_circular_mark, false);
-          select(this).classed(styles.selected_circular_mark, true);
-          select(this).raise();
-        }
+        if (instance.props.debugShowSelected) {
+          if (instance.props.debugSelectedPoints.includes(i))
+            select(this).classed(styles.circular_selection_debug, true);
+        } else {
+          if (highlightIndices[i] > 1) {
+            select(this).classed(styles.regular_circular_mark, false);
+            select(this).classed(styles.union_circular_mark, true);
+            select(this).raise();
+          } else if (highlightIndices[i] > 0) {
+            select(this).classed(styles.regular_circular_mark, false);
+            select(this).classed(styles.selected_circular_mark, true);
+            select(this).raise();
+          }
 
-        if (
-          instance.props.debugIndices &&
-          instance.props.debugIndices.includes(i)
-        ) {
-          select(this).classed(styles.circular_mark_debug, true);
+          if (
+            instance.props.debugIndices &&
+            instance.props.debugIndices.includes(i)
+          ) {
+            select(this).classed(styles.circular_mark_debug, true);
+          }
         }
       });
 
