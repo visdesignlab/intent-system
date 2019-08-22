@@ -28,8 +28,10 @@ interface State {
   height: number;
   width: number;
   hideZero: boolean;
+  showSelected: boolean;
   debugIndices: number[];
   debugColumns: string[];
+  debugSelectedPoints: number[];
 }
 
 type Props = StateProps & DispatchProps;
@@ -43,7 +45,9 @@ class App extends React.Component<Props, State> {
     width: 0,
     hideZero: false,
     debugIndices: [],
-    debugColumns: []
+    debugColumns: [],
+    showSelected: false,
+    debugSelectedPoints: []
   };
 
   componentDidMount() {
@@ -70,7 +74,9 @@ class App extends React.Component<Props, State> {
       predictionSet.predictions.length !==
         prevProps.predictionSet.predictions.length ||
       JSON.stringify(predictionSet.dimensions) !==
-        JSON.stringify(prevProps.predictionSet.dimensions)
+        JSON.stringify(prevProps.predictionSet.dimensions) ||
+      JSON.stringify(predictionSet.selectedIds) !==
+        JSON.stringify(prevProps.predictionSet.selectedIds)
     ) {
       predSvgSelection
         .style("height", `${predictions.length * 50}px`)
@@ -78,7 +84,8 @@ class App extends React.Component<Props, State> {
       this.setState({
         height: predSvg.clientHeight,
         width: predSvg.clientWidth,
-        debugColumns: predictionSet.dimensions
+        debugColumns: predictionSet.dimensions,
+        debugSelectedPoints: predictionSet.selectedIds
       });
     }
   }
@@ -92,7 +99,7 @@ class App extends React.Component<Props, State> {
       changeVisualization,
       columns
     } = this.props;
-    const { width, hideZero } = this.state;
+    const { width, hideZero, showSelected } = this.state;
 
     let { predictionSet } = this.props;
     let { predictions } = predictionSet;
@@ -129,6 +136,8 @@ class App extends React.Component<Props, State> {
                       labelColumn={labelColumn}
                       debugIndices={this.state.debugIndices}
                       debugColumns={this.state.debugColumns}
+                      debugShowSelected={this.state.showSelected}
+                      debugSelectedPoints={this.state.debugSelectedPoints}
                     />
                   )
                 );
@@ -168,16 +177,30 @@ class App extends React.Component<Props, State> {
             <Header textAlign="center" size="huge">
               Predictions
             </Header>
-            <Checkbox
-              label="Hide 0"
-              toggle
-              checked={hideZero}
-              onChange={() =>
-                this.setState({
-                  hideZero: !hideZero
-                })
-              }
-            />
+            <div>
+              <Checkbox
+                label="Hide 0"
+                toggle
+                checked={hideZero}
+                onChange={() =>
+                  this.setState({
+                    hideZero: !hideZero
+                  })
+                }
+              />
+            </div>
+            <div>
+              <Checkbox
+                label="Show selected IDs"
+                toggle
+                checked={showSelected}
+                onChange={() =>
+                  this.setState({
+                    showSelected: !showSelected
+                  })
+                }
+              />
+            </div>
           </Segment>
           {(!predictions || predictions.length <= 0) && (
             <Header textAlign="center"> Please Make Selection</Header>

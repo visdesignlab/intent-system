@@ -32,6 +32,8 @@ interface OwnProps {
   labelColumn: string;
   debugIndices: number[];
   debugColumns: string[];
+  debugShowSelected: boolean;
+  debugSelectedPoints: number[];
 }
 
 type Props = OwnProps & DispatchProps & StateProps;
@@ -146,6 +148,8 @@ class ScatterPlotMatrix extends React.Component<Props, State> {
                 pointSelection={this.state.pointSelection}
                 updatePointSelection={this.updatePointSelection}
                 debugIndices={this.props.debugIndices}
+                debugShowSelected={this.props.debugShowSelected}
+                debugSelectedPoints={this.props.debugSelectedPoints}
               />
             </g>
           </FullSizeSVG>
