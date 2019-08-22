@@ -1,6 +1,6 @@
 from .dataset import Dataset
 from .dimensions import Dimensions
-from .algorithms import Outlier, Skyline, Range, KMeansCluster, Categories
+from .algorithms import Outlier, Skyline, Range, KMeansCluster, Categories, DBSCANCluster
 
 from .vendor.interactions import Interaction, InteractionTypeKind, PredictionSet
 
@@ -34,6 +34,7 @@ class Inference:
             Skyline(),
             Range(),
             KMeansCluster(),
+            DBSCANCluster(),
             Categories(dataset),
         ]
 
