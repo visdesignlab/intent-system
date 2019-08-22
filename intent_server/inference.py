@@ -35,8 +35,8 @@ def relevant_ids(interactions: List[Interaction]) -> Set[int]:
         elif is_brush_selection(ix):
             rects.update({ix.interaction_type.brush_id: ix})
 
-    for ix in rects:
-        points.update([int(x) for x in rects[ix].interaction_type.data_ids])  # type: ignore
+    for brush_id in rects:
+        points.update([int(x) for x in rects[brush_id].interaction_type.data_ids])  # type: ignore
 
     return points
 
