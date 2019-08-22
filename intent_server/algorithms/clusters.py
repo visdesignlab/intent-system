@@ -2,9 +2,7 @@ from sklearn.cluster import KMeans
 
 import pandas as pd
 
-from ..intent import IntentMulticlass, IntentMulticlassInstance
-
-from typing import List
+from ..intent import IntentMulticlass
 
 
 class KMeansCluster(IntentMulticlass):
@@ -14,19 +12,19 @@ class KMeansCluster(IntentMulticlass):
     def to_string(self) -> str:
         return 'Cluster'
 
-    def instances(self, df: pd.DataFrame) -> List[IntentMulticlassInstance]:
+    def compute(self, df: pd.DataFrame) -> pd.DataFrame:
         nan_dropped = df.dropna()
         self.kmeans.fit(nan_dropped)
-        columnName = 'Labels'
 
         labels = pd.DataFrame(data=self.kmeans.labels_,
-                              index=nan_dropped.index,
-                              columns=[columnName]).applymap(str)
+                              index=nan_dropped.index).applymap(str)
 
         inc_nan = labels.reindex(index=df.index, fill_value='NaN')
-        values = inc_nan[columnName].unique()
-        return list(
-            map(
-                lambda v: IntentMulticlassInstance(
-                    inc_nan[columnName] == v, self.to_string() + ':' + columnName + ':' + str(v)),
-                values))
+        values = inc_nan.iloc[:, 0].unique()
+        result = pd.concat(
+            map(lambda v: pd.DataFrame(  # type: ignore
+                data=(inc_nan.iloc[:, 0] == v).astype('int').values,
+                columns=[self.to_string() + ":" + v],
+                index=df.index, dtype=int),
+                values), axis='columns')
+        return result
