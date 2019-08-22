@@ -1,24 +1,19 @@
-import * as React from "react";
+import { VisualizationType } from '@visdesignlab/intent-contract';
+import { select } from 'd3';
+import * as React from 'react';
+import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
+import { Dropdown, Header, Segment } from 'semantic-ui-react';
+import styled from 'styled-components';
 
-import { Dimension, DimensionType } from "../Data Types/Dimension";
-import {
-  InteractionHistoryAction,
-  InteractionHistoryActions
-} from "../../../App/VisStore/InteractionHistoryReducer";
-
-import { BrushDictionary } from "../Data Types/BrushType";
-import DimensionSelector from "../../DimensionSelector/DimensionSelector";
-import { Dispatch } from "redux";
-import ScatterPlotComponent from "../ScatterPlotComponent/ScatterPlotComponent";
-import { VisualizationType } from "@visdesignlab/intent-contract";
-import { connect } from "react-redux";
-import styled from "styled-components";
-import FullSizeSVG from "../ReusableComponents/FullSizeSVG";
-import { Segment, Header, Dropdown } from "semantic-ui-react";
-
-import styles from "./scatterplot.module.css";
-import { select } from "d3";
-import { datasets, changeDataset } from "../../..";
+import { changeDataset, datasets } from '../../..';
+import { InteractionHistoryAction, InteractionHistoryActions } from '../../../App/VisStore/InteractionHistoryReducer';
+import DimensionSelector from '../../DimensionSelector/DimensionSelector';
+import { BrushDictionary } from '../Data Types/BrushType';
+import { Dimension, DimensionType } from '../Data Types/Dimension';
+import FullSizeSVG from '../ReusableComponents/FullSizeSVG';
+import ScatterPlotComponent from '../ScatterPlotComponent/ScatterPlotComponent';
+import styles from './scatterplot.module.css';
 
 interface State {
   svgHeight: number;
@@ -178,6 +173,7 @@ class ScatterPlot extends React.Component<Props, State> {
             selection={[selectedX]}
             disabledDimensions={[selectedY]}
             notifyColumnChange={(col: string) => this.changeX(col)}
+            debugBackend={[]}
           />
           <DimensionSelector
             label="Y Axis"
@@ -185,6 +181,7 @@ class ScatterPlot extends React.Component<Props, State> {
             selection={[selectedY]}
             disabledDimensions={[selectedX]}
             notifyColumnChange={(col: string) => this.changeY(col)}
+            debugBackend={[]}
           />
         </DimensionSelectorGrid>
         <Segment>

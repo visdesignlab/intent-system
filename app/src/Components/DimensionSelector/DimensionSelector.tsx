@@ -1,14 +1,13 @@
-import * as React from "react";
-
-import { Menu, MenuItemProps, MenuProps } from "semantic-ui-react";
-
-import styled from "styled-components";
+import * as React from 'react';
+import { Icon, Menu, MenuItemProps, MenuProps } from 'semantic-ui-react';
+import styled from 'styled-components';
 
 interface OwnProps {
   label: string;
   dimensions: string[];
   disabledDimensions: string[];
   selection: string[];
+  debugBackend: string[];
   notifyColumnChange: (coL: string) => void;
 }
 
@@ -19,7 +18,8 @@ const DimensionSelector: React.FC<Props> = ({
   dimensions,
   disabledDimensions,
   selection,
-  notifyColumnChange
+  notifyColumnChange,
+  debugBackend
 }) => {
   return dimensions && dimensions.length > 0 ? (
     <WrappedMenu pointing secondary borderless stackable>
@@ -33,7 +33,12 @@ const DimensionSelector: React.FC<Props> = ({
           onClick={() => {
             notifyColumnChange(dim);
           }}
-        />
+        >
+          {dim}
+          {debugBackend.includes(dim) && (
+            <Icon name="bullseye" size="mini" color="red" />
+          )}
+        </Menu.Item>
       ))}
     </WrappedMenu>
   ) : (
