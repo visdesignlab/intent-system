@@ -29,6 +29,7 @@ interface State {
   width: number;
   hideZero: boolean;
   debugIndices: number[];
+  debugColumns: string[];
 }
 
 type Props = StateProps & DispatchProps;
@@ -41,7 +42,8 @@ class App extends React.Component<Props, State> {
     height: 0,
     width: 0,
     hideZero: false,
-    debugIndices: []
+    debugIndices: [],
+    debugColumns: []
   };
 
   componentDidMount() {
@@ -66,14 +68,17 @@ class App extends React.Component<Props, State> {
       this.state.height !== predSvg.clientHeight ||
       this.state.width !== predSvg.clientWidth ||
       predictionSet.predictions.length !==
-        prevProps.predictionSet.predictions.length
+        prevProps.predictionSet.predictions.length ||
+      JSON.stringify(predictionSet.dimensions) !==
+        JSON.stringify(prevProps.predictionSet.dimensions)
     ) {
       predSvgSelection
         .style("height", `${predictions.length * 50}px`)
         .style("width", `100%`);
       this.setState({
         height: predSvg.clientHeight,
-        width: predSvg.clientWidth
+        width: predSvg.clientWidth,
+        debugColumns: predictionSet.dimensions
       });
     }
   }
@@ -123,6 +128,7 @@ class App extends React.Component<Props, State> {
                       dimensions={numericColumns}
                       labelColumn={labelColumn}
                       debugIndices={this.state.debugIndices}
+                      debugColumns={this.state.debugColumns}
                     />
                   )
                 );

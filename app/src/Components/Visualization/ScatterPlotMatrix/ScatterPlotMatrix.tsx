@@ -31,6 +31,7 @@ interface OwnProps {
   dimensions: string[];
   labelColumn: string;
   debugIndices: number[];
+  debugColumns: string[];
 }
 
 type Props = OwnProps & DispatchProps & StateProps;
@@ -126,6 +127,7 @@ class ScatterPlotMatrix extends React.Component<Props, State> {
 
             this.updateSelection(selDims);
           }}
+          debugBackend={this.props.debugColumns}
         />
         <div ref={this.divRef} className={styles.square}>
           <FullSizeSVG ref={this.ref}>
