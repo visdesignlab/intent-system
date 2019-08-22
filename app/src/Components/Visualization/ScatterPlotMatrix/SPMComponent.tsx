@@ -1,5 +1,5 @@
 import { VisualizationType } from '@visdesignlab/intent-contract';
-import { axisBottom, axisLeft, brush, brushSelection, max, min, ScaleLinear, scaleLinear, select, values } from 'd3';
+import { axisBottom, axisLeft, brush, brushSelection, max, min, ScaleLinear, scaleLinear, select } from 'd3';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
