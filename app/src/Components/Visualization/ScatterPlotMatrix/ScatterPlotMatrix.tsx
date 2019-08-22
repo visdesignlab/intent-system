@@ -17,6 +17,7 @@ interface State {
   svgWidth: number;
   selectedDimensions: string[];
   brushDict: BrushDictionary;
+  pointSelection: number[];
 }
 
 interface DispatchProps {
@@ -41,7 +42,8 @@ class ScatterPlotMatrix extends React.Component<Props, State> {
     svgHeight: 0,
     svgWidth: 0,
     selectedDimensions: [],
-    brushDict: {}
+    brushDict: {},
+    pointSelection: []
   };
 
   componentDidMount() {
@@ -97,6 +99,10 @@ class ScatterPlotMatrix extends React.Component<Props, State> {
     this.setState({ brushDict });
   };
 
+  updatePointSelection = (pointSelection: number[]) => {
+    this.setState({ pointSelection });
+  };
+
   render() {
     const { dimensions, data, labelColumn } = this.props;
     const { selectedDimensions, svgHeight, svgWidth, brushDict } = this.state;
@@ -104,7 +110,6 @@ class ScatterPlotMatrix extends React.Component<Props, State> {
     const labels = data.map(r => r[labelColumn]);
 
     const lesserDim = svgHeight > svgWidth ? svgWidth : svgHeight;
-
     return (
       <ScatterPlotDiv>
         <DimensionSelector
@@ -135,6 +140,8 @@ class ScatterPlotMatrix extends React.Component<Props, State> {
                 YZero={false}
                 brushDict={brushDict}
                 updateBrushDictionary={this.updateBrushDict}
+                pointSelection={this.state.pointSelection}
+                updatePointSelection={this.updatePointSelection}
               />
             </g>
           </FullSizeSVG>

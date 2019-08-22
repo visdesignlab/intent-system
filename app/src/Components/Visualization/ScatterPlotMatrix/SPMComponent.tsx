@@ -1,15 +1,26 @@
 import { VisualizationType } from '@visdesignlab/intent-contract';
 import { axisBottom, axisLeft, brush, brushSelection, max, min, ScaleLinear, scaleLinear, select, values } from 'd3';
 import React from 'react';
+import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
 
+import { InteractionHistoryAction, InteractionHistoryActions } from '../../../App/VisStore/InteractionHistoryReducer';
 import { Brush, BrushDictionary } from '../Data Types/BrushType';
 import { Dimension, DimensionType } from '../Data Types/Dimension';
 import styles from './scatterplotmatrix.module.css';
 
 const emptyRegex = /[\n\r\s\t]+/g;
 
-// import MarkSeries from "../MarkSeries/MarkSeries";
-interface DispatchProps {}
+interface DispatchProps {
+  addPointSelection: (dimensions: string[], point: number) => void;
+  addPointDeselection: (dimensions: string[], point: number) => void;
+  addRectangularSelection: (
+    dimensions: string[],
+    brushId: string,
+    points: number[],
+    extents: number[][]
+  ) => void;
+}
 interface StateProps {}
 interface OwnProps {
   vis: VisualizationType;
@@ -22,8 +33,8 @@ interface OwnProps {
   data: any[];
   brushDict: BrushDictionary;
   updateBrushDictionary: (dict: BrushDictionary) => void;
-  // pointSelection: number[];
-  // updatePointSelection: (points: number[]) => void;
+  pointSelection: number[];
+  updatePointSelection: (points: number[]) => void;
 }
 
 interface SPMDimension extends Dimension<number> {
@@ -66,7 +77,14 @@ class SPMComponent extends React.Component<Props, State> {
 
   componentDidUpdate(prevProps: Props) {
     const { columns, height, width, data } = this.props;
-    if (columns === prevProps.columns && this.state.shouldUpdate <= 0) return;
+
+    if (
+      columns === prevProps.columns &&
+      this.state.shouldUpdate <= 0 &&
+      JSON.stringify(this.props.pointSelection) ===
+        JSON.stringify(prevProps.pointSelection)
+    )
+      return;
 
     const cellHeight = height / columns.length;
     const cellWidth = width / columns.length;
@@ -156,6 +174,19 @@ class SPMComponent extends React.Component<Props, State> {
         exit => exit.remove()
       );
 
+      marks.on("click", (_, i) => {
+        let sel = [...this.props.pointSelection];
+        if (sel.includes(i)) {
+          sel = sel.filter(idx => idx !== i);
+          this.props.updatePointSelection(sel);
+          this.props.addPointDeselection(this.props.columns, i);
+        } else {
+          sel.push(i);
+          this.props.updatePointSelection(sel);
+          this.props.addPointSelection(this.props.columns, i);
+        }
+      });
+
       const instance = this;
       const space = `${pair.X.label} ${pair.Y.label}`;
 
@@ -213,6 +244,13 @@ class SPMComponent extends React.Component<Props, State> {
             brushDict[space] = [br];
             instance.props.updateBrushDictionary(brushDict);
             instance.setState({ shouldUpdate: 2 });
+
+            instance.props.addRectangularSelection(
+              instance.props.columns,
+              br.id,
+              br.selectedPoints,
+              br.extents
+            );
           } else {
             const br: Brush = {
               id: id,
@@ -224,6 +262,12 @@ class SPMComponent extends React.Component<Props, State> {
             brushDict[space] = [br];
             instance.props.updateBrushDictionary(brushDict);
             instance.setState({ shouldUpdate: 2 });
+            instance.props.addRectangularSelection(
+              instance.props.columns,
+              br.id,
+              br.selectedPoints,
+              br.extents
+            );
           }
         });
 
@@ -255,6 +299,9 @@ class SPMComponent extends React.Component<Props, State> {
       const highlightIndices = new Uint8Array(pair.X.values.length);
 
       sel.forEach(s => (highlightIndices[s] = highlightIndices[s] + 1));
+      this.props.pointSelection.forEach(
+        sel => (highlightIndices[sel] = highlightIndices[sel] + 2)
+      );
 
       marks.each(function(_, i) {
         select(this).classed(styles.regular_circular_mark, true);
@@ -311,7 +358,6 @@ class SPMComponent extends React.Component<Props, State> {
   }
 
   render() {
-    const { height, width, labels } = this.props;
     const {
       cellHeight,
       cellWidth,
@@ -352,8 +398,8 @@ class SPMComponent extends React.Component<Props, State> {
                 />
                 <g className={styles.y_axis} />
               </g>
-              <g className={styles.marks} />
               <g className={styles.brush} />
+              <g className={styles.marks} />
             </g>
             <text transform={`translate(0, ${padding})`}>
               {p.X.label} {p.Y.label}
@@ -365,4 +411,60 @@ class SPMComponent extends React.Component<Props, State> {
   }
 }
 
-export default SPMComponent;
+const mapDispatchToProps = (
+  dispatch: Dispatch<InteractionHistoryAction>
+): DispatchProps => ({
+  addPointSelection: (dimensions: string[], point: number) => {
+    dispatch({
+      type: InteractionHistoryActions.ADD_INTERACTION,
+      args: {
+        visualizationType: VisualizationType.ScatterPlotMatrix,
+        interactionType: {
+          kind: "selection",
+          dimensions: dimensions,
+          dataIds: [point]
+        }
+      }
+    });
+  },
+  addPointDeselection: (dimensions: string[], point: number) => {
+    dispatch({
+      type: InteractionHistoryActions.ADD_INTERACTION,
+      args: {
+        visualizationType: VisualizationType.ScatterPlotMatrix,
+        interactionType: {
+          kind: "deselection",
+          dimensions: dimensions,
+          dataIds: [point]
+        }
+      }
+    });
+  },
+  addRectangularSelection: (
+    dimensions: string[],
+    brushId: string,
+    points: number[],
+    extents: number[][]
+  ) => {
+    dispatch({
+      type: InteractionHistoryActions.ADD_INTERACTION,
+      args: {
+        visualizationType: VisualizationType.ScatterPlotMatrix,
+        interactionType: {
+          dimensions: dimensions,
+          brushId: brushId,
+          dataIds: points,
+          left: extents[0][0],
+          right: extents[1][0],
+          top: extents[0][1],
+          bottom: extents[1][1]
+        }
+      }
+    });
+  }
+});
+
+export default connect(
+  null,
+  mapDispatchToProps
+)(SPMComponent);
