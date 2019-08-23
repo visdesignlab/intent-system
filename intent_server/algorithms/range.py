@@ -6,9 +6,10 @@ from ..vendor.interactions import Prediction
 import pandas as pd
 import numpy as np
 
-from typing import List
+from typing import List, Set, Tuple
 
-def decision_rules(model, selection, df):
+
+def decision_rules(model: tree, selection: np.ndarray, df: pd.DataFrame) -> Set[Tuple[str, ...]]:
     is_selected = np.array(selection[:, 0], dtype=bool)
     selected_rows = df[is_selected]
 
@@ -27,7 +28,7 @@ def decision_rules(model, selection, df):
         node_index = decision_path.indices[decision_path.indptr[sample_id]:
                                            decision_path.indptr[sample_id + 1]]
 
-        rules = []
+        rules: List[str] = []
         for node_id in node_index:
             if leave_id[sample_id] == node_id:
                 continue
@@ -43,6 +44,7 @@ def decision_rules(model, selection, df):
 
         paths.add(tuple(rules))
     return paths
+
 
 class Range(Intent):
     def __init__(self) -> None:
@@ -68,14 +70,14 @@ class Range(Intent):
         suggestion = None
 
         if model.get_depth() > 1:
-            sugg_model = tree.DecisionTreeClassifier(max_depth=model.get_depth()-1)
+            sugg_model = tree.DecisionTreeClassifier(max_depth=model.get_depth() - 1)
             sugg_model.fit(df, selection)
             sugg_paths = decision_rules(sugg_model, selection, df)
             suggestion = [Prediction(
                 intent=self.to_string() + ":Suggestion",
                 rank=0.3,
                 info={"rules": list(sugg_paths)})]
-           
+
         return [Prediction(
             intent=self.to_string(),
             rank=0.3,
