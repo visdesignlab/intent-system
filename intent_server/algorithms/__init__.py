@@ -1,7 +1,8 @@
 from .categories import Categories
-from .clusters import KMeansCluster
+from .kmeans import KMeansCluster
 from .outlier import Outlier
 from .range import Range
 from .skyline import Skyline
+from .dbscan import DBSCANCluster
 
-__all__ = ["Categories", "KMeansCluster", "Outlier", "Range", "Skyline"]
+__all__ = ["Categories", "KMeansCluster", "Outlier", "Range", "Skyline", "DBSCANCluster"]

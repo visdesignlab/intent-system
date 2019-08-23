@@ -10,7 +10,7 @@ class KMeansCluster(IntentMulticlass):
         self.kmeans = KMeans(n_clusters=3, random_state=0)
 
     def to_string(self) -> str:
-        return 'Cluster'
+        return 'Cluster:KMeans'
 
     def compute(self, df: pd.DataFrame) -> pd.DataFrame:
         nan_dropped = df.dropna()
