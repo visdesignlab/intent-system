@@ -25,9 +25,10 @@ export const InteractionHistoryReducer: Reducer<
 > = (current: InteractionHistory = [], action: InteractionHistoryAction) => {
   switch (action.type) {
     case InteractionHistoryActions.ADD_INTERACTION:
+      const interactions = [...current, action.args.interaction];
       const request: PredictionRequest = {
         multiBrushBehavior: action.args.multiBrushBehavior,
-        interactionHistory: [...current, action.args.interaction]
+        interactionHistory: interactions
       };
 
       axios.post(`/dataset/${datasetName}/predict`, request).then(response => {
@@ -38,7 +39,7 @@ export const InteractionHistoryReducer: Reducer<
         console.log("Arguments", action.args);
         console.log("Preds", response.data);
       });
-      return [...current, action.args.interaction];
+      return interactions;
     default:
       return [...current];
   }
