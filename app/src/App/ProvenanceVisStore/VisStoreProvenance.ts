@@ -3,6 +3,7 @@ import thunk from 'redux-thunk';
 
 import { DatasetReducer } from '../VisStore/DatasetReducers';
 import { InteractionHistoryReducer } from '../VisStore/InteractionHistoryReducer';
+import { MultiBrushBehaviorReducer } from '../VisStore/MultiBrushBehaviorReducer';
 import { PredictionActionReducer } from '../VisStore/PredictionsReducer';
 import { VisualizationReducer } from '../VisStore/VisualizationReducer';
 import { VisualizationState } from '../VisStore/VisualizationState';
@@ -27,6 +28,7 @@ const reducer = () => {
     dataset: DatasetReducer,
     visualization: VisualizationReducer,
     interactions: InteractionHistoryReducer,
-    predictionSet: PredictionActionReducer
+    predictionSet: PredictionActionReducer,
+    mutliBrushBehavior: MultiBrushBehaviorReducer
   });
 };

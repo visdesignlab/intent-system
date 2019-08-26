@@ -1,10 +1,11 @@
-import { VisualizationType } from '@visdesignlab/intent-contract';
+import { MultiBrushBehavior, VisualizationType } from '@visdesignlab/intent-contract';
 import { axisBottom, axisLeft, brush, brushSelection, max, min, ScaleLinear, scaleLinear, select } from 'd3';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 
 import { InteractionHistoryAction, InteractionHistoryActions } from '../../../App/VisStore/InteractionHistoryReducer';
+import { VisualizationState } from '../../../App/VisStore/VisualizationState';
 import { Brush, BrushDictionary } from '../Data Types/BrushType';
 import { Dimension, DimensionType } from '../Data Types/Dimension';
 import styles from './scatterplotmatrix.module.css';
@@ -12,16 +13,27 @@ import styles from './scatterplotmatrix.module.css';
 const emptyRegex = /[\n\r\s\t]+/g;
 
 interface DispatchProps {
-  addPointSelection: (dimensions: string[], point: number) => void;
-  addPointDeselection: (dimensions: string[], point: number) => void;
+  addPointSelection: (
+    dimensions: string[],
+    point: number,
+    brushBehavior: MultiBrushBehavior
+  ) => void;
+  addPointDeselection: (
+    dimensions: string[],
+    point: number,
+    brushBehavior: MultiBrushBehavior
+  ) => void;
   addRectangularSelection: (
     dimensions: string[],
     brushId: string,
     points: number[],
-    extents: number[][]
+    extents: number[][],
+    brushBehavior: MultiBrushBehavior
   ) => void;
 }
-interface StateProps {}
+interface StateProps {
+  brushBehavior: MultiBrushBehavior;
+}
 interface OwnProps {
   vis: VisualizationType;
   height: number;
@@ -187,11 +199,19 @@ class SPMComponent extends React.Component<Props, State> {
         if (sel.includes(i)) {
           sel = sel.filter(idx => idx !== i);
           this.props.updatePointSelection(sel);
-          this.props.addPointDeselection(this.props.columns, i);
+          this.props.addPointDeselection(
+            this.props.columns,
+            i,
+            instance.props.brushBehavior
+          );
         } else {
           sel.push(i);
           this.props.updatePointSelection(sel);
-          this.props.addPointSelection(this.props.columns, i);
+          this.props.addPointSelection(
+            this.props.columns,
+            i,
+            instance.props.brushBehavior
+          );
         }
       });
 
@@ -257,7 +277,8 @@ class SPMComponent extends React.Component<Props, State> {
               instance.props.columns,
               br.id,
               br.selectedPoints,
-              br.extents
+              br.extents,
+              instance.props.brushBehavior
             );
           } else {
             const br: Brush = {
@@ -274,7 +295,8 @@ class SPMComponent extends React.Component<Props, State> {
               instance.props.columns,
               br.id,
               br.selectedPoints,
-              br.extents
+              br.extents,
+              instance.props.brushBehavior
             );
           }
         });
@@ -435,28 +457,42 @@ class SPMComponent extends React.Component<Props, State> {
 const mapDispatchToProps = (
   dispatch: Dispatch<InteractionHistoryAction>
 ): DispatchProps => ({
-  addPointSelection: (dimensions: string[], point: number) => {
+  addPointSelection: (
+    dimensions: string[],
+    point: number,
+    brushBehavior: MultiBrushBehavior
+  ) => {
     dispatch({
       type: InteractionHistoryActions.ADD_INTERACTION,
       args: {
-        visualizationType: VisualizationType.ScatterPlotMatrix,
-        interactionType: {
-          kind: "selection",
-          dimensions: dimensions,
-          dataIds: [point]
+        multiBrushBehavior: brushBehavior,
+        interaction: {
+          visualizationType: VisualizationType.ScatterPlotMatrix,
+          interactionType: {
+            kind: "selection",
+            dimensions: dimensions,
+            dataIds: [point]
+          }
         }
       }
     });
   },
-  addPointDeselection: (dimensions: string[], point: number) => {
+  addPointDeselection: (
+    dimensions: string[],
+    point: number,
+    brushBehavior: MultiBrushBehavior
+  ) => {
     dispatch({
       type: InteractionHistoryActions.ADD_INTERACTION,
       args: {
-        visualizationType: VisualizationType.ScatterPlotMatrix,
-        interactionType: {
-          kind: "deselection",
-          dimensions: dimensions,
-          dataIds: [point]
+        multiBrushBehavior: brushBehavior,
+        interaction: {
+          visualizationType: VisualizationType.ScatterPlotMatrix,
+          interactionType: {
+            kind: "deselection",
+            dimensions: dimensions,
+            dataIds: [point]
+          }
         }
       }
     });
@@ -465,27 +501,35 @@ const mapDispatchToProps = (
     dimensions: string[],
     brushId: string,
     points: number[],
-    extents: number[][]
+    extents: number[][],
+    brushBehavior: MultiBrushBehavior
   ) => {
     dispatch({
       type: InteractionHistoryActions.ADD_INTERACTION,
       args: {
-        visualizationType: VisualizationType.ScatterPlotMatrix,
-        interactionType: {
-          dimensions: dimensions,
-          brushId: brushId,
-          dataIds: points,
-          left: extents[0][0],
-          right: extents[1][0],
-          top: extents[0][1],
-          bottom: extents[1][1]
+        multiBrushBehavior: brushBehavior,
+        interaction: {
+          visualizationType: VisualizationType.ScatterPlotMatrix,
+          interactionType: {
+            dimensions: dimensions,
+            brushId: brushId,
+            dataIds: points,
+            left: extents[0][0],
+            right: extents[1][0],
+            top: extents[0][1],
+            bottom: extents[1][1]
+          }
         }
       }
     });
   }
 });
 
+const mapStateToProps = (state: VisualizationState): StateProps => ({
+  brushBehavior: state.mutliBrushBehavior
+});
+
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(SPMComponent);

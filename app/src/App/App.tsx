@@ -1,4 +1,4 @@
-import { PredictionSet, VisualizationType } from '@visdesignlab/intent-contract';
+import { InteractionHistory, MultiBrushBehavior, PredictionSet, VisualizationType } from '@visdesignlab/intent-contract';
 import { scaleLinear, select } from 'd3';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -6,8 +6,10 @@ import { Dispatch } from 'redux';
 import { Checkbox, Container, ContainerProps, Header, Popup, Segment, SegmentProps } from 'semantic-ui-react';
 import styled from 'styled-components';
 
+import { VisStore } from '..';
 import ScatterPlot from '../Components/Visualization/ScatterPlot/ScatterPlot';
 import ScatterPlotMatrix from '../Components/Visualization/ScatterPlotMatrix/ScatterPlotMatrix';
+import { MultiBrushBehaviorAction, MultiBrushBehaviorActions } from './VisStore/MultiBrushBehaviorReducer';
 import { VisualizationChangeAction, VisualizationChangeActions } from './VisStore/VisualizationReducer';
 import { VisualizationState } from './VisStore/VisualizationState';
 
@@ -22,6 +24,10 @@ interface StateProps {
 
 interface DispatchProps {
   changeVisualization: (vis: VisualizationType) => void;
+  changeMultiBrushBehavior: (
+    behavior: MultiBrushBehavior,
+    interactionHistory: InteractionHistory
+  ) => void;
 }
 
 interface State {
@@ -29,6 +35,7 @@ interface State {
   width: number;
   hideZero: boolean;
   showSelected: boolean;
+  multiBrushIsUnion: boolean;
   debugIndices: number[];
   debugColumns: string[];
   debugSelectedPoints: number[];
@@ -47,7 +54,8 @@ class App extends React.Component<Props, State> {
     debugIndices: [],
     debugColumns: [],
     showSelected: false,
-    debugSelectedPoints: []
+    debugSelectedPoints: [],
+    multiBrushIsUnion: false
   };
 
   componentDidMount() {
@@ -97,9 +105,10 @@ class App extends React.Component<Props, State> {
       labelColumn,
       visualization,
       changeVisualization,
+      changeMultiBrushBehavior,
       columns
     } = this.props;
-    const { width, hideZero, showSelected } = this.state;
+    const { width, hideZero, showSelected, multiBrushIsUnion } = this.state;
 
     let { predictionSet } = this.props;
     let { predictions } = predictionSet;
@@ -201,6 +210,26 @@ class App extends React.Component<Props, State> {
                 }
               />
             </div>
+            <div>
+              <Checkbox
+                label={`Multi Brush Behavior: ${
+                  multiBrushIsUnion ? "Union" : "Intersection"
+                }`}
+                toggle
+                checked={multiBrushIsUnion}
+                onChange={() => {
+                  this.setState({
+                    multiBrushIsUnion: !multiBrushIsUnion
+                  });
+                  changeMultiBrushBehavior(
+                    !multiBrushIsUnion
+                      ? MultiBrushBehavior.UNION
+                      : MultiBrushBehavior.INTERSECTION,
+                    VisStore.visStore().getState().interactions
+                  );
+                }}
+              />
+            </div>
           </Segment>
           {(!predictions || predictions.length <= 0) && (
             <Header textAlign="center"> Please Make Selection</Header>
@@ -279,12 +308,24 @@ const mapStateToProps = (state: VisualizationState): StateProps => ({
 });
 
 const mapDispatchToProps = (
-  dispatch: Dispatch<VisualizationChangeAction>
+  dispatch: Dispatch<VisualizationChangeAction | MultiBrushBehaviorAction>
 ): DispatchProps => ({
   changeVisualization: (vis: VisualizationType) => {
     dispatch({
       type: VisualizationChangeActions.CHANGE_VISUALIZATION,
       args: vis
+    });
+  },
+  changeMultiBrushBehavior: (
+    brush: MultiBrushBehavior,
+    interactionHistory: InteractionHistory
+  ) => {
+    dispatch({
+      type: MultiBrushBehaviorActions.SWITCH,
+      args: {
+        multiBrushBehavior: brush,
+        interactions: interactionHistory
+      }
     });
   }
 });
