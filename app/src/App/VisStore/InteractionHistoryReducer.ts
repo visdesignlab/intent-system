@@ -36,7 +36,7 @@ export const InteractionHistoryReducer: Reducer<
           type: PredictionActions.UPDATE_PREDICATION,
           args: response.data
         });
-        console.log("Arguments", action.args);
+        console.log("Arguments", interactions);
         console.log("Preds", response.data);
       });
       return interactions;
