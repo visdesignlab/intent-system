@@ -3,7 +3,7 @@ from flask import Blueprint, jsonify, request, redirect
 from .dataset import Dataset
 from .dimensions import Dimensions
 from .inference import Inference
-from .vendor.interactions import interaction_history_from_dict
+from .vendor.interactions import prediction_request_from_dict
 
 # Load and preprocess the dataset
 datasets = {
@@ -44,7 +44,8 @@ def route_dataset_info(dataset_name):  # type: ignore
 
 @views.route('/dataset/<dataset_name>/predict', methods=['POST'])
 def route_dataset_predict(dataset_name):  # type: ignore
-    interaction_hist = interaction_history_from_dict(request.json)
+    prediction_request = prediction_request_from_dict(request.json)
+    interaction_hist = prediction_request.interaction_history
     ds = datasets[dataset_name]
     predictions = Inference(ds).predict(interaction_hist)
     return jsonify(predictions.to_dict())
