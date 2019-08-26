@@ -11,6 +11,8 @@
 #     result = rectangular_selection_from_dict(json.loads(json_string))
 #     result = change_axis_from_dict(json.loads(json_string))
 #     result = clear_all_selections_from_dict(json.loads(json_string))
+#     result = multi_brush_behavior_from_dict(json.loads(json_string))
+#     result = prediction_request_from_dict(json.loads(json_string))
 #     result = interaction_from_dict(json.loads(json_string))
 #     result = interaction_history_from_dict(json.loads(json_string))
 #     result = prediction_from_dict(json.loads(json_string))
@@ -290,6 +292,30 @@ class Interaction:
         return result
 
 
+class MultiBrushBehavior(Enum):
+    INTERSECTION = "INTERSECTION"
+    UNION = "UNION"
+
+
+@dataclass
+class PredictionRequest:
+    interaction_history: List[Interaction]
+    multi_brush_behavior: MultiBrushBehavior
+
+    @staticmethod
+    def from_dict(obj: Any) -> 'PredictionRequest':
+        assert isinstance(obj, dict)
+        interaction_history = from_list(Interaction.from_dict, obj.get("interactionHistory"))
+        multi_brush_behavior = MultiBrushBehavior(obj.get("multiBrushBehavior"))
+        return PredictionRequest(interaction_history, multi_brush_behavior)
+
+    def to_dict(self) -> dict:
+        result: dict = {}
+        result["interactionHistory"] = from_list(lambda x: to_class(Interaction, x), self.interaction_history)
+        result["multiBrushBehavior"] = to_enum(MultiBrushBehavior, self.multi_brush_behavior)
+        return result
+
+
 @dataclass
 class Prediction:
     intent: str
@@ -394,6 +420,22 @@ def clear_all_selections_from_dict(s: Any) -> ClearAllSelections:
 
 def clear_all_selections_to_dict(x: ClearAllSelections) -> Any:
     return to_class(ClearAllSelections, x)
+
+
+def multi_brush_behavior_from_dict(s: Any) -> MultiBrushBehavior:
+    return MultiBrushBehavior(s)
+
+
+def multi_brush_behavior_to_dict(x: MultiBrushBehavior) -> Any:
+    return to_enum(MultiBrushBehavior, x)
+
+
+def prediction_request_from_dict(s: Any) -> PredictionRequest:
+    return PredictionRequest.from_dict(s)
+
+
+def prediction_request_to_dict(x: PredictionRequest) -> Any:
+    return to_class(PredictionRequest, x)
 
 
 def interaction_from_dict(s: Any) -> Interaction:
