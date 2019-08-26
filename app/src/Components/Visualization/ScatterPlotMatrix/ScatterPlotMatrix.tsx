@@ -1,4 +1,4 @@
-import { VisualizationType } from '@visdesignlab/intent-contract';
+import { MultiBrushBehavior, VisualizationType } from '@visdesignlab/intent-contract';
 import { select } from 'd3';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -6,6 +6,7 @@ import { Dispatch } from 'redux';
 import styled from 'styled-components';
 
 import { InteractionHistoryAction, InteractionHistoryActions } from '../../../App/VisStore/InteractionHistoryReducer';
+import { VisualizationState } from '../../../App/VisStore/VisualizationState';
 import DimensionSelector from '../../DimensionSelector/DimensionSelector';
 import { BrushDictionary } from '../Data Types/BrushType';
 import FullSizeSVG from '../ReusableComponents/FullSizeSVG';
@@ -21,10 +22,18 @@ interface State {
 }
 
 interface DispatchProps {
-  addEmptyInteraction: (dimensions: string[]) => void;
-  addChangeAxisInteraction: (dimensions: string[]) => void;
+  addEmptyInteraction: (
+    dimensions: string[],
+    brushBehavior: MultiBrushBehavior
+  ) => void;
+  addChangeAxisInteraction: (
+    dimensions: string[],
+    brushBehavior: MultiBrushBehavior
+  ) => void;
 }
-interface StateProps {}
+interface StateProps {
+  brushBehavior: MultiBrushBehavior;
+}
 
 interface OwnProps {
   data: any[];
@@ -67,7 +76,7 @@ class ScatterPlotMatrix extends React.Component<Props, State> {
       svgWidth: lesser,
       selectedDimensions: dims
     });
-    this.props.addEmptyInteraction(dims);
+    this.props.addEmptyInteraction(dims, this.props.brushBehavior);
   }
 
   componentWillMount() {
@@ -96,7 +105,10 @@ class ScatterPlotMatrix extends React.Component<Props, State> {
   updateSelection = (selectedDimensions: string[]) => {
     this.setState({ selectedDimensions });
     console.log("Hello");
-    this.props.addChangeAxisInteraction(selectedDimensions);
+    this.props.addChangeAxisInteraction(
+      selectedDimensions,
+      this.props.brushBehavior
+    );
   };
 
   updateBrushDict = (brushDict: BrushDictionary) => {
@@ -159,34 +171,50 @@ class ScatterPlotMatrix extends React.Component<Props, State> {
   }
 }
 
+const mapStateToProps = (state: VisualizationState): StateProps => ({
+  brushBehavior: state.mutliBrushBehavior
+});
+
 const mapDispatchToProps = (
   dispatch: Dispatch<InteractionHistoryAction>
 ): DispatchProps => ({
-  addEmptyInteraction: (dimensions: string[]) => {
+  addEmptyInteraction: (
+    dimensions: string[],
+    brushBehavior: MultiBrushBehavior
+  ) => {
     dispatch({
       type: InteractionHistoryActions.ADD_INTERACTION,
       args: {
-        visualizationType: VisualizationType.ScatterPlotMatrix,
-        interactionType: {
-          dimensions: dimensions
+        multiBrushBehavior: brushBehavior,
+        interaction: {
+          visualizationType: VisualizationType.ScatterPlotMatrix,
+          interactionType: {
+            dimensions: dimensions
+          }
         }
       }
     });
   },
-  addChangeAxisInteraction: (dimensions: string[]) => {
+  addChangeAxisInteraction: (
+    dimensions: string[],
+    brushBehavior: MultiBrushBehavior
+  ) => {
     dispatch({
       type: InteractionHistoryActions.ADD_INTERACTION,
       args: {
-        visualizationType: VisualizationType.ScatterPlotMatrix,
-        interactionType: {
-          dimensions: dimensions
+        multiBrushBehavior: brushBehavior,
+        interaction: {
+          visualizationType: VisualizationType.ScatterPlotMatrix,
+          interactionType: {
+            dimensions: dimensions
+          }
         }
       }
     });
   }
 });
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(ScatterPlotMatrix);
 

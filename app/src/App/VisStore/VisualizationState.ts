@@ -1,4 +1,4 @@
-import { InteractionHistory, PredictionSet, VisualizationType } from '@visdesignlab/intent-contract';
+import { InteractionHistory, MultiBrushBehavior, PredictionSet, VisualizationType } from '@visdesignlab/intent-contract';
 
 import { Dataset } from './Dataset';
 
@@ -7,4 +7,5 @@ export interface VisualizationState {
   visualization: VisualizationType;
   interactions: InteractionHistory;
   predictionSet: PredictionSet;
+  mutliBrushBehavior: MultiBrushBehavior;
 }
