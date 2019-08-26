@@ -38,7 +38,7 @@ export const InteractionHistoryReducer: Reducer<
         console.log("Arguments", action.args);
         console.log("Preds", response.data);
       });
-      return [...current];
+      return [...current, action.args.interaction];
     default:
       return [...current];
   }
