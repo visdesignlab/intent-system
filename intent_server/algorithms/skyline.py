@@ -39,7 +39,7 @@ class Skyline(IntentMulticlass):
         # Get all permutations of the sign
         permutations = [list(i) for i in itertools.product([-1, 1], repeat=len(data.columns))]
 
-        result = pd.concat(map(lambda perm: self.skyline_for_permutation(
+        result = pd.concat(map(lambda perm: self.skyline_for_permutation(  # type: ignore
             np.array(perm), data), permutations), axis='columns')
         return result
 
