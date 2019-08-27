@@ -47,5 +47,5 @@ def route_dataset_predict(dataset_name):  # type: ignore
     prediction_request = prediction_request_from_dict(request.json)
     interaction_hist = prediction_request.interaction_history
     ds = datasets[dataset_name]
-    predictions = Inference(ds).predict(interaction_hist)
+    predictions = Inference(ds).predict(interaction_hist, prediction_request.multi_brush_behavior)
     return jsonify(predictions.to_dict())
