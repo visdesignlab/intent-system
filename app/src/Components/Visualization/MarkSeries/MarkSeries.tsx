@@ -1,20 +1,17 @@
-import * as React from "react";
+import { MultiBrushBehavior, VisualizationType } from '@visdesignlab/intent-contract';
+import axios from 'axios';
+import { brush, brushSelection, max, ScaleLinear, select } from 'd3';
+import * as React from 'react';
+import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
+import { Header, Popup } from 'semantic-ui-react';
+import styled from 'styled-components';
 
-import { Brush, BrushDictionary } from "../Data Types/BrushType";
-import { ScaleLinear, brush, brushSelection, select, max } from "d3";
-
-import { MarkData } from "../Data Types/MarkData";
-import { Popup, Header } from "semantic-ui-react";
-import styled from "styled-components";
-import { VisualizationType } from "@visdesignlab/intent-contract";
-import {
-  InteractionHistoryAction,
-  InteractionHistoryActions
-} from "../../../App/VisStore/InteractionHistoryReducer";
-import { Dispatch } from "redux";
-import { connect } from "react-redux";
-import axios from "axios";
-import { datasetName } from "../../..";
+import { datasetName } from '../../..';
+import { InteractionHistoryAction, InteractionHistoryActions } from '../../../App/VisStore/InteractionHistoryReducer';
+import { VisualizationState } from '../../../App/VisStore/VisualizationState';
+import { Brush, BrushDictionary } from '../Data Types/BrushType';
+import { MarkData } from '../Data Types/MarkData';
 
 interface RequiredProps {
   vis: VisualizationType;
@@ -34,25 +31,30 @@ interface RequiredProps {
   updateDebugKeys: (keys: string[]) => void;
 }
 
-interface StateProps {}
+interface StateProps {
+  brushBehavior: MultiBrushBehavior;
+}
 
 interface DispatchProps {
   addPointSelection: (
     vis: VisualizationType,
     dimensions: string[],
-    point: number
+    point: number,
+    brushBehavior: MultiBrushBehavior
   ) => void;
   addPointDeselection: (
     vis: VisualizationType,
     dimensions: string[],
-    point: number
+    point: number,
+    brushBehavior: MultiBrushBehavior
   ) => void;
   addRectangularSelection: (
     vis: VisualizationType,
     dimensions: string[],
     brushId: string,
     points: number[],
-    extents: number[][]
+    extents: number[][],
+    brushBehavior: MultiBrushBehavior
   ) => void;
 }
 
@@ -225,7 +227,8 @@ class MarkSeries extends React.Component<Props, State> {
               [xLabel, yLabel],
               br.id,
               br.selectedPoints,
-              br.extents
+              br.extents,
+              instance.props.brushBehavior
             );
           }
         });
@@ -380,7 +383,12 @@ class MarkSeries extends React.Component<Props, State> {
                           let sel = [...pointSelection];
                           sel = sel.filter(idx => idx !== i);
                           updatePointSelection(sel);
-                          addPointDeselection(vis, [xLabel, yLabel], i);
+                          addPointDeselection(
+                            vis,
+                            [xLabel, yLabel],
+                            i,
+                            this.props.brushBehavior
+                          );
                         }}
                       />
                     ) : (
@@ -394,7 +402,12 @@ class MarkSeries extends React.Component<Props, State> {
                           let sel = [...pointSelection];
                           sel = sel.filter(idx => idx !== i);
                           updatePointSelection(sel);
-                          addPointDeselection(vis, [xLabel, yLabel], i);
+                          addPointDeselection(
+                            vis,
+                            [xLabel, yLabel],
+                            i,
+                            this.props.brushBehavior
+                          );
                         }}
                       />
                     )
@@ -412,7 +425,8 @@ class MarkSeries extends React.Component<Props, State> {
                         addPointSelection(
                           VisualizationType.ScatterPlot,
                           [xLabel, yLabel],
-                          i
+                          i,
+                          this.props.brushBehavior
                         );
                       }}
                     />
@@ -464,7 +478,12 @@ class MarkSeries extends React.Component<Props, State> {
                         let sel = [...pointSelection];
                         sel = sel.filter(idx => idx !== i);
                         updatePointSelection(sel);
-                        addPointDeselection(vis, [xLabel, yLabel], i);
+                        addPointDeselection(
+                          vis,
+                          [xLabel, yLabel],
+                          i,
+                          this.props.brushBehavior
+                        );
                       }}
                     />
                   )
@@ -478,22 +497,30 @@ class MarkSeries extends React.Component<Props, State> {
   }
 }
 
+const mapStateToProps = (state: VisualizationState): StateProps => ({
+  brushBehavior: state.mutliBrushBehavior
+});
+
 const mapDispatchToProp = (
   dispatch: Dispatch<InteractionHistoryAction>
 ): DispatchProps => ({
   addPointSelection: (
     vis: VisualizationType,
     dimensions: string[],
-    point: number
+    point: number,
+    brushBehavior: MultiBrushBehavior
   ) => {
     dispatch({
       type: InteractionHistoryActions.ADD_INTERACTION,
       args: {
-        visualizationType: vis,
-        interactionType: {
-          kind: "selection",
-          dimensions: dimensions,
-          dataIds: [point]
+        multiBrushBehavior: brushBehavior,
+        interaction: {
+          visualizationType: vis,
+          interactionType: {
+            kind: "selection",
+            dimensions: dimensions,
+            dataIds: [point]
+          }
         }
       }
     });
@@ -501,16 +528,20 @@ const mapDispatchToProp = (
   addPointDeselection: (
     vis: VisualizationType,
     dimensions: string[],
-    point: number
+    point: number,
+    brushBehavior: MultiBrushBehavior
   ) => {
     dispatch({
       type: InteractionHistoryActions.ADD_INTERACTION,
       args: {
-        visualizationType: vis,
-        interactionType: {
-          kind: "deselection",
-          dimensions: dimensions,
-          dataIds: [point]
+        multiBrushBehavior: brushBehavior,
+        interaction: {
+          visualizationType: vis,
+          interactionType: {
+            kind: "deselection",
+            dimensions: dimensions,
+            dataIds: [point]
+          }
         }
       }
     });
@@ -520,20 +551,24 @@ const mapDispatchToProp = (
     dimensions: string[],
     brushId: string,
     points: number[],
-    extents: number[][]
+    extents: number[][],
+    brushBehavior: MultiBrushBehavior
   ) => {
     dispatch({
       type: InteractionHistoryActions.ADD_INTERACTION,
       args: {
-        visualizationType: vis,
-        interactionType: {
-          dimensions: dimensions,
-          brushId: brushId,
-          dataIds: points,
-          left: extents[0][0],
-          right: extents[1][0],
-          top: extents[0][1],
-          bottom: extents[1][1]
+        multiBrushBehavior: brushBehavior,
+        interaction: {
+          visualizationType: vis,
+          interactionType: {
+            dimensions: dimensions,
+            brushId: brushId,
+            dataIds: points,
+            left: extents[0][0],
+            right: extents[1][0],
+            top: extents[0][1],
+            bottom: extents[1][1]
+          }
         }
       }
     });
@@ -541,7 +576,7 @@ const mapDispatchToProp = (
 });
 
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProp
 )(MarkSeries);
 

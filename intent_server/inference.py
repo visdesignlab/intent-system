@@ -2,7 +2,7 @@ from .dataset import Dataset
 from .dimensions import Dimensions
 from .algorithms import Outlier, Skyline, Range, KMeansCluster, Categories, DBSCANCluster
 
-from .vendor.interactions import Interaction, InteractionTypeKind, PredictionSet
+from .vendor.interactions import Interaction, InteractionTypeKind, PredictionSet, MultiBrushBehavior
 
 from typing import List, Set
 
@@ -21,7 +21,7 @@ def is_brush_selection(interaction: Interaction) -> bool:
     return interaction.interaction_type.brush_id is not None
 
 
-def relevant_ids(interactions: List[Interaction]) -> Set[int]:
+def relevant_ids(interactions: List[Interaction], op: MultiBrushBehavior) -> Set[int]:
     points: Set[int] = set()
     rects = dict()
 
@@ -35,8 +35,17 @@ def relevant_ids(interactions: List[Interaction]) -> Set[int]:
         elif is_brush_selection(ix):
             rects.update({ix.interaction_type.brush_id: ix})
 
-    for brush_id in rects:
-        points.update([int(x) for x in rects[brush_id].interaction_type.data_ids])  # type: ignore
+    if op is MultiBrushBehavior.UNION:
+        for brush_id in rects:
+            points.update(
+                [int(x) for x in rects[brush_id].interaction_type.data_ids])  # type: ignore
+    if op is MultiBrushBehavior.INTERSECTION:
+        setlist = []
+        for brush_id in rects:
+            id_list = map(lambda x: int(x),  # type: ignore
+                          rects[brush_id].interaction_type.data_ids)
+            setlist.append(set(id_list))
+        points.update(set.intersection(*setlist))
 
     return points
 
@@ -53,9 +62,9 @@ class Inference:
             Categories(dataset),
         ]
 
-    def predict(self, interactions: List[Interaction]) -> PredictionSet:
+    def predict(self, interactions: List[Interaction], op: MultiBrushBehavior) -> PredictionSet:
 
-        ids = relevant_ids(interactions)
+        ids = relevant_ids(interactions, op)
 
         filtered = list(filter(lambda x: x.interaction_type.data_ids, interactions))
         list_of_dims = map(lambda x: x.interaction_type.dimensions, filtered)

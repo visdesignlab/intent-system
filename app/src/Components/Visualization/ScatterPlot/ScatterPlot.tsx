@@ -1,4 +1,4 @@
-import { VisualizationType } from '@visdesignlab/intent-contract';
+import { MultiBrushBehavior, VisualizationType } from '@visdesignlab/intent-contract';
 import { select } from 'd3';
 import * as React from 'react';
 import { connect } from 'react-redux';
@@ -8,6 +8,7 @@ import styled from 'styled-components';
 
 import { changeDataset, datasets } from '../../..';
 import { InteractionHistoryAction, InteractionHistoryActions } from '../../../App/VisStore/InteractionHistoryReducer';
+import { VisualizationState } from '../../../App/VisStore/VisualizationState';
 import DimensionSelector from '../../DimensionSelector/DimensionSelector';
 import { BrushDictionary } from '../Data Types/BrushType';
 import { Dimension, DimensionType } from '../Data Types/Dimension';
@@ -28,11 +29,20 @@ interface State {
   debugKey: string;
 }
 
+interface StateProps {
+  brushBehavior: MultiBrushBehavior;
+}
+
 interface DispatchProps {
-  addEmptyInteraction: (vis: VisualizationType, dimensions: string[]) => void;
+  addEmptyInteraction: (
+    vis: VisualizationType,
+    dimensions: string[],
+    brushBehavior: MultiBrushBehavior
+  ) => void;
   addChangeAxisInteraction: (
     vis: VisualizationType,
-    dimensions: string[]
+    dimensions: string[],
+    brushBehavior: MultiBrushBehavior
   ) => void;
 }
 
@@ -42,7 +52,7 @@ interface OwnProps {
   labelColumn: string;
 }
 
-type Props = OwnProps & DispatchProps;
+type Props = OwnProps & DispatchProps & StateProps;
 
 class ScatterPlot extends React.Component<Props, State> {
   divRef: React.RefObject<HTMLDivElement> = React.createRef();
@@ -85,30 +95,33 @@ class ScatterPlot extends React.Component<Props, State> {
       selectedX: dimensions[0],
       selectedY: dimensions[1]
     });
-    this.props.addEmptyInteraction(VisualizationType.ScatterPlot, [
-      dimensions[0],
-      dimensions[1]
-    ]);
+    this.props.addEmptyInteraction(
+      VisualizationType.ScatterPlot,
+      [dimensions[0], dimensions[1]],
+      this.props.brushBehavior
+    );
   }
 
   changeX(selectedX: string) {
     this.setState({
       selectedX
     });
-    this.props.addChangeAxisInteraction(VisualizationType.ScatterPlot, [
-      selectedX,
-      this.state.selectedY
-    ]);
+    this.props.addChangeAxisInteraction(
+      VisualizationType.ScatterPlot,
+      [selectedX, this.state.selectedY],
+      this.props.brushBehavior
+    );
   }
 
   changeY(selectedY: string) {
     this.setState({
       selectedY
     });
-    this.props.addChangeAxisInteraction(VisualizationType.ScatterPlot, [
-      this.state.selectedX,
-      selectedY
-    ]);
+    this.props.addChangeAxisInteraction(
+      VisualizationType.ScatterPlot,
+      [this.state.selectedX, selectedY],
+      this.props.brushBehavior
+    );
   }
 
   updateBrushDict = (brushDict: BrushDictionary) => {
@@ -257,27 +270,45 @@ class ScatterPlot extends React.Component<Props, State> {
   }
 }
 
+const mapStateToProps = (state: VisualizationState): StateProps => ({
+  brushBehavior: state.mutliBrushBehavior
+});
+
 const mapDispatchToProps = (
   dispatch: Dispatch<InteractionHistoryAction>
 ): DispatchProps => ({
-  addEmptyInteraction: (vis: VisualizationType, dimensions: string[]) => {
+  addEmptyInteraction: (
+    vis: VisualizationType,
+    dimensions: string[],
+    brushBehavior: MultiBrushBehavior
+  ) => {
     dispatch({
       type: InteractionHistoryActions.ADD_INTERACTION,
       args: {
-        visualizationType: vis,
-        interactionType: {
-          dimensions: dimensions
+        multiBrushBehavior: brushBehavior,
+        interaction: {
+          visualizationType: vis,
+          interactionType: {
+            dimensions: dimensions
+          }
         }
       }
     });
   },
-  addChangeAxisInteraction: (vis: VisualizationType, dimensions: string[]) => {
+  addChangeAxisInteraction: (
+    vis: VisualizationType,
+    dimensions: string[],
+    brushBehavior: MultiBrushBehavior
+  ) => {
     dispatch({
       type: InteractionHistoryActions.ADD_INTERACTION,
       args: {
-        visualizationType: vis,
-        interactionType: {
-          dimensions: dimensions
+        multiBrushBehavior: brushBehavior,
+        interaction: {
+          visualizationType: vis,
+          interactionType: {
+            dimensions: dimensions
+          }
         }
       }
     });
@@ -285,7 +316,7 @@ const mapDispatchToProps = (
 });
 
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(ScatterPlot);
 
