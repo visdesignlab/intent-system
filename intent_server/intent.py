@@ -27,9 +27,8 @@ class IntentBinary(Intent, ABC):
     def info(self) -> Optional[Dict[str, Any]]:
         pass
 
-    def rank(self, selection: np.ndarray, df: pd.DataFrame) -> float:
-        belongs_to = self.compute(df)
-        return float(1 - jaccard(belongs_to, selection))
+    def __rank(self, selection: np.ndarray, computed: pd.DataFrame) -> float:
+        return float(1 - jaccard(computed, selection))
 
     def to_prediction(self, selection: np.ndarray, df: pd.DataFrame) -> List[Prediction]:
         belongs_to = self.compute(df)
@@ -37,7 +36,7 @@ class IntentBinary(Intent, ABC):
 
         return [Prediction(
             intent=self.to_string(),
-            rank=self.rank(selection, df),
+            rank=self.__rank(selection, belongs_to),
             info=self.info(),
             data_ids=list(map(float, ids)))]
 
