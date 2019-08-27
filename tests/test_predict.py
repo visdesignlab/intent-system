@@ -1,4 +1,6 @@
-from intent_server.vendor.interactions import Interaction, InteractionType, InteractionTypeKind, MultiBrushBehavior
+from intent_server.vendor.interactions import Interaction, InteractionType
+from intent_server.vendor.interactions import InteractionTypeKind, MultiBrushBehavior
+
 from intent_server.inference import relevant_ids
 
 from typing import List
