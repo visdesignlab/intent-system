@@ -7,6 +7,7 @@ import { Checkbox, Container, ContainerProps, Header, Popup, Segment, SegmentPro
 import styled from 'styled-components';
 
 import { VisStore } from '..';
+import PCP from '../Components/Visualization/PCP/PCP';
 import ScatterPlot from '../Components/Visualization/ScatterPlot/ScatterPlot';
 import ScatterPlotMatrix from '../Components/Visualization/ScatterPlotMatrix/ScatterPlotMatrix';
 import { MultiBrushBehaviorAction, MultiBrushBehaviorActions } from './VisStore/MultiBrushBehaviorReducer';
@@ -126,7 +127,7 @@ class App extends React.Component<Props, State> {
         <VisualizationGrid>
           {(() => {
             switch (VisualizationType[visualization]) {
-              case VisualizationType.ScatterPlot:
+              case VisualizationType.Scatterplot:
                 return (
                   data.length > 0 && (
                     <ScatterPlot
@@ -136,7 +137,7 @@ class App extends React.Component<Props, State> {
                     />
                   )
                 );
-              case VisualizationType.ScatterPlotMatrix:
+              case VisualizationType.ScatterplotMatrix:
                 return (
                   data.length > 0 && (
                     <ScatterPlotMatrix
@@ -150,6 +151,16 @@ class App extends React.Component<Props, State> {
                     />
                   )
                 );
+              case VisualizationType.ParallelCoordinatePlot:
+                return (
+                  data.length > 0 && (
+                    <PCP
+                      data={data}
+                      dimensions={numericColumns}
+                      labelColumn={labelColumn}
+                    ></PCP>
+                  )
+                );
               default:
                 return (
                   <PaddedContainer textAlign="center">
@@ -157,12 +168,15 @@ class App extends React.Component<Props, State> {
                     <VisSegment
                       placeholder
                       onClick={() =>
-                        changeVisualization(VisualizationType.ScatterPlot)
+                        changeVisualization(VisualizationType.Scatterplot)
                       }
                     >
                       Scatterplot
                     </VisSegment>
                     <VisSegment placeholder>Scatterplot Matrix</VisSegment>
+                    <VisSegment placeholder>
+                      Parallel Coordinate Plot
+                    </VisSegment>
                   </PaddedContainer>
                 );
             }

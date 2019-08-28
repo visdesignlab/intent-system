@@ -1,4 +1,4 @@
-import { VisualizationType } from '@visdesignlab/intent-contract/';
+import { VisualizationType } from '@visdesignlab/intent-contract';
 import { Action, Reducer } from 'redux';
 
 export enum VisualizationChangeActions {
@@ -15,7 +15,7 @@ export const VisualizationReducer: Reducer<
   VisualizationType,
   VisualizationChangeAction
 > = (
-  current: VisualizationType = VisualizationType.ScatterPlotMatrix,
+  current: VisualizationType = VisualizationType.ParallelCoordinatePlot,
   action: VisualizationChangeAction
 ) => {
   switch (action.type) {

@@ -467,7 +467,7 @@ const mapDispatchToProps = (
       args: {
         multiBrushBehavior: brushBehavior,
         interaction: {
-          visualizationType: VisualizationType.ScatterPlotMatrix,
+          visualizationType: VisualizationType.ScatterplotMatrix,
           interactionType: {
             kind: "selection",
             dimensions: dimensions,
@@ -487,7 +487,7 @@ const mapDispatchToProps = (
       args: {
         multiBrushBehavior: brushBehavior,
         interaction: {
-          visualizationType: VisualizationType.ScatterPlotMatrix,
+          visualizationType: VisualizationType.ScatterplotMatrix,
           interactionType: {
             kind: "deselection",
             dimensions: dimensions,
@@ -509,7 +509,7 @@ const mapDispatchToProps = (
       args: {
         multiBrushBehavior: brushBehavior,
         interaction: {
-          visualizationType: VisualizationType.ScatterPlotMatrix,
+          visualizationType: VisualizationType.ScatterplotMatrix,
           interactionType: {
             dimensions: dimensions,
             brushId: brushId,

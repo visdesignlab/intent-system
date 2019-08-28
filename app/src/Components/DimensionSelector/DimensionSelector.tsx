@@ -56,6 +56,6 @@ const WrappedMenu = styled(Menu)<MenuProps>`
 `;
 
 const MenuHeader = styled(Menu.Item)<MenuItemProps>`
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   background-color: rgba(128, 128, 128, 0.09) !important;
 `;
