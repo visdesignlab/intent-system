@@ -31,14 +31,19 @@ export const InteractionHistoryReducer: Reducer<
         interactionHistory: interactions
       };
 
-      axios.post(`/dataset/${datasetName}/predict`, request).then(response => {
-        VisStore.visStore().dispatch({
-          type: PredictionActions.UPDATE_PREDICATION,
-          args: response.data
+      axios
+        .post(`/dataset/${datasetName}/predict`, request)
+        .then(response => {
+          VisStore.visStore().dispatch({
+            type: PredictionActions.UPDATE_PREDICATION,
+            args: response.data
+          });
+          console.log("Arguments", interactions);
+          console.log("Preds", response.data);
+        })
+        .catch(err => {
+          console.log(current, action, err);
         });
-        console.log("Arguments", interactions);
-        console.log("Preds", response.data);
-      });
       return interactions;
     default:
       return [...current];

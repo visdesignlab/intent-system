@@ -40,6 +40,10 @@ interface OwnProps {
   data: any[];
   dimensions: string[];
   labelColumn: string;
+  debugIndices: number[];
+  debugColumns: string[];
+  debugShowSelected: boolean;
+  debugSelectedPoints: number[];
 }
 
 type Props = OwnProps & StateProps & DispatchProps;
@@ -58,7 +62,7 @@ class PCP extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    // window.addEventListener("resize", this.resize.bind(this));
+    window.addEventListener("resize", this.resize.bind(this));
   }
 
   componentDidMount() {
@@ -70,32 +74,71 @@ class PCP extends React.Component<Props, State> {
     const lesser = divHeight < divWidth ? divHeight : divWidth;
 
     select(this.divRef.current)
-      .style("height", `${lesser}px`)
-      .style("width", `${lesser}px`);
+      .style("height", `${divHeight}px`)
+      .style("width", `${divWidth}px`);
 
+    // const dims = dimensions;
     const dims = dimensions.slice(0, 3);
 
     this.setState({
-      svgHeight: lesser,
-      svgWidth: lesser,
+      svgHeight: divHeight,
+      svgWidth: divWidth,
       selectedDimensions: dims
     });
+
+    this.props.addEmptyInteraction(dims, this.props.multiBrushBehavior);
   }
 
   componentWillUnmount() {
-    // window.removeEventListener("resize", this.resize.bind(this));
+    window.removeEventListener("resize", this.resize.bind(this));
   }
 
   updateSelection = (selectedDimensions: string[]) => {
     this.setState({ selectedDimensions });
-    // this.props.addChangeAxisInteraction(
-    //   selectedDimensions,
-    // )
+    this.props.addChangeAxisInteraction(
+      selectedDimensions,
+      this.props.multiBrushBehavior
+    );
+  };
+
+  resize() {
+    const divHeight = (this.divRef.current as HTMLDivElement).clientHeight;
+    const divWidth = (this.divRef.current as HTMLDivElement).clientWidth;
+    const lesser = divHeight < divWidth ? divHeight : divWidth;
+
+    select(this.divRef.current)
+      .style("height", `${divHeight}px`)
+      .style("width", `${divWidth}px`);
+
+    this.setState({
+      svgHeight: lesser,
+      svgWidth: lesser
+    });
+  }
+
+  updateBrushDictionary = (brushDict: BrushDictionary) => {
+    this.setState({ brushDict });
+  };
+
+  updatePointSelection = (pointSelection: number[]) => {
+    this.setState({
+      pointSelection
+    });
   };
 
   render() {
-    const { dimensions } = this.props;
-    const { selectedDimensions } = this.state;
+    const { dimensions, data, labelColumn } = this.props;
+    const {
+      selectedDimensions,
+      svgHeight,
+      svgWidth,
+      brushDict,
+      pointSelection
+    } = this.state;
+
+    const labels = data.map(r => r[labelColumn]);
+
+    const lesserDim = svgHeight > svgWidth ? svgWidth : svgHeight;
 
     return (
       <ScatterPlotDiv>
@@ -131,7 +174,23 @@ class PCP extends React.Component<Props, State> {
         <div ref={this.divRef}>
           <FullSizeSVG ref={this.ref}>
             <g transform={`translate(50,50)`}>
-              <PCPComponent></PCPComponent>
+              <PCPComponent
+                vis={VisualizationType.ParallelCoordinatePlot}
+                data={data.slice(0, 40)}
+                height={svgHeight - 100}
+                width={svgWidth - 100}
+                labels={labels.slice(0, 40)}
+                columns={selectedDimensions}
+                XZero={false}
+                YZero={false}
+                brushDict={brushDict}
+                updateBrushDictionary={this.updateBrushDictionary}
+                pointSelection={pointSelection}
+                updatePointSelection={this.updatePointSelection}
+                debugIndices={this.props.debugIndices}
+                debugShowSelected={this.props.debugShowSelected}
+                debugSelectedPoints={this.props.debugSelectedPoints}
+              />
             </g>
           </FullSizeSVG>
         </div>

@@ -158,6 +158,10 @@ class App extends React.Component<Props, State> {
                       data={data}
                       dimensions={numericColumns}
                       labelColumn={labelColumn}
+                      debugIndices={this.state.debugIndices}
+                      debugColumns={this.state.debugColumns}
+                      debugShowSelected={this.state.showSelected}
+                      debugSelectedPoints={this.state.debugSelectedPoints}
                     ></PCP>
                   )
                 );
