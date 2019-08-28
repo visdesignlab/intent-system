@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@visdesignlab/intent-contract": "^8.0.0",
+    "@visdesignlab/intent-contract": "^10.1.1",
     "@visdesignlab/provenance-lib-core": "^1.2.0",
     "axios": "^0.19.0",
     "d3": "^5.9.2",
