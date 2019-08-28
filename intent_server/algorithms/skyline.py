@@ -38,8 +38,9 @@ class Skyline(IntentMulticlass):
 
         # Computing all permutations of min/max was really slow:
         # For now we only compute the skyline for all min and all max dimensions.
-        # To undo this change replace the following line
-        permutations = [list(itertools.repeat(-1, len(data.columns))), list(itertools.repeat(1, len(data.columns)))]
+        # To undo this change replace the following lines
+        permutations = [list(itertools.repeat(-1, len(data.columns))),
+                        list(itertools.repeat(1, len(data.columns)))]
         # with this line:
         # permutations = [list(i) for i in itertools.product([-1, 1], repeat=len(data.columns))]
 
