@@ -36,8 +36,13 @@ class Skyline(IntentMulticlass):
     def compute(self, df: pd.DataFrame) -> pd.DataFrame:
         data = df.select_dtypes(include=['number'])
 
-        # Get all permutations of the sign
-        permutations = [list(i) for i in itertools.product([-1, 1], repeat=len(data.columns))]
+        # Computing all permutations of min/max was really slow:
+        # For now we only compute the skyline for all min and all max dimensions.
+        # To undo this change replace the following lines
+        permutations = [list(itertools.repeat(-1, len(data.columns))),
+                        list(itertools.repeat(1, len(data.columns)))]
+        # with this line:
+        # permutations = [list(i) for i in itertools.product([-1, 1], repeat=len(data.columns))]
 
         result = pd.concat(map(lambda perm: self.skyline_for_permutation(  # type: ignore
             np.array(perm), data), permutations), axis='columns')

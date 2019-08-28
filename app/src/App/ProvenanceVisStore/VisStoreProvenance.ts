@@ -12,7 +12,8 @@ export function initVisStoreWithProvenance() {
   let store = initVisStore();
   return {
     visStore: () => store,
-    resetStore: (state: VisualizationState) => (store = initVisStore(state))
+    resetStore: (state?: VisualizationState) =>
+      (store = state ? initVisStore(state) : initVisStore())
   };
 }
 

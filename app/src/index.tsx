@@ -1,24 +1,24 @@
-import "./index.css";
-import "semantic-ui-css/semantic.min.css";
+import './index.css';
+import 'semantic-ui-css/semantic.min.css';
 
-import * as serviceWorker from "./serviceWorker";
+import { initProvenanceRedux } from '@visdesignlab/provenance-lib-core/lib/src';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
 
-import { StudyState, initStudyStore } from "./StudyStore/StudyStore";
+import App from './App/App';
+import { initVisStoreWithProvenance } from './App/ProvenanceVisStore/VisStoreProvenance';
+import { loadDataset } from './App/VisStore/DatasetReducers';
+import * as serviceWorker from './serviceWorker';
+import { initStudyStore, StudyState } from './StudyStore/StudyStore';
 
-import App from "./App/App";
-import { Provider } from "react-redux";
-import React from "react";
-import ReactDOM from "react-dom";
 // import { VisualizationType } from "@visdesignlab/intent-contract";
-import { initProvenanceRedux } from "@visdesignlab/provenance-lib-core/lib/src";
-import { initVisStoreWithProvenance } from "./App/ProvenanceVisStore/VisStoreProvenance";
-import { loadDataset } from "./App/VisStore/DatasetReducers";
-
 function initAppStore() {
   let store = initStudyStore();
   return {
     store: () => store,
-    resetStore: (state: StudyState) => (store = initStudyStore(state))
+    resetStore: (state?: StudyState) =>
+      (store = state ? initStudyStore(state) : initStudyStore())
   };
 }
 
@@ -46,6 +46,7 @@ VisStore.visStore().dispatch(loadDataset(`/dataset/${datasetName}`) as any);
 
 export function changeDataset(dsName: string) {
   datasetName = dsName;
+  VisStore.resetStore();
   VisStore.visStore().dispatch(loadDataset(`/dataset/${datasetName}`) as any);
 }
 
