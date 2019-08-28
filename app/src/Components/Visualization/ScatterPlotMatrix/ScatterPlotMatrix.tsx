@@ -3,8 +3,10 @@ import { select } from 'd3';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
+import { Dropdown, Segment } from 'semantic-ui-react';
 import styled from 'styled-components';
 
+import { changeDataset, datasets } from '../../..';
 import { InteractionHistoryAction, InteractionHistoryActions } from '../../../App/VisStore/InteractionHistoryReducer';
 import { VisualizationState } from '../../../App/VisStore/VisualizationState';
 import DimensionSelector from '../../DimensionSelector/DimensionSelector';
@@ -143,6 +145,20 @@ class ScatterPlotMatrix extends React.Component<Props, State> {
           }}
           debugBackend={this.props.debugColumns}
         />
+        <Segment>
+          <Dropdown
+            placeholder="Change Dataset"
+            selection
+            options={datasets.map(k => ({
+              key: k,
+              text: k,
+              value: k
+            }))}
+            onChange={(e, data) => {
+              changeDataset(data.value as string);
+            }}
+          />
+        </Segment>
         <div ref={this.divRef} className={styles.square}>
           <FullSizeSVG ref={this.ref}>
             <g transform={`translate(50,50)`}>
@@ -222,5 +238,5 @@ const ScatterPlotDiv = styled.div`
   height: 100%;
   width: 100%;
   display: grid;
-  grid-template-rows: 1fr 15fr;
+  grid-template-rows: 1fr 0.75fr 14.25fr;
 `;
