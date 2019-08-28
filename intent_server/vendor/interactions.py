@@ -268,9 +268,9 @@ class InteractionType:
 
 class VisualizationType(Enum):
     NONE = "None"
-    SCATTER_PLOT = "ScatterPlot"
-    SCATTER_PLOT_MATRIX = "ScatterPlotMatrix"
-    TABLE = "Table"
+    PARALLEL_COORDINATE_PLOT = "ParallelCoordinatePlot"
+    SCATTERPLOT = "Scatterplot"
+    SCATTERPLOT_MATRIX = "ScatterplotMatrix"
 
 
 @dataclass
