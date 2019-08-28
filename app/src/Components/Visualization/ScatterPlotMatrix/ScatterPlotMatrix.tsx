@@ -6,7 +6,7 @@ import { Dispatch } from 'redux';
 import { Dropdown, Segment } from 'semantic-ui-react';
 import styled from 'styled-components';
 
-import { changeDataset, datasets } from '../../..';
+import { changeDataset, datasetName, datasets } from '../../..';
 import { InteractionHistoryAction, InteractionHistoryActions } from '../../../App/VisStore/InteractionHistoryReducer';
 import { VisualizationState } from '../../../App/VisStore/VisualizationState';
 import DimensionSelector from '../../DimensionSelector/DimensionSelector';
@@ -147,7 +147,7 @@ class ScatterPlotMatrix extends React.Component<Props, State> {
         />
         <Segment>
           <Dropdown
-            placeholder="Change Dataset"
+            placeholder={datasetName}
             selection
             options={datasets.map(k => ({
               key: k,

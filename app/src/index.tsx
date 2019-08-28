@@ -45,19 +45,25 @@ export let datasetName = "draft_combine";
 VisStore.visStore().dispatch(loadDataset(`/dataset/${datasetName}`) as any);
 
 export function changeDataset(dsName: string) {
+  if (datasetName === dsName) return;
   datasetName = dsName;
   VisStore.resetStore();
   VisStore.visStore().dispatch(loadDataset(`/dataset/${datasetName}`) as any);
+  renderApp();
 }
 
-ReactDOM.render(
-  <Provider store={studyStore.store()}>
-    <Provider store={VisStore.visStore()}>
-      <App />
-    </Provider>
-  </Provider>,
-  document.getElementById("root")
-);
+function renderApp() {
+  ReactDOM.render(
+    <Provider store={studyStore.store()}>
+      <Provider store={VisStore.visStore()}>
+        <App />
+      </Provider>
+    </Provider>,
+    document.getElementById("root")
+  );
+}
+
+renderApp();
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
