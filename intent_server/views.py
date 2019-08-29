@@ -5,6 +5,8 @@ from .dimensions import Dimensions
 from .inference import Inference
 from .vendor.interactions import prediction_request_from_dict
 
+import time
+
 # Load and preprocess the dataset
 datasets = {
     'slc_housing': Dataset.load_housing_data(),

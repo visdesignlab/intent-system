@@ -349,6 +349,7 @@ class PredictionSet:
     dimensions: List[str]
     predictions: List[Prediction]
     selected_ids: List[float]
+    time: float
 
     @staticmethod
     def from_dict(obj: Any) -> 'PredictionSet':
@@ -356,13 +357,15 @@ class PredictionSet:
         dimensions = from_list(from_str, obj.get("dimensions"))
         predictions = from_list(Prediction.from_dict, obj.get("predictions"))
         selected_ids = from_list(from_float, obj.get("selectedIds"))
-        return PredictionSet(dimensions, predictions, selected_ids)
+        time = from_float(obj.get("time"))
+        return PredictionSet(dimensions, predictions, selected_ids, time)
 
     def to_dict(self) -> dict:
         result: dict = {}
         result["dimensions"] = from_list(from_str, self.dimensions)
         result["predictions"] = from_list(lambda x: to_class(Prediction, x), self.predictions)
         result["selectedIds"] = from_list(to_float, self.selected_ids)
+        result["time"] = to_float(self.time)
         return result
 
 

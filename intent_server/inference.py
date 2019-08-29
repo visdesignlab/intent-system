@@ -7,6 +7,7 @@ from .vendor.interactions import Interaction, InteractionTypeKind, PredictionSet
 from typing import List, Set
 
 import pandas as pd
+import time
 
 
 def is_point_selection(interaction: Interaction) -> bool:
@@ -64,7 +65,7 @@ class Inference:
         ]
 
     def predict(self, interactions: List[Interaction], op: MultiBrushBehavior) -> PredictionSet:
-
+        start = time.time()
         ids = relevant_ids(interactions, op)
 
         filtered = list(filter(lambda x: x.interaction_type.data_ids, interactions))
@@ -83,10 +84,12 @@ class Inference:
 
         # Perform ranking
         ranks = map(lambda m: m.to_prediction(sel_array, relevant_data), self.intents)
+        end = time.time()
         return PredictionSet(
             predictions=[p for preds in ranks for p in preds],
             dimensions=dims.dims,
-            selected_ids=list(map(float, ids)))
+            selected_ids=list(map(float, ids))
+            time=end-start)
 
     def info(self, dims: Dimensions) -> pd.DataFrame:
         subset = self.dataset.data[dims.indices()]

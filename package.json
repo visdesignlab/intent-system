@@ -13,7 +13,8 @@
     "build-env": "yarn install && yarn run update-env",
     "server": "./server.sh",
     "app": "cd app && yarn start",
-    "start": "yarn run free-port && concurrently --kill-others \"yarn run server\" \"yarn run app\" ; "
+    "start": "yarn run free-port && concurrently --kill-others \"yarn run server\" \"yarn run app\" ; ",
+    "bindgen": "quicktype intent_contract/contract.ts -o intent_server/vendor/interactions.py --python-version 3.7"
   },
   "repository": {
     "type": "git",
@@ -28,5 +29,8 @@
   "dependencies": {
     "concurrently": "^4.1.1",
     "kill-port": "^1.5.1"
+  },
+  "devDependencies": {
+    "quicktype": "^15.0.200"
   }
 }
