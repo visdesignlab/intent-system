@@ -17,7 +17,7 @@ class DBSCANCluster(IntentMulticlass):
         nan_dropped = df.dropna()
 
         min_max_scaler = preprocessing.MinMaxScaler()
-        scaled = min_max_scaler.fit_transform(nan_dropped.values);
+        scaled = min_max_scaler.fit_transform(nan_dropped.values)
 
         self.dbscan.fit(scaled)
 

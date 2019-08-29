@@ -19,7 +19,7 @@ class Outlier(IntentBinary):
         nan_dropped = df.select_dtypes(include=['number']).dropna()
 
         min_max_scaler = preprocessing.MinMaxScaler()
-        scaled = min_max_scaler.fit_transform(nan_dropped.values);
+        scaled = min_max_scaler.fit_transform(nan_dropped.values)
 
         outliers = self.clf.fit_predict(scaled)
         result = pd.DataFrame(data=outliers, index=nan_dropped.index, columns=[
