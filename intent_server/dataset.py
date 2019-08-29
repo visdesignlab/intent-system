@@ -69,6 +69,9 @@ class Dataset:
             'TotSqf',
             'YearBlt',
         ]]
+        # Remove some outliers
+        selection = selection[selection.Acres < 1]
+        selection = selection[selection.Deck < 6]
         return Dataset('ListNo', selection.astype({'ListNo': str}), 'SLC Housing')
 
     @staticmethod
