@@ -9,7 +9,6 @@ import { PredictionActions } from './PredictionsReducer';
 export enum MultiBrushBehaviorActions {
   SWITCH = "SWITCH"
 }
-
 export interface MultiBrushBehaviorAction
   extends Action<MultiBrushBehaviorActions> {
   type: MultiBrushBehaviorActions;
