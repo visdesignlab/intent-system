@@ -194,6 +194,8 @@ class SPMComponent extends React.Component<Props, State> {
         exit => exit.remove()
       );
 
+      marks.append("title").text((_, i) => this.props.labels[i]);
+
       marks.on("click", (_, i) => {
         let sel = [...this.props.pointSelection];
         if (sel.includes(i)) {
