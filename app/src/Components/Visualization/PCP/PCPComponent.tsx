@@ -199,18 +199,32 @@ class PCPComponent extends React.Component<Props, State> {
       .selectAll("path")
       .classed(styles.intersection, false);
 
+    const highlightIndices = new Uint8Array(data.length);
+
     Object.values(brushDict).forEach(brush => {
       const { selectedPoints } = brush[0];
       data.forEach((d, i) => {
         if (selectedPoints.includes(i)) {
-          const path = select(`#path-id-${i}`);
-          path.raise();
-          if (path.classed(styles.selected))
-            path.classed(styles.intersection, true);
-          else path.classed(styles.selected, true);
+          highlightIndices[i] = highlightIndices[i] + 1;
+          // const path = select(`#path-id-${i}`);
+          // path.raise();
+          // if (path.classed(styles.selected))
+          //   path.classed(styles.intersection, true);
+          // else path.classed(styles.selected, true);
         }
       });
     });
+
+    selectAll(".paths")
+      .selectAll("path")
+      .each((_, i) => {
+        const path = select(`#path-id-${i}`);
+        path.raise();
+        if (highlightIndices[i] > 1) path.classed(styles.intersection, true);
+        else if (highlightIndices[i] > 0) path.classed(styles.selected, true);
+      });
+
+    console.log(highlightIndices);
 
     if (this.state.shouldUpdate > 0)
       this.setState({
