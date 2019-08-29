@@ -71,8 +71,6 @@ class PCP extends React.Component<Props, State> {
     const divHeight = (this.divRef.current as HTMLDivElement).clientHeight;
     const divWidth = (this.divRef.current as HTMLDivElement).clientWidth;
 
-    const lesser = divHeight < divWidth ? divHeight : divWidth;
-
     select(this.divRef.current)
       .style("height", `${divHeight}px`)
       .style("width", `${divWidth}px`);
@@ -137,8 +135,6 @@ class PCP extends React.Component<Props, State> {
     } = this.state;
 
     const labels = data.map(r => r[labelColumn]);
-
-    const lesserDim = svgHeight > svgWidth ? svgWidth : svgHeight;
 
     return (
       <ScatterPlotDiv>

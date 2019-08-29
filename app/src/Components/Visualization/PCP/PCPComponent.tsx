@@ -205,15 +205,8 @@ class PCPComponent extends React.Component<Props, State> {
   }
 
   render() {
-    const {
-      axes,
-      cellHeight,
-      cellWidth,
-      paddedCellWidth,
-      padding,
-      brushDict
-    } = this.state;
-    const { width, columns, labels, data } = this.props;
+    const { axes, cellHeight, paddedCellWidth, padding } = this.state;
+    const { columns, labels, data } = this.props;
 
     return (
       <g ref={this.ref}>
