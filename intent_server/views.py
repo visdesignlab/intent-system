@@ -5,6 +5,8 @@ from .dimensions import Dimensions
 from .inference import Inference
 from .vendor.interactions import prediction_request_from_dict
 
+import time
+
 # Load and preprocess the dataset
 datasets = {
     'slc_housing': Dataset.load_housing_data(),
@@ -47,5 +49,12 @@ def route_dataset_predict(dataset_name):  # type: ignore
     prediction_request = prediction_request_from_dict(request.json)
     interaction_hist = prediction_request.interaction_history
     ds = datasets[dataset_name]
+
+    start = time.time()
     predictions = Inference(ds).predict(interaction_hist, prediction_request.multi_brush_behavior)
-    return jsonify(predictions.to_dict())
+    end = time.time()
+
+    dct = predictions.to_dict()
+    dct['time'] = end - start
+
+    return jsonify(dct)
