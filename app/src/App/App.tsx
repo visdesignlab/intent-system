@@ -3,7 +3,7 @@ import { scaleLinear, select } from 'd3';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
-import { Checkbox, Container, ContainerProps, Header, Popup, Segment, SegmentProps } from 'semantic-ui-react';
+import { Button, Checkbox, Container, ContainerProps, Header, Popup, Segment, SegmentProps } from 'semantic-ui-react';
 import styled from 'styled-components';
 
 import { VisStore } from '..';
@@ -177,8 +177,22 @@ class App extends React.Component<Props, State> {
                     >
                       Scatterplot
                     </VisSegment>
-                    <VisSegment placeholder>Scatterplot Matrix</VisSegment>
-                    <VisSegment placeholder>
+                    <VisSegment
+                      placeholder
+                      onClick={() =>
+                        changeVisualization(VisualizationType.ScatterplotMatrix)
+                      }
+                    >
+                      Scatterplot Matrix
+                    </VisSegment>
+                    <VisSegment
+                      placeholder
+                      onClick={() =>
+                        changeVisualization(
+                          VisualizationType.ParallelCoordinatePlot
+                        )
+                      }
+                    >
                       Parallel Coordinate Plot
                     </VisSegment>
                   </PaddedContainer>
@@ -186,17 +200,18 @@ class App extends React.Component<Props, State> {
             }
           })()}
           {visualization !== VisualizationType.None && (
-            <div />
-            // <Button
-            //   style={{
-            //     position: "absolute",
-            //     bottom: "0",
-            //     left: "0"
-            //   }}
-            //   onClick={() => changeVisualization(VisualizationType.None)}
-            // >
-            //   Home
-            // </Button>
+            <div>
+              <Button
+                style={{
+                  position: "absolute",
+                  bottom: "0",
+                  left: "0"
+                }}
+                onClick={() => changeVisualization(VisualizationType.None)}
+              >
+                Home
+              </Button>
+            </div>
           )}
         </VisualizationGrid>
         <ResultsGrid ref={this.predictionResultsRef}>

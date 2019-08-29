@@ -70,7 +70,8 @@ class ScatterPlot extends React.Component<Props, State> {
     debugKey: ""
   };
 
-  componentWillMount() {
+  constructor(props: Props) {
+    super(props);
     window.addEventListener("resize", this.resize.bind(this));
   }
 
