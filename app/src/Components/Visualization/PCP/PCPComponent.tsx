@@ -1,17 +1,30 @@
-import { VisualizationType } from '@visdesignlab/intent-contract';
+import { MultiBrushBehavior, VisualizationType } from '@visdesignlab/intent-contract';
 import { brushSelection, brushY, line, max, min, ScaleLinear, scaleLinear, select, selectAll } from 'd3';
 import React from 'react';
 import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
 
+import { InteractionHistoryAction, InteractionHistoryActions } from '../../../App/VisStore/InteractionHistoryReducer';
+import { VisualizationState } from '../../../App/VisStore/VisualizationState';
 import { Brush, BrushDictionary } from '../Data Types/BrushType';
 import { Dimension, DimensionType } from '../Data Types/Dimension';
 import styles from './pcp.module.css';
 
 const emptyRegex = /[\n\r\s\t]+/g;
 
-interface StateProps {}
+interface StateProps {
+  multiBrushBehavior: MultiBrushBehavior;
+}
 
-interface DispatchProps {}
+interface DispatchProps {
+  addRectangularSelection: (
+    dimensions: string[],
+    brushId: string,
+    points: number[],
+    extents: number[][],
+    multiBrushBehavior: MultiBrushBehavior
+  ) => void;
+}
 
 interface OwnProps {
   vis: VisualizationType;
@@ -132,6 +145,13 @@ class PCPComponent extends React.Component<Props, State> {
             brushDict[id] = [br];
             instance.props.updateBrushDictionary(brushDict);
             instance.setState({ shouldUpdate: 2 });
+            instance.props.addRectangularSelection(
+              [axis.label],
+              br.id,
+              br.selectedPoints,
+              br.extents,
+              instance.props.multiBrushBehavior
+            );
           } else {
             const br: Brush = {
               id: id,
@@ -143,6 +163,13 @@ class PCPComponent extends React.Component<Props, State> {
             brushDict[id] = [br];
             instance.props.updateBrushDictionary(brushDict);
             instance.setState({ shouldUpdate: 2 });
+            instance.props.addRectangularSelection(
+              [axis.label],
+              br.id,
+              br.selectedPoints,
+              br.extents,
+              instance.props.multiBrushBehavior
+            );
           }
         });
 
@@ -317,7 +344,45 @@ class PCPComponent extends React.Component<Props, State> {
   }
 }
 
-export default connect()(PCPComponent);
+const mapStateToProps = (state: VisualizationState): StateProps => ({
+  multiBrushBehavior: state.mutliBrushBehavior
+});
+
+const mapDispatchToProps = (
+  dispatch: Dispatch<InteractionHistoryAction>
+): DispatchProps => ({
+  addRectangularSelection: (
+    dimensions: string[],
+    brushId: string,
+    points: number[],
+    extents: number[][],
+    multiBrushBehavior: MultiBrushBehavior
+  ) => {
+    dispatch({
+      type: InteractionHistoryActions.ADD_INTERACTION,
+      args: {
+        multiBrushBehavior: multiBrushBehavior,
+        interaction: {
+          visualizationType: VisualizationType.ParallelCoordinatePlot,
+          interactionType: {
+            dimensions: dimensions,
+            brushId: brushId,
+            dataIds: points,
+            left: extents[0][0],
+            right: extents[1][0],
+            top: extents[0][1],
+            bottom: extents[1][1]
+          }
+        }
+      }
+    });
+  }
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(PCPComponent);
 
 function calculatePath(xPositions: number[], yPositions: number[]) {
   const arr: [number, number][] = xPositions.map((x, i) => [x, yPositions[i]]);
