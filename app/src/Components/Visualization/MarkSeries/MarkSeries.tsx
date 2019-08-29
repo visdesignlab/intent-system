@@ -76,6 +76,7 @@ class MarkSeries extends React.Component<Props, State> {
   brushRef: React.RefObject<SVGGElement> = React.createRef();
   firstCall: boolean = true;
   programMove: boolean = false;
+  cancelAction: boolean = false;
 
   static defaultProps: OptionalProps = {
     markSize: 3,
@@ -94,6 +95,10 @@ class MarkSeries extends React.Component<Props, State> {
     this.setState({
       brushDict: {}
     });
+  }
+
+  componentWillUnmount() {
+    this.cancelAction = true;
   }
 
   componentDidUpdate(prevProps: Props) {
@@ -124,6 +129,7 @@ class MarkSeries extends React.Component<Props, State> {
           }
         })
         .then(res => {
+          if (this.cancelAction) return;
           this.setState({
             debugInfo: res.data
           });

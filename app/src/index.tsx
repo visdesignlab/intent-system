@@ -9,6 +9,7 @@ import { Provider } from 'react-redux';
 import App from './App/App';
 import { initVisStoreWithProvenance } from './App/ProvenanceVisStore/VisStoreProvenance';
 import { loadDataset } from './App/VisStore/DatasetReducers';
+import { InteractionHistoryActions } from './App/VisStore/InteractionHistoryReducer';
 import * as serviceWorker from './serviceWorker';
 import { initStudyStore, StudyState } from './StudyStore/StudyStore';
 
@@ -47,9 +48,13 @@ VisStore.visStore().dispatch(loadDataset(`/dataset/${datasetName}`) as any);
 export function changeDataset(dsName: string) {
   if (datasetName === dsName) return;
   datasetName = dsName;
-  VisStore.resetStore();
+  VisStore.visStore().dispatch({
+    type: InteractionHistoryActions.RESET_HISTORY,
+    args: {
+      multiBrushBehavior: VisStore.visStore().getState().mutliBrushBehavior
+    }
+  });
   VisStore.visStore().dispatch(loadDataset(`/dataset/${datasetName}`) as any);
-  renderApp();
 }
 
 function renderApp() {

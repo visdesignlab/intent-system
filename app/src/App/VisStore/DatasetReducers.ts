@@ -1,7 +1,8 @@
-import { Action, Dispatch, Reducer } from "redux";
-import { Dataset, emptyDataset } from "./Dataset";
+import { text } from 'd3';
+import { Action, Dispatch, Reducer } from 'redux';
 
-import { text } from "d3";
+import { Dataset, emptyDataset } from './Dataset';
+import { InteractionHistoryAction } from './InteractionHistoryReducer';
 
 export enum DatasetActions {
   LOAD_DATASET = "LOAD_DATASET"
@@ -25,7 +26,9 @@ export const DatasetReducer: Reducer<Dataset, DatasetAction> = (
 };
 
 export function loadDataset(url: string) {
-  return (dispatch: Dispatch<DatasetAction>) => {
+  return (
+    dispatch: Dispatch<DatasetAction> & Dispatch<InteractionHistoryAction>
+  ) => {
     text(url)
       .then(d => {
         const rawData = d.replace(/\bNaN\b/g, "null");

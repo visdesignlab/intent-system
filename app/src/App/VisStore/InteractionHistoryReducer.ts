@@ -7,7 +7,8 @@ import { VisStore } from './../..';
 import { PredictionActions } from './PredictionsReducer';
 
 export enum InteractionHistoryActions {
-  ADD_INTERACTION = "ADD_INTERACTION"
+  ADD_INTERACTION = "ADD_INTERACTION",
+  RESET_HISTORY = "RESET_HISTORY"
 }
 
 export interface InteractionHistoryAction
@@ -15,7 +16,7 @@ export interface InteractionHistoryAction
   type: InteractionHistoryActions;
   args: {
     multiBrushBehavior: MultiBrushBehavior;
-    interaction: Interaction;
+    interaction?: Interaction;
   };
 }
 
@@ -23,10 +24,11 @@ export const InteractionHistoryReducer: Reducer<
   InteractionHistory,
   InteractionHistoryAction
 > = (current: InteractionHistory = [], action: InteractionHistoryAction) => {
+  let request: PredictionRequest = {} as any;
   switch (action.type) {
     case InteractionHistoryActions.ADD_INTERACTION:
-      const interactions = [...current, action.args.interaction];
-      const request: PredictionRequest = {
+      const interactions = [...current, action.args.interaction as Interaction];
+      request = {
         multiBrushBehavior: action.args.multiBrushBehavior,
         interactionHistory: interactions
       };
@@ -45,6 +47,26 @@ export const InteractionHistoryReducer: Reducer<
           console.log(current, action, err);
         });
       return interactions;
+    case InteractionHistoryActions.RESET_HISTORY:
+      request = {
+        multiBrushBehavior: action.args.multiBrushBehavior,
+        interactionHistory: []
+      };
+
+      axios
+        .post(`/dataset/${datasetName}/predict`, request)
+        .then(response => {
+          VisStore.visStore().dispatch({
+            type: PredictionActions.UPDATE_PREDICATION,
+            args: response.data
+          });
+          console.log("Arguments", request);
+          console.log("Preds", response.data);
+        })
+        .catch(err => {
+          console.log(current, action, err);
+        });
+      return [];
     default:
       return [...current];
   }

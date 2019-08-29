@@ -21,10 +21,14 @@ interface StateProps {
   labelColumn: string;
   visualization: VisualizationType;
   predictionSet: PredictionSet;
+  multiBrushBehavior: MultiBrushBehavior;
 }
 
 interface DispatchProps {
-  changeVisualization: (vis: VisualizationType) => void;
+  changeVisualization: (
+    vis: VisualizationType,
+    multiBrushBehavior: MultiBrushBehavior
+  ) => void;
   changeMultiBrushBehavior: (
     behavior: MultiBrushBehavior,
     interactionHistory: InteractionHistory
@@ -172,7 +176,10 @@ class App extends React.Component<Props, State> {
                     <VisSegment
                       placeholder
                       onClick={() =>
-                        changeVisualization(VisualizationType.Scatterplot)
+                        changeVisualization(
+                          VisualizationType.Scatterplot,
+                          this.props.multiBrushBehavior
+                        )
                       }
                     >
                       Scatterplot
@@ -180,7 +187,10 @@ class App extends React.Component<Props, State> {
                     <VisSegment
                       placeholder
                       onClick={() =>
-                        changeVisualization(VisualizationType.ScatterplotMatrix)
+                        changeVisualization(
+                          VisualizationType.ScatterplotMatrix,
+                          this.props.multiBrushBehavior
+                        )
                       }
                     >
                       Scatterplot Matrix
@@ -189,7 +199,8 @@ class App extends React.Component<Props, State> {
                       placeholder
                       onClick={() =>
                         changeVisualization(
-                          VisualizationType.ParallelCoordinatePlot
+                          VisualizationType.ParallelCoordinatePlot,
+                          this.props.multiBrushBehavior
                         )
                       }
                     >
@@ -207,7 +218,12 @@ class App extends React.Component<Props, State> {
                   bottom: "0",
                   left: "0"
                 }}
-                onClick={() => changeVisualization(VisualizationType.None)}
+                onClick={() =>
+                  changeVisualization(
+                    VisualizationType.None,
+                    this.props.multiBrushBehavior
+                  )
+                }
               >
                 Home
               </Button>
@@ -337,16 +353,23 @@ const mapStateToProps = (state: VisualizationState): StateProps => ({
   numericColumns: state.dataset.numericColumns,
   labelColumn: state.dataset.labelColumn,
   visualization: state.visualization,
-  predictionSet: state.predictionSet
+  predictionSet: state.predictionSet,
+  multiBrushBehavior: state.mutliBrushBehavior
 });
 
 const mapDispatchToProps = (
   dispatch: Dispatch<VisualizationChangeAction | MultiBrushBehaviorAction>
 ): DispatchProps => ({
-  changeVisualization: (vis: VisualizationType) => {
+  changeVisualization: (
+    vis: VisualizationType,
+    multiBrushBehavior: MultiBrushBehavior
+  ) => {
     dispatch({
       type: VisualizationChangeActions.CHANGE_VISUALIZATION,
-      args: vis
+      args: {
+        multiBrushBehavior: multiBrushBehavior,
+        visType: vis
+      }
     });
   },
   changeMultiBrushBehavior: (
