@@ -1,4 +1,5 @@
 from sklearn.cluster import DBSCAN
+from sklearn import preprocessing
 
 import pandas as pd
 
@@ -14,7 +15,11 @@ class DBSCANCluster(IntentMulticlass):
 
     def compute(self, df: pd.DataFrame) -> pd.DataFrame:
         nan_dropped = df.dropna()
-        self.dbscan.fit(nan_dropped)
+
+        min_max_scaler = preprocessing.MinMaxScaler()
+        scaled = min_max_scaler.fit_transform(nan_dropped.values);
+
+        self.dbscan.fit(scaled)
 
         labels = pd.DataFrame(data=self.dbscan.labels_,
                               index=nan_dropped.index).applymap(str)

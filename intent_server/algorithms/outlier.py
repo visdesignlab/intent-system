@@ -1,4 +1,5 @@
 from sklearn.neighbors import LocalOutlierFactor
+from sklearn import preprocessing
 
 from ..intent import IntentBinary
 
@@ -16,7 +17,11 @@ class Outlier(IntentBinary):
 
     def compute(self, df: pd.DataFrame) -> pd.DataFrame:
         nan_dropped = df.select_dtypes(include=['number']).dropna()
-        outliers = self.clf.fit_predict(nan_dropped)
+
+        min_max_scaler = preprocessing.MinMaxScaler()
+        scaled = min_max_scaler.fit_transform(nan_dropped.values);
+
+        outliers = self.clf.fit_predict(scaled)
         result = pd.DataFrame(data=outliers, index=nan_dropped.index, columns=[
                               self.to_string()]).replace({-1: 1, 1: 0})
         return result.loc[result.ix[:, 0] == 1].reindex(index=df.index, fill_value=0)
