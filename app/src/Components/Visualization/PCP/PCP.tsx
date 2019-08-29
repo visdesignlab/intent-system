@@ -172,10 +172,10 @@ class PCP extends React.Component<Props, State> {
             <g transform={`translate(50,50)`}>
               <PCPComponent
                 vis={VisualizationType.ParallelCoordinatePlot}
-                data={data.slice(0, 40)}
+                data={data}
                 height={svgHeight - 100}
                 width={svgWidth - 100}
-                labels={labels.slice(0, 40)}
+                labels={labels}
                 columns={selectedDimensions}
                 XZero={false}
                 YZero={false}

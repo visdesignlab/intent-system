@@ -230,7 +230,7 @@ class App extends React.Component<Props, State> {
             </div>
           )}
         </VisualizationGrid>
-        <ResultsGrid ref={this.predictionResultsRef}>
+        <PredictionGrid ref={this.predictionResultsRef}>
           <Segment>
             <Header textAlign="center" size="huge">
               Predictions
@@ -338,7 +338,7 @@ class App extends React.Component<Props, State> {
                 })}
             </svg>
           </div>
-        </ResultsGrid>
+        </PredictionGrid>
         <SubmitGrid />
       </PageGrid>
     ) : (
@@ -393,16 +393,23 @@ export default connect(
 
 const SubmitGrid = styled.div`
   grid-column: 16/-1;
-  grid-row: 16/-1;
-  border: 0.5px dashed white;
+  grid-row: 13/-1;
+  border: 0.5px dashed black;
 `;
 
-const ResultsGrid = styled.div`
+const PredictionGrid = styled.div`
   grid-column: 16/-1;
-  grid-row: 1/16;
+  grid-row: 1/10;
   border: 0.5px dashed white;
   padding: 1em;
 `;
+
+// const ResultsGrid = styled.div`
+//   grid-column: 16/-1;
+//   grid-row: 13/-1;
+//   border: 0.5px dashed black;
+//   padding: 1em;
+// `;
 
 const VisualizationGrid = styled.div`
   grid-column: 1 / 16;

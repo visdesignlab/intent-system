@@ -206,21 +206,19 @@ class PCPComponent extends React.Component<Props, State> {
       data.forEach((d, i) => {
         if (selectedPoints.includes(i)) {
           highlightIndices[i] = highlightIndices[i] + 1;
-          // const path = select(`#path-id-${i}`);
-          // path.raise();
-          // if (path.classed(styles.selected))
-          //   path.classed(styles.intersection, true);
-          // else path.classed(styles.selected, true);
         }
       });
     });
+
+    const maxBrush = max(highlightIndices) as number;
 
     selectAll(".paths")
       .selectAll("path")
       .each((_, i) => {
         const path = select(`#path-id-${i}`);
         path.raise();
-        if (highlightIndices[i] > 1) path.classed(styles.intersection, true);
+        if (maxBrush !== 0 && highlightIndices[i] === maxBrush)
+          path.classed(styles.intersection, true);
         else if (highlightIndices[i] > 0) path.classed(styles.selected, true);
       });
 
