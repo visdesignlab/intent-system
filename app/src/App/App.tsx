@@ -60,7 +60,7 @@ class App extends React.Component<Props, State> {
     debugColumns: [],
     showSelected: false,
     debugSelectedPoints: [],
-    multiBrushIsUnion: false
+    multiBrushIsUnion: true
   };
 
   componentDidMount() {
