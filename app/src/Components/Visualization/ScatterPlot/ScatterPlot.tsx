@@ -96,7 +96,7 @@ class ScatterPlot extends React.Component<Props, State> {
       selectedY: dimensions[1]
     });
     this.props.addEmptyInteraction(
-      VisualizationType.ScatterPlot,
+      VisualizationType.Scatterplot,
       [dimensions[0], dimensions[1]],
       this.props.brushBehavior
     );
@@ -107,7 +107,7 @@ class ScatterPlot extends React.Component<Props, State> {
       selectedX
     });
     this.props.addChangeAxisInteraction(
-      VisualizationType.ScatterPlot,
+      VisualizationType.Scatterplot,
       [selectedX, this.state.selectedY],
       this.props.brushBehavior
     );
@@ -118,7 +118,7 @@ class ScatterPlot extends React.Component<Props, State> {
       selectedY
     });
     this.props.addChangeAxisInteraction(
-      VisualizationType.ScatterPlot,
+      VisualizationType.Scatterplot,
       [this.state.selectedX, selectedY],
       this.props.brushBehavior
     );
@@ -241,7 +241,7 @@ class ScatterPlot extends React.Component<Props, State> {
           <FullSizeSVG>
             <g transform={`translate(100, 100)`}>
               <ScatterPlotComponent
-                vis={VisualizationType.ScatterPlot}
+                vis={VisualizationType.Scatterplot}
                 height={lesserDim - 100}
                 width={lesserDim - 100}
                 X={X}

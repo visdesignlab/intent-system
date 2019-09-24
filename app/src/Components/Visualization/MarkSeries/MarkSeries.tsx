@@ -423,7 +423,7 @@ class MarkSeries extends React.Component<Props, State> {
                         sel.push(i);
                         updatePointSelection(sel);
                         addPointSelection(
-                          VisualizationType.ScatterPlot,
+                          VisualizationType.Scatterplot,
                           [xLabel, yLabel],
                           i,
                           this.props.brushBehavior

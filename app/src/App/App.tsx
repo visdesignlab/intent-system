@@ -126,7 +126,7 @@ class App extends React.Component<Props, State> {
         <VisualizationGrid>
           {(() => {
             switch (VisualizationType[visualization]) {
-              case VisualizationType.ScatterPlot:
+              case VisualizationType.Scatterplot:
                 return (
                   data.length > 0 && (
                     <ScatterPlot
@@ -136,7 +136,7 @@ class App extends React.Component<Props, State> {
                     />
                   )
                 );
-              case VisualizationType.ScatterPlotMatrix:
+              case VisualizationType.ScatterplotMatrix:
                 return (
                   data.length > 0 && (
                     <ScatterPlotMatrix
@@ -157,7 +157,7 @@ class App extends React.Component<Props, State> {
                     <VisSegment
                       placeholder
                       onClick={() =>
-                        changeVisualization(VisualizationType.ScatterPlot)
+                        changeVisualization(VisualizationType.Scatterplot)
                       }
                     >
                       Scatterplot
