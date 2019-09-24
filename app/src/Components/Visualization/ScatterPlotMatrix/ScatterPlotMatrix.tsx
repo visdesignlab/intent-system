@@ -163,7 +163,7 @@ class ScatterPlotMatrix extends React.Component<Props, State> {
           <FullSizeSVG ref={this.ref}>
             <g transform={`translate(50,50)`}>
               <SPMComponent
-                vis={VisualizationType.ScatterPlotMatrix}
+                vis={VisualizationType.ScatterplotMatrix}
                 data={data}
                 height={lesserDim - 100}
                 width={lesserDim - 100}
@@ -203,7 +203,7 @@ const mapDispatchToProps = (
       args: {
         multiBrushBehavior: brushBehavior,
         interaction: {
-          visualizationType: VisualizationType.ScatterPlotMatrix,
+          visualizationType: VisualizationType.ScatterplotMatrix,
           interactionType: {
             dimensions: dimensions
           }
@@ -220,7 +220,7 @@ const mapDispatchToProps = (
       args: {
         multiBrushBehavior: brushBehavior,
         interaction: {
-          visualizationType: VisualizationType.ScatterPlotMatrix,
+          visualizationType: VisualizationType.ScatterplotMatrix,
           interactionType: {
             dimensions: dimensions
           }
