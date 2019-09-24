@@ -1,0 +1,10 @@
+export enum BrushResizeType {
+  LEFT = "LEFT",
+  RIGHT = "RIGHT",
+  TOP = "TOP",
+  BOTTOM = "BOTTOM",
+  TOPLEFT = "TOPLEFT",
+  TOPRIGHT = "TOPRIGHT",
+  BOTTOMLEFT = "BOTTOMLEFT",
+  BOTTOMRIGHT = "BOTTOMRIGHT"
+}
