@@ -111,3 +111,9 @@ class Dataset:
         )
         df['Name'] = df['Name'] + ' (' + df['Position'] + ')'
         return Dataset('Name', df, 'NFL Draft Combine')
+
+    @staticmethod
+    def load_gapminderworld_data() -> 'Dataset':
+        df = pd.read_csv('data/gapminderworld.csv')
+        return Dataset('country', df, 'Gapminder World')
+
