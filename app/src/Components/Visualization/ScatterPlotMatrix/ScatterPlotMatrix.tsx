@@ -127,6 +127,11 @@ class ScatterPlotMatrix extends React.Component<Props, State> {
 
     const labels = data.map(r => r[labelColumn]);
 
+    const objectPicker = (d: any, keys: string[]) =>
+      keys.reduce((a: any, c: string) => ({ ...a, [c]: d[c] }), {});
+
+    const subsetData = data.map(d => objectPicker(d, selectedDimensions));
+
     const lesserDim = svgHeight > svgWidth ? svgWidth : svgHeight;
     return (
       <ScatterPlotDiv>
@@ -161,23 +166,12 @@ class ScatterPlotMatrix extends React.Component<Props, State> {
         </Segment>
         <div ref={this.divRef} className={styles.square}>
           <FullSizeSVG ref={this.ref}>
-            <g transform={`translate(50,50)`}>
+            <g transform={`translate(25,25)`}>
               <SPMComponent
-                vis={VisualizationType.ScatterplotMatrix}
-                data={data}
-                height={lesserDim - 100}
-                width={lesserDim - 100}
-                labels={labels}
+                data={subsetData}
                 columns={selectedDimensions}
-                XZero={false}
-                YZero={false}
-                brushDict={brushDict}
-                updateBrushDictionary={this.updateBrushDict}
-                pointSelection={this.state.pointSelection}
-                updatePointSelection={this.updatePointSelection}
-                debugIndices={this.props.debugIndices}
-                debugShowSelected={this.props.debugShowSelected}
-                debugSelectedPoints={this.props.debugSelectedPoints}
+                height={svgHeight - 50}
+                width={svgWidth - 50}
               />
             </g>
           </FullSizeSVG>
