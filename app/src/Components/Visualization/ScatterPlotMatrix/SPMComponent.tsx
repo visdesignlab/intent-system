@@ -44,8 +44,6 @@ const SPMComponent: React.FC<Props> = ({
 
     columns.forEach((col1, idx1) =>
       columns.forEach((col2, idx2) => {
-        const brushes = brushCollectionDictionary[`${col1}|${col2}`];
-
         const xValues = data.map(d => d[col1]) as number[];
         const yValues = data.map(d => d[col2]) as number[];
         const [minX, maxX] = [min(xValues), max(xValues)] as number[];
@@ -74,7 +72,7 @@ const SPMComponent: React.FC<Props> = ({
     );
 
     return pr;
-  }, [columns]);
+  }, [columns, brushCollectionDictionary, data, paddedHeight, paddedWidth]);
 
   const selectedIndices: {[key: number]: number} = useMemo(() => {
     const si: {[key: number]: number} = {};
@@ -99,7 +97,7 @@ const SPMComponent: React.FC<Props> = ({
     });
 
     return si;
-  }, [JSON.stringify(brushCollectionDictionary)]);
+  }, [brushCollectionDictionary, pairs]);
 
   return (
     <g>
