@@ -1,17 +1,36 @@
-import { InteractionHistory, MultiBrushBehavior, PredictionSet, VisualizationType } from '@visdesignlab/intent-contract';
-import { scaleLinear, select } from 'd3';
+import {
+  InteractionHistory,
+  MultiBrushBehavior,
+  PredictionSet,
+  VisualizationType,
+} from '@visdesignlab/intent-contract';
+import {scaleLinear, select} from 'd3';
 import React from 'react';
-import { connect } from 'react-redux';
-import { Dispatch } from 'redux';
-import { Checkbox, Container, ContainerProps, Header, Popup, Segment, SegmentProps } from 'semantic-ui-react';
+import {connect} from 'react-redux';
+import {Dispatch} from 'redux';
+import {
+  Checkbox,
+  Container,
+  ContainerProps,
+  Header,
+  Popup,
+  Segment,
+  SegmentProps,
+} from 'semantic-ui-react';
 import styled from 'styled-components';
 
-import { VisStore } from '..';
+import {VisStore} from '..';
 import ScatterPlot from '../Components/Visualization/ScatterPlot/ScatterPlot';
 import ScatterPlotMatrix from '../Components/Visualization/ScatterPlotMatrix/ScatterPlotMatrix';
-import { MultiBrushBehaviorAction, MultiBrushBehaviorActions } from './VisStore/MultiBrushBehaviorReducer';
-import { VisualizationChangeAction, VisualizationChangeActions } from './VisStore/VisualizationReducer';
-import { VisualizationState } from './VisStore/VisualizationState';
+import {
+  MultiBrushBehaviorAction,
+  MultiBrushBehaviorActions,
+} from './VisStore/MultiBrushBehaviorReducer';
+import {
+  VisualizationChangeAction,
+  VisualizationChangeActions,
+} from './VisStore/VisualizationReducer';
+import {VisualizationState} from './VisStore/VisualizationState';
 
 interface StateProps {
   data: any[];
@@ -26,7 +45,7 @@ interface DispatchProps {
   changeVisualization: (vis: VisualizationType) => void;
   changeMultiBrushBehavior: (
     behavior: MultiBrushBehavior,
-    interactionHistory: InteractionHistory
+    interactionHistory: InteractionHistory,
   ) => void;
 }
 
@@ -55,17 +74,17 @@ class App extends React.Component<Props, State> {
     debugColumns: [],
     showSelected: false,
     debugSelectedPoints: [],
-    multiBrushIsUnion: false
+    multiBrushIsUnion: false,
   };
 
   componentDidMount() {
     const predSvg = this.predictionsResultsSvgRef.current as SVGSVGElement;
     const predSvgSelection = select(predSvg);
-    predSvgSelection.style("height", `100%`).style("width", `100%`);
+    predSvgSelection.style('height', `100%`).style('width', `100%`);
 
     this.setState({
       height: predSvg.clientHeight,
-      width: predSvg.clientWidth
+      width: predSvg.clientWidth,
     });
   }
 
@@ -73,8 +92,8 @@ class App extends React.Component<Props, State> {
     const predSvg = this.predictionsResultsSvgRef.current as SVGSVGElement;
     const predSvgSelection = select(predSvg);
 
-    const { predictionSet } = this.props;
-    const { predictions } = predictionSet;
+    const {predictionSet} = this.props;
+    const {predictions} = predictionSet;
 
     if (
       this.state.height !== predSvg.clientHeight ||
@@ -87,13 +106,13 @@ class App extends React.Component<Props, State> {
         JSON.stringify(prevProps.predictionSet.selectedIds)
     ) {
       predSvgSelection
-        .style("height", `${predictions.length * 50}px`)
-        .style("width", `100%`);
+        .style('height', `${predictions.length * 50}px`)
+        .style('width', `100%`);
       this.setState({
         height: predSvg.clientHeight,
         width: predSvg.clientWidth,
         debugColumns: predictionSet.dimensions,
-        debugSelectedPoints: predictionSet.selectedIds
+        debugSelectedPoints: predictionSet.selectedIds,
       });
     }
   }
@@ -106,12 +125,12 @@ class App extends React.Component<Props, State> {
       visualization,
       changeVisualization,
       changeMultiBrushBehavior,
-      columns
+      columns,
     } = this.props;
-    const { width, hideZero, showSelected, multiBrushIsUnion } = this.state;
+    const {width, hideZero, showSelected, multiBrushIsUnion} = this.state;
 
-    let { predictionSet } = this.props;
-    let { predictions } = predictionSet;
+    let {predictionSet} = this.props;
+    let {predictions} = predictionSet;
     if (hideZero) predictions = predictions.filter(p => p.rank !== 0);
 
     const scale = scaleLinear()
@@ -121,7 +140,7 @@ class App extends React.Component<Props, State> {
     const barHeight = 30;
 
     return data ? (
-      <PageGrid key={JSON.stringify(columns)} className={""}>
+      <PageGrid key={JSON.stringify(columns)} className={''}>
         {/* <TitleBar tasks={TaskList} /> */}
         <VisualizationGrid>
           {(() => {
@@ -158,8 +177,7 @@ class App extends React.Component<Props, State> {
                       placeholder
                       onClick={() =>
                         changeVisualization(VisualizationType.Scatterplot)
-                      }
-                    >
+                      }>
                       Scatterplot
                     </VisSegment>
                     <VisSegment placeholder>Scatterplot Matrix</VisSegment>
@@ -193,7 +211,7 @@ class App extends React.Component<Props, State> {
                 checked={hideZero}
                 onChange={() =>
                   this.setState({
-                    hideZero: !hideZero
+                    hideZero: !hideZero,
                   })
                 }
               />
@@ -205,7 +223,7 @@ class App extends React.Component<Props, State> {
                 checked={showSelected}
                 onChange={() =>
                   this.setState({
-                    showSelected: !showSelected
+                    showSelected: !showSelected,
                   })
                 }
               />
@@ -213,19 +231,19 @@ class App extends React.Component<Props, State> {
             <div>
               <Checkbox
                 label={`Multi Brush Behavior: ${
-                  multiBrushIsUnion ? "Union" : "Intersection"
+                  multiBrushIsUnion ? 'Union' : 'Intersection'
                 }`}
                 toggle
                 checked={multiBrushIsUnion}
                 onChange={() => {
                   this.setState({
-                    multiBrushIsUnion: !multiBrushIsUnion
+                    multiBrushIsUnion: !multiBrushIsUnion,
                   });
                   changeMultiBrushBehavior(
                     !multiBrushIsUnion
                       ? MultiBrushBehavior.UNION
                       : MultiBrushBehavior.INTERSECTION,
-                    VisStore.visStore().getState().interactions
+                    VisStore.visStore().getState().interactions,
                   );
                 }}
               />
@@ -236,12 +254,11 @@ class App extends React.Component<Props, State> {
           )}
           <div
             style={{
-              padding: "1em",
-              height: "100%",
-              width: "100%",
-              overflow: "auto"
-            }}
-          >
+              padding: '1em',
+              height: '100%',
+              width: '100%',
+              overflow: 'auto',
+            }}>
             <svg id="predictions-svg" ref={this.predictionsResultsSvgRef}>
               {predictions &&
                 predictions.length > 0 &&
@@ -254,15 +271,14 @@ class App extends React.Component<Props, State> {
                           transform={`translate(0, ${(barHeight + 2) * i})`}
                           onMouseEnter={() => {
                             this.setState({
-                              debugIndices: pred.dataIds as number[]
+                              debugIndices: pred.dataIds as number[],
                             });
                           }}
                           onMouseLeave={() => {
                             this.setState({
-                              debugIndices: []
+                              debugIndices: [],
                             });
-                          }}
-                        >
+                          }}>
                           <BackgroundRect
                             height={barHeight}
                             width={scale.range()[1]}
@@ -272,8 +288,7 @@ class App extends React.Component<Props, State> {
                             width={scale(pred.rank)}
                           />
                           <PredictionText
-                            transform={`translate(20, ${barHeight / 2})`}
-                          >
+                            transform={`translate(20, ${barHeight / 2})`}>
                             {pred.intent}
                           </PredictionText>
                         </g>
@@ -304,35 +319,35 @@ const mapStateToProps = (state: VisualizationState): StateProps => ({
   numericColumns: state.dataset.numericColumns,
   labelColumn: state.dataset.labelColumn,
   visualization: state.visualization,
-  predictionSet: state.predictionSet
+  predictionSet: state.predictionSet,
 });
 
 const mapDispatchToProps = (
-  dispatch: Dispatch<VisualizationChangeAction | MultiBrushBehaviorAction>
+  dispatch: Dispatch<VisualizationChangeAction | MultiBrushBehaviorAction>,
 ): DispatchProps => ({
   changeVisualization: (vis: VisualizationType) => {
     dispatch({
       type: VisualizationChangeActions.CHANGE_VISUALIZATION,
-      args: vis
+      args: vis,
     });
   },
   changeMultiBrushBehavior: (
     brush: MultiBrushBehavior,
-    interactionHistory: InteractionHistory
+    interactionHistory: InteractionHistory,
   ) => {
     dispatch({
       type: MultiBrushBehaviorActions.SWITCH,
       args: {
         multiBrushBehavior: brush,
-        interactions: interactionHistory
-      }
+        interactions: interactionHistory,
+      },
     });
-  }
+  },
 });
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(App);
 
 const SubmitGrid = styled.div`

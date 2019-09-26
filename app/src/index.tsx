@@ -48,7 +48,7 @@ export function changeDataset(dsName: string) {
   if (datasetName === dsName) return;
   datasetName = dsName;
   VisStore.resetStore();
-  VisStore.visStore().dispatch(loadDataset(`/dataset/${datasetName}`) as any);
+    VisStore.visStore().dispatch(loadDataset(`/dataset/${datasetName}`) as any);
   renderApp();
 }
 
