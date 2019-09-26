@@ -72,7 +72,7 @@ const SPMComponent: React.FC<Props> = ({
     );
 
     return pr;
-  }, [columns, brushCollectionDictionary, data, paddedHeight, paddedWidth]);
+  }, [columns, data, paddedHeight, paddedWidth]);
 
   const selectedIndices: {[key: number]: number} = useMemo(() => {
     const si: {[key: number]: number} = {};
