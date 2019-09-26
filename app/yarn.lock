@@ -1582,10 +1582,10 @@
     lodash.unescape "4.0.1"
     semver "5.5.0"
 
-"@visdesignlab/intent-contract@^8.0.0":
-  version "8.0.0"
-  resolved "https://registry.yarnpkg.com/@visdesignlab/intent-contract/-/intent-contract-8.0.0.tgz#2a0b412eba095c6ad7af8d88570896c0729d9844"
-  integrity sha512-+1khgdvW/9sSQ0jpH1R9FSu5npXzV3nkQoJgx9quL1CbEIZJHXhP2tUGiGqpCf2nr1tTTiK1FwLzp2qkXJa6Wg==
+"@visdesignlab/intent-contract@^10.1.1":
+  version "10.1.1"
+  resolved "https://registry.yarnpkg.com/@visdesignlab/intent-contract/-/intent-contract-10.1.1.tgz#2da62138698c23245a0126faf29b0f88b13fefce"
+  integrity sha512-+DXj8tAd+reixAMiJv3g0sNyo6z5rGZn480eFdLGE7j9zTuxpPqK4B/SZ7ewjR4UeHf+jQysZUEbt4C1SNlgjA==
 
 "@visdesignlab/provenance-lib-core@^1.2.0":
   version "1.4.0"
