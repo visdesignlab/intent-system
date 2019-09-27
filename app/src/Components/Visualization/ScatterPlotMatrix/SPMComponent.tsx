@@ -87,7 +87,6 @@ const SPMComponent: React.FC<Props> = ({
           const y = pair.scaledY[d_id];
           brushList.forEach(b => {
             if (x >= b.x1 && x <= b.x2 && y >= b.y1 && y <= b.y2) {
-              console.log(true);
               if (!si[d_id]) si[d_id] = 0;
               si[d_id] += 1;
             }
@@ -100,7 +99,6 @@ const SPMComponent: React.FC<Props> = ({
   }, [brushCollectionDictionary, pairs]);
 
   const maxValue = max(Object.values(selectedIndices));
-  console.log(maxValue);
 
   return (
     <g>
