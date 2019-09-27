@@ -99,6 +99,9 @@ const SPMComponent: React.FC<Props> = ({
     return si;
   }, [brushCollectionDictionary, pairs]);
 
+  const maxValue = max(Object.values(selectedIndices));
+  console.log(maxValue);
+
   return (
     <g>
       {pairs.map((p, i) => {
@@ -137,7 +140,15 @@ const SPMComponent: React.FC<Props> = ({
                         selectedIndices[id] ? selectedIndices[id] : 0
                       }`}>
                       {selectedIndices[id] && selectedIndices[id] > 0 ? (
-                        <SelectedCircularMark cx={valX} cy={valY} r="3" />
+                        selectedIndices[id] === maxValue ? (
+                          <UnionSelectedCircularMark
+                            cx={valX}
+                            cy={valY}
+                            r="3"
+                          />
+                        ) : (
+                          <SelectedCircularMark cx={valX} cy={valY} r="3" />
+                        )
                       ) : (
                         <RegularCircularMark cx={valX} cy={valY} r="3" />
                       )}
@@ -172,6 +183,10 @@ export default SPMComponent;
 
 const RegularCircularMark = styled('circle')`
   fill: #648fff;
+`;
+
+const UnionSelectedCircularMark = styled('circle')`
+  fill: #ffb000;
 `;
 
 const SelectedCircularMark = styled('circle')`
