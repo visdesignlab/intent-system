@@ -63,6 +63,11 @@ class ScatterPlotMatrix extends React.Component<Props, State> {
     pointSelection: []
   };
 
+  constructor(props: Props) {
+    super(props);
+    window.addEventListener("resize", this.resize.bind(this));
+  }
+
   componentDidMount() {
     const { dimensions } = this.props;
 
@@ -81,10 +86,6 @@ class ScatterPlotMatrix extends React.Component<Props, State> {
       selectedDimensions: dims
     });
     this.props.addEmptyInteraction(dims, this.props.brushBehavior);
-  }
-
-  componentWillMount() {
-    window.addEventListener("resize", this.resize.bind(this));
   }
 
   componentWillUnmount() {
