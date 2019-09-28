@@ -8,16 +8,20 @@ from typing import Dict, Set
 
 
 class Dataset:
-    def __init__(self, label: str, data: pd.DataFrame, name: str, columnHeaderMap: Dict = {}) -> None:
+    def __init__(self,
+                 label: str,
+                 data: pd.DataFrame,
+                 name: str,
+                 columnHeaderMap: Dict = {}) -> None:
         self.label: str = label
         self.data: pd.DataFrame = data.reset_index(drop=True)
         self.name: str = name
         self.columnHeaderMap = columnHeaderMap
 
     def to_dict(self) -> Dict:
-        output = {'labelColumn': self.label, 
-        'name': self.name, 
-        'column_header_map': self.columnHeaderMap}
+        output = {'labelColumn': self.label,
+                  'name': self.name,
+                  'column_header_map': self.columnHeaderMap}
         output['values'] = self.data.T.to_dict()
         return output
 
