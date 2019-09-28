@@ -28,6 +28,6 @@
   "dependencies": {
     "@visdesignlab/intent-contract": "^10.1.1",
     "concurrently": "^4.1.1",
-    "kill-port": "^1.5.1"
+    "kill-port": "^1.5.2"
   }
 }

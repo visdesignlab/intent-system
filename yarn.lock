@@ -101,9 +101,9 @@ decamelize@^1.2.0:
   integrity sha1-9lNNFRSCabIDUue+4m9QH5oZEpA=
 
 end-of-stream@^1.1.0:
-  version "1.4.1"
-  resolved "https://registry.yarnpkg.com/end-of-stream/-/end-of-stream-1.4.1.tgz#ed29634d19baba463b6ce6b80a37213eab71ec43"
-  integrity sha512-1MkrZNvWTKCaigbn+W15elq2BB/L22nqrSY5DKlo3X6+vclJm8Bb5djXJBmEX6fS3+zCh/F4VBK5Z2KxJt4s2Q==
+  version "1.4.4"
+  resolved "https://registry.yarnpkg.com/end-of-stream/-/end-of-stream-1.4.4.tgz#5ae64a5f45057baf3626ec14da0ca5e4b2431eb0"
+  integrity sha512-+uw1inIHVPQoaVuHzRyXd21icM+cnt4CzD5rW+NC1wjOUSTOs+Te7FOv7AhN7vS9x/oIyhLP5PR1H+phQAHu5Q==
   dependencies:
     once "^1.4.0"
 
@@ -208,10 +208,10 @@ json-parse-better-errors@^1.0.1:
   resolved "https://registry.yarnpkg.com/json-parse-better-errors/-/json-parse-better-errors-1.0.2.tgz#bb867cfb3450e69107c131d1c514bab3dc8bcaa9"
   integrity sha512-mrqyZKfX5EhL7hvqcV6WG1yYjnjeuYDzDhhcAAUrq8Po85NBQBJP+ZDUT75qZQ98IkUoBqdkExkukOU7Ts2wrw==
 
-kill-port@^1.5.1:
-  version "1.5.1"
-  resolved "https://registry.yarnpkg.com/kill-port/-/kill-port-1.5.1.tgz#c567eca95824642aa489c8583a3a7d930a651fbf"
-  integrity sha512-hyjGDvVAE1Sosn4FFNYIWy6Ig2LD16GCkpv0+/EkLSrEEuapN5HW3VzA8e6mU5rzpKY0v/Y9kWt/MqqTqhZ8Ug==
+kill-port@^1.5.2:
+  version "1.5.2"
+  resolved "https://registry.yarnpkg.com/kill-port/-/kill-port-1.5.2.tgz#260a5bc0bcc11d26ed262dc1ee2fca8b4d15e664"
+  integrity sha512-YZPDpVUv9oZAg9uB6xnjwi1JGzA+c65Z+q4dID8G4aFSla81dHmqpCB/jV7tj6Y15SwABuqQB4jVfHn9aziKYw==
   dependencies:
     get-them-args "^1.3.1"
     shell-exec "^1.0.2"
@@ -397,9 +397,9 @@ resolve@^1.10.0:
     path-parse "^1.0.6"
 
 rxjs@^6.5.2:
-  version "6.5.2"
-  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-6.5.2.tgz#2e35ce815cd46d84d02a209fb4e5921e051dbec7"
-  integrity sha512-HUb7j3kvb7p7eCUHE3FqjoDsC1xfZQ4AHFWfTKSpZ+sAhhz5X1WX0ZuUqWbzB2QhSLp3DoLUG+hMdEDKqWo2Zg==
+  version "6.5.3"
+  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-6.5.3.tgz#510e26317f4db91a7eb1de77d9dd9ba0a4899a3a"
+  integrity sha512-wuYsAYYFdWTAnAaPoKGNhfpWwKZbJW+HgAJ+mImp+Epl7BG8oNWBCTyRM8gba9k4lk8BgWdoYm21Mo/RYhhbgA==
   dependencies:
     tslib "^1.9.0"
 
