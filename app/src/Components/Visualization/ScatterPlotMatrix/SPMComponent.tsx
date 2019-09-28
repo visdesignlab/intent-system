@@ -136,6 +136,37 @@ const SPMComponent: React.FC<Props> = ({
 
   return (
     <g>
+      {noOfUniqueCategories > 0 && (
+        <g transform={`translate(${width - 150}, 0)`}>
+          <rect
+            fill="smokegray"
+            stroke="none"
+            height={noOfUniqueCategories * 50}
+            width={150}
+            opacity="0.1"
+          />
+          {colorScale.domain().map((continent, i) => (
+            <g key={continent} transform={`translate(0, ${50 * i})`}>
+              <rect height="50" width="150" fill="none" stroke="black"></rect>
+              <circle
+                r={10}
+                fill={colorScale(continent) as string}
+                transform={`translate(20, 25)`}
+              />
+              <text
+                style={{
+                  dominantBaseline: "middle",
+                  fontSize: "1.2em",
+                  textTransform: "capitalize"
+                }}
+                transform={`translate(50, 25)`}
+              >
+                {continent}
+              </text>
+            </g>
+          ))}
+        </g>
+      )}
       {pairs.map((p, i) => {
         return (
           <g
