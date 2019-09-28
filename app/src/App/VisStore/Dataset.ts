@@ -4,12 +4,14 @@ export interface Dataset {
   numericColumns: string[];
   data: any[];
   columns: string[];
-  columnMaps?: { [key: string]: ColumnMetaData };
+  columnMaps: { [key: string]: ColumnMetaData };
+  categoricalColumns: string[];
 }
 
 export interface ColumnMetaData {
   text: string;
   unit: string;
+  type: string;
 }
 
 export function emptyDataset(): Dataset {
@@ -19,6 +21,7 @@ export function emptyDataset(): Dataset {
     numericColumns: [],
     columns: [],
     data: [],
-    columnMaps: {}
+    columnMaps: {},
+    categoricalColumns: []
   };
 }

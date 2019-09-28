@@ -1,5 +1,5 @@
 import { MultiBrushBehavior, VisualizationType } from '@visdesignlab/intent-contract';
-import { max, min, ScaleLinear, scaleLinear } from 'd3';
+import { max, min, ScaleLinear, scaleLinear, ScaleOrdinal } from 'd3';
 import React, { useMemo, useState } from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
@@ -33,6 +33,9 @@ interface OwnProps {
   height: number;
   width: number;
   columnMap: { [key: string]: ColumnMetaData };
+  noOfUniqueCategories: number;
+  colorScale: ScaleOrdinal<string, unknown>;
+  categoricalColumn: string;
 }
 
 type Props = OwnProps & DispatchProps & StateProps;
@@ -55,7 +58,10 @@ const SPMComponent: React.FC<Props> = ({
   width,
   columnMap,
   addRectangularSelection,
-  brushBehavior
+  brushBehavior,
+  noOfUniqueCategories,
+  colorScale,
+  categoricalColumn
 }: Props) => {
   const [brushCollectionDictionary, setBrushCollectionDictionary] = useState<{
     [key: string]: BrushCollection;
@@ -204,12 +210,41 @@ const SPMComponent: React.FC<Props> = ({
                             cx={valX}
                             cy={valY}
                             r="3"
+                            color={
+                              noOfUniqueCategories > 0
+                                ? (colorScale(
+                                    data[id][categoricalColumn]
+                                  ) as string)
+                                : (null as any)
+                            }
                           />
                         ) : (
-                          <SelectedCircularMark cx={valX} cy={valY} r="3" />
+                          <SelectedCircularMark
+                            cx={valX}
+                            cy={valY}
+                            r="3"
+                            color={
+                              noOfUniqueCategories > 0
+                                ? (colorScale(
+                                    data[id][categoricalColumn]
+                                  ) as string)
+                                : (null as any)
+                            }
+                          />
                         )
                       ) : (
-                        <RegularCircularMark cx={valX} cy={valY} r="3" />
+                        <RegularCircularMark
+                          cx={valX}
+                          cy={valY}
+                          r="3"
+                          color={
+                            noOfUniqueCategories > 0
+                              ? (colorScale(
+                                  data[id][categoricalColumn]
+                                ) as string)
+                              : (null as any)
+                          }
+                        />
                       )}
                     </g>
                   )
@@ -229,8 +264,14 @@ const SPMComponent: React.FC<Props> = ({
                     ...brushCollectionDictionary
                   });
                   const extents = [
-                    [affectedBrush.extents.x1, affectedBrush.extents.y1],
-                    [affectedBrush.extents.x2, affectedBrush.extents.y2]
+                    [
+                      p.xScale.invert(affectedBrush.extents.x1),
+                      p.yScale.invert(affectedBrush.extents.y1)
+                    ],
+                    [
+                      p.xScale.invert(affectedBrush.extents.x2),
+                      p.yScale.invert(affectedBrush.extents.y2)
+                    ]
                   ];
 
                   const selectedPoints: number[] = [];
@@ -316,22 +357,24 @@ export default connect(
   mapDispatchToProps
 )(SPMComponent);
 
-const CircularMark = styled("circle")`
-  opacity: 0.5;
-`;
+interface CircularMarkProp {
+  color?: string;
+}
+
+const CircularMark = styled("circle")<CircularMarkProp>``;
 
 const RegularCircularMark = styled(CircularMark)`
-  fill: #648fff;
+  fill: ${props => (props.color ? props.color : "#648fff")};
 `;
 
 const UnionSelectedCircularMark = styled(CircularMark)`
-  fill: #ffb000;
-  opacity: 0.8;
+  fill: ${props => (props.color ? props.color : "#ffb000")};
+  stroke: #ffb000;
 `;
 
 const SelectedCircularMark = styled(CircularMark)`
-  fill: #dc267f;
-  opacity: 0.8;
+  fill: ${props => (props.color ? props.color : "#dc267f")};
+  stroke: #dc267f;
 `;
 
 const AxisLabelText = styled("text")`

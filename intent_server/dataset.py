@@ -125,23 +125,37 @@ class Dataset:
         return Dataset('country', df, 'Gapminder World', {
             'cmu': {
                 'text': 'Child Mortality Rate',
-                'unit': '0-5 year-old dying per 1000 born'
+                'unit': '0-5 year-old dying per 1000 born',
+                'type': 'numeric'
             },
             'gdp': {
                 'text': "GDP",
-                'unit': 'per capita'
+                'unit': 'per capita',
+                'type': 'numeric'
             },
             'life': {
                 'text': 'Life Expectancy',
-                'unit': 'Years'
+                'unit': 'Years',
+                'type': 'numeric'
             },
             'tfr': {
                 'text': 'Total Fertility Rate',
-                'unit': 'babies per woman'
+                'unit': 'babies per woman',
+                'type': 'numeric'
             },
             'population': {
                 'text': 'Population',
-                'unit': 'number of people'
+                'unit': 'number of people',
+                'type': 'numeric'
+            },
+            'continent': {
+                'text': 'Continent',
+                'unit': 'Categorical',
+                'type': 'categorical'
+            },
+            'country': {
+                'text': 'Country',
+                'unit': 'label',
+                'type': 'label'
             }
-
         })

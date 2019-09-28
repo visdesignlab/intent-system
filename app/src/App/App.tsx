@@ -18,6 +18,7 @@ interface StateProps {
   data: any[];
   columns: string[];
   numericColumns: string[];
+  categoricalColumns: string[];
   labelColumn: string;
   visualization: VisualizationType;
   predictionSet: PredictionSet;
@@ -151,6 +152,7 @@ class App extends React.Component<Props, State> {
                       debugColumns={this.state.debugColumns}
                       debugShowSelected={this.state.showSelected}
                       debugSelectedPoints={this.state.debugSelectedPoints}
+                      categoricalColumns={this.props.categoricalColumns}
                     />
                   )
                 );
@@ -309,7 +311,8 @@ const mapStateToProps = (state: VisualizationState): StateProps => ({
   labelColumn: state.dataset.labelColumn,
   visualization: state.visualization,
   predictionSet: state.predictionSet,
-  columnMaps: state.dataset.columnMaps as any
+  columnMaps: state.dataset.columnMaps,
+  categoricalColumns: state.dataset.categoricalColumns
 });
 
 const mapDispatchToProps = (
