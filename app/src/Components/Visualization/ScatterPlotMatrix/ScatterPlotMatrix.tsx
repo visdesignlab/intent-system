@@ -1,5 +1,5 @@
 import { MultiBrushBehavior, VisualizationType } from '@visdesignlab/intent-contract';
-import { select } from 'd3';
+import { ScaleOrdinal, scaleOrdinal, schemeSet3, select } from 'd3';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
@@ -46,6 +46,7 @@ interface OwnProps {
   debugColumns: string[];
   debugShowSelected: boolean;
   debugSelectedPoints: number[];
+  categoricalColumns: string[];
   columnMap: { [key: string]: ColumnMetaData };
 }
 
@@ -125,14 +126,25 @@ class ScatterPlotMatrix extends React.Component<Props, State> {
   };
 
   render() {
-    const { dimensions, data } = this.props;
+    const { dimensions, data, categoricalColumns } = this.props;
     const { selectedDimensions, svgHeight, svgWidth } = this.state;
+
+    let maxNoOfCategories = 0;
+    let colorScale: ScaleOrdinal<string, unknown> = scaleOrdinal();
+    let oneCategoricalValue = "";
+    if (categoricalColumns.length > 0) {
+      oneCategoricalValue = categoricalColumns[0];
+      const uniqueValues = [...new Set(data.map(d => d[oneCategoricalValue]))];
+      maxNoOfCategories = uniqueValues.length;
+      colorScale.domain(uniqueValues).range(schemeSet3);
+    }
 
     const objectPicker = (d: any, keys: string[]) =>
       keys.reduce((a: any, c: string) => ({ ...a, [c]: d[c] }), {});
 
-    const subsetData = data.map(d => objectPicker(d, selectedDimensions));
-
+    const subsetData = data.map(d =>
+      objectPicker(d, [...selectedDimensions, ...categoricalColumns])
+    );
     return (
       <ScatterPlotDiv>
         <DimensionSelector
@@ -145,7 +157,6 @@ class ScatterPlotMatrix extends React.Component<Props, State> {
             if (selectedDimensions.includes(col))
               selDims = selectedDimensions.filter(d => d !== col);
             else selDims = [...selectedDimensions, col];
-
             this.updateSelection(selDims);
           }}
           debugBackend={this.props.debugColumns}
@@ -173,6 +184,9 @@ class ScatterPlotMatrix extends React.Component<Props, State> {
                 height={svgHeight - 50}
                 width={svgWidth - 50}
                 columnMap={this.props.columnMap}
+                noOfUniqueCategories={maxNoOfCategories}
+                colorScale={colorScale}
+                categoricalColumn={oneCategoricalValue}
               />
             </g>
           </FullSizeSVG>

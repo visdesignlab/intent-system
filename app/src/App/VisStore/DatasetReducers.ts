@@ -41,16 +41,15 @@ export function loadDataset(url: string) {
           column_header_map: { [key: string]: ColumnMetaData };
         } = JSON.parse(rawData);
 
-        let columns: string[] = [];
-        let numericColumns: string[] = [];
+        const columns: string[] = Object.keys(column_header_map);
+        const numericColumns: string[] = Object.keys(column_header_map).filter(
+          k => column_header_map[k].type === "numeric"
+        );
+        const categoricalColumns: string[] = Object.keys(
+          column_header_map
+        ).filter(k => column_header_map[k].type === "categorical");
         values = Object.keys(values).map((r: any) => values[r]);
 
-        if (values.length > 0) {
-          columns = Object.keys(values[0]);
-          numericColumns = columns.filter(
-            col => col !== labelColumn && !isNaN(values[0][col])
-          );
-        }
         dispatch({
           type: DatasetActions.LOAD_DATASET,
           args: {
@@ -59,6 +58,7 @@ export function loadDataset(url: string) {
             name,
             columns,
             numericColumns,
+            categoricalColumns,
             data: values,
             columnMaps: column_header_map
           }
