@@ -1,20 +1,43 @@
-import { max, min, ScaleLinear, scaleLinear } from 'd3';
-import React, { useMemo, useState } from 'react';
-import { Popup } from 'semantic-ui-react';
+import {max, min, ScaleLinear, scaleLinear} from 'd3';
+import React, {useMemo, useState} from 'react';
+import {Popup} from 'semantic-ui-react';
 import styled from 'styled-components';
-
-import { ColumnMetaData } from '../../../App/VisStore/Dataset';
-import Axis, { ScaleType } from '../Axis/Axis';
+import {Dispatch} from 'redux';
+import {ColumnMetaData} from '../../../App/VisStore/Dataset';
+import Axis, {ScaleType} from '../Axis/Axis';
 import BrushComponent from '../Brush/Components/BrushComponent';
-import { BrushCollection } from '../Brush/Types/Brush';
+import {BrushCollection} from '../Brush/Types/Brush';
+import {
+  MultiBrushBehavior,
+  VisualizationType,
+} from '@visdesignlab/intent-contract';
+import {InteractionHistoryActions} from '../../../App/VisStore/InteractionHistoryReducer';
+import {connect} from 'react-redux';
+import {VisualizationState} from '../../../App/VisStore/VisualizationState';
 
-interface Props {
+interface StateProps {
+  brushBehavior: MultiBrushBehavior;
+}
+
+interface DispatchProps {
+  addRectangularSelection: (
+    dimensions: string[],
+    brushId: string,
+    points: number[],
+    extents: number[][],
+    brushBehavior: MultiBrushBehavior,
+  ) => void;
+}
+
+interface OwnProps {
   data: any[];
   columns: string[];
   height: number;
   width: number;
-  columnMap: { [key: string]: ColumnMetaData };
+  columnMap: {[key: string]: ColumnMetaData};
 }
+
+type Props = OwnProps & DispatchProps & StateProps;
 
 interface ScatterplotDimension {
   x: number;
@@ -32,7 +55,9 @@ const SPMComponent: React.FC<Props> = ({
   columns,
   height,
   width,
-  columnMap
+  columnMap,
+  addRectangularSelection,
+  brushBehavior,
 }: Props) => {
   const [brushCollectionDictionary, setBrushCollectionDictionary] = useState<{
     [key: string]: BrushCollection;
@@ -68,19 +93,19 @@ const SPMComponent: React.FC<Props> = ({
             xScale,
             yScale,
             scaledX: xValues.map(x => (x ? xScale(x) : -1)),
-            scaledY: yValues.map(y => (y ? yScale(y) : -1))
+            scaledY: yValues.map(y => (y ? yScale(y) : -1)),
           };
 
           pr.push(pair);
         }
-      })
+      }),
     );
 
     return pr;
   }, [columns, data, paddedHeight, paddedWidth]);
 
-  const selectedIndices: { [key: number]: number } = useMemo(() => {
-    const si: { [key: number]: number } = {};
+  const selectedIndices: {[key: number]: number} = useMemo(() => {
+    const si: {[key: number]: number} = {};
 
     pairs.forEach(pair => {
       const brushes =
@@ -112,8 +137,7 @@ const SPMComponent: React.FC<Props> = ({
           <g
             key={i}
             transform={`translate(${p.x * scatterplotWidth}, ${p.y *
-              scatterplotHeight})`}
-          >
+              scatterplotHeight})`}>
             <rect
               fill="none"
               stroke="none"
@@ -130,8 +154,7 @@ const SPMComponent: React.FC<Props> = ({
                     content={columnMap[p.xLabel] && columnMap[p.xLabel].unit}
                     trigger={
                       <XAxisLabelText
-                        transform={`translate(${paddedWidth / 2}, 50)`}
-                      >
+                        transform={`translate(${paddedWidth / 2}, 50)`}>
                         {columnMap[p.xLabel]
                           ? columnMap[p.xLabel].text
                           : p.xLabel}
@@ -146,8 +169,7 @@ const SPMComponent: React.FC<Props> = ({
                   trigger={
                     <YAxisLabelText
                       transform={`translate(-40, ${paddedHeight /
-                        2}) rotate(90)`}
-                    >
+                        2}) rotate(90)`}>
                       {columnMap[p.yLabel]
                         ? columnMap[p.yLabel].text
                         : p.yLabel}
@@ -173,8 +195,7 @@ const SPMComponent: React.FC<Props> = ({
                       key={`${id} ${
                         selectedIndices[id] ? selectedIndices[id] : 0
                       }`}
-                      data-id={Math.random()}
-                    >
+                      data-id={Math.random()}>
                       {selectedIndices[id] && selectedIndices[id] > 0 ? (
                         selectedIndices[id] === maxValue ? (
                           <UnionSelectedCircularMark
@@ -197,15 +218,40 @@ const SPMComponent: React.FC<Props> = ({
                   left: 0,
                   top: 0,
                   right: paddedWidth,
-                  bottom: paddedHeight
+                  bottom: paddedHeight,
                 }}
-                onBrushUpdate={brushes => {
+                onBrushUpdate={(brushes, affectedBrush, affectType) => {
                   brushCollectionDictionary[
                     `${p.xLabel}|${p.yLabel}`
                   ] = brushes;
                   setBrushCollectionDictionary({
-                    ...brushCollectionDictionary
+                    ...brushCollectionDictionary,
                   });
+                  const extents = [
+                    [affectedBrush.extents.x1, affectedBrush.extents.y1],
+                    [affectedBrush.extents.x2, affectedBrush.extents.y2],
+                  ];
+
+                  const selectedPoints: number[] = [];
+                  p.scaledX.forEach((x, x_idx) => {
+                    const y = p.scaledY[x_idx];
+                    if (
+                      x >= affectedBrush.extents.x1 &&
+                      x <= affectedBrush.extents.x2 &&
+                      y >= affectedBrush.extents.y1 &&
+                      y <= affectedBrush.extents.y2
+                    ) {
+                      selectedPoints.push(x_idx);
+                    }
+                  });
+
+                  addRectangularSelection(
+                    [p.xLabel, p.yLabel],
+                    affectedBrush.id,
+                    selectedPoints,
+                    extents,
+                    brushBehavior,
+                  );
                 }}
               />
             </g>
@@ -216,9 +262,45 @@ const SPMComponent: React.FC<Props> = ({
   );
 };
 
-export default SPMComponent;
+const mapStateToProps = (state: VisualizationState): StateProps => ({
+  brushBehavior: state.mutliBrushBehavior,
+});
 
-const CircularMark = styled("circle")`
+const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => ({
+  addRectangularSelection: (
+    dimensions: string[],
+    brushId: string,
+    points: number[],
+    extents: number[][],
+    brushBehavior: MultiBrushBehavior,
+  ) => {
+    dispatch({
+      type: InteractionHistoryActions.ADD_INTERACTION,
+      args: {
+        multiBrushBehavior: brushBehavior,
+        interaction: {
+          visualizationType: VisualizationType.ScatterplotMatrix,
+          interactionType: {
+            dimensions: dimensions,
+            brushId,
+            dataIds: points,
+            left: extents[0][0],
+            right: extents[1][0],
+            top: extents[0][1],
+            bottom: extents[1][1],
+          },
+        },
+      },
+    });
+  },
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(SPMComponent);
+
+const CircularMark = styled('circle')`
   opacity: 0.5;
 `;
 
@@ -236,7 +318,7 @@ const SelectedCircularMark = styled(CircularMark)`
   opacity: 0.8;
 `;
 
-const AxisLabelText = styled("text")`
+const AxisLabelText = styled('text')`
   font-size: 1.2em;
 `;
 

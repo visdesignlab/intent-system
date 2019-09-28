@@ -1,13 +1,18 @@
-import { Interaction, InteractionHistory, MultiBrushBehavior, PredictionRequest } from '@visdesignlab/intent-contract';
+import {
+  Interaction,
+  InteractionHistory,
+  MultiBrushBehavior,
+  PredictionRequest,
+} from '@visdesignlab/intent-contract';
 import axios from 'axios';
-import { Action, Reducer } from 'redux';
+import {Action, Reducer} from 'redux';
 
-import { datasetName } from '../..';
-import { VisStore } from './../..';
-import { PredictionActions } from './PredictionsReducer';
+import {datasetName} from '../..';
+import {VisStore} from './../..';
+import {PredictionActions} from './PredictionsReducer';
 
 export enum InteractionHistoryActions {
-  ADD_INTERACTION = "ADD_INTERACTION"
+  ADD_INTERACTION = 'ADD_INTERACTION',
 }
 
 export interface InteractionHistoryAction
@@ -28,17 +33,20 @@ export const InteractionHistoryReducer: Reducer<
       const interactions = [...current, action.args.interaction];
       const request: PredictionRequest = {
         multiBrushBehavior: action.args.multiBrushBehavior,
-        interactionHistory: interactions
+        interactionHistory: interactions,
       };
-
-      axios.post(`/dataset/${datasetName}/predict`, request).then(response => {
-        VisStore.visStore().dispatch({
-          type: PredictionActions.UPDATE_PREDICATION,
-          args: response.data
-        });
-        console.log("Arguments", interactions);
-        console.log("Preds", response.data);
-      });
+      console.log(interactions, request);
+      axios
+        .post(`/dataset/${datasetName}/predict`, request)
+        .then(response => {
+          VisStore.visStore().dispatch({
+            type: PredictionActions.UPDATE_PREDICATION,
+            args: response.data,
+          });
+          console.log('Arguments', interactions);
+          console.log('Preds', response.data);
+        })
+        .catch(err => console.log(err));
       return interactions;
     default:
       return [...current];
