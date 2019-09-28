@@ -77,6 +77,14 @@ const BrushComponent: FC<Props> = ({
     ) {
       delete brushes[currentBrush.id];
     }
+    const curr = currentBrush;
+    let { x1, x2, y1, y2 } = curr.extents;
+
+    if (x1 > x2) [x1, x2] = [x2, x1];
+    if (y1 > y2) [y1, y2] = [y2, y1];
+
+    curr.extents = { x1, x2, y1, y2 };
+    brushes[curr.id] = curr;
     setCurrentBrush(null as any);
     setMouseDown(false);
     setIsCreatingNewBrush(false);

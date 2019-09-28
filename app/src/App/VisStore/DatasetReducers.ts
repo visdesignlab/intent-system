@@ -1,7 +1,7 @@
-import { Action, Dispatch, Reducer } from "redux";
-import { Dataset, emptyDataset } from "./Dataset";
+import { text } from 'd3';
+import { Action, Dispatch, Reducer } from 'redux';
 
-import { text } from "d3";
+import { ColumnMetaData, Dataset, emptyDataset } from './Dataset';
 
 export enum DatasetActions {
   LOAD_DATASET = "LOAD_DATASET"
@@ -32,11 +32,13 @@ export function loadDataset(url: string) {
         let {
           labelColumn,
           name,
-          values
+          values,
+          column_header_map
         }: {
           labelColumn: string;
           name: string;
           values: any[];
+          column_header_map: { [key: string]: ColumnMetaData };
         } = JSON.parse(rawData);
 
         let columns: string[] = [];
@@ -57,7 +59,8 @@ export function loadDataset(url: string) {
             name,
             columns,
             numericColumns,
-            data: values
+            data: values,
+            columnMaps: column_header_map
           }
         });
       })

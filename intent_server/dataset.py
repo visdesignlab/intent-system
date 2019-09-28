@@ -8,13 +8,20 @@ from typing import Dict, Set
 
 
 class Dataset:
-    def __init__(self, label: str, data: pd.DataFrame, name: str) -> None:
+    def __init__(self,
+                 label: str,
+                 data: pd.DataFrame,
+                 name: str,
+                 columnHeaderMap: Dict = {}) -> None:
         self.label: str = label
         self.data: pd.DataFrame = data.reset_index(drop=True)
         self.name: str = name
+        self.columnHeaderMap = columnHeaderMap
 
     def to_dict(self) -> Dict:
-        output = {'labelColumn': self.label, 'name': self.name}
+        output = {'labelColumn': self.label,
+                  'name': self.name,
+                  'column_header_map': self.columnHeaderMap}
         output['values'] = self.data.T.to_dict()
         return output
 
@@ -115,4 +122,26 @@ class Dataset:
     @staticmethod
     def load_gapminderworld_data() -> 'Dataset':
         df = pd.read_csv('data/gapminderworld.csv')
-        return Dataset('country', df, 'Gapminder World')
+        return Dataset('country', df, 'Gapminder World', {
+            'cmu': {
+                'text': 'Child Mortality Rate',
+                'unit': '0-5 year-old dying per 1000 born'
+            },
+            'gdp': {
+                'text': "GDP",
+                'unit': 'per capita'
+            },
+            'life': {
+                'text': 'Life Expectancy',
+                'unit': 'Years'
+            },
+            'tfr': {
+                'text': 'Total Fertility Rate',
+                'unit': 'babies per woman'
+            },
+            'population': {
+                'text': 'Population',
+                'unit': 'number of people'
+            }
+
+        })
