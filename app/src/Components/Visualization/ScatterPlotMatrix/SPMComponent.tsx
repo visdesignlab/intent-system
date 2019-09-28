@@ -1,9 +1,9 @@
-import {max, min, ScaleLinear, scaleLinear} from 'd3';
-import React, {useMemo, useState} from 'react';
+import { max, min, ScaleLinear, scaleLinear } from 'd3';
+import React, { useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import BrushComponent from '../Brush/Components/BrushComponent';
-import {BrushCollection} from '../Brush/Types/Brush';
+import { BrushCollection } from '../Brush/Types/Brush';
 
 interface Props {
   data: any[];
@@ -27,7 +27,7 @@ const SPMComponent: React.FC<Props> = ({
   data,
   columns,
   height,
-  width,
+  width
 }: Props) => {
   const [brushCollectionDictionary, setBrushCollectionDictionary] = useState<{
     [key: string]: BrushCollection;
@@ -63,19 +63,19 @@ const SPMComponent: React.FC<Props> = ({
             xScale,
             yScale,
             scaledX: xValues.map(x => (x ? xScale(x) : -1)),
-            scaledY: yValues.map(y => (y ? yScale(y) : -1)),
+            scaledY: yValues.map(y => (y ? yScale(y) : -1))
           };
 
           pr.push(pair);
         }
-      }),
+      })
     );
 
     return pr;
   }, [columns, data, paddedHeight, paddedWidth]);
 
-  const selectedIndices: {[key: number]: number} = useMemo(() => {
-    const si: {[key: number]: number} = {};
+  const selectedIndices: { [key: number]: number } = useMemo(() => {
+    const si: { [key: number]: number } = {};
 
     pairs.forEach(pair => {
       const brushes =
@@ -107,7 +107,8 @@ const SPMComponent: React.FC<Props> = ({
           <g
             key={i}
             transform={`translate(${p.x * scatterplotWidth}, ${p.y *
-              scatterplotHeight})`}>
+              scatterplotHeight})`}
+          >
             <text>
               {p.xLabel} {p.yLabel}
             </text>
@@ -136,7 +137,8 @@ const SPMComponent: React.FC<Props> = ({
                       data-id={Math.random()}
                       key={`${id} ${
                         selectedIndices[id] ? selectedIndices[id] : 0
-                      }`}>
+                      }`}
+                    >
                       {selectedIndices[id] && selectedIndices[id] > 0 ? (
                         selectedIndices[id] === maxValue ? (
                           <UnionSelectedCircularMark
@@ -159,16 +161,17 @@ const SPMComponent: React.FC<Props> = ({
                   left: 0,
                   top: 0,
                   right: paddedWidth,
-                  bottom: paddedHeight,
+                  bottom: paddedHeight
                 }}
                 onBrushUpdate={brushes => {
                   brushCollectionDictionary[
                     `${p.xLabel}|${p.yLabel}`
                   ] = brushes;
                   setBrushCollectionDictionary({
-                    ...brushCollectionDictionary,
+                    ...brushCollectionDictionary
                   });
-                }}></BrushComponent>
+                }}
+              ></BrushComponent>
             </g>
           </g>
         );
@@ -179,14 +182,14 @@ const SPMComponent: React.FC<Props> = ({
 
 export default SPMComponent;
 
-const RegularCircularMark = styled('circle')`
+const RegularCircularMark = styled("circle")`
   fill: #648fff;
 `;
 
-const UnionSelectedCircularMark = styled('circle')`
+const UnionSelectedCircularMark = styled("circle")`
   fill: #ffb000;
 `;
 
-const SelectedCircularMark = styled('circle')`
+const SelectedCircularMark = styled("circle")`
   fill: #dc267f;
 `;
