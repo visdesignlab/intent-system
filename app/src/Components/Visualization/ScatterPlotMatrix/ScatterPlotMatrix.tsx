@@ -1,22 +1,17 @@
-import {
-  MultiBrushBehavior,
-  VisualizationType,
-} from '@visdesignlab/intent-contract';
-import {select} from 'd3';
+import { MultiBrushBehavior, VisualizationType } from '@visdesignlab/intent-contract';
+import { select } from 'd3';
 import React from 'react';
-import {connect} from 'react-redux';
-import {Dispatch} from 'redux';
-import {Dropdown, Segment} from 'semantic-ui-react';
+import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
+import { Dropdown, Segment } from 'semantic-ui-react';
 import styled from 'styled-components';
 
-import {changeDataset, datasetName, datasets} from '../../..';
-import {
-  InteractionHistoryAction,
-  InteractionHistoryActions,
-} from '../../../App/VisStore/InteractionHistoryReducer';
-import {VisualizationState} from '../../../App/VisStore/VisualizationState';
+import { changeDataset, datasetName, datasets } from '../../..';
+import { ColumnMetaData } from '../../../App/VisStore/Dataset';
+import { InteractionHistoryAction, InteractionHistoryActions } from '../../../App/VisStore/InteractionHistoryReducer';
+import { VisualizationState } from '../../../App/VisStore/VisualizationState';
 import DimensionSelector from '../../DimensionSelector/DimensionSelector';
-import {BrushDictionary} from '../Data Types/BrushType';
+import { BrushDictionary } from '../Data Types/BrushType';
 import FullSizeSVG from '../ReusableComponents/FullSizeSVG';
 import styles from './scatterplotmatrix.module.css';
 import SPMComponent from './SPMComponent';
@@ -32,11 +27,11 @@ interface State {
 interface DispatchProps {
   addEmptyInteraction: (
     dimensions: string[],
-    brushBehavior: MultiBrushBehavior,
+    brushBehavior: MultiBrushBehavior
   ) => void;
   addChangeAxisInteraction: (
     dimensions: string[],
-    brushBehavior: MultiBrushBehavior,
+    brushBehavior: MultiBrushBehavior
   ) => void;
 }
 interface StateProps {
@@ -51,6 +46,7 @@ interface OwnProps {
   debugColumns: string[];
   debugShowSelected: boolean;
   debugSelectedPoints: number[];
+  columnMap: { [key: string]: ColumnMetaData };
 }
 
 type Props = OwnProps & DispatchProps & StateProps;
@@ -64,35 +60,35 @@ class ScatterPlotMatrix extends React.Component<Props, State> {
     svgWidth: 0,
     selectedDimensions: [],
     brushDict: {},
-    pointSelection: [],
+    pointSelection: []
   };
 
   componentDidMount() {
-    const {dimensions} = this.props;
+    const { dimensions } = this.props;
 
     const divHeight = (this.divRef.current as HTMLDivElement).clientHeight;
     const divWidth = (this.divRef.current as HTMLDivElement).clientWidth;
     const lesser = divHeight < divWidth ? divHeight : divWidth;
 
     select(this.divRef.current)
-      .style('height', `${lesser}px`)
-      .style('width', `${lesser}px`);
+      .style("height", `${lesser}px`)
+      .style("width", `${lesser}px`);
     const dims = dimensions.slice(0, 3);
 
     this.setState({
       svgHeight: lesser,
       svgWidth: lesser,
-      selectedDimensions: dims,
+      selectedDimensions: dims
     });
     this.props.addEmptyInteraction(dims, this.props.brushBehavior);
   }
 
   componentWillMount() {
-    window.addEventListener('resize', this.resize.bind(this));
+    window.addEventListener("resize", this.resize.bind(this));
   }
 
   componentWillUnmount() {
-    window.removeEventListener('resize', this.resize.bind(this));
+    window.removeEventListener("resize", this.resize.bind(this));
   }
 
   resize() {
@@ -101,38 +97,38 @@ class ScatterPlotMatrix extends React.Component<Props, State> {
     const lesser = divHeight < divWidth ? divHeight : divWidth;
 
     select(this.divRef.current)
-      .style('height', `${lesser}px`)
-      .style('width', `${lesser}px`);
+      .style("height", `${lesser}px`)
+      .style("width", `${lesser}px`);
 
     this.setState({
       svgHeight: lesser,
-      svgWidth: lesser,
+      svgWidth: lesser
     });
   }
 
   updateSelection = (selectedDimensions: string[]) => {
-    this.setState({selectedDimensions});
-    console.log('Hello');
+    this.setState({ selectedDimensions });
+    console.log("Hello");
     this.props.addChangeAxisInteraction(
       selectedDimensions,
-      this.props.brushBehavior,
+      this.props.brushBehavior
     );
   };
 
   updateBrushDict = (brushDict: BrushDictionary) => {
-    this.setState({brushDict});
+    this.setState({ brushDict });
   };
 
   updatePointSelection = (pointSelection: number[]) => {
-    this.setState({pointSelection});
+    this.setState({ pointSelection });
   };
 
   render() {
-    const {dimensions, data} = this.props;
-    const {selectedDimensions, svgHeight, svgWidth} = this.state;
+    const { dimensions, data } = this.props;
+    const { selectedDimensions, svgHeight, svgWidth } = this.state;
 
     const objectPicker = (d: any, keys: string[]) =>
-      keys.reduce((a: any, c: string) => ({...a, [c]: d[c]}), {});
+      keys.reduce((a: any, c: string) => ({ ...a, [c]: d[c] }), {});
 
     const subsetData = data.map(d => objectPicker(d, selectedDimensions));
 
@@ -160,7 +156,7 @@ class ScatterPlotMatrix extends React.Component<Props, State> {
             options={datasets.map(k => ({
               key: k,
               text: k,
-              value: k,
+              value: k
             }))}
             onChange={(_, data) => {
               changeDataset(data.value as string);
@@ -169,12 +165,13 @@ class ScatterPlotMatrix extends React.Component<Props, State> {
         </Segment>
         <div ref={this.divRef} className={styles.square}>
           <FullSizeSVG ref={this.ref}>
-            <g transform={`translate(25,25)`}>
+            <g transform={`translate(25,15)`}>
               <SPMComponent
                 data={subsetData}
                 columns={selectedDimensions}
                 height={svgHeight - 50}
                 width={svgWidth - 50}
+                columnMap={this.props.columnMap}
               />
             </g>
           </FullSizeSVG>
@@ -185,15 +182,15 @@ class ScatterPlotMatrix extends React.Component<Props, State> {
 }
 
 const mapStateToProps = (state: VisualizationState): StateProps => ({
-  brushBehavior: state.mutliBrushBehavior,
+  brushBehavior: state.mutliBrushBehavior
 });
 
 const mapDispatchToProps = (
-  dispatch: Dispatch<InteractionHistoryAction>,
+  dispatch: Dispatch<InteractionHistoryAction>
 ): DispatchProps => ({
   addEmptyInteraction: (
     dimensions: string[],
-    brushBehavior: MultiBrushBehavior,
+    brushBehavior: MultiBrushBehavior
   ) => {
     dispatch({
       type: InteractionHistoryActions.ADD_INTERACTION,
@@ -202,15 +199,15 @@ const mapDispatchToProps = (
         interaction: {
           visualizationType: VisualizationType.ScatterplotMatrix,
           interactionType: {
-            dimensions: dimensions,
-          },
-        },
-      },
+            dimensions: dimensions
+          }
+        }
+      }
     });
   },
   addChangeAxisInteraction: (
     dimensions: string[],
-    brushBehavior: MultiBrushBehavior,
+    brushBehavior: MultiBrushBehavior
   ) => {
     dispatch({
       type: InteractionHistoryActions.ADD_INTERACTION,
@@ -219,16 +216,16 @@ const mapDispatchToProps = (
         interaction: {
           visualizationType: VisualizationType.ScatterplotMatrix,
           interactionType: {
-            dimensions: dimensions,
-          },
-        },
-      },
+            dimensions: dimensions
+          }
+        }
+      }
     });
-  },
+  }
 });
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
+  mapDispatchToProps
 )(ScatterPlotMatrix);
 
 const ScatterPlotDiv = styled.div`

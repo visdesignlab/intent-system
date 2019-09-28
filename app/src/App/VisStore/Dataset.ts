@@ -4,6 +4,12 @@ export interface Dataset {
   numericColumns: string[];
   data: any[];
   columns: string[];
+  columnMaps?: { [key: string]: ColumnMetaData };
+}
+
+export interface ColumnMetaData {
+  text: string;
+  unit: string;
 }
 
 export function emptyDataset(): Dataset {
@@ -12,6 +18,7 @@ export function emptyDataset(): Dataset {
     labelColumn: "",
     numericColumns: [],
     columns: [],
-    data: []
+    data: [],
+    columnMaps: {}
   };
 }

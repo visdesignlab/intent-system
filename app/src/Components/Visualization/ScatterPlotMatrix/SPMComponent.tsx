@@ -1,7 +1,10 @@
 import { max, min, ScaleLinear, scaleLinear } from 'd3';
 import React, { useMemo, useState } from 'react';
+import { Popup } from 'semantic-ui-react';
 import styled from 'styled-components';
 
+import { ColumnMetaData } from '../../../App/VisStore/Dataset';
+import Axis, { ScaleType } from '../Axis/Axis';
 import BrushComponent from '../Brush/Components/BrushComponent';
 import { BrushCollection } from '../Brush/Types/Brush';
 
@@ -10,6 +13,7 @@ interface Props {
   columns: string[];
   height: number;
   width: number;
+  columnMap: { [key: string]: ColumnMetaData };
 }
 
 interface ScatterplotDimension {
@@ -27,7 +31,8 @@ const SPMComponent: React.FC<Props> = ({
   data,
   columns,
   height,
-  width
+  width,
+  columnMap
 }: Props) => {
   const [brushCollectionDictionary, setBrushCollectionDictionary] = useState<{
     [key: string]: BrushCollection;
@@ -109,17 +114,48 @@ const SPMComponent: React.FC<Props> = ({
             transform={`translate(${p.x * scatterplotWidth}, ${p.y *
               scatterplotHeight})`}
           >
-            <text>
-              {p.xLabel} {p.yLabel}
-            </text>
             <rect
               fill="none"
-              stroke="black"
+              stroke="none"
               height={scatterplotHeight}
               width={scatterplotWidth}
               opacity="0.5"
             />
             <g transform={`translate(${internalPadding},${internalPadding})`}>
+              <Axis scale={p.yScale} position={ScaleType.LEFT} />
+              <g transform={`translate(0, ${p.yScale.range()[0]})`}>
+                <Axis rotate scale={p.xScale} position={ScaleType.BOTTOM} />
+                {p.y === columns.length - 1 && (
+                  <Popup
+                    content={columnMap[p.xLabel] && columnMap[p.xLabel].unit}
+                    trigger={
+                      <XAxisLabelText
+                        transform={`translate(${paddedWidth / 2}, 50)`}
+                      >
+                        {columnMap[p.xLabel]
+                          ? columnMap[p.xLabel].text
+                          : p.xLabel}
+                      </XAxisLabelText>
+                    }
+                  />
+                )}
+              </g>
+              {p.x === 0 && (
+                <Popup
+                  content={columnMap[p.yLabel] && columnMap[p.yLabel].unit}
+                  trigger={
+                    <YAxisLabelText
+                      transform={`translate(-40, ${paddedHeight /
+                        2}) rotate(90)`}
+                    >
+                      {columnMap[p.yLabel]
+                        ? columnMap[p.yLabel].text
+                        : p.yLabel}
+                    </YAxisLabelText>
+                  }
+                />
+              )}
+
               <rect
                 fill="none"
                 stroke="blue"
@@ -134,10 +170,10 @@ const SPMComponent: React.FC<Props> = ({
                   valX !== -1 &&
                   valY !== -1 && (
                     <g
-                      data-id={Math.random()}
                       key={`${id} ${
                         selectedIndices[id] ? selectedIndices[id] : 0
                       }`}
+                      data-id={Math.random()}
                     >
                       {selectedIndices[id] && selectedIndices[id] > 0 ? (
                         selectedIndices[id] === maxValue ? (
@@ -171,7 +207,7 @@ const SPMComponent: React.FC<Props> = ({
                     ...brushCollectionDictionary
                   });
                 }}
-              ></BrushComponent>
+              />
             </g>
           </g>
         );
@@ -182,14 +218,32 @@ const SPMComponent: React.FC<Props> = ({
 
 export default SPMComponent;
 
-const RegularCircularMark = styled("circle")`
+const CircularMark = styled("circle")`
+  opacity: 0.5;
+`;
+
+const RegularCircularMark = styled(CircularMark)`
   fill: #648fff;
 `;
 
-const UnionSelectedCircularMark = styled("circle")`
+const UnionSelectedCircularMark = styled(CircularMark)`
   fill: #ffb000;
+  opacity: 0.8;
 `;
 
-const SelectedCircularMark = styled("circle")`
+const SelectedCircularMark = styled(CircularMark)`
   fill: #dc267f;
+  opacity: 0.8;
+`;
+
+const AxisLabelText = styled("text")`
+  font-size: 1.2em;
+`;
+
+const XAxisLabelText = styled(AxisLabelText)`
+  text-anchor: middle;
+`;
+
+const YAxisLabelText = styled(AxisLabelText)`
+  text-anchor: middle;
 `;

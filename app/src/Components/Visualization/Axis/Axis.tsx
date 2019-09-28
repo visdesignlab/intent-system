@@ -1,16 +1,9 @@
-import * as React from "react";
+import { axisBottom, axisLeft, axisRight, axisTop, ScaleLinear, select } from 'd3';
+import * as React from 'react';
+import { useEffect, useState } from 'react';
+import styled from 'styled-components';
 
-import {
-  ScaleLinear,
-  axisBottom,
-  axisLeft,
-  axisRight,
-  axisTop,
-  select
-} from "d3";
-import { useEffect, useState } from "react";
-
-import styled from "styled-components";
+import styles from './axis.module.css';
 
 export enum ScaleType {
   BOTTOM,
@@ -22,15 +15,17 @@ export enum ScaleType {
 interface Props {
   scale: ScaleLinear<number, number>;
   position: ScaleType;
+  rotate?: boolean;
   label?: string;
   size?: number;
 }
 
-const Axis: React.FC<Props> = ({ scale, position, label, size }) => {
+const Axis: React.FC<Props> = ({ scale, position, label, size, rotate }) => {
   const ref: React.RefObject<SVGGElement> = React.createRef();
   const [axisDim, setAxisDim] = useState(0);
-
   if (!size) size = 2;
+
+  const shouldRotate = rotate ? rotate : false;
 
   let axis: any;
   let xTranslate: number = axisDim;
@@ -60,6 +55,10 @@ const Axis: React.FC<Props> = ({ scale, position, label, size }) => {
   useEffect(() => {
     const gElement = ref.current as any;
     select(ref.current).call(axis);
+    select(ref.current)
+      .selectAll("text")
+      .attr("dx", "1em")
+      .style("font-size", "0.75em");
 
     switch (position) {
       case ScaleType.BOTTOM:
@@ -82,7 +81,11 @@ const Axis: React.FC<Props> = ({ scale, position, label, size }) => {
 
   return (
     <g>
-      <g ref={ref} />
+      {shouldRotate ? (
+        <g ref={ref} className={styles.rotate_text} />
+      ) : (
+        <g ref={ref} />
+      )}
       {position === ScaleType.LEFT || position === ScaleType.RIGHT ? (
         <LabelTextY
           size={size}
@@ -115,6 +118,7 @@ const LabelTextX = styled.text<LabelTextXProps>`
   font-size: ${props => props.size}em;
   text-anchor: middle;
   dominant-baseline: ${props => (props.top ? "baseline" : "hanging")};
+  transform: ${props => (props.rotate ? "rotate(90)" : "rotate(0)")};
 `;
 
 interface LabelTextYProps {
@@ -127,5 +131,6 @@ const LabelTextY = styled.text<LabelTextYProps>`
   text-anchor: middle;
   writing-mode: vertical-rl;
   text-gravity: inverse;
+  transform: ${props => (props.rotate ? "rotate(90)" : "rotate(0)")};
   dominant-baseline: ${props => (props.right ? "middle" : "hanging")};
 `;
