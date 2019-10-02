@@ -8,6 +8,8 @@ export interface Dataset {
   categoricalColumns: string[];
 }
 
+export type ColumnMap = { [key: string]: ColumnMetaData };
+
 export interface ColumnMetaData {
   text: string;
   unit: string;
