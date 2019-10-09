@@ -1,9 +1,11 @@
 import React, {FC} from 'react';
 
-interface Props {}
+interface Props {
+  text: string;
+}
 
-const Task: FC<Props> = ({}: Props) => {
-  return <div>Test</div>;
+const Task: FC<Props> = ({text}: Props) => {
+  return <div>{text}</div>;
 };
 
 export default Task;
