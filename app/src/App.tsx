@@ -10,8 +10,8 @@ const App: FC<Props> = ({}: Props) => {
   return (
     <MainDiv>
       <TaskVisDiv>
-        <Task />
-        <Task />
+        <Task text="Study" />
+        <Task text="Visualization" />
       </TaskVisDiv>
     </MainDiv>
   );
@@ -25,7 +25,6 @@ const MainDiv = styled('div')`
 
   display: grid;
   grid-template-columns: 3fr 1fr;
-  grid-template-areas: 'visualization predictions_study';
 `;
 
 const TaskVisDiv = styled('div')`
@@ -34,7 +33,4 @@ const TaskVisDiv = styled('div')`
 
   display: grid;
   grid-template-rows: 1fr 15fr;
-  grid-template-areas:
-    'task'
-    'viz';
 `;
