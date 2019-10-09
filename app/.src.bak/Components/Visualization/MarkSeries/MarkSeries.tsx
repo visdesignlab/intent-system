@@ -1,17 +1,23 @@
-import { MultiBrushBehavior, VisualizationType } from '@visdesignlab/intent-contract';
+import {
+  MultiBrushBehavior,
+  VisualizationType,
+} from '@visdesignlab/intent-contract';
 import axios from 'axios';
-import { brush, brushSelection, max, ScaleLinear, select } from 'd3';
+import {brush, brushSelection, max, ScaleLinear, select} from 'd3';
 import * as React from 'react';
-import { connect } from 'react-redux';
-import { Dispatch } from 'redux';
-import { Header, Popup } from 'semantic-ui-react';
+import {connect} from 'react-redux';
+import {Dispatch} from 'redux';
+import {Header, Popup} from 'semantic-ui-react';
 import styled from 'styled-components';
 
-import { datasetName } from '../../..';
-import { InteractionHistoryAction, InteractionHistoryActions } from '../../../App/VisStore/InteractionHistoryReducer';
-import { VisualizationState } from '../../../App/VisStore/VisualizationState';
-import { Brush, BrushDictionary } from '../Data Types/BrushType';
-import { MarkData } from '../Data Types/MarkData';
+import {datasetName} from '../../..';
+import {
+  InteractionHistoryAction,
+  InteractionHistoryActions,
+} from '../../../App/VisStore/InteractionHistoryReducer';
+import {VisualizationState} from '../../../App/VisStore/VisualizationState';
+import {Brush, BrushDictionary} from '../Data Types/BrushType';
+import {MarkData} from '../Data Types/MarkData';
 
 interface RequiredProps {
   vis: VisualizationType;
@@ -40,13 +46,13 @@ interface DispatchProps {
     vis: VisualizationType,
     dimensions: string[],
     point: number,
-    brushBehavior: MultiBrushBehavior
+    brushBehavior: MultiBrushBehavior,
   ) => void;
   addPointDeselection: (
     vis: VisualizationType,
     dimensions: string[],
     point: number,
-    brushBehavior: MultiBrushBehavior
+    brushBehavior: MultiBrushBehavior,
   ) => void;
   addRectangularSelection: (
     vis: VisualizationType,
@@ -54,7 +60,7 @@ interface DispatchProps {
     brushId: string,
     points: number[],
     extents: number[][],
-    brushBehavior: MultiBrushBehavior
+    brushBehavior: MultiBrushBehavior,
   ) => void;
 }
 
@@ -65,8 +71,8 @@ interface OptionalProps {
 }
 
 interface State {
-  brushDict: { [key: string]: any };
-  debugInfo: { [key: string]: any };
+  brushDict: {[key: string]: any};
+  debugInfo: {[key: string]: any};
 }
 
 type Props = RequiredProps & OptionalProps & StateProps & DispatchProps;
@@ -79,25 +85,25 @@ class MarkSeries extends React.Component<Props, State> {
 
   static defaultProps: OptionalProps = {
     markSize: 3,
-    opacity: 1
+    opacity: 1,
   };
 
   constructor(props: Props) {
     super(props);
     this.state = {
       brushDict: {},
-      debugInfo: {}
+      debugInfo: {},
     };
   }
 
   componentDidMount() {
     this.setState({
-      brushDict: {}
+      brushDict: {},
     });
   }
 
   componentDidUpdate(prevProps: Props) {
-    const { brushRef } = this;
+    const {brushRef} = this;
     const brushGElement = brushRef.current as SVGGElement;
     const {
       xScale,
@@ -108,7 +114,7 @@ class MarkSeries extends React.Component<Props, State> {
       yValues,
       addRectangularSelection,
       vis,
-      updateDebugKeys
+      updateDebugKeys,
     } = this.props;
 
     if (
@@ -120,20 +126,20 @@ class MarkSeries extends React.Component<Props, State> {
       axios
         .post(`/dataset/${datasetName}/info`, JSON.stringify(data), {
           headers: {
-            "Content-Type": "application/json"
-          }
+            'Content-Type': 'application/json',
+          },
         })
         .then(res => {
           this.setState({
-            debugInfo: res.data
+            debugInfo: res.data,
           });
 
           if (Object.values(res.data.measures).length > 0) {
             const measure = res.data.measures[0];
             const keys = Object.keys(measure).filter(
-              key => !isNaN(measure[key])
+              key => !isNaN(measure[key]),
             );
-            updateDebugKeys(["Off", ...keys]);
+            updateDebugKeys(['Off', ...keys]);
           }
         })
         .catch(err => console.log(err));
@@ -151,11 +157,11 @@ class MarkSeries extends React.Component<Props, State> {
 
       const nBrush = brush()
         .extent([[-10, -10], [width + 10, height + 10]])
-        .on("end", function() {
+        .on('end', function() {
           if (instance.programMove) return;
           const id = brushes[brushes.length - 1].id;
           const lastBrush = (document.getElementById(
-            `brush-${id}`
+            `brush-${id}`,
           ) as unknown) as SVGGElement;
 
           const lastSelection = brushSelection(lastBrush);
@@ -198,14 +204,14 @@ class MarkSeries extends React.Component<Props, State> {
 
             const br: Brush = {
               id: select(this)
-                .attr("id")
-                .replace("brush-", ""),
+                .attr('id')
+                .replace('brush-', ''),
               brush: nBrush,
               selectedPoints: selectedIndices,
               extents: [
                 [xScale.invert(left), yScale.invert(top)],
-                [xScale.invert(right), yScale.invert(bottom)]
-              ]
+                [xScale.invert(right), yScale.invert(bottom)],
+              ],
             };
 
             brushes.forEach(brs => {
@@ -215,11 +221,11 @@ class MarkSeries extends React.Component<Props, State> {
               }
             });
 
-            const { brushDict } = instance.props;
+            const {brushDict} = instance.props;
 
             brushDict[space] = brushes;
             instance.setState({
-              brushDict
+              brushDict,
             });
 
             addRectangularSelection(
@@ -228,7 +234,7 @@ class MarkSeries extends React.Component<Props, State> {
               br.id,
               br.selectedPoints,
               br.extents,
-              instance.props.brushBehavior
+              instance.props.brushBehavior,
             );
           }
         });
@@ -237,10 +243,10 @@ class MarkSeries extends React.Component<Props, State> {
         id: new Date().valueOf().toString(),
         brush: nBrush,
         selectedPoints: [],
-        extents: [[], []]
+        extents: [[], []],
       });
 
-      const { brushDict } = this.props;
+      const {brushDict} = this.props;
       brushDict[space] = brushes;
       this.props.updateBrushDictionary(brushDict);
 
@@ -253,27 +259,27 @@ class MarkSeries extends React.Component<Props, State> {
 
       const brushGSelection = select(brushGElement);
       const brushesSelection = brushGSelection
-        .selectAll(".brush")
+        .selectAll('.brush')
         .data(brushes, (d: any) => d.id);
 
       brushesSelection.exit().remove();
 
       brushesSelection
         .enter()
-        .insert("g", ".brush")
-        .classed("brush", true)
-        .attr("id", brush => `brush-${brush.id}`)
+        .insert('g', '.brush')
+        .classed('brush', true)
+        .attr('id', brush => `brush-${brush.id}`)
         .each(function(brushObject) {
           brushObject.brush(select(this));
           const brs = instance.props.brushDict[space].filter(
-            d => d.id === brushObject.id
+            d => d.id === brushObject.id,
           );
           if (brs.length === 1) {
             const br = brs[0];
             instance.programMove = true;
             select(this).call(brushObject.brush.move, [
               [xScale(br.extents[0][0]), yScale(br.extents[0][1])],
-              [xScale(br.extents[1][0]), yScale(br.extents[1][1])]
+              [xScale(br.extents[1][0]), yScale(br.extents[1][1])],
             ]);
             instance.programMove = false;
           }
@@ -281,14 +287,14 @@ class MarkSeries extends React.Component<Props, State> {
 
       brushesSelection.each(function(brushObject) {
         select(this)
-          .classed("brush", true)
-          .selectAll(".overlay")
-          .style("pointer-events", () => {
+          .classed('brush', true)
+          .selectAll('.overlay')
+          .style('pointer-events', () => {
             let brush = brushObject.brush;
             return brushes[brushes.length - 1].id === brushObject.id &&
               brush !== undefined
-              ? "all"
-              : "none";
+              ? 'all'
+              : 'none';
           });
       });
     };
@@ -316,10 +322,10 @@ class MarkSeries extends React.Component<Props, State> {
       addPointDeselection,
       addPointSelection,
       debugMode,
-      debugKey
+      debugKey,
     } = this.props;
-    const { brushDict } = this.props;
-    const { debugInfo } = this.state;
+    const {brushDict} = this.props;
+    const {debugInfo} = this.state;
     const space = `${xLabel} ${yLabel}`;
 
     const data: MarkData[] = xValues.map((x, i) => ({
@@ -327,7 +333,7 @@ class MarkSeries extends React.Component<Props, State> {
       rawY: yValues[i],
       scaledX: x ? xScale(x) : 0,
       scaledY: yValues[i] ? yScale(yValues[i]) : yScale.range()[1],
-      label: labels[i]
+      label: labels[i],
     }));
 
     const selectedArrays = ([] as Brush[]).concat
@@ -339,14 +345,14 @@ class MarkSeries extends React.Component<Props, State> {
     const higlightedIndices = new Uint8Array(data.length);
 
     selectedPoints.forEach(
-      p => (higlightedIndices[p] = higlightedIndices[p] + 1)
+      p => (higlightedIndices[p] = higlightedIndices[p] + 1),
     );
 
     const highestIntersection = max(higlightedIndices);
 
     const thisSpacePoints = ([] as number[]).concat.apply(
       [],
-      (brushDict[space] || []).map(b => b.selectedPoints)
+      (brushDict[space] || []).map(b => b.selectedPoints),
     );
 
     return !debugMode ? (
@@ -360,12 +366,12 @@ class MarkSeries extends React.Component<Props, State> {
                 content={
                   <div>
                     <Header>{labels[i]}</Header>
-                    <pre>{debugInfo ? debugInfo["dimensions"] : ""}</pre>
+                    <pre>{debugInfo ? debugInfo['dimensions'] : ''}</pre>
                     <pre>
                       {JSON.stringify(
-                        debugInfo["measures"] ? debugInfo["measures"][i] : {},
+                        debugInfo['measures'] ? debugInfo['measures'][i] : {},
                         null,
-                        2
+                        2,
                       )}
                     </pre>
                   </div>
@@ -387,7 +393,7 @@ class MarkSeries extends React.Component<Props, State> {
                             vis,
                             [xLabel, yLabel],
                             i,
-                            this.props.brushBehavior
+                            this.props.brushBehavior,
                           );
                         }}
                       />
@@ -406,7 +412,7 @@ class MarkSeries extends React.Component<Props, State> {
                             vis,
                             [xLabel, yLabel],
                             i,
-                            this.props.brushBehavior
+                            this.props.brushBehavior,
                           );
                         }}
                       />
@@ -426,7 +432,7 @@ class MarkSeries extends React.Component<Props, State> {
                           VisualizationType.Scatterplot,
                           [xLabel, yLabel],
                           i,
-                          this.props.brushBehavior
+                          this.props.brushBehavior,
                         );
                       }}
                     />
@@ -448,12 +454,12 @@ class MarkSeries extends React.Component<Props, State> {
                 content={
                   <div>
                     <Header>{labels[i]}</Header>
-                    <pre>{debugInfo ? debugInfo["dimensions"] : ""}</pre>
+                    <pre>{debugInfo ? debugInfo['dimensions'] : ''}</pre>
                     <pre>
                       {JSON.stringify(
-                        debugInfo["measures"] ? debugInfo["measures"][i] : {},
+                        debugInfo['measures'] ? debugInfo['measures'][i] : {},
                         null,
-                        2
+                        2,
                       )}
                     </pre>
                   </div>
@@ -482,7 +488,7 @@ class MarkSeries extends React.Component<Props, State> {
                           vis,
                           [xLabel, yLabel],
                           i,
-                          this.props.brushBehavior
+                          this.props.brushBehavior,
                         );
                       }}
                     />
@@ -498,17 +504,17 @@ class MarkSeries extends React.Component<Props, State> {
 }
 
 const mapStateToProps = (state: VisualizationState): StateProps => ({
-  brushBehavior: state.mutliBrushBehavior
+  brushBehavior: state.mutliBrushBehavior,
 });
 
 const mapDispatchToProp = (
-  dispatch: Dispatch<InteractionHistoryAction>
+  dispatch: Dispatch<InteractionHistoryAction>,
 ): DispatchProps => ({
   addPointSelection: (
     vis: VisualizationType,
     dimensions: string[],
     point: number,
-    brushBehavior: MultiBrushBehavior
+    brushBehavior: MultiBrushBehavior,
   ) => {
     dispatch({
       type: InteractionHistoryActions.ADD_INTERACTION,
@@ -517,19 +523,19 @@ const mapDispatchToProp = (
         interaction: {
           visualizationType: vis,
           interactionType: {
-            kind: "selection",
+            kind: 'selection',
             dimensions: dimensions,
-            dataIds: [point]
-          }
-        }
-      }
+            dataIds: [point],
+          },
+        },
+      },
     });
   },
   addPointDeselection: (
     vis: VisualizationType,
     dimensions: string[],
     point: number,
-    brushBehavior: MultiBrushBehavior
+    brushBehavior: MultiBrushBehavior,
   ) => {
     dispatch({
       type: InteractionHistoryActions.ADD_INTERACTION,
@@ -538,12 +544,12 @@ const mapDispatchToProp = (
         interaction: {
           visualizationType: vis,
           interactionType: {
-            kind: "deselection",
+            kind: 'deselection',
             dimensions: dimensions,
-            dataIds: [point]
-          }
-        }
-      }
+            dataIds: [point],
+          },
+        },
+      },
     });
   },
   addRectangularSelection: (
@@ -552,7 +558,7 @@ const mapDispatchToProp = (
     brushId: string,
     points: number[],
     extents: number[][],
-    brushBehavior: MultiBrushBehavior
+    brushBehavior: MultiBrushBehavior,
   ) => {
     dispatch({
       type: InteractionHistoryActions.ADD_INTERACTION,
@@ -567,35 +573,35 @@ const mapDispatchToProp = (
             left: extents[0][0],
             right: extents[1][0],
             top: extents[0][1],
-            bottom: extents[1][1]
-          }
-        }
-      }
+            bottom: extents[1][1],
+          },
+        },
+      },
     });
-  }
+  },
 });
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProp
+  mapDispatchToProp,
 )(MarkSeries);
 
 interface Extend {
   thisSpace: boolean;
 }
 
-const RegularCircularMark = styled("circle")<Extend>`
+const RegularCircularMark = styled('circle')<Extend>`
   fill: #648fff;
 `;
 
-const SelectedCircularMark = styled("circle")<Extend>`
+const SelectedCircularMark = styled('circle')<Extend>`
   fill: #dc267f;
-  stroke-width: ${props => (props.thisSpace ? "2px" : 0)};
+  stroke-width: ${props => (props.thisSpace ? '2px' : 0)};
   stroke: #b31964;
 `;
 
-const UnionCircularMark = styled("circle")<Extend>`
+const UnionCircularMark = styled('circle')<Extend>`
   fill: #ffb000;
-  stroke-width: ${props => (props.thisSpace ? "2px" : 0)};
+  stroke-width: ${props => (props.thisSpace ? '2px' : 0)};
   stroke: #bb840a;
 `;
