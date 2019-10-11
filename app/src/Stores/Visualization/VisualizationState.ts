@@ -1,6 +1,8 @@
 import {Interaction} from '@visdesignlab/intent-contract';
-import {BrushCollection} from '@bit/kirangadhave.multi_brush_component.brush';
 import {Dataset} from './Dataset';
+import {Plots} from '../Types/Plots';
+import TaskDetails from '../Types/TaskDetails';
+import ParticipantDetails from '../Types/ParticipantDetails';
 
 export default interface VisualizationState {
   participant: ParticipantDetails;
@@ -10,23 +12,3 @@ export default interface VisualizationState {
   interaction: Interaction;
   multiBrushBehaviour: boolean;
 }
-
-type Plots = SinglePlot[];
-
-interface SinglePlot {
-  x: string;
-  y: string;
-  color: string;
-  brushes: BrushCollection;
-}
-
-interface ParticipantDetails {
-  name: string;
-}
-
-interface TaskDetails {
-  taskId: number;
-  order: number;
-}
-
-const state: VisualizationState = {} as any;
