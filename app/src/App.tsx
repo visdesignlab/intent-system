@@ -1,6 +1,7 @@
 import React, {FC} from 'react';
 import styled from 'styled-components';
 import Task from './Components/Task';
+import Visualization from './Components/Visualization';
 
 interface OwnProps {}
 
@@ -11,7 +12,7 @@ const App: FC<Props> = ({}: Props) => {
     <MainDiv>
       <TaskVisDiv>
         <Task text="Study" />
-        <Task text="Visualization" />
+        <Visualization />
       </TaskVisDiv>
     </MainDiv>
   );

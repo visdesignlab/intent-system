@@ -1,8 +1,10 @@
 import React, {FC} from 'react';
 
-interface Props {
+interface OwnProps {
   text: string;
 }
+
+type Props = OwnProps;
 
 const Task: FC<Props> = ({text}: Props) => {
   return <div>{text}</div>;
