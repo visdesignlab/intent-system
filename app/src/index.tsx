@@ -3,40 +3,20 @@ import 'semantic-ui-css/semantic.min.css';
 import axios from 'axios';
 import {initProvenanceRedux} from '@visdesignlab/provenance-lib-core/lib/src';
 import React from 'react';
-import thunk from 'redux-thunk';
 import ReactDOM from 'react-dom';
 import {Provider} from 'react-redux';
 
 import * as serviceWorker from './serviceWorker';
 import App from './App';
-import {
-  loadDataset,
-  DatasetReducer,
-} from './Stores/Visualization/Setup/DatasetRedux';
-import {combineReducers, createStore, applyMiddleware} from 'redux';
+import {loadDataset2} from './Stores/Visualization/Setup/DatasetRedux';
+import VisualizationStoreCreator from './Stores/Visualization/VisualizationStore';
 import VisualizationState from './Stores/Visualization/VisualizationState';
-import {ParticipantDetailsReducer} from './Stores/Visualization/Setup/ParticipantRedux';
-import {TaskReducer} from './Stores/Visualization/Setup/TaskRedux';
-import {MultiBrushBehaviorReducer} from './Stores/Visualization/Setup/MultiBrushRedux';
-import {PlotsReducer} from './Stores/Visualization/Setup/PlotsRedux';
-import {InteractionsReducer} from './Stores/Visualization/Setup/InteractionsRedux';
 
-export const VisualizationReducer = combineReducers<VisualizationState>({
-  dataset: DatasetReducer as any,
-  participant: ParticipantDetailsReducer,
-  task: TaskReducer,
-  multiBrushBehaviour: MultiBrushBehaviorReducer,
-  plots: PlotsReducer,
-  interactions: InteractionsReducer,
-});
-
-export const VisualizationStore = createStore<
-  VisualizationState,
-  any,
-  any,
-  any
->(VisualizationReducer, applyMiddleware(thunk));
-
+export const VisualizationStore = VisualizationStoreCreator();
+export const VisualizationProvenance = initProvenanceRedux<VisualizationState>(
+  VisualizationStore,
+  (_: any) => {},
+);
 export const datasets = [
   'draft_combine',
   'slc_housing',
@@ -52,16 +32,18 @@ axios
   .get('/dataset')
   .then(response => {
     const datasets = response.data;
-
-    const defaultDataset = datasets.filter((d: string) =>
-      d.includes('gapminder'),
-    )[0];
-    console.log(defaultDataset);
-    VisualizationStore.dispatch(loadDataset(getDatasetUrl(defaultDataset)));
+    datasetName = datasets.filter((d: string) => d.includes('gapminder'))[0];
+    loadDataset2(getDatasetUrl(datasetName));
+    //VisualizationStore.dispatch(loadDataset(getDatasetUrl(datasetName)));
   })
   .catch(err => console.log(err));
 
-ReactDOM.render(<App />, document.getElementById('root'));
+ReactDOM.render(
+  <Provider store={VisualizationStore}>
+    <App />
+  </Provider>,
+  document.getElementById('root'),
+);
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
