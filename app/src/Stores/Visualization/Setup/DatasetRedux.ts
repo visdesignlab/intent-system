@@ -1,6 +1,7 @@
 import {Dataset, ColumnMap, emptyDataset} from '../../Types/Dataset';
 import {Action, Dispatch, Reducer} from 'redux';
 import {text} from 'd3';
+import {VisualizationStore} from '../../..';
 
 export const DATASET_UPDATE = 'DATASET_UPDATE';
 export type DATASET_UPDATE = typeof DATASET_UPDATE;
@@ -10,12 +11,10 @@ interface DatasetUpdateAction extends Action<DATASET_UPDATE> {
   args: Dataset;
 }
 
-export const updateDataset = (dataset: Dataset): DatasetUpdateAction => {
-  return {
-    type: DATASET_UPDATE,
-    args: dataset,
-  };
-};
+export const updateDataset = (dataset: Dataset): DatasetUpdateAction => ({
+  type: DATASET_UPDATE,
+  args: dataset,
+});
 
 export const DatasetReducer: Reducer<Dataset, DatasetUpdateAction> = (
   current: Dataset = emptyDataset(),
@@ -72,6 +71,8 @@ export const loadDataset = (url: string) => {
           type: DATASET_UPDATE,
           args: parsedDataset,
         });
+
+        console.log(VisualizationStore.getState());
       })
       .catch(err => {
         console.error(err);
