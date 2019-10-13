@@ -12,12 +12,22 @@ import App from './App';
 import {
   loadDataset,
   DatasetReducer,
-} from './Stores/Visualization/Dataset/Types';
+} from './Stores/Visualization/Setup/DatasetRedux';
 import {combineReducers, createStore, applyMiddleware} from 'redux';
 import VisualizationState from './Stores/Visualization/VisualizationState';
+import {ParticipantDetailsReducer} from './Stores/Visualization/Setup/ParticipantRedux';
+import {TaskReducer} from './Stores/Visualization/Setup/TaskRedux';
+import {MultiBrushBehaviorReducer} from './Stores/Visualization/Setup/MultiBrushRedux';
+import {PlotsReducer} from './Stores/Visualization/Setup/PlotsRedux';
+import {InteractionsReducer} from './Stores/Visualization/Setup/InteractionsRedux';
 
 export const VisualizationReducer = combineReducers<VisualizationState>({
   dataset: DatasetReducer as any,
+  participant: ParticipantDetailsReducer,
+  task: TaskReducer,
+  multiBrushBehaviour: MultiBrushBehaviorReducer,
+  plots: PlotsReducer,
+  interactions: InteractionsReducer,
 });
 
 export const VisualizationStore = createStore<
