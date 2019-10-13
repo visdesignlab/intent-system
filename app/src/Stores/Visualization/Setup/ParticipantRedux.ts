@@ -1,5 +1,6 @@
 import {Action, Reducer} from 'redux';
 import ParticipantDetails from '../../Types/ParticipantDetails';
+import {recordableReduxActionCreator} from '@visdesignlab/provenance-lib-core/lib/src';
 
 export const UPDATE_PARTICIPANT = 'UPDATE_PARTICIPANT';
 export type UPDATE_PARTICIPANT = typeof UPDATE_PARTICIPANT;
@@ -13,12 +14,12 @@ const dummyParticipant: ParticipantDetails = {
   name: 'UNKNOWN',
 };
 
-export const updateParticipant = (
-  participant: ParticipantDetails,
-): ParticipantUpdateAction => ({
-  type: UPDATE_PARTICIPANT,
-  args: participant,
-});
+export const updateParticipant = (participant: ParticipantDetails) =>
+  recordableReduxActionCreator(
+    'Participant Update',
+    UPDATE_PARTICIPANT,
+    participant,
+  );
 
 export const ParticipantDetailsReducer: Reducer<
   ParticipantDetails,
@@ -29,6 +30,7 @@ export const ParticipantDetailsReducer: Reducer<
 ) => {
   switch (action.type) {
     case UPDATE_PARTICIPANT:
+      console.log(action.args, 'Test');
       return action.args;
     default:
       return current;

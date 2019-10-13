@@ -2,23 +2,32 @@ import React, {FC} from 'react';
 import styled from 'styled-components';
 import Task from './Components/Task';
 import Visualization from './Components/Visualization';
+import VisualizationState from './Stores/Visualization/VisualizationState';
+import {Dataset} from './Stores/Types/Dataset';
+import {connect} from 'react-redux';
 
 interface OwnProps {}
+interface StateProps {
+  dataset: Dataset;
+}
+type Props = OwnProps & StateProps;
 
-type Props = OwnProps;
-
-const App: FC<Props> = ({}: Props) => {
+const App: FC<Props> = ({dataset}: Props) => {
   return (
     <MainDiv>
       <TaskVisDiv>
-        <Task text="Study" />
+        <Task text="Test" />
         <Visualization />
       </TaskVisDiv>
     </MainDiv>
   );
 };
 
-export default App;
+const mapStateToProps = (state: VisualizationState): StateProps => ({
+  dataset: state.dataset,
+});
+
+export default connect(mapStateToProps)(App);
 
 const MainDiv = styled('div')`
   height: 100vh;
