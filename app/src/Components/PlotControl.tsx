@@ -30,6 +30,8 @@ type Props = OwnProps & StateProps & DispatchProps;
 const PlotControl: FC<Props> = ({dataset, addPlot}: Props) => {
   const [addingPlot, setAddingPlot] = useState(true);
 
+  const [singlePlot, setSinglePlot] = useState<SinglePlot>({} as SinglePlot);
+
   const AddPlotButton = (
     <Button onClick={() => setAddingPlot(true)}>
       <Icon name="add"></Icon>
@@ -44,6 +46,9 @@ const PlotControl: FC<Props> = ({dataset, addPlot}: Props) => {
         <Dropdown
           placeholder="X Axis dimension"
           selection
+          onChange={(_, data) => {
+            setSinglePlot({...singlePlot, x: data.value as string});
+          }}
           options={convertToDropdownFormat(
             dataset.columnMaps,
             'numeric',
@@ -54,6 +59,9 @@ const PlotControl: FC<Props> = ({dataset, addPlot}: Props) => {
         <Dropdown
           placeholder="Y Axis dimension"
           selection
+          onChange={(_, data) => {
+            setSinglePlot({...singlePlot, y: data.value as string});
+          }}
           options={convertToDropdownFormat(
             dataset.columnMaps,
             'numeric',
@@ -64,23 +72,46 @@ const PlotControl: FC<Props> = ({dataset, addPlot}: Props) => {
         <Dropdown
           placeholder="Color"
           selection
+          onChange={(_, data) => {
+            setSinglePlot({...singlePlot, color: data.value as string});
+          }}
           options={convertToDropdownFormat(
             dataset.columnMaps,
             'categorical',
           )}></Dropdown>
       </Menu.Item>
       <Menu.Item>
-        <Button icon color="green" onClick={() => setAddingPlot(true)}>
+        <Button
+          icon
+          color="green"
+          disabled={!(singlePlot.x && singlePlot.y && singlePlot.color)}
+          onClick={() => {
+            const plot = singlePlot;
+            plot.id = new Date().valueOf().toString();
+            plot.brushes = {};
+
+            addPlot(plot);
+            setSinglePlot({} as any);
+            setAddingPlot(false);
+          }}>
           <Icon name="check"></Icon>
         </Button>
       </Menu.Item>
       <Menu.Item>
-        <Button icon color="red" onClick={() => setAddingPlot(true)}>
+        <Button
+          icon
+          color="red"
+          onClick={() => {
+            setSinglePlot({} as any);
+            setAddingPlot(false);
+          }}>
           <Icon name="close"></Icon>
         </Button>
       </Menu.Item>
     </Menu>
   );
+
+  console.log(singlePlot);
 
   return (
     <Segment>
@@ -96,6 +127,7 @@ const PlotControl: FC<Props> = ({dataset, addPlot}: Props) => {
 const mapDispatchToProps = (): DispatchProps => ({
   addPlot: (plot: SinglePlot) => {
     VisualizationProvenance.apply(addPlot(plot));
+    console.table(Object.values(VisualizationProvenance.graph().nodes));
   },
 });
 
