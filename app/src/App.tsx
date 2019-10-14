@@ -38,7 +38,7 @@ const App: FC<Props> = ({dataset, plots, addPlot}: Props) => {
       <TaskVisDiv>
         <Task text="Study" />
         <VisDiv>
-          <PlotControl></PlotControl>
+          <PlotControl />
           <Visualization />
         </VisDiv>
       </TaskVisDiv>
