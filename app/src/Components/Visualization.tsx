@@ -40,12 +40,59 @@ const Visualization: FC<Props> = ({dataset, plots}: Props) => {
   const height = dimensions.height - 2 * margin;
   const width = dimensions.width - 2 * margin;
 
+  const breakCount = 3;
+  const actualCount = plots.length;
+
+  let rowCount = Math.floor(actualCount / breakCount);
+  if (rowCount === 0) {
+    rowCount += 1;
+  } else if (actualCount > breakCount && actualCount % breakCount !== 0) {
+    rowCount += 1;
+  }
+
+  const columnCount = actualCount >= 3 ? 3 : actualCount;
+  const dividedHeight = height / rowCount;
+  const dividedWidth = width / columnCount;
+
+  const plotDimension =
+    dividedWidth < dividedHeight ? dividedWidth : dividedHeight;
+
+  const totalHeight = plotDimension * rowCount;
+  const totalWidth = plotDimension * columnCount;
+
+  console.log(breakCount, actualCount, totalHeight);
+
+  const xPosGen = getNextXPosition(breakCount);
+
   return (
     <MainSvg ref={measuredRef}>
       <g transform={`translate(${margin}, ${margin})`}>
         {height >= 0 && width >= 0 && (
-          <BorderRectangle width={width} height={height}></BorderRectangle>
+          <>
+            <BorderRectangle width={width} height={height}></BorderRectangle>
+            <g
+              transform={`translate(${width / 2 - totalWidth / 2}, ${height /
+                2 -
+                totalHeight / 2})`}>
+              {plots.map((plot, i) => {
+                return (
+                  <g
+                    key={`${plot.id} ${i}`}
+                    transform={`translate(${plotDimension *
+                      xPosGen()}, ${plotDimension *
+                      Math.floor(i / breakCount)})`}>
+                    <rect
+                      height={plotDimension}
+                      width={plotDimension}
+                      fill="none"
+                      stroke="red"></rect>
+                  </g>
+                );
+              })}
+            </g>
+          </>
         )}
+        )
       </g>
     </MainSvg>
   );
@@ -76,4 +123,16 @@ const BorderRectangle = styled('rect')`
   fill: none;
   stroke: black;
   stroke-width: 1px;
+  opacity: 0.4;
 `;
+
+function getNextXPosition(breakCount: number) {
+  let pos = 0;
+
+  return () => {
+    const currPos = pos;
+    pos += 1;
+    if (pos >= breakCount) pos = 0;
+    return currPos;
+  };
+}

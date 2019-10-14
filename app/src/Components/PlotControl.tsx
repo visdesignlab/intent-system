@@ -28,7 +28,7 @@ interface DispatchProps {
 type Props = OwnProps & StateProps & DispatchProps;
 
 const PlotControl: FC<Props> = ({dataset, addPlot}: Props) => {
-  const [addingPlot, setAddingPlot] = useState(true);
+  const [addingPlot, setAddingPlot] = useState(false);
 
   const [singlePlot, setSinglePlot] = useState<SinglePlot>({} as SinglePlot);
 
@@ -110,8 +110,6 @@ const PlotControl: FC<Props> = ({dataset, addPlot}: Props) => {
       </Menu.Item>
     </Menu>
   );
-
-  console.log(singlePlot);
 
   return (
     <Segment>
