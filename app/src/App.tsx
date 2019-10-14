@@ -5,19 +5,42 @@ import Visualization from './Components/Visualization';
 import VisualizationState from './Stores/Visualization/VisualizationState';
 import {Dataset} from './Stores/Types/Dataset';
 import {connect} from 'react-redux';
+import {SinglePlot, Plots} from './Stores/Types/Plots';
+import {addPlot} from './Stores/Visualization/Setup/PlotsRedux';
+import {VisualizationProvenance} from '.';
+import PlotControl from './Components/PlotControl';
 
 interface OwnProps {}
+interface DispatchProps {
+  addPlot: (plot: SinglePlot) => void;
+}
 interface StateProps {
+  plots: Plots;
   dataset: Dataset;
 }
-type Props = OwnProps & StateProps;
+type Props = OwnProps & StateProps & DispatchProps;
 
-const App: FC<Props> = ({dataset}: Props) => {
+const App: FC<Props> = ({dataset, plots, addPlot}: Props) => {
+  if (plots.length === 0 && dataset.name !== '') {
+    const plot: SinglePlot = {
+      id: new Date().valueOf().toString(),
+      x: dataset.numericColumns[0],
+      y: dataset.numericColumns[1],
+      color: dataset.categoricalColumns[0],
+      brushes: {},
+    };
+    console.log(dataset.name);
+    addPlot(plot);
+    console.table(Object.values(VisualizationProvenance.graph().nodes));
+  }
   return (
     <MainDiv>
       <TaskVisDiv>
-        <Task text="Test" />
-        <Visualization />
+        <Task text="Study" />
+        <VisDiv>
+          <PlotControl></PlotControl>
+          <Visualization />
+        </VisDiv>
       </TaskVisDiv>
     </MainDiv>
   );
@@ -25,9 +48,19 @@ const App: FC<Props> = ({dataset}: Props) => {
 
 const mapStateToProps = (state: VisualizationState): StateProps => ({
   dataset: state.dataset,
+  plots: state.plots,
 });
 
-export default connect(mapStateToProps)(App);
+const mapDispatchToProps = (): DispatchProps => ({
+  addPlot: (plot: SinglePlot) => {
+    VisualizationProvenance.apply(addPlot(plot));
+  },
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(App);
 
 const MainDiv = styled('div')`
   height: 100vh;
@@ -43,4 +76,12 @@ const TaskVisDiv = styled('div')`
 
   display: grid;
   grid-template-rows: 1fr 15fr;
+`;
+
+const VisDiv = styled('div')`
+  display: grid;
+  grid-template-rows: 1fr 10fr;
+
+  width: 100%;
+  height: 100%;
 `;

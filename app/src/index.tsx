@@ -8,7 +8,7 @@ import {Provider} from 'react-redux';
 
 import * as serviceWorker from './serviceWorker';
 import App from './App';
-import {loadDataset2} from './Stores/Visualization/Setup/DatasetRedux';
+import {loadDataset} from './Stores/Visualization/Setup/DatasetRedux';
 import VisualizationStoreCreator from './Stores/Visualization/VisualizationStore';
 import VisualizationState from './Stores/Visualization/VisualizationState';
 
@@ -30,20 +30,22 @@ export const getDatasetUrl = (datasetName: string) => `/dataset/${datasetName}`;
 
 axios
   .get('/dataset')
-  .then(response => {
+  .then(async response => {
     const datasets = response.data;
     datasetName = datasets.filter((d: string) => d.includes('gapminder'))[0];
-    loadDataset2(getDatasetUrl(datasetName));
-    //VisualizationStore.dispatch(loadDataset(getDatasetUrl(datasetName)));
+    await loadDataset(getDatasetUrl(datasetName));
+    startRender();
   })
   .catch(err => console.log(err));
 
-ReactDOM.render(
-  <Provider store={VisualizationStore}>
-    <App />
-  </Provider>,
-  document.getElementById('root'),
-);
+function startRender() {
+  ReactDOM.render(
+    <Provider store={VisualizationStore}>
+      <App />
+    </Provider>,
+    document.getElementById('root'),
+  );
+}
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
