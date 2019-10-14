@@ -8,27 +8,38 @@ import {
   min,
   max,
   scaleOrdinal,
-  schemeSet3,
   schemeSet2,
   axisBottom,
   select,
   axisLeft,
 } from 'd3';
+import styled from 'styled-components';
+import {VisualizationProvenance} from '..';
+import {removePlot} from '../Stores/Visualization/Setup/PlotsRedux';
 
 interface OwnProps {
   plot: SinglePlot;
   size: number;
+  lastPlot: boolean;
 }
 
 interface StateProps {
   dataset: Dataset;
 }
 
-interface DispatchProps {}
+interface DispatchProps {
+  removePlot: (plot: SinglePlot) => void;
+}
 
 type Props = OwnProps & StateProps & DispatchProps;
 
-const Scatterplot: FC<Props> = ({plot, size, dataset}: Props) => {
+const Scatterplot: FC<Props> = ({
+  plot,
+  size,
+  dataset,
+  lastPlot,
+  removePlot,
+}: Props) => {
   const xAxisRef: RefObject<SVGGElement> = createRef();
   const yAxisRef: RefObject<SVGGElement> = createRef();
 
@@ -39,7 +50,7 @@ const Scatterplot: FC<Props> = ({plot, size, dataset}: Props) => {
     color: v[color],
   }));
 
-  const padding = 10;
+  const padding = 50;
 
   const xScale = scaleLinear()
     .domain([min(data.map(d => d.x)), max(data.map(d => d.x))])
@@ -62,7 +73,7 @@ const Scatterplot: FC<Props> = ({plot, size, dataset}: Props) => {
       const yAxis = axisLeft(yScale);
       select(yAxisRef.current).call(yAxis);
     }
-  }, [plot.x, plot.y, size]);
+  }, [size, xAxisRef, xScale, yAxisRef, yScale]);
 
   return (
     <g>
@@ -85,6 +96,14 @@ const Scatterplot: FC<Props> = ({plot, size, dataset}: Props) => {
           ))}
         </g>
       </g>
+      <g className="close" transform={`translate(0, ${size - padding})`}>
+        {!lastPlot && (
+          <CloseCircle
+            fill="red"
+            r={10}
+            onClick={() => removePlot(plot)}></CloseCircle>
+        )}
+      </g>
     </g>
   );
 };
@@ -93,4 +112,17 @@ const mapStateToProps = (state: VisualizationState): StateProps => ({
   dataset: state.dataset,
 });
 
-export default connect(mapStateToProps)(Scatterplot);
+const mapDispatchToProps = (): DispatchProps => ({
+  removePlot: (plot: SinglePlot) => {
+    VisualizationProvenance.apply(removePlot(plot));
+  },
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(Scatterplot);
+
+const CloseCircle = styled('circle')`
+  cursor: pointer;
+`;
