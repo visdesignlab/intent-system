@@ -6,6 +6,7 @@ import {VisualizationProvenance} from '..';
 import VisualizationState from '../Stores/Visualization/VisualizationState';
 import {Dataset} from '../Stores/Types/Dataset';
 import {Plots} from '../Stores/Types/Plots';
+import Scatterplot from './Scatterplot';
 
 interface OwnProps {
   test?: string;
@@ -86,6 +87,7 @@ const Visualization: FC<Props> = ({dataset, plots}: Props) => {
                       width={plotDimension}
                       fill="none"
                       stroke="red"></rect>
+                    <Scatterplot plot={plot} size={plotDimension}></Scatterplot>
                   </g>
                 );
               })}
