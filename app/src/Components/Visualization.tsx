@@ -1,4 +1,4 @@
-import React, {FC, useState, createRef, useEffect, useCallback} from 'react';
+import React, {FC, useState, useCallback} from 'react';
 import styled from 'styled-components';
 import {updateParticipant} from '../Stores/Visualization/Setup/ParticipantRedux';
 import {connect} from 'react-redux';
@@ -87,7 +87,10 @@ const Visualization: FC<Props> = ({dataset, plots}: Props) => {
                       width={plotDimension}
                       fill="none"
                       stroke="red"></rect>
-                    <Scatterplot plot={plot} size={plotDimension}></Scatterplot>
+                    <Scatterplot
+                      plot={plot}
+                      size={plotDimension}
+                      lastPlot={plots.length === 1}></Scatterplot>
                   </g>
                 );
               })}

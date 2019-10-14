@@ -1,7 +1,7 @@
 import React, {FC, useState} from 'react';
 import {connect} from 'react-redux';
 import VisualizationState from '../Stores/Visualization/VisualizationState';
-import {Dataset, ColumnMetaData, ColumnMap} from '../Stores/Types/Dataset';
+import {Dataset, ColumnMap} from '../Stores/Types/Dataset';
 import {
   Segment,
   Grid,
