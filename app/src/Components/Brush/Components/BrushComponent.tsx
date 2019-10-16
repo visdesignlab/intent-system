@@ -8,6 +8,7 @@ import SingleBrushComponent from './SingleBrushComponent';
 interface Props {
   extents: BrushableRegion;
   showBrushBorder?: boolean;
+  extentPadding?: number;
   onBrushUpdate: (
     brushes: BrushCollection,
     affectedBrush: Brush,
@@ -18,10 +19,16 @@ interface Props {
 const BrushComponent: FC<Props> = ({
   extents,
   showBrushBorder,
-  onBrushUpdate
+  onBrushUpdate,
+  extentPadding
 }: Props) => {
+  if (!extentPadding) extentPadding = 0;
+
   const { top, left, right, bottom } = extents;
-  const [height, width] = [Math.abs(bottom - top), Math.abs(left - right)];
+  const [height, width] = [
+    Math.abs(bottom + extentPadding - (top - extentPadding)),
+    Math.abs(left - extentPadding - (right + extentPadding))
+  ];
 
   const [mouseDown, setMouseDown] = useState<boolean>(false);
   const [brushes, setBrushes] = useState<BrushCollection>({});
@@ -42,10 +49,10 @@ const BrushComponent: FC<Props> = ({
     const brush: Brush = {
       id: new Date().getTime().toString(),
       extents: {
-        x1: event.clientX - currentTarget.left,
-        x2: event.clientX - currentTarget.left,
-        y1: event.clientY - currentTarget.top,
-        y2: event.clientY - currentTarget.top
+        x1: (event.clientX - currentTarget.left) / width,
+        x2: (event.clientX - currentTarget.left) / width,
+        y1: (event.clientY - currentTarget.top) / height,
+        y2: (event.clientY - currentTarget.top) / height
       }
     };
     brushes[brush.id] = brush;
@@ -62,8 +69,8 @@ const BrushComponent: FC<Props> = ({
     const currentTarget = event.currentTarget.getBoundingClientRect();
     let x1 = currentBrush.extents.x1;
     let y1 = currentBrush.extents.y1;
-    let x2 = event.clientX - currentTarget.left;
-    let y2 = event.clientY - currentTarget.top;
+    let x2 = (event.clientX - currentTarget.left) / width;
+    let y2 = (event.clientY - currentTarget.top) / height;
 
     currentBrush.extents = { x1, x2, y1, y2 };
 
@@ -115,10 +122,10 @@ const BrushComponent: FC<Props> = ({
     if (!mouseDown) return;
 
     let [X1, X2, Y1, Y2] = [
-      brush.extents.x1,
-      brush.extents.x2,
-      brush.extents.y1,
-      brush.extents.y2
+      brush.extents.x1 * width,
+      brush.extents.x2 * width,
+      brush.extents.y1 * height,
+      brush.extents.y2 * height
     ];
 
     let [delX1, delX2, delY1, delY2] = [
@@ -137,10 +144,10 @@ const BrushComponent: FC<Props> = ({
       delY2 = 0;
     }
 
-    brush.extents.x1 = X1 + delX1;
-    brush.extents.x2 = X2 + delX2;
-    brush.extents.y1 = Y1 + delY1;
-    brush.extents.y2 = Y2 + delY2;
+    brush.extents.x1 = (X1 + delX1) / width;
+    brush.extents.x2 = (X2 + delX2) / width;
+    brush.extents.y1 = (Y1 + delY1) / height;
+    brush.extents.y2 = (Y2 + delY2) / height;
 
     brushes[brush.id] = brush;
     setBrushes({ ...brushes });
@@ -177,32 +184,32 @@ const BrushComponent: FC<Props> = ({
     if (!mouseDownForResize) return;
     switch (BrushResizeType[resizeDirection]) {
       case BrushResizeType.LEFT:
-        brush.extents.x1 += event.movementX;
+        brush.extents.x1 += event.movementX / width;
         break;
       case BrushResizeType.RIGHT:
-        brush.extents.x2 += event.movementX;
+        brush.extents.x2 += event.movementX / width;
         break;
       case BrushResizeType.TOP:
-        brush.extents.y1 += event.movementY;
+        brush.extents.y1 += event.movementY / height;
         break;
       case BrushResizeType.BOTTOM:
-        brush.extents.y2 += event.movementY;
+        brush.extents.y2 += event.movementY / height;
         break;
       case BrushResizeType.TOPLEFT:
-        brush.extents.x1 += event.movementX;
-        brush.extents.y1 += event.movementY;
+        brush.extents.x1 += event.movementX / width;
+        brush.extents.y1 += event.movementY / height;
         break;
       case BrushResizeType.TOPRIGHT:
-        brush.extents.x2 += event.movementX;
-        brush.extents.y1 += event.movementY;
+        brush.extents.x2 += event.movementX / width;
+        brush.extents.y1 += event.movementY / height;
         break;
       case BrushResizeType.BOTTOMLEFT:
-        brush.extents.x1 += event.movementX;
-        brush.extents.y2 += event.movementY;
+        brush.extents.x1 += event.movementX / width;
+        brush.extents.y2 += event.movementY / height;
         break;
       case BrushResizeType.BOTTOMRIGHT:
-        brush.extents.x2 += event.movementX;
-        brush.extents.y2 += event.movementY;
+        brush.extents.x2 += event.movementX / width;
+        brush.extents.y2 += event.movementY / height;
         break;
       default:
         console.log(event.movementX, event.movementY);
@@ -268,8 +275,11 @@ const BrushComponent: FC<Props> = ({
     <g ref={brushGroupRef} className="brushGroup">
       {brushKeys.map(brushKey => {
         const brush = brushes[brushKey];
-        const { x1, y1, x2, y2 } = brush.extents;
-
+        let { x1, y1, x2, y2 } = brush.extents;
+        x1 = x1 * width;
+        x2 = x2 * width;
+        y1 *= height;
+        y2 *= height;
         if (x2 < x1 && y2 < y1)
           return (
             <SingleBrushComponent
@@ -343,7 +353,7 @@ const BrushComponent: FC<Props> = ({
       : [brushOverlay, brushGroup];
 
   return (
-    <g transform={`translate(${left}, ${top})`}>
+    <g transform={`translate(${left - extentPadding}, ${top - extentPadding})`}>
       {first}
       {second}
     </g>

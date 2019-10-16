@@ -1,22 +1,14 @@
-import React, {FC, useEffect, RefObject, createRef, useState} from 'react';
-import {SinglePlot} from '../Stores/Types/Plots';
-import {Dataset} from '../Stores/Types/Dataset';
-import VisualizationState from '../Stores/Visualization/VisualizationState';
-import {connect} from 'react-redux';
-import {
-  scaleLinear,
-  min,
-  max,
-  scaleOrdinal,
-  schemeSet2,
-  axisBottom,
-  select,
-  axisLeft,
-} from 'd3';
+import { axisBottom, axisLeft, max, min, scaleLinear, scaleOrdinal, schemeSet2, select } from 'd3';
+import React, { createRef, FC, RefObject, useEffect, useState } from 'react';
+import { connect } from 'react-redux';
+import { Popup } from 'semantic-ui-react';
 import styled from 'styled-components';
-import {VisualizationProvenance} from '..';
-import {removePlot} from '../Stores/Visualization/Setup/PlotsRedux';
-import {Popup} from 'semantic-ui-react';
+
+import { VisualizationProvenance } from '..';
+import { Dataset } from '../Stores/Types/Dataset';
+import { SinglePlot } from '../Stores/Types/Plots';
+import { removePlot } from '../Stores/Visualization/Setup/PlotsRedux';
+import VisualizationState from '../Stores/Visualization/VisualizationState';
 import BrushComponent from './Brush/Components/BrushComponent';
 
 interface OwnProps {
@@ -40,16 +32,16 @@ const Scatterplot: FC<Props> = ({
   size,
   dataset,
   lastPlot,
-  removePlot,
+  removePlot
 }: Props) => {
   const xAxisRef: RefObject<SVGGElement> = createRef();
   const yAxisRef: RefObject<SVGGElement> = createRef();
 
-  const {x, y, color, id, brushes} = plot;
+  const { x, y, color, id, brushes } = plot;
   const data = dataset.data.map(v => ({
     x: v[x],
     y: v[y],
-    color: v[color],
+    color: v[color]
   }));
 
   const [mouseIsDown, setMouseIsDown] = useState(false);
@@ -83,14 +75,16 @@ const Scatterplot: FC<Props> = ({
     <g
       onMouseDown={() => setMouseIsDown(true)}
       onMouseUp={() => setMouseIsDown(false)}
-      onMouseOut={() => setMouseIsDown(false)}>
+      onMouseOut={() => setMouseIsDown(false)}
+    >
       <BrushComponent
         extents={{
-          left: -5,
-          top: -5,
-          right: paddedSize + 5,
-          bottom: paddedSize + 5,
+          left: 0,
+          top: 0,
+          right: paddedSize,
+          bottom: paddedSize
         }}
+        extentPadding={5}
         onBrushUpdate={(brushes, affectedBrush, affectType) => {
           console.log(brushes, affectedBrush, affectType);
         }}
@@ -99,7 +93,10 @@ const Scatterplot: FC<Props> = ({
   );
 
   const MarksLayer = (
-    <g style={{pointerEvents: mouseIsDown ? 'none' : 'all'}} className="marks">
+    <g
+      style={{ pointerEvents: mouseIsDown ? "none" : "all" }}
+      className="marks"
+    >
       {data.map((d, i) => (
         <Popup
           key={i}
@@ -108,14 +105,16 @@ const Scatterplot: FC<Props> = ({
               fill={colorScale(d.color) as string}
               cx={xScale(d.x)}
               cy={yScale(d.y)}
-              r={5}></circle>
+              r={5}
+            ></circle>
           }
           content={
             <div>
               <h1>{dataset.data[i].country}</h1>
               <pre>{JSON.stringify(dataset.data[i], null, 2)}</pre>
             </div>
-          }></Popup>
+          }
+        ></Popup>
       ))}
     </g>
   );
@@ -129,7 +128,8 @@ const Scatterplot: FC<Props> = ({
           <g
             ref={xAxisRef}
             transform={`translate(0, ${xScale.range()[1]})`}
-            className="x"></g>
+            className="x"
+          ></g>
           <g ref={yAxisRef} className="y"></g>
         </g>
         <g className="plot">
@@ -142,7 +142,8 @@ const Scatterplot: FC<Props> = ({
           <CloseCircle
             fill="red"
             r={10}
-            onClick={() => removePlot(plot)}></CloseCircle>
+            onClick={() => removePlot(plot)}
+          ></CloseCircle>
         )}
         )}
       </g>
@@ -151,20 +152,20 @@ const Scatterplot: FC<Props> = ({
 };
 
 const mapStateToProps = (state: VisualizationState): StateProps => ({
-  dataset: state.dataset,
+  dataset: state.dataset
 });
 
 const mapDispatchToProps = (): DispatchProps => ({
   removePlot: (plot: SinglePlot) => {
     VisualizationProvenance.apply(removePlot(plot));
-  },
+  }
 });
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
+  mapDispatchToProps
 )(Scatterplot);
 
-const CloseCircle = styled('circle')`
+const CloseCircle = styled("circle")`
   cursor: pointer;
 `;
