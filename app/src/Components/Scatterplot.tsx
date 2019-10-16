@@ -74,16 +74,16 @@ const Scatterplot: FC<Props> = ({
   useEffect(() => {
     if (xAxisRef.current) {
       const xAxis = axisBottom(xScale).tickFormat((d: any) => {
-        if (d > 10000000) return `${d / 10000000}kk`;
-        if (d > 1000) return `${d / 1000}k`;
+        if (d > 10000000) return `${d / 10000000}M`;
+        if (d > 1000) return `${d / 1000}K`;
         return d;
       });
       select(xAxisRef.current).call(xAxis);
     }
     if (yAxisRef.current) {
       const yAxis = axisLeft(yScale).tickFormat((d: any) => {
-        if (d > 10000000) return `${d / 10000000}kk`;
-        if (d > 1000) return `${d / 1000}k`;
+        if (d > 10000000) return `${d / 10000000}M`;
+        if (d > 1000) return `${d / 1000}K`;
         return d;
       });
       select(yAxisRef.current).call(yAxis);
@@ -188,11 +188,26 @@ const Scatterplot: FC<Props> = ({
     <g>
       <g transform={`translate(${padding}, ${padding})`}>
         <g className="axis">
-          <g
-            ref={xAxisRef}
-            transform={`translate(0, ${xScale.range()[1]})`}
-            className="x"></g>
-          <g ref={yAxisRef} className="y"></g>
+          <g transform={`translate(0, ${xScale.range()[1]})`}>
+            <g ref={xAxisRef} className="x"></g>
+            <text
+              transform={`translate(${paddedSize / 2}, 40)`}
+              fontSize="1.2em"
+              textAnchor="middle">
+              {dataset.columnMaps[plot.x].text} (
+              {dataset.columnMaps[plot.x].unit})
+            </text>
+          </g>
+          <g>
+            <g ref={yAxisRef} className="y"></g>
+            <text
+              fontSize="1.2em"
+              textAnchor="middle"
+              transform={`translate(-40, ${paddedSize / 2})rotate(270)`}>
+              {dataset.columnMaps[plot.y].text} (
+              {dataset.columnMaps[plot.y].unit})
+            </text>
+          </g>
         </g>
         <g className="plot">
           {first}
