@@ -1,4 +1,4 @@
-import React, {FC, useEffect, RefObject, createRef} from 'react';
+import React, {FC, useEffect, RefObject, createRef, useState} from 'react';
 import {SinglePlot} from '../Stores/Types/Plots';
 import {Dataset} from '../Stores/Types/Dataset';
 import VisualizationState from '../Stores/Visualization/VisualizationState';
@@ -16,6 +16,8 @@ import {
 import styled from 'styled-components';
 import {VisualizationProvenance} from '..';
 import {removePlot} from '../Stores/Visualization/Setup/PlotsRedux';
+import {Popup} from 'semantic-ui-react';
+import BrushComponent from './Brush/Components/BrushComponent';
 
 interface OwnProps {
   plot: SinglePlot;
@@ -50,15 +52,17 @@ const Scatterplot: FC<Props> = ({
     color: v[color],
   }));
 
-  const padding = 50;
+  const [mouseIsDown, setMouseIsDown] = useState(false);
 
+  const padding = 50;
+  const paddedSize = size - 2 * padding;
   const xScale = scaleLinear()
     .domain([min(data.map(d => d.x)), max(data.map(d => d.x))])
-    .range([0, size - 2 * padding]);
+    .range([0, paddedSize]);
 
   const yScale = scaleLinear()
     .domain([max(data.map(d => d.y)), min(data.map(d => d.y))])
-    .range([0, size - 2 * padding]);
+    .range([0, paddedSize]);
 
   const colorScale = scaleOrdinal()
     .domain([...new Set(data.map(d => d.color))])
@@ -75,6 +79,49 @@ const Scatterplot: FC<Props> = ({
     }
   }, [size, xAxisRef, xScale, yAxisRef, yScale]);
 
+  const BrushLayer = (
+    <g
+      onMouseDown={() => setMouseIsDown(true)}
+      onMouseUp={() => setMouseIsDown(false)}
+      onMouseOut={() => setMouseIsDown(false)}>
+      <BrushComponent
+        extents={{
+          left: -5,
+          top: -5,
+          right: paddedSize + 5,
+          bottom: paddedSize + 5,
+        }}
+        onBrushUpdate={(brushes, affectedBrush, affectType) => {
+          console.log(brushes, affectedBrush, affectType);
+        }}
+      />
+    </g>
+  );
+
+  const MarksLayer = (
+    <g style={{pointerEvents: mouseIsDown ? 'none' : 'all'}} className="marks">
+      {data.map((d, i) => (
+        <Popup
+          key={i}
+          trigger={
+            <circle
+              fill={colorScale(d.color) as string}
+              cx={xScale(d.x)}
+              cy={yScale(d.y)}
+              r={5}></circle>
+          }
+          content={
+            <div>
+              <h1>{dataset.data[i].country}</h1>
+              <pre>{JSON.stringify(dataset.data[i], null, 2)}</pre>
+            </div>
+          }></Popup>
+      ))}
+    </g>
+  );
+
+  const [first, second] = [BrushLayer, MarksLayer];
+
   return (
     <g>
       <g transform={`translate(${padding}, ${padding})`}>
@@ -86,14 +133,8 @@ const Scatterplot: FC<Props> = ({
           <g ref={yAxisRef} className="y"></g>
         </g>
         <g className="plot">
-          {data.map((d, i) => (
-            <circle
-              key={i}
-              fill={colorScale(d.color) as string}
-              cx={xScale(d.x)}
-              cy={yScale(d.y)}
-              r={5}></circle>
-          ))}
+          {first}
+          {second}
         </g>
       </g>
       <g className="close" transform={`translate(0, ${size - padding})`}>
@@ -102,6 +143,7 @@ const Scatterplot: FC<Props> = ({
             fill="red"
             r={10}
             onClick={() => removePlot(plot)}></CloseCircle>
+        )}
         )}
       </g>
     </g>

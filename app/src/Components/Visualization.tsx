@@ -86,6 +86,7 @@ const Visualization: FC<Props> = ({dataset, plots}: Props) => {
                       height={plotDimension}
                       width={plotDimension}
                       fill="none"
+                      opacity={0.2}
                       stroke="red"></rect>
                     <Scatterplot
                       plot={plot}
