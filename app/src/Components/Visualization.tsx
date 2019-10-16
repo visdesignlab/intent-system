@@ -70,7 +70,9 @@ const Visualization: FC<Props> = ({dataset, plots}: Props) => {
       <g transform={`translate(${margin}, ${margin})`}>
         {height >= 0 && width >= 0 && (
           <>
-            <BorderRectangle width={width} height={height}></BorderRectangle>
+            {false && (
+              <BorderRectangle width={width} height={height}></BorderRectangle>
+            )}
             <g
               transform={`translate(${width / 2 - totalWidth / 2}, ${height /
                 2 -
@@ -86,7 +88,7 @@ const Visualization: FC<Props> = ({dataset, plots}: Props) => {
                       height={plotDimension}
                       width={plotDimension}
                       fill="none"
-                      opacity={0.2}
+                      opacity={0}
                       stroke="red"></rect>
                     <Scatterplot
                       plot={plot}

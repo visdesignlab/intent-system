@@ -210,6 +210,13 @@ const Scatterplot: FC<Props> = ({
           </g>
         </g>
         <g className="plot">
+          <rect
+            x={-extentPadding}
+            y={-extentPadding}
+            height={paddedSize + extentPadding}
+            width={paddedSize + extentPadding}
+            fill="gray"
+            opacity={0.04}></rect>
           {first}
           {second}
         </g>
