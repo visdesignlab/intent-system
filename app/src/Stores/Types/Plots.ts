@@ -8,4 +8,5 @@ export interface SinglePlot {
   y: string;
   color: string;
   brushes: BrushCollection;
+  selectedPoints: number[];
 }

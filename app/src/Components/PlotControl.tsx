@@ -89,7 +89,7 @@ const PlotControl: FC<Props> = ({dataset, addPlot}: Props) => {
             const plot = singlePlot;
             plot.id = new Date().valueOf().toString();
             plot.brushes = {};
-
+            plot.selectedPoints = [];
             addPlot(plot);
             setSinglePlot({} as any);
             setAddingPlot(false);
@@ -122,9 +122,9 @@ const PlotControl: FC<Props> = ({dataset, addPlot}: Props) => {
   );
 };
 
-const mapDispatchToProps = (): DispatchProps => ({
+const mapDispatchToProps = (dispatch: any): DispatchProps => ({
   addPlot: (plot: SinglePlot) => {
-    VisualizationProvenance.apply(addPlot(plot));
+    dispatch(addPlot(plot));
     console.table(Object.values(VisualizationProvenance.graph().nodes));
   },
 });

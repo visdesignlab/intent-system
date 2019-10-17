@@ -1,6 +1,8 @@
 import {Action, Reducer} from 'redux';
 import {SinglePlot, Plots} from '../../Types/Plots';
 import {recordableReduxActionCreator} from '@visdesignlab/provenance-lib-core/lib/src';
+import {VisualizationStore, VisualizationProvenance} from '../../..';
+import {ADD_INTERACTION} from './InteractionsRedux';
 
 export const ADD_PLOT = 'ADD_PLOT';
 export const REMOVE_PLOT = 'REMOVE_PLOT';
@@ -27,8 +29,16 @@ interface RemovePlotAction extends Action<REMOVE_PLOT> {
 
 export type PlotAction = AddPlotAction | UpdatePlotAction | RemovePlotAction;
 
-export const addPlot = (plot: SinglePlot) =>
-  recordableReduxActionCreator(`Add Plot: ${plot.id}`, ADD_PLOT, plot);
+export const addPlot = (plot: SinglePlot) => (dispatch: any, getState: any) => {
+  VisualizationProvenance.apply(
+    recordableReduxActionCreator(`Add Plot: ${plot.id}`, ADD_PLOT, plot),
+  );
+  dispatch({
+    type: ADD_INTERACTION,
+    args: {} as any,
+  });
+  console.log(getState());
+};
 
 export const updatePlot = (plot: SinglePlot) =>
   recordableReduxActionCreator(`Update Plot: ${plot.id}`, UPDATE_PLOT, plot);
