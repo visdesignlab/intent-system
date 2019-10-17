@@ -28,8 +28,8 @@ const App: FC<Props> = ({dataset, plots, addPlot}: Props) => {
       y: dataset.numericColumns[1],
       color: dataset.categoricalColumns[0],
       brushes: {},
+      selectedPoints: [],
     };
-    console.log(dataset.name);
     addPlot(plot);
     console.table(Object.values(VisualizationProvenance.graph().nodes));
   }
@@ -51,9 +51,9 @@ const mapStateToProps = (state: VisualizationState): StateProps => ({
   plots: state.plots,
 });
 
-const mapDispatchToProps = (): DispatchProps => ({
+const mapDispatchToProps = (dispatch: any): DispatchProps => ({
   addPlot: (plot: SinglePlot) => {
-    VisualizationProvenance.apply(addPlot(plot));
+    dispatch(addPlot(plot));
   },
 });
 

@@ -100,16 +100,23 @@ const Scatterplot: FC<Props> = ({
 
   let maxIntersection = 1;
 
-  Object.values(brushes).forEach(brush => {
-    let {x1, x2, y1, y2} = brush.extents;
-    [x1, x2, y1, y2] = [
-      xScale.invert(x1 * width - 5),
-      xScale.invert(x2 * width - 5),
-      yScale.invert(y1 * height - 5),
-      yScale.invert(y2 * height - 5),
-    ];
+  data.forEach((d, i) => {
+    if (plot.selectedPoints.includes(i)) {
+      if (!selectedIndices[i]) {
+        selectedIndices[i] = 0;
+      }
+      selectedIndices[i] += 1;
+    }
 
-    data.forEach((d, i) => {
+    Object.values(brushes).forEach(brush => {
+      let {x1, x2, y1, y2} = brush.extents;
+      [x1, x2, y1, y2] = [
+        xScale.invert(x1 * width - 5),
+        xScale.invert(x2 * width - 5),
+        yScale.invert(y1 * height - 5),
+        yScale.invert(y2 * height - 5),
+      ];
+
       if (d.x >= x1 && d.x <= x2 && d.y <= y1 && d.y >= y2) {
         if (!selectedIndices[i]) {
           selectedIndices[i] = 0;
@@ -153,12 +160,24 @@ const Scatterplot: FC<Props> = ({
             selectedIndices[i] ? (
               selectedIndices[i] < maxIntersection ? (
                 <UnionMark
+                  onClick={() => {
+                    let points = plot.selectedPoints.filter(p => p !== i);
+
+                    plot.selectedPoints = points;
+                    updatePlot({...plot});
+                  }}
                   fill={colorScale(d.color) as string}
                   cx={xScale(d.x)}
                   cy={yScale(d.y)}
                   r={5}></UnionMark>
               ) : (
                 <IntersectionMark
+                  onClick={() => {
+                    let points = plot.selectedPoints.filter(p => p !== i);
+
+                    plot.selectedPoints = points;
+                    updatePlot({...plot});
+                  }}
                   fill={colorScale(d.color) as string}
                   cx={xScale(d.x)}
                   cy={yScale(d.y)}
@@ -166,6 +185,13 @@ const Scatterplot: FC<Props> = ({
               )
             ) : (
               <RegularMark
+                onClick={() => {
+                  let points = plot.selectedPoints;
+                  if (!points.includes(i)) points.push(i);
+
+                  plot.selectedPoints = points;
+                  updatePlot({...plot});
+                }}
                 fill={colorScale(d.color) as string}
                 cx={xScale(d.x)}
                 cy={yScale(d.y)}
@@ -194,8 +220,10 @@ const Scatterplot: FC<Props> = ({
               transform={`translate(${paddedSize / 2}, 40)`}
               fontSize="1.2em"
               textAnchor="middle">
-              {dataset.columnMaps[plot.x].text} (
-              {dataset.columnMaps[plot.x].unit})
+              <tspan style={{fontWeight: 'bold'}}>
+                {dataset.columnMaps[plot.x].text}
+              </tspan>
+              (<tspan>{dataset.columnMaps[plot.x].unit}</tspan>)
             </text>
           </g>
           <g>
@@ -204,8 +232,10 @@ const Scatterplot: FC<Props> = ({
               fontSize="1.2em"
               textAnchor="middle"
               transform={`translate(-40, ${paddedSize / 2})rotate(270)`}>
-              {dataset.columnMaps[plot.y].text} (
-              {dataset.columnMaps[plot.y].unit})
+              <tspan style={{fontWeight: 'bold'}}>
+                {dataset.columnMaps[plot.y].text}{' '}
+              </tspan>
+              (<tspan>{dataset.columnMaps[plot.y].unit}</tspan>)
             </text>
           </g>
         </g>
@@ -216,7 +246,7 @@ const Scatterplot: FC<Props> = ({
             height={paddedSize + extentPadding}
             width={paddedSize + extentPadding}
             fill="gray"
-            opacity={0.04}></rect>
+            opacity={0.05}></rect>
           {first}
           {second}
         </g>
