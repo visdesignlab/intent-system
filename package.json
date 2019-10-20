@@ -13,7 +13,9 @@
     "build-env": "yarn install && yarn run update-env",
     "server": "./server.sh",
     "app": "cd app && yarn start",
-    "start": "yarn run free-port && concurrently --kill-others \"yarn run server\" \"yarn run app\" ; "
+    "python-bindgen": "quicktype --src app/src/contract/index.ts --src-lang typescript --lang python --out intent_server/vendor/interactions.py || echo 'Please install npm package quicktype globally'",
+    "bind-contract": "onchange 'app/src/contract/index.ts' -- yarn python-bindgen",
+    "start": "yarn run free-port && concurrently --kill-others \"yarn run server\" \"yarn run app\" \"yarn run bind-contract\"; "
   },
   "repository": {
     "type": "git",
@@ -26,9 +28,8 @@
   },
   "homepage": "https://github.com/grtlr/intent-server#readme",
   "dependencies": {
-    "@visdesignlab/intent-contract": "^10.1.1",
     "concurrently": "^4.1.1",
     "kill-port": "^1.5.2",
-    "redux-thunk": "^2.3.0"
+    "onchange": "^6.1.0"
   }
 }

@@ -12,7 +12,6 @@ import {loadDataset} from './App/VisStore/DatasetReducers';
 import * as serviceWorker from './serviceWorker';
 import {initStudyStore, StudyState} from './StudyStore/StudyStore';
 
-// import { VisualizationType } from "@visdesignlab/intent-contract";
 function initAppStore() {
   let store = initStudyStore();
   return {

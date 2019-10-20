@@ -1,11 +1,8 @@
-import {
-  MultiBrushBehavior,
-  InteractionHistory,
-} from '@visdesignlab/intent-contract';
 import {Plots} from '../Types/Plots';
 import TaskDetails from '../Types/TaskDetails';
 import ParticipantDetails from '../Types/ParticipantDetails';
 import {Dataset} from '../Types/Dataset';
+import {InteractionHistory, MultiBrushBehavior} from '../../contract';
 
 export default interface VisualizationState {
   participant: ParticipantDetails;

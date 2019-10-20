@@ -1,5 +1,5 @@
 import {Action, Reducer} from 'redux';
-import {MultiBrushBehavior} from '@visdesignlab/intent-contract';
+import {MultiBrushBehavior} from '../../../contract';
 
 export const CHANGE_BRUSH_BEHAVIOR = 'CHANGE_BRUSH_BEHAVIOR';
 export type CHANGE_BRUSH_BEHAVIOR = typeof CHANGE_BRUSH_BEHAVIOR;
