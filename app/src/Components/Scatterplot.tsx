@@ -13,12 +13,12 @@ import {connect} from 'react-redux';
 import {Popup} from 'semantic-ui-react';
 import styled from 'styled-components';
 
-import {VisualizationProvenance} from '..';
 import {Dataset} from '../Stores/Types/Dataset';
 import {SinglePlot} from '../Stores/Types/Plots';
 import {removePlot, updatePlot} from '../Stores/Visualization/Setup/PlotsRedux';
 import VisualizationState from '../Stores/Visualization/VisualizationState';
 import BrushComponent from './Brush/Components/BrushComponent';
+import {ThunkDispatch} from 'redux-thunk';
 
 interface OwnProps {
   plot: SinglePlot;
@@ -253,10 +253,9 @@ const Scatterplot: FC<Props> = ({
       </g>
       <g className="close" transform={`translate(0, ${size - padding})`}>
         {!lastPlot && (
-          <CloseCircle
-            fill="red"
-            r={10}
-            onClick={() => removePlot(plot)}></CloseCircle>
+          <CloseGroup>
+            <circle fill="red" r={10} onClick={() => removePlot(plot)}></circle>
+          </CloseGroup>
         )}
         )}
       </g>
@@ -268,12 +267,14 @@ const mapStateToProps = (state: VisualizationState): StateProps => ({
   dataset: state.dataset,
 });
 
-const mapDispatchToProps = (): DispatchProps => ({
+const mapDispatchToProps = (
+  dispatch: ThunkDispatch<{}, {}, any>,
+): DispatchProps => ({
   removePlot: (plot: SinglePlot) => {
-    VisualizationProvenance.apply(removePlot(plot));
+    dispatch(removePlot(plot));
   },
   updatePlot: (plot: SinglePlot) => {
-    VisualizationProvenance.apply(updatePlot(plot));
+    dispatch(updatePlot(plot));
   },
 });
 
@@ -282,7 +283,7 @@ export default connect(
   mapDispatchToProps,
 )(Scatterplot);
 
-const CloseCircle = styled('circle')`
+const CloseGroup = styled('g')`
   cursor: pointer;
 `;
 

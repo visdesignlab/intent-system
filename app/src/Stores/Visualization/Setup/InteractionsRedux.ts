@@ -1,11 +1,11 @@
-import {Interaction, InteractionHistory} from '@visdesignlab/intent-contract';
 import {Action, Reducer} from 'redux';
 import {recordableReduxActionCreator} from '@visdesignlab/provenance-lib-core/lib/src';
+import {Interaction, InteractionHistory} from '../../../contract';
 
 export const ADD_INTERACTION = 'ADD_INTERACTION';
 export type ADD_INTERACTION = typeof ADD_INTERACTION;
 
-interface AddInteractionAction extends Action<ADD_INTERACTION> {
+export interface AddInteractionAction extends Action<ADD_INTERACTION> {
   type: ADD_INTERACTION;
   args: Interaction;
 }

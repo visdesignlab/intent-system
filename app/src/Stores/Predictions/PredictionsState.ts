@@ -1,4 +1,4 @@
-import {PredictionSet} from '@visdesignlab/intent-contract';
+import {PredictionSet} from '../../contract';
 
 export interface PredictionState {
   predictionSet: PredictionSet;

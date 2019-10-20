@@ -4,7 +4,6 @@
   "private": true,
   "dependencies": {
     "@bit/kirangadhave.multi_brush_component.brush": "^3.0.0",
-    "@visdesignlab/intent-contract": "^10.1.1",
     "@visdesignlab/provenance-lib-core": "^1.2.0",
     "axios": "^0.19.0",
     "d3": "^5.12.0",
@@ -29,7 +28,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "python-bindgen": "quicktype --src app/src/contract/index.ts --src-lang typescript --lang python --out intent-server/vendor/interaction.py || echo 'Please install npm package quicktype globally'"
   },
   "eslintConfig": {
     "extends": "react-app"
