@@ -7,6 +7,7 @@ import {
   scaleOrdinal,
   schemeSet2,
   select,
+  ScaleLinear,
 } from 'd3';
 import React, {createRef, FC, RefObject, useEffect, useState} from 'react';
 import {connect} from 'react-redux';
@@ -19,6 +20,13 @@ import {removePlot, updatePlot} from '../Stores/Visualization/Setup/PlotsRedux';
 import VisualizationState from '../Stores/Visualization/VisualizationState';
 import BrushComponent from './Brush/Components/BrushComponent';
 import {ThunkDispatch} from 'redux-thunk';
+import {Brush, BrushAffectType} from './Brush/Types/Brush';
+import {RectangularSelection, MultiBrushBehavior} from '../contract';
+import {
+  ADD_INTERACTION,
+  AddInteractionAction,
+} from '../Stores/Visualization/Setup/InteractionsRedux';
+import {Dispatch} from 'redux';
 
 interface OwnProps {
   plot: SinglePlot;
@@ -28,11 +36,24 @@ interface OwnProps {
 
 interface StateProps {
   dataset: Dataset;
+  multiBrushBehavior: MultiBrushBehavior;
 }
 
 interface DispatchProps {
   updatePlot: (plot: SinglePlot, addInteraction: boolean) => void;
   removePlot: (plot: SinglePlot) => void;
+  addBrush: (
+    selection: RectangularSelection,
+    multiBrushBehavior: MultiBrushBehavior,
+  ) => void;
+  removeBrush: (
+    selection: RectangularSelection,
+    multiBrushBehavior: MultiBrushBehavior,
+  ) => void;
+  updateBrush: (
+    selection: RectangularSelection,
+    multiBrushBehavior: MultiBrushBehavior,
+  ) => void;
 }
 
 type Props = OwnProps & StateProps & DispatchProps;
@@ -44,6 +65,10 @@ const Scatterplot: FC<Props> = ({
   lastPlot,
   updatePlot,
   removePlot,
+  addBrush,
+  updateBrush,
+  removeBrush,
+  multiBrushBehavior,
 }: Props) => {
   const xAxisRef: RefObject<SVGGElement> = createRef();
   const yAxisRef: RefObject<SVGGElement> = createRef();
@@ -111,10 +136,10 @@ const Scatterplot: FC<Props> = ({
     Object.values(brushes).forEach(brush => {
       let {x1, x2, y1, y2} = brush.extents;
       [x1, x2, y1, y2] = [
-        xScale.invert(x1 * width - 5),
-        xScale.invert(x2 * width - 5),
-        yScale.invert(y1 * height - 5),
-        yScale.invert(y2 * height - 5),
+        xScale.invert(x1 * width - extentPadding),
+        xScale.invert(x2 * width - extentPadding),
+        yScale.invert(y1 * height - extentPadding),
+        yScale.invert(y2 * height - extentPadding),
       ];
 
       if (d.x >= x1 && d.x <= x2 && d.y <= y1 && d.y >= y2) {
@@ -145,6 +170,53 @@ const Scatterplot: FC<Props> = ({
           const currPlot = {...plot};
           currPlot.brushes = {...brushes};
           updatePlot(currPlot, false);
+          let {x1, x2, y1, y2} = affectedBrush.extents;
+          [x1, x2, y1, y2] = [
+            xScale.invert(x1 * width - extentPadding),
+            xScale.invert(x2 * width - extentPadding),
+            yScale.invert(y1 * height - extentPadding),
+            yScale.invert(y2 * height - extentPadding),
+          ];
+
+          const selectedIndices: {[key: number]: number} = {};
+
+          data.forEach((d, i) => {
+            if (d.x >= x1 && d.x <= x2 && d.y <= y1 && d.y >= y2) {
+              if (!selectedIndices[i]) {
+                selectedIndices[i] = 0;
+              }
+              selectedIndices[i] += 1;
+            }
+          });
+
+          const selection: RectangularSelection = {
+            plot,
+            dataIds: Object.keys(selectedIndices).map(d => parseInt(d)),
+            brushId: affectedBrush.id,
+            left: x1,
+            right: x2,
+            top: y1,
+            bottom: y2,
+          };
+
+          switch (affectType) {
+            case BrushAffectType.ADD:
+              addBrush(selection, multiBrushBehavior);
+              break;
+            case BrushAffectType.CHANGE:
+              updateBrush(selection, multiBrushBehavior);
+              break;
+            case BrushAffectType.REMOVE:
+              selection.dataIds = null as any;
+              selection.left = null as any;
+              selection.right = null as any;
+              selection.top = null as any;
+              selection.bottom = null as any;
+              removeBrush(selection, multiBrushBehavior);
+              break;
+            default:
+              throw new Error('Wrong brush error');
+          }
         }}
       />
     </g>
@@ -177,7 +249,6 @@ const Scatterplot: FC<Props> = ({
                     plot.selectedPoints = points;
                     updatePlot({...plot}, false);
                   }}
-                  fill={colorScale(d.color) as string}
                   cx={xScale(d.x)}
                   cy={yScale(d.y)}
                   r={5}></IntersectionMark>
@@ -187,7 +258,6 @@ const Scatterplot: FC<Props> = ({
                 onClick={() => {
                   let points = plot.selectedPoints;
                   if (!points.includes(i)) points.push(i);
-
                   plot.selectedPoints = points;
                   updatePlot({...plot}, false);
                 }}
@@ -264,6 +334,7 @@ const Scatterplot: FC<Props> = ({
 
 const mapStateToProps = (state: VisualizationState): StateProps => ({
   dataset: state.dataset,
+  multiBrushBehavior: state.multiBrushBehaviour,
 });
 
 const mapDispatchToProps = (
@@ -274,6 +345,42 @@ const mapDispatchToProps = (
   },
   updatePlot: (plot: SinglePlot, addInteraction: boolean) => {
     dispatch(updatePlot(plot, addInteraction));
+  },
+  addBrush: (
+    interaction: RectangularSelection,
+    multiBrushBehavior: MultiBrushBehavior,
+  ) => {
+    dispatch({
+      type: ADD_INTERACTION,
+      args: {
+        interaction,
+        multiBrushBehavior,
+      },
+    });
+  },
+  removeBrush: (
+    interaction: RectangularSelection,
+    multiBrushBehavior: MultiBrushBehavior,
+  ) => {
+    dispatch({
+      type: ADD_INTERACTION,
+      args: {
+        interaction,
+        multiBrushBehavior,
+      },
+    });
+  },
+  updateBrush: (
+    interaction: RectangularSelection,
+    multiBrushBehavior: MultiBrushBehavior,
+  ) => {
+    dispatch({
+      type: ADD_INTERACTION,
+      args: {
+        interaction,
+        multiBrushBehavior,
+      },
+    });
   },
 });
 

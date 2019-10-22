@@ -30,7 +30,7 @@ export const InteractionsReducer: Reducer<
   switch (action.type) {
     case ADD_INTERACTION:
       const interactions = [...current, action.args.interaction];
-
+      console.log(action.args);
       const request: PredictionRequest = {
         multiBrushBehavior: action.args.multiBrushBehavior,
         interactionHistory: interactions,
