@@ -8,7 +8,7 @@ export enum VisualizationType {
 
 interface Selection {
   plot: Plot;
-  dimensions: Array<string>;
+  dimensions?: Array<string>;
   dataIds: Array<number>;
 }
 
