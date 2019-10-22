@@ -1,4 +1,5 @@
 export enum VisualizationType {
+  Grid = 'Grid',
   Scatterplot = 'Scatterplot',
   ScatterplotMatrix = 'ScatterplotMatrix',
   ParallelCoordinatePlot = 'ParallelCoordinatePlot',
@@ -6,6 +7,7 @@ export enum VisualizationType {
 }
 
 interface Selection {
+  plot: Plot;
   dimensions: Array<string>;
   dataIds: Array<number>;
 }
@@ -39,9 +41,32 @@ export enum MultiBrushBehavior {
   UNION = 'UNION',
 }
 
+export interface Plot {
+  id: string;
+  x: string;
+  y: string;
+  color: string;
+}
+
 export interface PredictionRequest {
   multiBrushBehavior: MultiBrushBehavior;
   interactionHistory: InteractionHistory;
+}
+
+interface PlotsInteraction {
+  plot: Plot;
+}
+
+export interface AddPlotInteraction extends PlotsInteraction {
+  kind: 'ADD';
+}
+
+export interface RemovePlotInteraction extends PlotsInteraction {
+  kind: 'REMOVE';
+}
+
+export interface UpdatePlotInteraction extends PlotsInteraction {
+  kind: 'UPDATE';
 }
 
 export type InteractionType =
@@ -49,7 +74,10 @@ export type InteractionType =
   | ClearAllSelections
   | PointSelection
   | PointDeselection
-  | RectangularSelection;
+  | RectangularSelection
+  | AddPlotInteraction
+  | RemovePlotInteraction
+  | UpdatePlotInteraction;
 
 export interface Interaction {
   visualizationType: VisualizationType;

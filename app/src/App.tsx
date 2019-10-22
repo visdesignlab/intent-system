@@ -31,7 +31,7 @@ const App: FC<Props> = ({dataset, plots, addPlot}: Props) => {
       selectedPoints: [],
     };
     addPlot(plot);
-    console.table(Object.values(VisualizationProvenance.graph().nodes));
+    // console.table(Object.values(VisualizationProvenance.graph().nodes));
   }
   return (
     <MainDiv>

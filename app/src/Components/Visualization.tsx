@@ -61,7 +61,7 @@ const Visualization: FC<Props> = ({dataset, plots}: Props) => {
   const totalHeight = plotDimension * rowCount;
   const totalWidth = plotDimension * columnCount;
 
-  console.log(breakCount, actualCount, totalHeight);
+  // console.log(breakCount, actualCount, totalHeight);
 
   const xPosGen = getNextXPosition(breakCount);
 
