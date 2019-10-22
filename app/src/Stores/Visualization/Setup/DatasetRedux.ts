@@ -68,7 +68,7 @@ export const loadDataset = async (url: string) => {
 
   VisualizationProvenance.apply(updateDataset(parsedDataset));
 
-  console.log(VisualizationProvenance.graph().current.state);
-  console.table(Object.values(VisualizationProvenance.graph().nodes));
+  // console.log(VisualizationProvenance.graph().current.state);
+  // console.table(Object.values(VisualizationProvenance.graph().nodes));
   return parsedDataset;
 };

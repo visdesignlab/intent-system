@@ -2,8 +2,6 @@ import os
 
 from intent_server import create_app
 
-print("Hello")
-
 app = create_app()
 port = int(os.environ.get('PORT', 5000))
 

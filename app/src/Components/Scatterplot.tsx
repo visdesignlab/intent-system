@@ -31,7 +31,7 @@ interface StateProps {
 }
 
 interface DispatchProps {
-  updatePlot: (plot: SinglePlot) => void;
+  updatePlot: (plot: SinglePlot, addInteraction: boolean) => void;
   removePlot: (plot: SinglePlot) => void;
 }
 
@@ -144,8 +144,7 @@ const Scatterplot: FC<Props> = ({
         onBrushUpdate={(brushes, affectedBrush, affectType) => {
           const currPlot = {...plot};
           currPlot.brushes = {...brushes};
-          updatePlot(currPlot);
-          console.log(brushes, affectedBrush, affectType);
+          updatePlot(currPlot, false);
         }}
       />
     </g>
@@ -164,7 +163,7 @@ const Scatterplot: FC<Props> = ({
                     let points = plot.selectedPoints.filter(p => p !== i);
 
                     plot.selectedPoints = points;
-                    updatePlot({...plot});
+                    updatePlot({...plot}, false);
                   }}
                   fill={colorScale(d.color) as string}
                   cx={xScale(d.x)}
@@ -176,7 +175,7 @@ const Scatterplot: FC<Props> = ({
                     let points = plot.selectedPoints.filter(p => p !== i);
 
                     plot.selectedPoints = points;
-                    updatePlot({...plot});
+                    updatePlot({...plot}, false);
                   }}
                   fill={colorScale(d.color) as string}
                   cx={xScale(d.x)}
@@ -190,7 +189,7 @@ const Scatterplot: FC<Props> = ({
                   if (!points.includes(i)) points.push(i);
 
                   plot.selectedPoints = points;
-                  updatePlot({...plot});
+                  updatePlot({...plot}, false);
                 }}
                 fill={colorScale(d.color) as string}
                 cx={xScale(d.x)}
@@ -273,8 +272,8 @@ const mapDispatchToProps = (
   removePlot: (plot: SinglePlot) => {
     dispatch(removePlot(plot));
   },
-  updatePlot: (plot: SinglePlot) => {
-    dispatch(updatePlot(plot));
+  updatePlot: (plot: SinglePlot, addInteraction: boolean) => {
+    dispatch(updatePlot(plot, addInteraction));
   },
 });
 

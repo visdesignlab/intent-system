@@ -4,6 +4,8 @@ from .dataset import Dataset
 from .dimensions import Dimensions
 from .inference import Inference
 from .vendor.interactions import prediction_request_from_dict
+import sys
+import pprint
 
 import time
 

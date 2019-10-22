@@ -12,19 +12,29 @@
 #     result = change_axis_from_dict(json.loads(json_string))
 #     result = clear_all_selections_from_dict(json.loads(json_string))
 #     result = multi_brush_behavior_from_dict(json.loads(json_string))
+#     result = plot_from_dict(json.loads(json_string))
 #     result = prediction_request_from_dict(json.loads(json_string))
+#     result = plots_interaction_from_dict(json.loads(json_string))
+#     result = add_plot_interaction_from_dict(json.loads(json_string))
+#     result = remove_plot_interaction_from_dict(json.loads(json_string))
+#     result = update_plot_interaction_from_dict(json.loads(json_string))
 #     result = interaction_type_from_dict(json.loads(json_string))
 #     result = interaction_from_dict(json.loads(json_string))
 #     result = interaction_history_from_dict(json.loads(json_string))
 #     result = prediction_from_dict(json.loads(json_string))
 #     result = prediction_set_from_dict(json.loads(json_string))
 
-from typing import List, Any, Optional, Dict, TypeVar, Callable, Type, cast
+from typing import Any, List, Optional, Dict, TypeVar, Callable, Type, cast
 from enum import Enum
 
 
 T = TypeVar("T")
 EnumT = TypeVar("EnumT", bound=Enum)
+
+
+def from_str(x: Any) -> str:
+    assert isinstance(x, str)
+    return x
 
 
 def from_list(f: Callable[[Any], T], x: Any) -> List[T]:
@@ -37,14 +47,14 @@ def from_float(x: Any) -> float:
     return float(x)
 
 
-def from_str(x: Any) -> str:
-    assert isinstance(x, str)
-    return x
-
-
 def to_float(x: Any) -> float:
     assert isinstance(x, float)
     return x
+
+
+def to_class(c: Type[T], x: Any) -> dict:
+    assert isinstance(x, c)
+    return cast(Any, x).to_dict()
 
 
 def to_enum(c: Type[EnumT], x: Any) -> EnumT:
@@ -66,35 +76,64 @@ def from_union(fs, x):
     assert False
 
 
-def to_class(c: Type[T], x: Any) -> dict:
-    assert isinstance(x, c)
-    return cast(Any, x).to_dict()
-
-
 def from_dict(f: Callable[[Any], T], x: Any) -> Dict[str, T]:
     assert isinstance(x, dict)
     return { k: f(v) for (k, v) in x.items() }
 
 
+class Plot:
+    color: str
+    id: str
+    x: str
+    y: str
+
+    def __init__(self, color: str, id: str, x: str, y: str) -> None:
+        self.color = color
+        self.id = id
+        self.x = x
+        self.y = y
+
+    @staticmethod
+    def from_dict(obj: Any) -> 'Plot':
+        assert isinstance(obj, dict)
+        color = from_str(obj.get("color"))
+        id = from_str(obj.get("id"))
+        x = from_str(obj.get("x"))
+        y = from_str(obj.get("y"))
+        return Plot(color, id, x, y)
+
+    def to_dict(self) -> dict:
+        result: dict = {}
+        result["color"] = from_str(self.color)
+        result["id"] = from_str(self.id)
+        result["x"] = from_str(self.x)
+        result["y"] = from_str(self.y)
+        return result
+
+
 class Selection:
     data_ids: List[float]
     dimensions: List[str]
+    plot: Plot
 
-    def __init__(self, data_ids: List[float], dimensions: List[str]) -> None:
+    def __init__(self, data_ids: List[float], dimensions: List[str], plot: Plot) -> None:
         self.data_ids = data_ids
         self.dimensions = dimensions
+        self.plot = plot
 
     @staticmethod
     def from_dict(obj: Any) -> 'Selection':
         assert isinstance(obj, dict)
         data_ids = from_list(from_float, obj.get("dataIds"))
         dimensions = from_list(from_str, obj.get("dimensions"))
-        return Selection(data_ids, dimensions)
+        plot = Plot.from_dict(obj.get("plot"))
+        return Selection(data_ids, dimensions, plot)
 
     def to_dict(self) -> dict:
         result: dict = {}
         result["dataIds"] = from_list(to_float, self.data_ids)
         result["dimensions"] = from_list(from_str, self.dimensions)
+        result["plot"] = to_class(Plot, self.plot)
         return result
 
 
@@ -106,11 +145,13 @@ class PointSelection:
     data_ids: List[float]
     dimensions: List[str]
     kind: PointSelectionKind
+    plot: Plot
 
-    def __init__(self, data_ids: List[float], dimensions: List[str], kind: PointSelectionKind) -> None:
+    def __init__(self, data_ids: List[float], dimensions: List[str], kind: PointSelectionKind, plot: Plot) -> None:
         self.data_ids = data_ids
         self.dimensions = dimensions
         self.kind = kind
+        self.plot = plot
 
     @staticmethod
     def from_dict(obj: Any) -> 'PointSelection':
@@ -118,13 +159,15 @@ class PointSelection:
         data_ids = from_list(from_float, obj.get("dataIds"))
         dimensions = from_list(from_str, obj.get("dimensions"))
         kind = PointSelectionKind(obj.get("kind"))
-        return PointSelection(data_ids, dimensions, kind)
+        plot = Plot.from_dict(obj.get("plot"))
+        return PointSelection(data_ids, dimensions, kind, plot)
 
     def to_dict(self) -> dict:
         result: dict = {}
         result["dataIds"] = from_list(to_float, self.data_ids)
         result["dimensions"] = from_list(from_str, self.dimensions)
         result["kind"] = to_enum(PointSelectionKind, self.kind)
+        result["plot"] = to_class(Plot, self.plot)
         return result
 
 
@@ -136,11 +179,13 @@ class PointDeselection:
     data_ids: List[float]
     dimensions: List[str]
     kind: PointDeselectionKind
+    plot: Plot
 
-    def __init__(self, data_ids: List[float], dimensions: List[str], kind: PointDeselectionKind) -> None:
+    def __init__(self, data_ids: List[float], dimensions: List[str], kind: PointDeselectionKind, plot: Plot) -> None:
         self.data_ids = data_ids
         self.dimensions = dimensions
         self.kind = kind
+        self.plot = plot
 
     @staticmethod
     def from_dict(obj: Any) -> 'PointDeselection':
@@ -148,13 +193,15 @@ class PointDeselection:
         data_ids = from_list(from_float, obj.get("dataIds"))
         dimensions = from_list(from_str, obj.get("dimensions"))
         kind = PointDeselectionKind(obj.get("kind"))
-        return PointDeselection(data_ids, dimensions, kind)
+        plot = Plot.from_dict(obj.get("plot"))
+        return PointDeselection(data_ids, dimensions, kind, plot)
 
     def to_dict(self) -> dict:
         result: dict = {}
         result["dataIds"] = from_list(to_float, self.data_ids)
         result["dimensions"] = from_list(from_str, self.dimensions)
         result["kind"] = to_enum(PointDeselectionKind, self.kind)
+        result["plot"] = to_class(Plot, self.plot)
         return result
 
 
@@ -164,15 +211,17 @@ class RectangularSelection:
     data_ids: List[float]
     dimensions: List[str]
     left: float
+    plot: Plot
     right: float
     top: float
 
-    def __init__(self, bottom: float, brush_id: str, data_ids: List[float], dimensions: List[str], left: float, right: float, top: float) -> None:
+    def __init__(self, bottom: float, brush_id: str, data_ids: List[float], dimensions: List[str], left: float, plot: Plot, right: float, top: float) -> None:
         self.bottom = bottom
         self.brush_id = brush_id
         self.data_ids = data_ids
         self.dimensions = dimensions
         self.left = left
+        self.plot = plot
         self.right = right
         self.top = top
 
@@ -184,9 +233,10 @@ class RectangularSelection:
         data_ids = from_list(from_float, obj.get("dataIds"))
         dimensions = from_list(from_str, obj.get("dimensions"))
         left = from_float(obj.get("left"))
+        plot = Plot.from_dict(obj.get("plot"))
         right = from_float(obj.get("right"))
         top = from_float(obj.get("top"))
-        return RectangularSelection(bottom, brush_id, data_ids, dimensions, left, right, top)
+        return RectangularSelection(bottom, brush_id, data_ids, dimensions, left, plot, right, top)
 
     def to_dict(self) -> dict:
         result: dict = {}
@@ -195,6 +245,7 @@ class RectangularSelection:
         result["dataIds"] = from_list(to_float, self.data_ids)
         result["dimensions"] = from_list(from_str, self.dimensions)
         result["left"] = to_float(self.left)
+        result["plot"] = to_class(Plot, self.plot)
         result["right"] = to_float(self.right)
         result["top"] = to_float(self.top)
         return result
@@ -226,11 +277,13 @@ class ClearAllSelections:
     data_ids: List[float]
     dimensions: List[str]
     kind: ClearAllSelectionsKind
+    plot: Plot
 
-    def __init__(self, data_ids: List[float], dimensions: List[str], kind: ClearAllSelectionsKind) -> None:
+    def __init__(self, data_ids: List[float], dimensions: List[str], kind: ClearAllSelectionsKind, plot: Plot) -> None:
         self.data_ids = data_ids
         self.dimensions = dimensions
         self.kind = kind
+        self.plot = plot
 
     @staticmethod
     def from_dict(obj: Any) -> 'ClearAllSelections':
@@ -238,36 +291,43 @@ class ClearAllSelections:
         data_ids = from_list(from_float, obj.get("dataIds"))
         dimensions = from_list(from_str, obj.get("dimensions"))
         kind = ClearAllSelectionsKind(obj.get("kind"))
-        return ClearAllSelections(data_ids, dimensions, kind)
+        plot = Plot.from_dict(obj.get("plot"))
+        return ClearAllSelections(data_ids, dimensions, kind, plot)
 
     def to_dict(self) -> dict:
         result: dict = {}
         result["dataIds"] = from_list(to_float, self.data_ids)
         result["dimensions"] = from_list(from_str, self.dimensions)
         result["kind"] = to_enum(ClearAllSelectionsKind, self.kind)
+        result["plot"] = to_class(Plot, self.plot)
         return result
 
 
 class InteractionTypeKind(Enum):
+    ADD = "ADD"
     CLEARALL = "clearall"
     DESELECTION = "deselection"
+    REMOVE = "REMOVE"
     SELECTION = "selection"
+    UPDATE = "UPDATE"
 
 
 class InteractionType:
     data_ids: Optional[List[float]]
-    dimensions: List[str]
+    dimensions: Optional[List[str]]
     kind: Optional[InteractionTypeKind]
+    plot: Optional[Plot]
     bottom: Optional[float]
     brush_id: Optional[str]
     left: Optional[float]
     right: Optional[float]
     top: Optional[float]
 
-    def __init__(self, data_ids: Optional[List[float]], dimensions: List[str], kind: Optional[InteractionTypeKind], bottom: Optional[float], brush_id: Optional[str], left: Optional[float], right: Optional[float], top: Optional[float]) -> None:
+    def __init__(self, data_ids: Optional[List[float]], dimensions: Optional[List[str]], kind: Optional[InteractionTypeKind], plot: Optional[Plot], bottom: Optional[float], brush_id: Optional[str], left: Optional[float], right: Optional[float], top: Optional[float]) -> None:
         self.data_ids = data_ids
         self.dimensions = dimensions
         self.kind = kind
+        self.plot = plot
         self.bottom = bottom
         self.brush_id = brush_id
         self.left = left
@@ -278,20 +338,22 @@ class InteractionType:
     def from_dict(obj: Any) -> 'InteractionType':
         assert isinstance(obj, dict)
         data_ids = from_union([lambda x: from_list(from_float, x), from_none], obj.get("dataIds"))
-        dimensions = from_list(from_str, obj.get("dimensions"))
+        dimensions = from_union([lambda x: from_list(from_str, x), from_none], obj.get("dimensions"))
         kind = from_union([InteractionTypeKind, from_none], obj.get("kind"))
+        plot = from_union([Plot.from_dict, from_none], obj.get("plot"))
         bottom = from_union([from_float, from_none], obj.get("bottom"))
         brush_id = from_union([from_str, from_none], obj.get("brushId"))
         left = from_union([from_float, from_none], obj.get("left"))
         right = from_union([from_float, from_none], obj.get("right"))
         top = from_union([from_float, from_none], obj.get("top"))
-        return InteractionType(data_ids, dimensions, kind, bottom, brush_id, left, right, top)
+        return InteractionType(data_ids, dimensions, kind, plot, bottom, brush_id, left, right, top)
 
     def to_dict(self) -> dict:
         result: dict = {}
         result["dataIds"] = from_union([lambda x: from_list(to_float, x), from_none], self.data_ids)
-        result["dimensions"] = from_list(from_str, self.dimensions)
+        result["dimensions"] = from_union([lambda x: from_list(from_str, x), from_none], self.dimensions)
         result["kind"] = from_union([lambda x: to_enum(InteractionTypeKind, x), from_none], self.kind)
+        result["plot"] = from_union([lambda x: to_class(Plot, x), from_none], self.plot)
         result["bottom"] = from_union([to_float, from_none], self.bottom)
         result["brushId"] = from_union([from_str, from_none], self.brush_id)
         result["left"] = from_union([to_float, from_none], self.left)
@@ -301,6 +363,7 @@ class InteractionType:
 
 
 class VisualizationType(Enum):
+    GRID = "Grid"
     NONE = "None"
     PARALLEL_COORDINATE_PLOT = "ParallelCoordinatePlot"
     SCATTERPLOT = "Scatterplot"
@@ -353,6 +416,102 @@ class PredictionRequest:
         result: dict = {}
         result["interactionHistory"] = from_list(lambda x: to_class(Interaction, x), self.interaction_history)
         result["multiBrushBehavior"] = to_enum(MultiBrushBehavior, self.multi_brush_behavior)
+        return result
+
+
+class PlotsInteraction:
+    plot: Plot
+
+    def __init__(self, plot: Plot) -> None:
+        self.plot = plot
+
+    @staticmethod
+    def from_dict(obj: Any) -> 'PlotsInteraction':
+        assert isinstance(obj, dict)
+        plot = Plot.from_dict(obj.get("plot"))
+        return PlotsInteraction(plot)
+
+    def to_dict(self) -> dict:
+        result: dict = {}
+        result["plot"] = to_class(Plot, self.plot)
+        return result
+
+
+class AddPlotInteractionKind(Enum):
+    ADD = "ADD"
+
+
+class AddPlotInteraction:
+    kind: AddPlotInteractionKind
+    plot: Plot
+
+    def __init__(self, kind: AddPlotInteractionKind, plot: Plot) -> None:
+        self.kind = kind
+        self.plot = plot
+
+    @staticmethod
+    def from_dict(obj: Any) -> 'AddPlotInteraction':
+        assert isinstance(obj, dict)
+        kind = AddPlotInteractionKind(obj.get("kind"))
+        plot = Plot.from_dict(obj.get("plot"))
+        return AddPlotInteraction(kind, plot)
+
+    def to_dict(self) -> dict:
+        result: dict = {}
+        result["kind"] = to_enum(AddPlotInteractionKind, self.kind)
+        result["plot"] = to_class(Plot, self.plot)
+        return result
+
+
+class RemovePlotInteractionKind(Enum):
+    REMOVE = "REMOVE"
+
+
+class RemovePlotInteraction:
+    kind: RemovePlotInteractionKind
+    plot: Plot
+
+    def __init__(self, kind: RemovePlotInteractionKind, plot: Plot) -> None:
+        self.kind = kind
+        self.plot = plot
+
+    @staticmethod
+    def from_dict(obj: Any) -> 'RemovePlotInteraction':
+        assert isinstance(obj, dict)
+        kind = RemovePlotInteractionKind(obj.get("kind"))
+        plot = Plot.from_dict(obj.get("plot"))
+        return RemovePlotInteraction(kind, plot)
+
+    def to_dict(self) -> dict:
+        result: dict = {}
+        result["kind"] = to_enum(RemovePlotInteractionKind, self.kind)
+        result["plot"] = to_class(Plot, self.plot)
+        return result
+
+
+class UpdatePlotInteractionKind(Enum):
+    UPDATE = "UPDATE"
+
+
+class UpdatePlotInteraction:
+    kind: UpdatePlotInteractionKind
+    plot: Plot
+
+    def __init__(self, kind: UpdatePlotInteractionKind, plot: Plot) -> None:
+        self.kind = kind
+        self.plot = plot
+
+    @staticmethod
+    def from_dict(obj: Any) -> 'UpdatePlotInteraction':
+        assert isinstance(obj, dict)
+        kind = UpdatePlotInteractionKind(obj.get("kind"))
+        plot = Plot.from_dict(obj.get("plot"))
+        return UpdatePlotInteraction(kind, plot)
+
+    def to_dict(self) -> dict:
+        result: dict = {}
+        result["kind"] = to_enum(UpdatePlotInteractionKind, self.kind)
+        result["plot"] = to_class(Plot, self.plot)
         return result
 
 
@@ -480,12 +639,52 @@ def multi_brush_behavior_to_dict(x: MultiBrushBehavior) -> Any:
     return to_enum(MultiBrushBehavior, x)
 
 
+def plot_from_dict(s: Any) -> Plot:
+    return Plot.from_dict(s)
+
+
+def plot_to_dict(x: Plot) -> Any:
+    return to_class(Plot, x)
+
+
 def prediction_request_from_dict(s: Any) -> PredictionRequest:
     return PredictionRequest.from_dict(s)
 
 
 def prediction_request_to_dict(x: PredictionRequest) -> Any:
     return to_class(PredictionRequest, x)
+
+
+def plots_interaction_from_dict(s: Any) -> PlotsInteraction:
+    return PlotsInteraction.from_dict(s)
+
+
+def plots_interaction_to_dict(x: PlotsInteraction) -> Any:
+    return to_class(PlotsInteraction, x)
+
+
+def add_plot_interaction_from_dict(s: Any) -> AddPlotInteraction:
+    return AddPlotInteraction.from_dict(s)
+
+
+def add_plot_interaction_to_dict(x: AddPlotInteraction) -> Any:
+    return to_class(AddPlotInteraction, x)
+
+
+def remove_plot_interaction_from_dict(s: Any) -> RemovePlotInteraction:
+    return RemovePlotInteraction.from_dict(s)
+
+
+def remove_plot_interaction_to_dict(x: RemovePlotInteraction) -> Any:
+    return to_class(RemovePlotInteraction, x)
+
+
+def update_plot_interaction_from_dict(s: Any) -> UpdatePlotInteraction:
+    return UpdatePlotInteraction.from_dict(s)
+
+
+def update_plot_interaction_to_dict(x: UpdatePlotInteraction) -> Any:
+    return to_class(UpdatePlotInteraction, x)
 
 
 def interaction_type_from_dict(s: Any) -> InteractionType:
