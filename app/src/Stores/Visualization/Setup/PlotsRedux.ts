@@ -5,7 +5,7 @@ import {VisualizationProvenance} from '../../..';
 import {ADD_INTERACTION, AddInteractionAction} from './InteractionsRedux';
 import VisualizationState from '../VisualizationState';
 import {ThunkDispatch} from 'redux-thunk';
-import {VisualizationType, Interaction, Plot} from '../../../contract';
+import {VisualizationType, Interaction} from '../../../contract';
 
 export const ADD_PLOT = 'ADD_PLOT';
 export const REMOVE_PLOT = 'REMOVE_PLOT';

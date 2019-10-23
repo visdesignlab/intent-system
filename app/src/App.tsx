@@ -7,7 +7,6 @@ import {Dataset} from './Stores/Types/Dataset';
 import {connect} from 'react-redux';
 import {SinglePlot, Plots} from './Stores/Types/Plots';
 import {addPlot} from './Stores/Visualization/Setup/PlotsRedux';
-import {VisualizationProvenance} from '.';
 import PlotControl from './Components/PlotControl';
 
 interface OwnProps {}
@@ -31,7 +30,6 @@ const App: FC<Props> = ({dataset, plots, addPlot}: Props) => {
       selectedPoints: [],
     };
     addPlot(plot);
-    // console.table(Object.values(VisualizationProvenance.graph().nodes));
   }
   return (
     <MainDiv>

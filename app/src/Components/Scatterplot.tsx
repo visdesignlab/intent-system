@@ -7,7 +7,6 @@ import {
   scaleOrdinal,
   schemeSet2,
   select,
-  ScaleLinear,
 } from 'd3';
 import React, {createRef, FC, RefObject, useEffect, useState} from 'react';
 import {connect} from 'react-redux';
@@ -20,13 +19,15 @@ import {removePlot, updatePlot} from '../Stores/Visualization/Setup/PlotsRedux';
 import VisualizationState from '../Stores/Visualization/VisualizationState';
 import BrushComponent from './Brush/Components/BrushComponent';
 import {ThunkDispatch} from 'redux-thunk';
-import {Brush, BrushAffectType} from './Brush/Types/Brush';
-import {RectangularSelection, MultiBrushBehavior} from '../contract';
+import {BrushAffectType} from './Brush/Types/Brush';
 import {
-  ADD_INTERACTION,
-  AddInteractionAction,
-} from '../Stores/Visualization/Setup/InteractionsRedux';
-import {Dispatch} from 'redux';
+  RectangularSelection,
+  MultiBrushBehavior,
+  VisualizationType,
+  PointSelection,
+  PointDeselection,
+} from '../contract';
+import {ADD_INTERACTION} from '../Stores/Visualization/Setup/InteractionsRedux';
 
 interface OwnProps {
   plot: SinglePlot;
@@ -54,6 +55,14 @@ interface DispatchProps {
     selection: RectangularSelection,
     multiBrushBehavior: MultiBrushBehavior,
   ) => void;
+  addPointSelection: (
+    interaction: PointSelection,
+    multiBrushBehavior: MultiBrushBehavior,
+  ) => void;
+  addPointDeselection: (
+    interaction: PointDeselection,
+    multiBrushBehavior: MultiBrushBehavior,
+  ) => void;
 }
 
 type Props = OwnProps & StateProps & DispatchProps;
@@ -69,6 +78,8 @@ const Scatterplot: FC<Props> = ({
   updateBrush,
   removeBrush,
   multiBrushBehavior,
+  addPointDeselection,
+  addPointSelection,
 }: Props) => {
   const xAxisRef: RefObject<SVGGElement> = createRef();
   const yAxisRef: RefObject<SVGGElement> = createRef();
@@ -215,7 +226,9 @@ const Scatterplot: FC<Props> = ({
               removeBrush(selection, multiBrushBehavior);
               break;
             default:
-              throw new Error('Wrong brush error');
+              throw new Error(
+                'Wrong brush effect! Something went wrong with BrushComponent',
+              );
           }
         }}
       />
@@ -236,6 +249,14 @@ const Scatterplot: FC<Props> = ({
 
                     plot.selectedPoints = points;
                     updatePlot({...plot}, false);
+                    addPointDeselection(
+                      {
+                        plot,
+                        dataIds: [i],
+                        kind: 'deselection',
+                      },
+                      multiBrushBehavior,
+                    );
                   }}
                   fill={colorScale(d.color) as string}
                   cx={xScale(d.x)}
@@ -248,7 +269,17 @@ const Scatterplot: FC<Props> = ({
 
                     plot.selectedPoints = points;
                     updatePlot({...plot}, false);
+
+                    addPointDeselection(
+                      {
+                        plot,
+                        dataIds: [i],
+                        kind: 'deselection',
+                      },
+                      multiBrushBehavior,
+                    );
                   }}
+                  fill={colorScale(d.color) as string}
                   cx={xScale(d.x)}
                   cy={yScale(d.y)}
                   r={5}></IntersectionMark>
@@ -260,6 +291,14 @@ const Scatterplot: FC<Props> = ({
                   if (!points.includes(i)) points.push(i);
                   plot.selectedPoints = points;
                   updatePlot({...plot}, false);
+                  addPointSelection(
+                    {
+                      plot,
+                      dataIds: [i],
+                      kind: 'selection',
+                    },
+                    multiBrushBehavior,
+                  );
                 }}
                 fill={colorScale(d.color) as string}
                 cx={xScale(d.x)}
@@ -353,8 +392,11 @@ const mapDispatchToProps = (
     dispatch({
       type: ADD_INTERACTION,
       args: {
-        interaction,
-        multiBrushBehavior,
+        interaction: {
+          visualizationType: VisualizationType.Grid,
+          interactionType: interaction,
+        },
+        multiBrushBehavior: multiBrushBehavior,
       },
     });
   },
@@ -365,8 +407,11 @@ const mapDispatchToProps = (
     dispatch({
       type: ADD_INTERACTION,
       args: {
-        interaction,
-        multiBrushBehavior,
+        interaction: {
+          visualizationType: VisualizationType.Grid,
+          interactionType: interaction,
+        },
+        multiBrushBehavior: multiBrushBehavior,
       },
     });
   },
@@ -377,7 +422,40 @@ const mapDispatchToProps = (
     dispatch({
       type: ADD_INTERACTION,
       args: {
-        interaction,
+        interaction: {
+          visualizationType: VisualizationType.Grid,
+          interactionType: interaction,
+        },
+        multiBrushBehavior: multiBrushBehavior,
+      },
+    });
+  },
+  addPointSelection: (
+    interaction: PointSelection,
+    multiBrushBehavior: MultiBrushBehavior,
+  ) => {
+    dispatch({
+      type: ADD_INTERACTION,
+      args: {
+        interaction: {
+          visualizationType: VisualizationType.Grid,
+          interactionType: interaction,
+        },
+        multiBrushBehavior,
+      },
+    });
+  },
+  addPointDeselection: (
+    interaction: PointDeselection,
+    multiBrushBehavior: MultiBrushBehavior,
+  ) => {
+    dispatch({
+      type: ADD_INTERACTION,
+      args: {
+        interaction: {
+          visualizationType: VisualizationType.Grid,
+          interactionType: interaction,
+        },
         multiBrushBehavior,
       },
     });
@@ -400,6 +478,10 @@ interface MarkProps {
 const RegularMark = styled('circle')<MarkProps>`
   fill: ${props => (props.fill ? props.fill : 'black')};
   opacity: 0.6;
+  cursor: pointer;
+  &:hover {
+    r: 7px;
+  }
 `;
 
 const UnionMark = styled(RegularMark)<MarkProps>`

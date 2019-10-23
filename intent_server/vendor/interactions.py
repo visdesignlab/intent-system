@@ -24,6 +24,8 @@
 #     result = prediction_from_dict(json.loads(json_string))
 #     result = prediction_set_from_dict(json.loads(json_string))
 
+import sys
+
 from typing import Any, List, Optional, Dict, TypeVar, Callable, Type, cast
 from enum import Enum
 
