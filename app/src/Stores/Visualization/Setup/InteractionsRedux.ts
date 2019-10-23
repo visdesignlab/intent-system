@@ -36,10 +36,16 @@ export const InteractionsReducer: Reducer<
         interactionHistory: interactions,
       };
 
-      axios.post(`/dataset/${datasetName}/predict`, request).then(response => {
-        console.log('IH', interactions);
-        console.log('Predictions', response.data);
-      });
+      console.log('IH', interactions);
+
+      axios
+        .post(`/dataset/${datasetName}/predict`, request)
+        .then(response => {
+          console.log('Predictions', response.data);
+        })
+        .catch(err => {
+          console.log(err);
+        });
 
       return interactions;
     default:
