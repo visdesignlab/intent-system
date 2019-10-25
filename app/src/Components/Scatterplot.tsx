@@ -242,34 +242,14 @@ const Scatterplot: FC<Props> = ({
           key={i}
           trigger={
             selectedIndices[i] ? (
-              selectedIndices[i] < maxIntersection ? (
-                <UnionMark
-                  onClick={() => {
-                    let points = plot.selectedPoints.filter(p => p !== i);
-
-                    plot.selectedPoints = points;
-                    updatePlot({...plot}, false);
-                    addPointDeselection(
-                      {
-                        plot,
-                        dataIds: [i],
-                        kind: 'deselection',
-                      },
-                      multiBrushBehavior,
-                    );
-                  }}
-                  fill={colorScale(d.color) as string}
-                  cx={xScale(d.x)}
-                  cy={yScale(d.y)}
-                  r={5}></UnionMark>
-              ) : (
+              selectedIndices[i] === maxIntersection ||
+              plot.selectedPoints.includes(i) ? (
                 <IntersectionMark
                   onClick={() => {
                     let points = plot.selectedPoints.filter(p => p !== i);
 
                     plot.selectedPoints = points;
                     updatePlot({...plot}, false);
-
                     addPointDeselection(
                       {
                         plot,
@@ -283,6 +263,27 @@ const Scatterplot: FC<Props> = ({
                   cx={xScale(d.x)}
                   cy={yScale(d.y)}
                   r={5}></IntersectionMark>
+              ) : (
+                <UnionMark
+                  onClick={() => {
+                    let points = plot.selectedPoints.filter(p => p !== i);
+
+                    plot.selectedPoints = points;
+                    updatePlot({...plot}, false);
+
+                    addPointDeselection(
+                      {
+                        plot,
+                        dataIds: [i],
+                        kind: 'deselection',
+                      },
+                      multiBrushBehavior,
+                    );
+                  }}
+                  fill={colorScale(d.color) as string}
+                  cx={xScale(d.x)}
+                  cy={yScale(d.y)}
+                  r={5}></UnionMark>
               )
             ) : (
               <RegularMark
