@@ -4,9 +4,8 @@ import {
   max,
   min,
   scaleLinear,
-  scaleOrdinal,
-  schemeSet2,
   select,
+  ScaleOrdinal,
 } from 'd3';
 import React, {createRef, FC, RefObject, useEffect, useState} from 'react';
 import {connect} from 'react-redux';
@@ -33,6 +32,7 @@ interface OwnProps {
   plot: SinglePlot;
   size: number;
   lastPlot: boolean;
+  colorScale: ScaleOrdinal<string, unknown>;
 }
 
 interface StateProps {
@@ -80,6 +80,7 @@ const Scatterplot: FC<Props> = ({
   multiBrushBehavior,
   addPointDeselection,
   addPointSelection,
+  colorScale,
 }: Props) => {
   const xAxisRef: RefObject<SVGGElement> = createRef();
   const yAxisRef: RefObject<SVGGElement> = createRef();
@@ -102,10 +103,6 @@ const Scatterplot: FC<Props> = ({
   const yScale = scaleLinear()
     .domain([max(data.map(d => d.y)), min(data.map(d => d.y))])
     .range([0, paddedSize]);
-
-  const colorScale = scaleOrdinal()
-    .domain([...new Set(data.map(d => d.color))])
-    .range(schemeSet2);
 
   useEffect(() => {
     if (xAxisRef.current) {
@@ -178,6 +175,7 @@ const Scatterplot: FC<Props> = ({
         }}
         extentPadding={extentPadding}
         onBrushUpdate={(brushes, affectedBrush, affectType) => {
+          if (!affectedBrush) return;
           const currPlot = {...plot};
           currPlot.brushes = {...brushes};
           updatePlot(currPlot, false);

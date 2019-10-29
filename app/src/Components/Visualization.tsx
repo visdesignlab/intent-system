@@ -7,6 +7,9 @@ import VisualizationState from '../Stores/Visualization/VisualizationState';
 import {Dataset} from '../Stores/Types/Dataset';
 import {Plots} from '../Stores/Types/Plots';
 import Scatterplot from './Scatterplot';
+import Legend from './Legend';
+import * as _ from 'lodash';
+import {scaleOrdinal, schemeSet2} from 'd3';
 
 interface OwnProps {
   test?: string;
@@ -65,8 +68,25 @@ const Visualization: FC<Props> = ({dataset, plots}: Props) => {
 
   const xPosGen = getNextXPosition(breakCount);
 
+  const uniqueValues = _.chain(dataset.data)
+    .map(n => n[dataset.categoricalColumns[0]])
+    .uniq()
+    .value();
+
+  const colorScale = scaleOrdinal()
+    .domain(uniqueValues)
+    .range(schemeSet2);
+
   return (
     <MainSvg ref={measuredRef}>
+      <g transform={`translate(${margin}, 0)`}>
+        <Legend
+          colorScale={colorScale}
+          height={margin}
+          width={width}
+          values={uniqueValues}
+        />
+      </g>
       <g transform={`translate(${margin}, ${margin})`}>
         {height >= 0 && width >= 0 && (
           <>
@@ -93,7 +113,8 @@ const Visualization: FC<Props> = ({dataset, plots}: Props) => {
                     <Scatterplot
                       plot={plot}
                       size={plotDimension}
-                      lastPlot={plots.length === 1}></Scatterplot>
+                      lastPlot={plots.length === 1}
+                      colorScale={colorScale}></Scatterplot>
                   </g>
                 );
               })}
