@@ -18,7 +18,7 @@ const Legend: FC<Props> = ({values, height, width, colorScale}: Props) => {
   const cellWidth = width / values.length;
   height = height - 2 * padding;
   width = cellWidth - 2 * padding;
-  console.log(values);
+
   return (
     <g>
       {values.map((val, i) => (
