@@ -134,13 +134,6 @@ const Scatterplot: FC<Props> = ({
   let maxIntersection = 1;
 
   data.forEach((d, i) => {
-    if (plot.selectedPoints.includes(i)) {
-      if (!selectedIndices[i]) {
-        selectedIndices[i] = 0;
-      }
-      selectedIndices[i] += 1;
-    }
-
     Object.values(brushes).forEach(brush => {
       let {x1, x2, y1, y2} = brush.extents;
       [x1, x2, y1, y2] = [
@@ -239,45 +232,35 @@ const Scatterplot: FC<Props> = ({
         <Popup
           key={i}
           trigger={
-            selectedIndices[i] ? (
-              selectedIndices[i] === maxIntersection ||
-              plot.selectedPoints.includes(i) ? (
-                <IntersectionMark
-                  onClick={() => {
-                    let points = plot.selectedPoints.filter(p => p !== i);
+            plot.selectedPoints.includes(i) ? (
+              <IntersectionMark
+                onClick={() => {
+                  let points = plot.selectedPoints.filter(p => p !== i);
 
-                    plot.selectedPoints = points;
-                    updatePlot({...plot}, false);
-                    addPointDeselection(
-                      {
-                        plot,
-                        dataIds: [i],
-                        kind: 'deselection',
-                      },
-                      multiBrushBehavior,
-                    );
-                  }}
+                  plot.selectedPoints = points;
+                  updatePlot({...plot}, false);
+                  addPointDeselection(
+                    {
+                      plot,
+                      dataIds: [i],
+                      kind: 'deselection',
+                    },
+                    multiBrushBehavior,
+                  );
+                }}
+                fill={colorScale(d.color) as string}
+                cx={xScale(d.x)}
+                cy={yScale(d.y)}
+                r={5}></IntersectionMark>
+            ) : selectedIndices[i] ? (
+              selectedIndices[i] === maxIntersection ? (
+                <IntersectionMark
                   fill={colorScale(d.color) as string}
                   cx={xScale(d.x)}
                   cy={yScale(d.y)}
                   r={5}></IntersectionMark>
               ) : (
                 <UnionMark
-                  onClick={() => {
-                    let points = plot.selectedPoints.filter(p => p !== i);
-
-                    plot.selectedPoints = points;
-                    updatePlot({...plot}, false);
-
-                    addPointDeselection(
-                      {
-                        plot,
-                        dataIds: [i],
-                        kind: 'deselection',
-                      },
-                      multiBrushBehavior,
-                    );
-                  }}
                   fill={colorScale(d.color) as string}
                   cx={xScale(d.x)}
                   cy={yScale(d.y)}

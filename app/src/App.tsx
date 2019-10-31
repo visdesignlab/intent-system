@@ -29,7 +29,17 @@ const App: FC<Props> = ({dataset, plots, addPlot}: Props) => {
       brushes: {},
       selectedPoints: [],
     };
+    const plot2: SinglePlot = {
+      id: `test-${new Date().valueOf().toString()}`,
+      x: dataset.numericColumns[1],
+      y: dataset.numericColumns[2],
+      color: dataset.categoricalColumns[0],
+      brushes: {},
+      selectedPoints: [],
+    };
+
     addPlot(plot);
+    addPlot(plot2);
   }
   return (
     <MainDiv>
