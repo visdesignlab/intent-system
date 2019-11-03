@@ -24,7 +24,7 @@ class Outlier(IntentBinary):
         outliers = self.clf.fit_predict(scaled)
         result = pd.DataFrame(data=outliers, index=nan_dropped.index, columns=[
                               self.to_string()]).replace({-1: 1, 1: 0})
-        return result.loc[result.ix[:, 0] == 1].reindex(index=df.index, fill_value=0)
+        return result.loc[result.iloc[:, 0] == 1].reindex(index=df.index, fill_value=0)
 
     def info(self) -> Optional[Dict[str, Any]]:
         return {
