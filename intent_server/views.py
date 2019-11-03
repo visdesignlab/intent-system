@@ -49,15 +49,29 @@ def route_dataset_info(dataset_name):  # type: ignore
 
 @views.route('/dataset/<dataset_name>/predict', methods=['POST'])
 def route_dataset_predict(dataset_name):  # type: ignore
-    prediction_request = prediction_request_from_dict(request.json)
-    interaction_hist = prediction_request.interaction_history
-    ds = datasets[dataset_name]
+    print("Testing", file=sys.stderr)
+    print(" ", file=sys.stderr)
+    print(" ", file=sys.stderr)
+    print(" ", file=sys.stderr)
+    try:
+        prediction_request = prediction_request_from_dict(request.json)
+        interaction_hist = prediction_request.interaction_history
+        ds = datasets[dataset_name]
 
-    start = time.time()
-    predictions = Inference(ds).predict(interaction_hist, prediction_request.multi_brush_behavior)
-    end = time.time()
+        start = time.time()
+        predictions = Inference(ds).predict(interaction_hist, prediction_request.multi_brush_behavior)
+        end = time.time()
 
-    dct = predictions.to_dict()
-    dct['time'] = end - start
+        dct = predictions.to_dict()
+        dct['time'] = end - start
 
-    return jsonify(dct)
+        return jsonify(dct)
+    except:
+        print(" ", file=sys.stderr)
+        print(" ", file=sys.stderr)
+        print(" ", file=sys.stderr)
+        print("Debug Ended with error", file=sys.stderr)
+        raise
+
+    print(" ", file=sys.stderr)
+

@@ -4,10 +4,12 @@ import Task from './Components/Task';
 import Visualization from './Components/Visualization';
 import VisualizationState from './Stores/Visualization/VisualizationState';
 import {Dataset} from './Stores/Types/Dataset';
-import {connect} from 'react-redux';
+import {connect, Provider} from 'react-redux';
 import {SinglePlot, Plots} from './Stores/Types/Plots';
 import {addPlot} from './Stores/Visualization/Setup/PlotsRedux';
 import PlotControl from './Components/PlotControl';
+import {predictionStore} from '.';
+import Predictions from './Components/Predictions';
 
 interface OwnProps {}
 interface DispatchProps {
@@ -39,7 +41,7 @@ const App: FC<Props> = ({dataset, plots, addPlot}: Props) => {
     };
 
     addPlot(plot);
-    addPlot(plot2);
+    //addPlot(plot2);
   }
   return (
     <MainDiv>
@@ -50,6 +52,9 @@ const App: FC<Props> = ({dataset, plots, addPlot}: Props) => {
           <Visualization />
         </VisDiv>
       </TaskVisDiv>
+      <Provider store={predictionStore}>
+        <Predictions></Predictions>
+      </Provider>
     </MainDiv>
   );
 };
