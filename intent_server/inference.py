@@ -5,7 +5,7 @@ from .algorithms import Outlier, Skyline, Range, KMeansCluster, Categories, DBSC
 from .vendor.interactions import Interaction, InteractionTypeKind, PredictionSet, MultiBrushBehavior
 
 from typing import List, Set
-
+import sys
 import pandas as pd
 
 
@@ -67,8 +67,10 @@ class Inference:
 
         ids = relevant_ids(interactions, op)
 
+
         filtered = list(filter(lambda x: x.interaction_type.data_ids, interactions))
-        list_of_dims = map(lambda x: x.interaction_type.dimensions, filtered)
+        list_of_dims = map(lambda interaction: [interaction.interaction_type.plot.x, interaction.interaction_type.plot.y], filtered)
+
         dims = Dimensions(list(set([y for x in list_of_dims for y in x])))
 
         if len(ids) == 0:

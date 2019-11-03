@@ -11,6 +11,7 @@ import App from './App';
 import {loadDataset} from './Stores/Visualization/Setup/DatasetRedux';
 import VisualizationStoreCreator from './Stores/Visualization/VisualizationStore';
 import VisualizationState from './Stores/Visualization/VisualizationState';
+import PredictionStoreCreator from './Stores/Predictions/Setup/PredictionStore';
 
 export const VisualizationStore = VisualizationStoreCreator();
 export const VisualizationProvenance = initProvenanceRedux<VisualizationState>(
@@ -23,6 +24,8 @@ export const datasets = [
   'nba_players',
   'gapminder_world',
 ];
+
+export const predictionStore = PredictionStoreCreator();
 
 export let datasetName = 'gapminder_world';
 
@@ -40,8 +43,10 @@ axios
 
 function startRender() {
   ReactDOM.render(
-    <Provider store={VisualizationStore}>
-      <App />
+    <Provider store={predictionStore}>
+      <Provider store={VisualizationStore}>
+        <App />
+      </Provider>
     </Provider>,
     document.getElementById('root'),
   );

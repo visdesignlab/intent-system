@@ -7,7 +7,8 @@ import {
   PredictionRequest,
 } from '../../../contract';
 import axios from 'axios';
-import {datasetName} from '../../..';
+import {datasetName, predictionStore} from '../../..';
+import {updatePredictions} from '../../Predictions/Setup/PredictionRedux';
 
 export const ADD_INTERACTION = 'ADD_INTERACTION';
 export type ADD_INTERACTION = typeof ADD_INTERACTION;
@@ -35,13 +36,13 @@ export const InteractionsReducer: Reducer<
         multiBrushBehavior: action.args.multiBrushBehavior,
         interactionHistory: interactions,
       };
-
+      console.log(request);
       console.log('IH', interactions);
 
       axios
         .post(`/dataset/${datasetName}/predict`, request)
         .then(response => {
-          console.log('Predictions', response.data);
+          predictionStore.dispatch(updatePredictions(response.data));
         })
         .catch(err => {
           console.log(err);
