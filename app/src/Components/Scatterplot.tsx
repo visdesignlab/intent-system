@@ -5,28 +5,31 @@ import {
   min,
   scaleLinear,
   select,
-  ScaleOrdinal,
-} from 'd3';
-import React, {createRef, FC, RefObject, useEffect, useState} from 'react';
-import {connect} from 'react-redux';
-import {Popup} from 'semantic-ui-react';
-import styled from 'styled-components';
+  ScaleOrdinal
+} from "d3";
+import React, { createRef, FC, RefObject, useEffect, useState } from "react";
+import { connect } from "react-redux";
+import { Popup } from "semantic-ui-react";
+import styled from "styled-components";
 
-import {Dataset} from '../Stores/Types/Dataset';
-import {SinglePlot} from '../Stores/Types/Plots';
-import {removePlot, updatePlot} from '../Stores/Visualization/Setup/PlotsRedux';
-import VisualizationState from '../Stores/Visualization/VisualizationState';
-import BrushComponent from './Brush/Components/BrushComponent';
-import {ThunkDispatch} from 'redux-thunk';
-import {BrushAffectType} from './Brush/Types/Brush';
+import { Dataset } from "../Stores/Types/Dataset";
+import { SinglePlot } from "../Stores/Types/Plots";
+import {
+  removePlot,
+  updatePlot
+} from "../Stores/Visualization/Setup/PlotsRedux";
+import VisualizationState from "../Stores/Visualization/VisualizationState";
+import BrushComponent from "./Brush/Components/BrushComponent";
+import { ThunkDispatch } from "redux-thunk";
+import { BrushAffectType } from "./Brush/Types/Brush";
 import {
   RectangularSelection,
   MultiBrushBehavior,
   VisualizationType,
   PointSelection,
-  PointDeselection,
-} from '../contract';
-import {ADD_INTERACTION} from '../Stores/Visualization/Setup/InteractionsRedux';
+  PointDeselection
+} from "../contract";
+import { ADD_INTERACTION } from "../Stores/Visualization/Setup/InteractionsRedux";
 
 interface OwnProps {
   plot: SinglePlot;
@@ -48,23 +51,23 @@ interface DispatchProps {
   removePlot: (plot: SinglePlot) => void;
   addBrush: (
     selection: RectangularSelection,
-    multiBrushBehavior: MultiBrushBehavior,
+    multiBrushBehavior: MultiBrushBehavior
   ) => void;
   removeBrush: (
     selection: RectangularSelection,
-    multiBrushBehavior: MultiBrushBehavior,
+    multiBrushBehavior: MultiBrushBehavior
   ) => void;
   updateBrush: (
     selection: RectangularSelection,
-    multiBrushBehavior: MultiBrushBehavior,
+    multiBrushBehavior: MultiBrushBehavior
   ) => void;
   addPointSelection: (
     interaction: PointSelection,
-    multiBrushBehavior: MultiBrushBehavior,
+    multiBrushBehavior: MultiBrushBehavior
   ) => void;
   addPointDeselection: (
     interaction: PointDeselection,
-    multiBrushBehavior: MultiBrushBehavior,
+    multiBrushBehavior: MultiBrushBehavior
   ) => void;
 }
 
@@ -86,16 +89,16 @@ const Scatterplot: FC<Props> = ({
   addPointSelection,
   colorScale,
   update,
-  otherBrushes,
+  otherBrushes
 }: Props) => {
   const xAxisRef: RefObject<SVGGElement> = createRef();
   const yAxisRef: RefObject<SVGGElement> = createRef();
 
-  const {x, y, color, brushes} = plot;
+  const { x, y, color, brushes } = plot;
   const data = dataset.data.map(v => ({
     x: v[x],
     y: v[y],
-    color: v[color],
+    color: v[color]
   }));
 
   const [mouseIsDown, setMouseIsDown] = useState(false);
@@ -129,24 +132,24 @@ const Scatterplot: FC<Props> = ({
     }
   }, [size, xAxisRef, xScale, yAxisRef, yScale]);
 
-  const selectedIndices: {[key: number]: number} = {};
+  const selectedIndices: { [key: number]: number } = {};
 
   const extentPadding = 5;
   const [height, width] = [
     Math.abs(paddedSize + extentPadding - (0 - extentPadding)),
-    Math.abs(0 - extentPadding - (paddedSize + extentPadding)),
+    Math.abs(0 - extentPadding - (paddedSize + extentPadding))
   ];
 
   let maxIntersection = 1;
 
   data.forEach((d, i) => {
-    Object.values(brushes).forEach(brush => {
-      let {x1, x2, y1, y2} = brush.extents;
+    Object.values(brushes).forEach((brush: any) => {
+      let { x1, x2, y1, y2 } = brush.extents;
       [x1, x2, y1, y2] = [
         xScale.invert(x1 * width - extentPadding),
         xScale.invert(x2 * width - extentPadding),
         yScale.invert(y1 * height - extentPadding),
-        yScale.invert(y2 * height - extentPadding),
+        yScale.invert(y2 * height - extentPadding)
       ];
 
       if (d.x >= x1 && d.x <= x2 && d.y <= y1 && d.y >= y2) {
@@ -179,29 +182,30 @@ const Scatterplot: FC<Props> = ({
     <g
       onMouseDown={() => setMouseIsDown(true)}
       onMouseUp={() => setMouseIsDown(false)}
-      onMouseOut={() => setMouseIsDown(false)}>
+      onMouseOut={() => setMouseIsDown(false)}
+    >
       <BrushComponent
         extents={{
           left: 0,
           top: 0,
           right: paddedSize,
-          bottom: paddedSize,
+          bottom: paddedSize
         }}
         extentPadding={extentPadding}
         onBrushUpdate={(brushes, affectedBrush, affectType) => {
           if (!affectedBrush) return;
-          const currPlot = {...plot};
-          currPlot.brushes = {...brushes};
+          const currPlot = { ...plot };
+          currPlot.brushes = { ...brushes };
           updatePlot(currPlot, false);
-          let {x1, x2, y1, y2} = affectedBrush.extents;
+          let { x1, x2, y1, y2 } = affectedBrush.extents;
           [x1, x2, y1, y2] = [
             xScale.invert(x1 * width - extentPadding),
             xScale.invert(x2 * width - extentPadding),
             yScale.invert(y1 * height - extentPadding),
-            yScale.invert(y2 * height - extentPadding),
+            yScale.invert(y2 * height - extentPadding)
           ];
 
-          const selectedIndices: {[key: number]: number} = {};
+          const selectedIndices: { [key: number]: number } = {};
 
           data.forEach((d, i) => {
             if (d.x >= x1 && d.x <= x2 && d.y <= y1 && d.y >= y2) {
@@ -219,7 +223,7 @@ const Scatterplot: FC<Props> = ({
             left: x1,
             right: x2,
             top: y1,
-            bottom: y2,
+            bottom: y2
           };
 
           switch (affectType) {
@@ -239,7 +243,7 @@ const Scatterplot: FC<Props> = ({
               break;
             default:
               throw new Error(
-                'Wrong brush effect! Something went wrong with BrushComponent',
+                "Wrong brush effect! Something went wrong with BrushComponent"
               );
           }
         }}
@@ -247,10 +251,13 @@ const Scatterplot: FC<Props> = ({
     </g>
   );
 
-  const defaultMarkColor = '#37c3fa';
+  const defaultMarkColor = "#37c3fa";
 
   const MarksLayer = (
-    <g style={{pointerEvents: mouseIsDown ? 'none' : 'all'}} className="marks">
+    <g
+      style={{ pointerEvents: mouseIsDown ? "none" : "all" }}
+      className="marks"
+    >
       {data.map((d, i) => (
         <Popup
           key={i}
@@ -261,14 +268,14 @@ const Scatterplot: FC<Props> = ({
                   let points = plot.selectedPoints.filter(p => p !== i);
 
                   plot.selectedPoints = points;
-                  updatePlot({...plot}, false);
+                  updatePlot({ ...plot }, false);
                   addPointDeselection(
                     {
                       plot,
                       dataIds: [i],
-                      kind: 'deselection',
+                      kind: "deselection"
                     },
-                    multiBrushBehavior,
+                    multiBrushBehavior
                   );
                 }}
                 fill={
@@ -278,7 +285,8 @@ const Scatterplot: FC<Props> = ({
                 }
                 cx={xScale(d.x)}
                 cy={yScale(d.y)}
-                r={4}></IntersectionMark>
+                r={4}
+              ></IntersectionMark>
             ) : selectedIndices[i] ? (
               selectedIndices[i] === maxIntersection ? (
                 <IntersectionMark
@@ -289,7 +297,8 @@ const Scatterplot: FC<Props> = ({
                   }
                   cx={xScale(d.x)}
                   cy={yScale(d.y)}
-                  r={4}></IntersectionMark>
+                  r={4}
+                ></IntersectionMark>
               ) : (
                 <UnionMark
                   fill={
@@ -299,7 +308,8 @@ const Scatterplot: FC<Props> = ({
                   }
                   cx={xScale(d.x)}
                   cy={yScale(d.y)}
-                  r={4}></UnionMark>
+                  r={4}
+                ></UnionMark>
               )
             ) : (
               <RegularMark
@@ -307,14 +317,14 @@ const Scatterplot: FC<Props> = ({
                   let points = plot.selectedPoints;
                   if (!points.includes(i)) points.push(i);
                   plot.selectedPoints = points;
-                  updatePlot({...plot}, false);
+                  updatePlot({ ...plot }, false);
                   addPointSelection(
                     {
                       plot,
                       dataIds: [i],
-                      kind: 'selection',
+                      kind: "selection"
                     },
-                    multiBrushBehavior,
+                    multiBrushBehavior
                   );
                 }}
                 fill={
@@ -324,7 +334,8 @@ const Scatterplot: FC<Props> = ({
                 }
                 cx={xScale(d.x)}
                 cy={yScale(d.y)}
-                r={4}></RegularMark>
+                r={4}
+              ></RegularMark>
             )
           }
           content={
@@ -332,7 +343,8 @@ const Scatterplot: FC<Props> = ({
               <h1>{dataset.data[i].country}</h1>
               <pre>{JSON.stringify(dataset.data[i], null, 2)}</pre>
             </div>
-          }></Popup>
+          }
+        ></Popup>
       ))}
     </g>
   );
@@ -348,8 +360,9 @@ const Scatterplot: FC<Props> = ({
             <text
               transform={`translate(${paddedSize / 2}, 40)`}
               fontSize="1.2em"
-              textAnchor="middle">
-              <tspan style={{fontWeight: 'bold'}}>
+              textAnchor="middle"
+            >
+              <tspan style={{ fontWeight: "bold" }}>
                 {dataset.columnMaps[plot.x].text}
               </tspan>
               (<tspan>{dataset.columnMaps[plot.x].unit}</tspan>)
@@ -360,9 +373,10 @@ const Scatterplot: FC<Props> = ({
             <text
               fontSize="1.2em"
               textAnchor="middle"
-              transform={`translate(-40, ${paddedSize / 2})rotate(270)`}>
-              <tspan style={{fontWeight: 'bold'}}>
-                {dataset.columnMaps[plot.y].text}{' '}
+              transform={`translate(-40, ${paddedSize / 2})rotate(270)`}
+            >
+              <tspan style={{ fontWeight: "bold" }}>
+                {dataset.columnMaps[plot.y].text}{" "}
               </tspan>
               (<tspan>{dataset.columnMaps[plot.y].unit}</tspan>)
             </text>
@@ -375,28 +389,32 @@ const Scatterplot: FC<Props> = ({
             height={paddedSize + extentPadding}
             width={paddedSize + extentPadding}
             fill="gray"
-            opacity={0.05}></rect>
+            opacity={0.05}
+          ></rect>
           {first}
           {second}
         </g>
       </g>
       <g
         className="close"
-        transform={`translate(${size - padding - 100}, ${padding / 2})`}>
+        transform={`translate(${size - padding - 100}, ${padding / 2})`}
+      >
         {!lastPlot && (
           <CloseGroup>
             <text
               fill="red"
               textAnchor="middle"
               dominantBaseline="middle"
-              transform={`translate(50, 10)`}>
+              transform={`translate(50, 10)`}
+            >
               Remove
             </text>
             <rect
               height={20}
               width={100}
               opacity={0.01}
-              onClick={() => removePlot(plot)}></rect>
+              onClick={() => removePlot(plot)}
+            ></rect>
           </CloseGroup>
         )}
         )}
@@ -407,11 +425,11 @@ const Scatterplot: FC<Props> = ({
 
 const mapStateToProps = (state: VisualizationState): StateProps => ({
   dataset: state.dataset,
-  multiBrushBehavior: state.multiBrushBehaviour,
+  multiBrushBehavior: state.multiBrushBehaviour
 });
 
 const mapDispatchToProps = (
-  dispatch: ThunkDispatch<{}, {}, any>,
+  dispatch: ThunkDispatch<{}, {}, any>
 ): DispatchProps => ({
   removePlot: (plot: SinglePlot) => {
     dispatch(removePlot(plot));
@@ -421,87 +439,87 @@ const mapDispatchToProps = (
   },
   addBrush: (
     interaction: RectangularSelection,
-    multiBrushBehavior: MultiBrushBehavior,
+    multiBrushBehavior: MultiBrushBehavior
   ) => {
     dispatch({
       type: ADD_INTERACTION,
       args: {
         interaction: {
           visualizationType: VisualizationType.Grid,
-          interactionType: interaction,
+          interactionType: interaction
         },
-        multiBrushBehavior: multiBrushBehavior,
-      },
+        multiBrushBehavior: multiBrushBehavior
+      }
     });
   },
   removeBrush: (
     interaction: RectangularSelection,
-    multiBrushBehavior: MultiBrushBehavior,
+    multiBrushBehavior: MultiBrushBehavior
   ) => {
     dispatch({
       type: ADD_INTERACTION,
       args: {
         interaction: {
           visualizationType: VisualizationType.Grid,
-          interactionType: interaction,
+          interactionType: interaction
         },
-        multiBrushBehavior: multiBrushBehavior,
-      },
+        multiBrushBehavior: multiBrushBehavior
+      }
     });
   },
   updateBrush: (
     interaction: RectangularSelection,
-    multiBrushBehavior: MultiBrushBehavior,
+    multiBrushBehavior: MultiBrushBehavior
   ) => {
     dispatch({
       type: ADD_INTERACTION,
       args: {
         interaction: {
           visualizationType: VisualizationType.Grid,
-          interactionType: interaction,
+          interactionType: interaction
         },
-        multiBrushBehavior: multiBrushBehavior,
-      },
+        multiBrushBehavior: multiBrushBehavior
+      }
     });
   },
   addPointSelection: (
     interaction: PointSelection,
-    multiBrushBehavior: MultiBrushBehavior,
+    multiBrushBehavior: MultiBrushBehavior
   ) => {
     dispatch({
       type: ADD_INTERACTION,
       args: {
         interaction: {
           visualizationType: VisualizationType.Grid,
-          interactionType: interaction,
+          interactionType: interaction
         },
-        multiBrushBehavior,
-      },
+        multiBrushBehavior
+      }
     });
   },
   addPointDeselection: (
     interaction: PointDeselection,
-    multiBrushBehavior: MultiBrushBehavior,
+    multiBrushBehavior: MultiBrushBehavior
   ) => {
     dispatch({
       type: ADD_INTERACTION,
       args: {
         interaction: {
           visualizationType: VisualizationType.Grid,
-          interactionType: interaction,
+          interactionType: interaction
         },
-        multiBrushBehavior,
-      },
+        multiBrushBehavior
+      }
     });
-  },
+  }
 });
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
+  mapDispatchToProps
 )(Scatterplot);
 
-const CloseGroup = styled('g')`
+const CloseGroup = styled("g")`
   cursor: pointer;
 `;
 
@@ -509,8 +527,8 @@ interface MarkProps {
   fill?: string;
 }
 
-const RegularMark = styled('circle')<MarkProps>`
-  fill: ${props => (props.fill ? props.fill : 'black')};
+const RegularMark = styled("circle")<MarkProps>`
+  fill: ${props => (props.fill ? props.fill : "black")};
   opacity: 0.6;
   cursor: pointer;
   &:hover {
@@ -519,14 +537,14 @@ const RegularMark = styled('circle')<MarkProps>`
 `;
 
 const UnionMark = styled(RegularMark)<MarkProps>`
-  fill: ${props => (props.fill ? props.fill : 'black')};
+  fill: ${props => (props.fill ? props.fill : "black")};
   stroke: black;
   stroke-width: 1.5px;
   opacity: 0.6;
 `;
 
 const IntersectionMark = styled(RegularMark)<MarkProps>`
-  fill: ${props => (props.fill ? props.fill : 'black')};
+  fill: ${props => (props.fill ? props.fill : "black")};
   stroke: red;
   stroke-width: 1.5px;
   opacity: 0.6;
