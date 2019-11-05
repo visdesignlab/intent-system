@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@bit/kirangadhave.multi_brush_component.brush": "^3.0.0",
     "@types/lodash": "^4.14.144",
     "@visdesignlab/provenance-lib-core": "^1.2.0",
     "axios": "^0.19.0",
