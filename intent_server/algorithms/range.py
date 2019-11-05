@@ -75,11 +75,14 @@ class Range(Intent):
             sugg_paths = decision_rules(sugg_model, selection, df)
             suggestion = [Prediction(
                 intent=self.to_string() + ":Suggestion",
+                data_ids=[],
+                suggestion=None,
                 rank=0.3,
                 info={"rules": list(sugg_paths)})]
 
         return [Prediction(
             intent=self.to_string(),
             rank=0.3,
+            data_ids=[],
             info={"rules": list(paths)},
             suggestion=suggestion)]

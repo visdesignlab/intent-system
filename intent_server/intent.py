@@ -38,7 +38,7 @@ class IntentBinary(Intent, ABC):
             intent=self.to_string(),
             rank=self.__rank(selection, belongs_to),
             info=self.info(),
-            data_ids=list(map(float, ids)))]
+            data_ids=list(map(float, ids)), suggestion=None)]
 
 
 class IntentMulticlassInstance(IntentBinary):
