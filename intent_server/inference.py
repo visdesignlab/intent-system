@@ -35,16 +35,18 @@ def relevant_ids(interactions: List[Interaction], op: MultiBrushBehavior) -> Set
         elif is_brush_selection(ix):
             rects.update({ix.interaction_type.brush_id: ix})
 
+
     if op is MultiBrushBehavior.UNION:
         for brush_id in rects:
             points.update(
-                [int(x) for x in rects[brush_id].interaction_type.data_ids])  # type: ignore
+                [int(x) for x in rects[brush_id].interaction_type.data_ids or []])  # type: ignore
     if op is MultiBrushBehavior.INTERSECTION:
         setlist = []
         for brush_id in rects:
             id_list = map(lambda x: int(x),  # type: ignore
-                          rects[brush_id].interaction_type.data_ids)
+                          rects[brush_id].interaction_type.data_ids or [])
             setlist.append(set(id_list))
+        setlist = [d for d in setlist if d != set()]
         if len(setlist) > 0:
             points.update(set.intersection(*setlist))
 

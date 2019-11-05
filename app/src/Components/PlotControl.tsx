@@ -3,7 +3,6 @@ import {connect} from 'react-redux';
 import VisualizationState from '../Stores/Visualization/VisualizationState';
 import {Dataset, ColumnMap} from '../Stores/Types/Dataset';
 import {
-  Segment,
   Grid,
   Button,
   Icon,
@@ -15,6 +14,8 @@ import {
 import {SinglePlot} from '../Stores/Types/Plots';
 import {VisualizationProvenance} from '..';
 import {addPlot} from '../Stores/Visualization/Setup/PlotsRedux';
+import {MultiBrushBehavior} from '../contract';
+import {CHANGE_BRUSH_BEHAVIOR} from '../Stores/Visualization/Setup/MultiBrushRedux';
 
 interface OwnProps {
   showCategories: boolean;
@@ -23,10 +24,12 @@ interface OwnProps {
 
 interface StateProps {
   dataset: Dataset;
+  multiBrushBehavior: MultiBrushBehavior;
 }
 
 interface DispatchProps {
   addPlot: (plot: SinglePlot) => void;
+  changeBrushBehavior: (multiBrushBehaviour: MultiBrushBehavior) => void;
 }
 
 type Props = OwnProps & StateProps & DispatchProps;
@@ -34,6 +37,8 @@ type Props = OwnProps & StateProps & DispatchProps;
 const PlotControl: FC<Props> = ({
   showCategories,
   setShowCategories,
+  multiBrushBehavior,
+  changeBrushBehavior,
   dataset,
   addPlot,
 }: Props) => {
@@ -131,10 +136,29 @@ const PlotControl: FC<Props> = ({
       }}></Radio>
   );
 
+  const MultiBrushBehaviorToggle = (
+    <Radio
+      toggle
+      checked={multiBrushBehavior === MultiBrushBehavior.UNION}
+      label={
+        multiBrushBehavior === MultiBrushBehavior.UNION
+          ? 'Union'
+          : 'Intersection'
+      }
+      onChange={() => {
+        let mbb =
+          multiBrushBehavior === MultiBrushBehavior.UNION
+            ? MultiBrushBehavior.INTERSECTION
+            : MultiBrushBehavior.UNION;
+        changeBrushBehavior(mbb);
+      }}></Radio>
+  );
+
   const Control = (
     <Menu compact>
       <Menu.Item>{AddPlotButton}</Menu.Item>
       <Menu.Item>{HideCategoryToggle}</Menu.Item>
+      <Menu.Item>{MultiBrushBehaviorToggle}</Menu.Item>
     </Menu>
   );
 
@@ -152,10 +176,17 @@ const mapDispatchToProps = (dispatch: any): DispatchProps => ({
     dispatch(addPlot(plot));
     console.table(Object.values(VisualizationProvenance.graph().nodes));
   },
+  changeBrushBehavior: (mbb: MultiBrushBehavior) => {
+    dispatch({
+      type: CHANGE_BRUSH_BEHAVIOR,
+      args: mbb,
+    });
+  },
 });
 
 const mapStateToProps = (state: VisualizationState): StateProps => ({
   dataset: state.dataset,
+  multiBrushBehavior: state.multiBrushBehaviour,
 });
 
 export default connect(
