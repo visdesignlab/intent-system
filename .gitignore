@@ -130,3 +130,5 @@ files/
 results/
 node_modules/
 .DS_Store
+
+yarn.lock
