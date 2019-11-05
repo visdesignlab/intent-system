@@ -10,12 +10,16 @@ import {
   Menu,
   Label,
   Dropdown,
+  Radio,
 } from 'semantic-ui-react';
 import {SinglePlot} from '../Stores/Types/Plots';
 import {VisualizationProvenance} from '..';
 import {addPlot} from '../Stores/Visualization/Setup/PlotsRedux';
 
-interface OwnProps {}
+interface OwnProps {
+  showCategories: boolean;
+  setShowCategories: (shouldShow: boolean) => void;
+}
 
 interface StateProps {
   dataset: Dataset;
@@ -27,17 +31,15 @@ interface DispatchProps {
 
 type Props = OwnProps & StateProps & DispatchProps;
 
-const PlotControl: FC<Props> = ({dataset, addPlot}: Props) => {
+const PlotControl: FC<Props> = ({
+  showCategories,
+  setShowCategories,
+  dataset,
+  addPlot,
+}: Props) => {
   const [addingPlot, setAddingPlot] = useState(false);
 
   const [singlePlot, setSinglePlot] = useState<SinglePlot>({} as SinglePlot);
-
-  const AddPlotButton = (
-    <Button onClick={() => setAddingPlot(true)}>
-      <Icon name="add"></Icon>
-      Add plot
-    </Button>
-  );
 
   const AddPlotComponent = (
     <Menu compact>
@@ -111,14 +113,37 @@ const PlotControl: FC<Props> = ({dataset, addPlot}: Props) => {
     </Menu>
   );
 
+  const AddPlotButton = (
+    <Button onClick={() => setAddingPlot(true)}>
+      <Icon name="add"></Icon>
+      Add plot
+    </Button>
+  );
+
+  const HideCategoryToggle = (
+    <Radio
+      toggle
+      checked={showCategories}
+      label="Show Categories"
+      onChange={(_, state) => {
+        let {checked} = state;
+        setShowCategories(checked ? true : false);
+      }}></Radio>
+  );
+
+  const Control = (
+    <Menu compact>
+      <Menu.Item>{AddPlotButton}</Menu.Item>
+      <Menu.Item>{HideCategoryToggle}</Menu.Item>
+    </Menu>
+  );
+
   return (
-    <Segment>
-      <Grid>
-        <Grid.Column textAlign="center">
-          {addingPlot ? AddPlotComponent : AddPlotButton}
-        </Grid.Column>
-      </Grid>
-    </Segment>
+    <Grid verticalAlign="middle">
+      <Grid.Column textAlign="center">
+        {!addingPlot ? Control : AddPlotComponent}
+      </Grid.Column>
+    </Grid>
   );
 };
 
