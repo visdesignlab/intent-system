@@ -3,7 +3,7 @@ import {Prediction} from '../contract';
 import {connect} from 'react-redux';
 import {Segment, Header, Popup} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {min, max, scaleLinear} from 'd3';
+import {scaleLinear} from 'd3';
 
 interface OwnProps {}
 
