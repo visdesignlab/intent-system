@@ -8,7 +8,6 @@ import {Dataset} from '../Stores/Types/Dataset';
 import {Plots} from '../Stores/Types/Plots';
 import Scatterplot from './Scatterplot';
 import Legend from './Legend';
-import * as _ from 'lodash';
 import {scaleOrdinal, schemeSet2} from 'd3';
 
 interface OwnProps {
