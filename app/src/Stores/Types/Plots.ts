@@ -1,4 +1,4 @@
-import {BrushCollection} from '@bit/kirangadhave.multi_brush_component.brush';
+import { BrushCollection } from "../../Components/Brush/Types/Brush";
 
 export type Plots = SinglePlot[];
 
