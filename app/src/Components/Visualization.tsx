@@ -12,7 +12,7 @@ import * as _ from 'lodash';
 import {scaleOrdinal, schemeSet2} from 'd3';
 
 interface OwnProps {
-  test?: string;
+  showCategories: boolean;
 }
 
 interface StateProps {
@@ -26,7 +26,7 @@ interface DispatchProps {
 
 type Props = OwnProps & DispatchProps & StateProps;
 
-const Visualization: FC<Props> = ({dataset, plots}: Props) => {
+const Visualization: FC<Props> = ({showCategories, dataset, plots}: Props) => {
   const [dimensions, setDimensions] = useState<{height: number; width: number}>(
     {height: -1, width: -1},
   );
@@ -54,6 +54,8 @@ const Visualization: FC<Props> = ({dataset, plots}: Props) => {
     rowCount += 1;
   }
 
+  const [otherBrushes, setOtherBrushes] = useState({} as any);
+
   const columnCount = actualCount >= 3 ? 3 : actualCount;
   const dividedHeight = height / rowCount;
   const dividedWidth = width / columnCount;
@@ -77,16 +79,28 @@ const Visualization: FC<Props> = ({dataset, plots}: Props) => {
     .domain(uniqueValues)
     .range(schemeSet2);
 
+  const update = (plotid: string, brs: any) => {
+    if (
+      otherBrushes[plotid] &&
+      JSON.stringify(brs) === JSON.stringify(otherBrushes[plotid])
+    )
+      return;
+    otherBrushes[plotid] = brs;
+    setOtherBrushes(JSON.parse(JSON.stringify(otherBrushes)));
+  };
+
   return (
     <MainSvg ref={measuredRef}>
-      <g transform={`translate(${margin}, 0)`}>
-        <Legend
-          colorScale={colorScale}
-          height={margin}
-          width={width}
-          values={uniqueValues}
-        />
-      </g>
+      {showCategories && (
+        <g transform={`translate(${margin}, 0)`}>
+          <Legend
+            colorScale={colorScale}
+            height={margin}
+            width={width}
+            values={uniqueValues}
+          />
+        </g>
+      )}
       <g transform={`translate(${margin}, ${margin})`}>
         {height >= 0 && width >= 0 && (
           <>
@@ -113,7 +127,10 @@ const Visualization: FC<Props> = ({dataset, plots}: Props) => {
                     <Scatterplot
                       plot={plot}
                       size={plotDimension}
+                      showCategories={showCategories}
                       lastPlot={plots.length === 1}
+                      update={update}
+                      otherBrushes={otherBrushes}
                       colorScale={colorScale}></Scatterplot>
                   </g>
                 );

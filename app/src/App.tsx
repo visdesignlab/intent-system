@@ -1,4 +1,4 @@
-import React, {FC} from 'react';
+import React, {FC, useState} from 'react';
 import styled from 'styled-components';
 import Task from './Components/Task';
 import Visualization from './Components/Visualization';
@@ -41,15 +41,25 @@ const App: FC<Props> = ({dataset, plots, addPlot}: Props) => {
     };
 
     addPlot(plot);
-    //addPlot(plot2);
+    addPlot(plot2);
   }
+
+  const [showCategories, setShowCategories] = useState(true);
+
+  const changeShowCategories = (shouldShow: boolean) => {
+    setShowCategories(shouldShow);
+  };
+
   return (
     <MainDiv>
       <TaskVisDiv>
         <Task text="Study" />
         <VisDiv>
-          <PlotControl />
-          <Visualization />
+          <PlotControl
+            showCategories={showCategories}
+            setShowCategories={changeShowCategories}
+          />
+          <Visualization showCategories={showCategories} />
         </VisDiv>
       </TaskVisDiv>
       <Provider store={predictionStore}>

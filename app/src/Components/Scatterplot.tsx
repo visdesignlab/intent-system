@@ -33,6 +33,9 @@ interface OwnProps {
   size: number;
   lastPlot: boolean;
   colorScale: ScaleOrdinal<string, unknown>;
+  showCategories: boolean;
+  otherBrushes: any;
+  update: any;
 }
 
 interface StateProps {
@@ -70,6 +73,7 @@ type Props = OwnProps & StateProps & DispatchProps;
 const Scatterplot: FC<Props> = ({
   plot,
   size,
+  showCategories,
   dataset,
   lastPlot,
   updatePlot,
@@ -81,6 +85,8 @@ const Scatterplot: FC<Props> = ({
   addPointDeselection,
   addPointSelection,
   colorScale,
+  update,
+  otherBrushes,
 }: Props) => {
   const xAxisRef: RefObject<SVGGElement> = createRef();
   const yAxisRef: RefObject<SVGGElement> = createRef();
@@ -154,6 +160,21 @@ const Scatterplot: FC<Props> = ({
     });
   });
 
+  if (selectedIndices !== otherBrushes[plot.id])
+    update(plot.id, selectedIndices);
+
+  Object.keys(otherBrushes)
+    .filter(k => k !== plot.id)
+    .forEach(key => {
+      const selections = otherBrushes[key];
+
+      Object.entries(selections).forEach(entry => {
+        const [key, val] = entry as any;
+        if (!selectedIndices[key]) selectedIndices[key] = 0;
+        selectedIndices[key] += val;
+      });
+    });
+
   const BrushLayer = (
     <g
       onMouseDown={() => setMouseIsDown(true)}
@@ -226,6 +247,8 @@ const Scatterplot: FC<Props> = ({
     </g>
   );
 
+  const defaultMarkColor = '#37c3fa';
+
   const MarksLayer = (
     <g style={{pointerEvents: mouseIsDown ? 'none' : 'all'}} className="marks">
       {data.map((d, i) => (
@@ -248,23 +271,35 @@ const Scatterplot: FC<Props> = ({
                     multiBrushBehavior,
                   );
                 }}
-                fill={colorScale(d.color) as string}
+                fill={
+                  showCategories
+                    ? (colorScale(d.color) as string)
+                    : defaultMarkColor
+                }
                 cx={xScale(d.x)}
                 cy={yScale(d.y)}
-                r={5}></IntersectionMark>
+                r={4}></IntersectionMark>
             ) : selectedIndices[i] ? (
               selectedIndices[i] === maxIntersection ? (
                 <IntersectionMark
-                  fill={colorScale(d.color) as string}
+                  fill={
+                    showCategories
+                      ? (colorScale(d.color) as string)
+                      : defaultMarkColor
+                  }
                   cx={xScale(d.x)}
                   cy={yScale(d.y)}
-                  r={5}></IntersectionMark>
+                  r={4}></IntersectionMark>
               ) : (
                 <UnionMark
-                  fill={colorScale(d.color) as string}
+                  fill={
+                    showCategories
+                      ? (colorScale(d.color) as string)
+                      : defaultMarkColor
+                  }
                   cx={xScale(d.x)}
                   cy={yScale(d.y)}
-                  r={5}></UnionMark>
+                  r={4}></UnionMark>
               )
             ) : (
               <RegularMark
@@ -282,10 +317,14 @@ const Scatterplot: FC<Props> = ({
                     multiBrushBehavior,
                   );
                 }}
-                fill={colorScale(d.color) as string}
+                fill={
+                  showCategories
+                    ? (colorScale(d.color) as string)
+                    : defaultMarkColor
+                }
                 cx={xScale(d.x)}
                 cy={yScale(d.y)}
-                r={5}></RegularMark>
+                r={4}></RegularMark>
             )
           }
           content={
@@ -341,10 +380,23 @@ const Scatterplot: FC<Props> = ({
           {second}
         </g>
       </g>
-      <g className="close" transform={`translate(0, ${size - padding})`}>
+      <g
+        className="close"
+        transform={`translate(${size - padding - 100}, ${padding / 2})`}>
         {!lastPlot && (
           <CloseGroup>
-            <circle fill="red" r={10} onClick={() => removePlot(plot)}></circle>
+            <text
+              fill="red"
+              textAnchor="middle"
+              dominantBaseline="middle"
+              transform={`translate(50, 10)`}>
+              Remove
+            </text>
+            <rect
+              height={20}
+              width={100}
+              opacity={0.01}
+              onClick={() => removePlot(plot)}></rect>
           </CloseGroup>
         )}
         )}
