@@ -51,7 +51,7 @@ const PlotControl: FC<Props> = ({
       <Menu.Item>
         <Label>X Axis</Label>
         <Dropdown
-          placeholder="X Axis dimension"
+          placeholder="X Axis"
           selection
           onChange={(_, data) => {
             setSinglePlot({...singlePlot, x: data.value as string});
@@ -64,7 +64,7 @@ const PlotControl: FC<Props> = ({
       <Menu.Item>
         <Label>Y Axis</Label>
         <Dropdown
-          placeholder="Y Axis dimension"
+          placeholder="Y Axis"
           selection
           onChange={(_, data) => {
             setSinglePlot({...singlePlot, y: data.value as string});
