@@ -5,7 +5,6 @@ from .dimensions import Dimensions
 from .inference import Inference
 from .vendor.interactions import prediction_request_from_dict
 import sys
-import pprint
 
 import time
 
@@ -19,17 +18,21 @@ datasets = {
 
 views = Blueprint('views', __name__)
 
+
 @views.route('/')
 def index():  # type: ignore
     return redirect('index.html')
+
 
 @views.route('/dataset', methods=['GET'])
 def route_dataset_list():  # type: ignore
     return jsonify(list(datasets.keys()))
 
+
 @views.route('/dataset/<dataset_name>', methods=['GET'])
 def route_dataset(dataset_name):  # type: ignore
     return jsonify(datasets[dataset_name].to_dict())
+
 
 @views.route('/dataset/<dataset_name>/info', methods=['POST'])
 def route_dataset_info(dataset_name):  # type: ignore
@@ -42,6 +45,7 @@ def route_dataset_info(dataset_name):  # type: ignore
     }
     return jsonify(dct)
 
+
 @views.route('/dataset/<dataset_name>/predict', methods=['POST'])
 def route_dataset_predict(dataset_name):  # type: ignore
     print("Testing", file=sys.stderr)
@@ -53,13 +57,11 @@ def route_dataset_predict(dataset_name):  # type: ignore
     ds = datasets[dataset_name]
 
     start = time.time()
-    predictions = Inference(ds).predict(interaction_hist, \
-             prediction_request.multi_brush_behavior)
+    predictions = Inference(ds).predict(interaction_hist,
+                                        prediction_request.multi_brush_behavior)
     end = time.time()
 
     dct = predictions.to_dict()
     dct['time'] = end - start
 
     return jsonify(dct)
-    print(" ", file=sys.stderr)
-
