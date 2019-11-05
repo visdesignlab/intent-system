@@ -68,8 +68,9 @@ class Inference:
         ids = relevant_ids(interactions, op)
 
         filtered = list(filter(lambda x: x.interaction_type.data_ids, interactions))
-        list_of_dims = map(lambda interaction: [
-                           interaction.interaction_type.plot.x, interaction.interaction_type.plot.y], filtered)
+        list_of_dims = map(lambda interaction: [interaction.interaction_type.plot.x,  # type: ignore
+                                                interaction.interaction_type.plot.y]  # type: ignore
+                           if Interaction.interaction_type.plot else ["", ""], filtered)  # type: ignore
 
         dims = Dimensions(list(set([y for x in list_of_dims for y in x])))
 
