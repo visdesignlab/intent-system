@@ -18,7 +18,7 @@ export const MultiBrushBehaviorReducer: Reducer<
   MultiBrushBehavior,
   MultiBrushBehaviorChangeAction
 > = (
-  current: MultiBrushBehavior = MultiBrushBehavior.INTERSECTION,
+  current: MultiBrushBehavior = MultiBrushBehavior.UNION,
   action: MultiBrushBehaviorChangeAction,
 ) => {
   switch (action.type) {
