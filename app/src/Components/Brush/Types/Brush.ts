@@ -14,4 +14,5 @@ export enum BrushAffectType {
   ADD = 'ADD',
   REMOVE = 'REMOVE',
   CHANGE = 'CHANGE',
+  REMOVE_ALL = 'REMOVE_ALL',
 }

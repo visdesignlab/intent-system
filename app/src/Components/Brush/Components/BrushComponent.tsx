@@ -1,8 +1,8 @@
-import React, { FC, useRef, useState } from 'react';
+import React, {FC, useRef, useState} from 'react';
 
-import { Brush, BrushAffectType, BrushCollection } from '../Types/Brush';
-import { BrushableRegion } from '../Types/BrushableRegion';
-import { BrushResizeType } from '../Types/BrushResizeEnum';
+import {Brush, BrushAffectType, BrushCollection} from '../Types/Brush';
+import {BrushableRegion} from '../Types/BrushableRegion';
+import {BrushResizeType} from '../Types/BrushResizeEnum';
 import SingleBrushComponent from './SingleBrushComponent';
 
 interface Props {
@@ -12,22 +12,24 @@ interface Props {
   onBrushUpdate: (
     brushes: BrushCollection,
     affectedBrush: Brush,
-    affectType: BrushAffectType
+    affectType: BrushAffectType,
   ) => void;
+  clearAllBrushSetup: (handler: () => void) => void;
 }
 
 const BrushComponent: FC<Props> = ({
   extents,
   showBrushBorder,
+  clearAllBrushSetup,
   onBrushUpdate,
-  extentPadding
+  extentPadding,
 }: Props) => {
   if (!extentPadding) extentPadding = 0;
 
-  const { top, left, right, bottom } = extents;
+  const {top, left, right, bottom} = extents;
   const [height, width] = [
     Math.abs(bottom + extentPadding - (top - extentPadding)),
-    Math.abs(left - extentPadding - (right + extentPadding))
+    Math.abs(left - extentPadding - (right + extentPadding)),
   ];
 
   const [mouseDown, setMouseDown] = useState<boolean>(false);
@@ -37,12 +39,12 @@ const BrushComponent: FC<Props> = ({
   const [movingBrush, setMovingBrush] = useState<boolean>(false);
   const [mouseDownForResize, setMouseDownForResize] = useState<boolean>(false);
   const [resizeDirection, setResizeDirection] = useState<BrushResizeType>(
-    null as any
+    null as any,
   );
   const brushGroupRef = useRef<SVGGElement>(null);
 
   const handleMouseDownWhenCreating = <T extends SVGElement>(
-    event: React.MouseEvent<T, MouseEvent>
+    event: React.MouseEvent<T, MouseEvent>,
   ) => {
     setMouseDown(true);
     const currentTarget = event.currentTarget.getBoundingClientRect();
@@ -52,18 +54,18 @@ const BrushComponent: FC<Props> = ({
         x1: (event.clientX - currentTarget.left) / width,
         x2: (event.clientX - currentTarget.left) / width,
         y1: (event.clientY - currentTarget.top) / height,
-        y2: (event.clientY - currentTarget.top) / height
-      }
+        y2: (event.clientY - currentTarget.top) / height,
+      },
     };
     brushes[brush.id] = brush;
 
     setCurrentBrush(brush);
-    setBrushes({ ...brushes });
+    setBrushes({...brushes});
     setIsCreatingNewBrush(true);
   };
 
   const handleMouseMoveWhenCreating = <T extends SVGGElement>(
-    event: React.MouseEvent<T, MouseEvent>
+    event: React.MouseEvent<T, MouseEvent>,
   ) => {
     if (!mouseDown) return;
     const currentTarget = event.currentTarget.getBoundingClientRect();
@@ -72,14 +74,14 @@ const BrushComponent: FC<Props> = ({
     let x2 = (event.clientX - currentTarget.left) / width;
     let y2 = (event.clientY - currentTarget.top) / height;
 
-    currentBrush.extents = { x1, x2, y1, y2 };
+    currentBrush.extents = {x1, x2, y1, y2};
 
     brushes[currentBrush.id] = currentBrush;
-    setBrushes({ ...brushes });
+    setBrushes({...brushes});
   };
 
   const handleMouseUpWhenCreating = <T extends {}>(
-    _: React.MouseEvent<T, MouseEvent>
+    _: React.MouseEvent<T, MouseEvent>,
   ) => {
     const isNewBrushZero =
       currentBrush.extents &&
@@ -90,15 +92,15 @@ const BrushComponent: FC<Props> = ({
       delete brushes[currentBrush.id];
     } else {
       const curr = currentBrush;
-      let { x1, x2, y1, y2 } = curr.extents;
+      let {x1, x2, y1, y2} = curr.extents;
 
       if (x1 > x2) [x1, x2] = [x2, x1];
       if (y1 > y2) [y1, y2] = [y2, y1];
 
-      curr.extents = { x1, x2, y1, y2 };
+      curr.extents = {x1, x2, y1, y2};
       brushes[curr.id] = curr;
 
-      onBrushUpdate({ ...brushes }, curr, BrushAffectType.ADD);
+      onBrushUpdate({...brushes}, curr, BrushAffectType.ADD);
     }
 
     setCurrentBrush(null as any);
@@ -108,7 +110,7 @@ const BrushComponent: FC<Props> = ({
 
   const handleDragStart = <T extends SVGElement>(
     _: React.MouseEvent<T, MouseEvent>,
-    brush: Brush
+    brush: Brush,
   ) => {
     setMouseDown(true);
     setMovingBrush(true);
@@ -117,7 +119,7 @@ const BrushComponent: FC<Props> = ({
 
   const handleOnDrag = <T extends SVGGElement>(
     event: React.MouseEvent<T, MouseEvent>,
-    brush: Brush
+    brush: Brush,
   ) => {
     if (!mouseDown) return;
 
@@ -125,14 +127,14 @@ const BrushComponent: FC<Props> = ({
       brush.extents.x1 * width,
       brush.extents.x2 * width,
       brush.extents.y1 * height,
-      brush.extents.y2 * height
+      brush.extents.y2 * height,
     ];
 
     let [delX1, delX2, delY1, delY2] = [
       event.movementX,
       event.movementX,
       event.movementY,
-      event.movementY
+      event.movementY,
     ];
 
     if (X1 + delX1 <= 0 || X2 + delX2 >= width) {
@@ -150,7 +152,7 @@ const BrushComponent: FC<Props> = ({
     brush.extents.y2 = (Y2 + delY2) / height;
 
     brushes[brush.id] = brush;
-    setBrushes({ ...brushes });
+    setBrushes({...brushes});
   };
 
   const handleDragStop = <T extends {}>(_: React.MouseEvent<T, MouseEvent>) => {
@@ -158,19 +160,28 @@ const BrushComponent: FC<Props> = ({
     setMouseDown(false);
     setMovingBrush(false);
     setCurrentBrush(null as any);
-    onBrushUpdate({ ...brushes }, curr, BrushAffectType.CHANGE);
+    onBrushUpdate({...brushes}, curr, BrushAffectType.CHANGE);
   };
+
+  const removeAllBrushes = () => {
+    console.log('Hello');
+    const brs = JSON.parse(JSON.stringify(brushes));
+    setBrushes({});
+    onBrushUpdate({...brushes}, brs, BrushAffectType.REMOVE_ALL);
+  };
+
+  clearAllBrushSetup(removeAllBrushes);
 
   const removeBrush = (brush: Brush) => {
     delete brushes[brush.id];
-    setBrushes({ ...brushes });
-    onBrushUpdate({ ...brushes }, brush, BrushAffectType.REMOVE);
+    setBrushes({...brushes});
+    onBrushUpdate({...brushes}, brush, BrushAffectType.REMOVE);
   };
 
   const handleOnResizeStart = <T extends SVGGElement>(
     _: React.MouseEvent<T, MouseEvent>,
     brush: Brush,
-    resizeDirection: BrushResizeType
+    resizeDirection: BrushResizeType,
   ) => {
     setMouseDownForResize(true);
     setCurrentBrush(brush);
@@ -179,7 +190,7 @@ const BrushComponent: FC<Props> = ({
 
   const handleOnResize = <T extends SVGGElement>(
     event: React.MouseEvent<T, MouseEvent>,
-    brush: Brush
+    brush: Brush,
   ) => {
     if (!mouseDownForResize) return;
     switch (BrushResizeType[resizeDirection]) {
@@ -216,18 +227,18 @@ const BrushComponent: FC<Props> = ({
     }
 
     brushes[brush.id] = brush;
-    setBrushes({ ...brushes });
+    setBrushes({...brushes});
   };
 
   const handleOnResizeEnd = <T extends SVGGElement>(
-    _: React.MouseEvent<T, MouseEvent>
+    _: React.MouseEvent<T, MouseEvent>,
   ) => {
     const curr = currentBrush;
     setMouseDownForResize(false);
 
     setCurrentBrush(null as any);
     setResizeDirection(null as any);
-    onBrushUpdate({ ...brushes }, curr, BrushAffectType.CHANGE);
+    onBrushUpdate({...brushes}, curr, BrushAffectType.CHANGE);
   };
 
   const brushOverlay = (
@@ -236,7 +247,7 @@ const BrushComponent: FC<Props> = ({
       width={width}
       fill="none"
       cursor="crosshair"
-      stroke={showBrushBorder ? "black" : "none"}
+      stroke={showBrushBorder ? 'black' : 'none'}
       pointerEvents="all"
       onMouseDown={handleMouseDownWhenCreating}
       onMouseMove={event => {
@@ -267,7 +278,7 @@ const BrushComponent: FC<Props> = ({
   if (currentBrush && currentBrush.id) {
     brushKeys = [
       ...brushKeys.filter(b => b !== currentBrush.id),
-      currentBrush.id
+      currentBrush.id,
     ];
   }
 
@@ -275,7 +286,7 @@ const BrushComponent: FC<Props> = ({
     <g ref={brushGroupRef} className="brushGroup">
       {brushKeys.map(brushKey => {
         const brush = brushes[brushKey];
-        let { x1, y1, x2, y2 } = brush.extents;
+        let {x1, y1, x2, y2} = brush.extents;
         x1 = x1 * width;
         x2 = x2 * width;
         y1 *= height;
