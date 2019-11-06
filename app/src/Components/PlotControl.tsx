@@ -153,9 +153,26 @@ const PlotControl: FC<Props> = ({
       }}></Radio>
   );
 
+  const categoriesOptions = convertToDropdownFormat(
+    dataset.columnMaps,
+    'categorical',
+  );
+
+  const AddCategoryDropdown = (
+    <>
+      <Label>Color</Label>
+      <Dropdown
+        placeholder="Color"
+        selection
+        options={categoriesOptions}
+        defaultValue={categoriesOptions[0].value}></Dropdown>
+    </>
+  );
+
   const Control = (
     <Menu compact>
       <Menu.Item>{AddPlotButton}</Menu.Item>
+      <Menu.Item>{AddCategoryDropdown}</Menu.Item>
       <Menu.Item>{HideCategoryToggle}</Menu.Item>
       <Menu.Item>{MultiBrushBehaviorToggle}</Menu.Item>
     </Menu>
