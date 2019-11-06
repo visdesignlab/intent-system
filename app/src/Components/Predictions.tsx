@@ -1,7 +1,7 @@
 import React, {FC, RefObject, useRef} from 'react';
 import {Prediction} from '../contract';
 import {connect} from 'react-redux';
-import {Segment, Header, Popup} from 'semantic-ui-react';
+import {Segment, Header, Popup, Label} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {scaleLinear} from 'd3';
 
@@ -11,6 +11,7 @@ interface StateProps {
   dimensions: string[];
   selectedIds: number[];
   predictions: Prediction[];
+  time: number;
 }
 
 type Props = OwnProps & StateProps;
@@ -19,6 +20,7 @@ const Predictions: FC<Props> = ({
   dimensions,
   selectedIds,
   predictions,
+  time,
 }: Props) => {
   const svgRef: RefObject<SVGSVGElement> = useRef<SVGSVGElement>(null);
 
@@ -32,12 +34,20 @@ const Predictions: FC<Props> = ({
 
   const barHeight = 30;
 
+  if (!time) time = 0;
+
+  const stringTime = time.toFixed(2);
+
   return (
     <div>
       <Segment>
         <Header as="h1" textAlign="center">
           Predictions
         </Header>
+
+        {predictions.length > 0 && (
+          <Label>{`Time required: ${stringTime} seconds`}</Label>
+        )}
       </Segment>
       <PredictionsDiv>
         <svg ref={svgRef} height="100%" width="100%">
@@ -91,6 +101,7 @@ const mapStateToProps = (state: any): StateProps => {
     dimensions: state.predictionSet.dimensions,
     selectedIds: state.predictionSet.selectedIds,
     predictions: state.predictionSet.predictions,
+    time: state.predictionSet.time,
   };
 };
 
