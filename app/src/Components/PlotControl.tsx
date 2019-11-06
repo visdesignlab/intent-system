@@ -77,19 +77,6 @@ const PlotControl: FC<Props> = ({
             'numeric',
           )}></Dropdown>
       </Menu.Item>
-      {/* <Menu.Item> */}
-      {/*   <Label>Color</Label> */}
-      {/*   <Dropdown */}
-      {/*     placeholder="Color" */}
-      {/*     selection */}
-      {/*     onChange={(_, data) => { */}
-      {/*       setSinglePlot({...singlePlot, color: data.value as string}); */}
-      {/*     }} */}
-      {/*     options={convertToDropdownFormat( */}
-      {/*       dataset.columnMaps, */}
-      {/*       'categorical', */}
-      {/*     )}></Dropdown> */}
-      {/* </Menu.Item> */}
       <Menu.Item>
         <Button
           icon
@@ -165,6 +152,7 @@ const PlotControl: FC<Props> = ({
         placeholder="Color"
         selection
         options={categoriesOptions}
+        disabled={categoriesOptions.length < 2}
         defaultValue={categoriesOptions[0].value}></Dropdown>
     </>
   );
@@ -172,8 +160,8 @@ const PlotControl: FC<Props> = ({
   const Control = (
     <Menu compact>
       <Menu.Item>{AddPlotButton}</Menu.Item>
-      <Menu.Item>{AddCategoryDropdown}</Menu.Item>
       <Menu.Item>{HideCategoryToggle}</Menu.Item>
+      {showCategories && <Menu.Item>{AddCategoryDropdown}</Menu.Item>}
       <Menu.Item>{MultiBrushBehaviorToggle}</Menu.Item>
     </Menu>
   );
