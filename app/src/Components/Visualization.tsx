@@ -1,15 +1,21 @@
-import React, { FC, useState, useCallback } from "react";
-import styled from "styled-components";
-import { updateParticipant } from "../Stores/Visualization/Setup/ParticipantRedux";
-import { connect } from "react-redux";
-import { VisualizationProvenance } from "..";
-import VisualizationState from "../Stores/Visualization/VisualizationState";
-import { Dataset } from "../Stores/Types/Dataset";
-import { Plots } from "../Stores/Types/Plots";
-import Scatterplot from "./Scatterplot";
-import Legend from "./Legend";
-import { scaleOrdinal, schemeSet2 } from "d3";
-import _ from "lodash";
+import React, {FC, useState, useCallback} from 'react';
+import styled from 'styled-components';
+import {updateParticipant} from '../Stores/Visualization/Setup/ParticipantRedux';
+import {connect} from 'react-redux';
+import {VisualizationProvenance} from '..';
+import VisualizationState from '../Stores/Visualization/VisualizationState';
+import {Dataset} from '../Stores/Types/Dataset';
+import {Plots} from '../Stores/Types/Plots';
+import Scatterplot from './Scatterplot';
+import Legend from './Legend';
+import {scaleOrdinal, schemeSet2} from 'd3';
+import _ from 'lodash';
+
+export enum PointSelectionEnum {
+  ADD = 'ADD',
+  REMOVE = 'REMOVE',
+}
+
 interface OwnProps {
   showCategories: boolean;
 }
@@ -25,21 +31,17 @@ interface DispatchProps {
 
 type Props = OwnProps & DispatchProps & StateProps;
 
-const Visualization: FC<Props> = ({
-  showCategories,
-  dataset,
-  plots
-}: Props) => {
+const Visualization: FC<Props> = ({showCategories, dataset, plots}: Props) => {
   const [dimensions, setDimensions] = useState<{
     height: number;
     width: number;
-  }>({ height: -1, width: -1 });
+  }>({height: -1, width: -1});
 
   const measuredRef = useCallback(node => {
     if (node !== null) {
       setDimensions({
         height: node.getBoundingClientRect().height,
-        width: node.getBoundingClientRect().width
+        width: node.getBoundingClientRect().width,
       });
     }
   }, []);
@@ -70,8 +72,6 @@ const Visualization: FC<Props> = ({
   const totalHeight = plotDimension * rowCount;
   const totalWidth = plotDimension * columnCount;
 
-  // console.log(breakCount, actualCount, totalHeight);
-
   const xPosGen = getNextXPosition(breakCount);
 
   const uniqueValues = _.chain(dataset.data)
@@ -91,6 +91,28 @@ const Visualization: FC<Props> = ({
       return;
     otherBrushes[plotid] = brs;
     setOtherBrushes(JSON.parse(JSON.stringify(otherBrushes)));
+  };
+
+  let [otherSelection, setOtherSelection] = useState([] as number[]);
+
+  const updatePoints = (
+    plotid: string,
+    point: number,
+    type: PointSelectionEnum,
+  ) => {
+    switch (type) {
+      case PointSelectionEnum.ADD:
+        otherSelection.push(point);
+        setOtherSelection([...otherSelection]);
+        break;
+      case PointSelectionEnum.REMOVE:
+        console.log('REmoveing');
+        otherSelection = otherSelection.filter((p: any) => p !== point);
+        setOtherSelection([...otherSelection]);
+        break;
+      default:
+        return;
+    }
   };
 
   return (
@@ -114,23 +136,20 @@ const Visualization: FC<Props> = ({
             <g
               transform={`translate(${width / 2 - totalWidth / 2}, ${height /
                 2 -
-                totalHeight / 2})`}
-            >
+                totalHeight / 2})`}>
               {plots.map((plot, i) => {
                 return (
                   <g
                     key={`${plot.id} ${i}`}
                     transform={`translate(${plotDimension *
                       xPosGen()}, ${plotDimension *
-                      Math.floor(i / breakCount)})`}
-                  >
+                      Math.floor(i / breakCount)})`}>
                     <rect
                       height={plotDimension}
                       width={plotDimension}
                       fill="none"
                       opacity={0}
-                      stroke="red"
-                    ></rect>
+                      stroke="red"></rect>
                     <Scatterplot
                       plot={plot}
                       size={plotDimension}
@@ -138,8 +157,9 @@ const Visualization: FC<Props> = ({
                       lastPlot={plots.length === 1}
                       update={update}
                       otherBrushes={otherBrushes}
-                      colorScale={colorScale}
-                    ></Scatterplot>
+                      otherPointSelection={otherSelection}
+                      updateOtherPointSelection={updatePoints}
+                      colorScale={colorScale}></Scatterplot>
                   </g>
                 );
               })}
@@ -154,26 +174,26 @@ const Visualization: FC<Props> = ({
 
 const mapDispatchToProps = (): DispatchProps => ({
   update: (name: string) => {
-    VisualizationProvenance.apply(updateParticipant({ name: name }));
-  }
+    VisualizationProvenance.apply(updateParticipant({name: name}));
+  },
 });
 
 const mapStateToProps = (state: VisualizationState): StateProps => ({
   dataset: state.dataset,
-  plots: state.plots
+  plots: state.plots,
 });
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(Visualization);
 
-const MainSvg = styled("svg")`
+const MainSvg = styled('svg')`
   width: 100%;
   height: 100%;
 `;
 
-const BorderRectangle = styled("rect")`
+const BorderRectangle = styled('rect')`
   fill: none;
   stroke: black;
   stroke-width: 1px;

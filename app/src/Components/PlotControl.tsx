@@ -1,13 +1,21 @@
-import React, { FC, useState } from 'react';
-import { connect } from 'react-redux';
-import { Button, Dropdown, Grid, Icon, Label, Menu, Radio } from 'semantic-ui-react';
+import React, {FC, useState} from 'react';
+import {connect} from 'react-redux';
+import {
+  Button,
+  Dropdown,
+  Grid,
+  Icon,
+  Label,
+  Menu,
+  Radio,
+} from 'semantic-ui-react';
 
-import { VisualizationProvenance } from '..';
-import { MultiBrushBehavior } from '../contract';
-import { ColumnMap, Dataset } from '../Stores/Types/Dataset';
-import { SinglePlot } from '../Stores/Types/Plots';
-import { CHANGE_BRUSH_BEHAVIOR } from '../Stores/Visualization/Setup/MultiBrushRedux';
-import { addPlot } from '../Stores/Visualization/Setup/PlotsRedux';
+import {VisualizationProvenance} from '..';
+import {MultiBrushBehavior} from '../contract';
+import {ColumnMap, Dataset} from '../Stores/Types/Dataset';
+import {SinglePlot} from '../Stores/Types/Plots';
+import {CHANGE_BRUSH_BEHAVIOR} from '../Stores/Visualization/Setup/MultiBrushRedux';
+import {addPlot} from '../Stores/Visualization/Setup/PlotsRedux';
 import VisualizationState from '../Stores/Visualization/VisualizationState';
 
 interface OwnProps {
@@ -33,7 +41,7 @@ const PlotControl: FC<Props> = ({
   multiBrushBehavior,
   changeBrushBehavior,
   dataset,
-  addPlot
+  addPlot,
 }: Props) => {
   const [addingPlot, setAddingPlot] = useState(false);
 
@@ -47,10 +55,12 @@ const PlotControl: FC<Props> = ({
           placeholder="X Axis dimension"
           selection
           onChange={(_, data) => {
-            setSinglePlot({ ...singlePlot, x: data.value as string });
+            setSinglePlot({...singlePlot, x: data.value as string});
           }}
-          options={convertToDropdownFormat(dataset.columnMaps, "numeric")}
-        ></Dropdown>
+          options={convertToDropdownFormat(
+            dataset.columnMaps,
+            'numeric',
+          )}></Dropdown>
       </Menu.Item>
       <Menu.Item>
         <Label>Y Axis</Label>
@@ -58,10 +68,12 @@ const PlotControl: FC<Props> = ({
           placeholder="Y Axis dimension"
           selection
           onChange={(_, data) => {
-            setSinglePlot({ ...singlePlot, y: data.value as string });
+            setSinglePlot({...singlePlot, y: data.value as string});
           }}
-          options={convertToDropdownFormat(dataset.columnMaps, "numeric")}
-        ></Dropdown>
+          options={convertToDropdownFormat(
+            dataset.columnMaps,
+            'numeric',
+          )}></Dropdown>
       </Menu.Item>
       <Menu.Item>
         <Label>Color</Label>
@@ -69,10 +81,12 @@ const PlotControl: FC<Props> = ({
           placeholder="Color"
           selection
           onChange={(_, data) => {
-            setSinglePlot({ ...singlePlot, color: data.value as string });
+            setSinglePlot({...singlePlot, color: data.value as string});
           }}
-          options={convertToDropdownFormat(dataset.columnMaps, "categorical")}
-        ></Dropdown>
+          options={convertToDropdownFormat(
+            dataset.columnMaps,
+            'categorical',
+          )}></Dropdown>
       </Menu.Item>
       <Menu.Item>
         <Button
@@ -87,8 +101,7 @@ const PlotControl: FC<Props> = ({
             addPlot(plot);
             setSinglePlot({} as any);
             setAddingPlot(false);
-          }}
-        >
+          }}>
           <Icon name="check"></Icon>
         </Button>
       </Menu.Item>
@@ -99,8 +112,7 @@ const PlotControl: FC<Props> = ({
           onClick={() => {
             setSinglePlot({} as any);
             setAddingPlot(false);
-          }}
-        >
+          }}>
           <Icon name="close"></Icon>
         </Button>
       </Menu.Item>
@@ -120,29 +132,23 @@ const PlotControl: FC<Props> = ({
       checked={showCategories}
       label="Show Categories"
       onChange={(_, state) => {
-        let { checked } = state;
+        let {checked} = state;
         setShowCategories(checked ? true : false);
-      }}
-    ></Radio>
+      }}></Radio>
   );
 
   const MultiBrushBehaviorToggle = (
     <Radio
       toggle
       checked={multiBrushBehavior === MultiBrushBehavior.UNION}
-      label={
-        multiBrushBehavior === MultiBrushBehavior.UNION
-          ? "Union"
-          : "Intersection"
-      }
+      label="Union"
       onChange={() => {
         let mbb =
           multiBrushBehavior === MultiBrushBehavior.UNION
             ? MultiBrushBehavior.INTERSECTION
             : MultiBrushBehavior.UNION;
         changeBrushBehavior(mbb);
-      }}
-    ></Radio>
+      }}></Radio>
   );
 
   const Control = (
@@ -170,31 +176,31 @@ const mapDispatchToProps = (dispatch: any): DispatchProps => ({
   changeBrushBehavior: (mbb: MultiBrushBehavior) => {
     dispatch({
       type: CHANGE_BRUSH_BEHAVIOR,
-      args: mbb
+      args: mbb,
     });
-  }
+  },
 });
 
 const mapStateToProps = (state: VisualizationState): StateProps => ({
   dataset: state.dataset,
-  multiBrushBehavior: state.multiBrushBehaviour
+  multiBrushBehavior: state.multiBrushBehaviour,
 });
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(PlotControl);
 
 function convertToDropdownFormat(
   columnMap: ColumnMap,
-  type: string
-): { key: string; value: string; text: string }[] {
+  type: string,
+): {key: string; value: string; text: string}[] {
   const columns = Object.keys(columnMap);
   return columns
     .filter(col => columnMap[col].type === type)
     .map(col => ({
       key: col,
       text: `${columnMap[col].text} (${columnMap[col].unit})`,
-      value: col
+      value: col,
     }));
 }
