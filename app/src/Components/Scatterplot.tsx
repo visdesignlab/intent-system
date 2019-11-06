@@ -18,7 +18,7 @@ import {removePlot, updatePlot} from '../Stores/Visualization/Setup/PlotsRedux';
 import VisualizationState from '../Stores/Visualization/VisualizationState';
 import BrushComponent from './Brush/Components/BrushComponent';
 import {ThunkDispatch} from 'redux-thunk';
-import {BrushAffectType, Brush} from './Brush/Types/Brush';
+import {BrushAffectType} from './Brush/Types/Brush';
 import {
   RectangularSelection,
   MultiBrushBehavior,
