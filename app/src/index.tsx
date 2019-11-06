@@ -12,6 +12,8 @@ import {loadDataset} from './Stores/Visualization/Setup/DatasetRedux';
 import VisualizationStoreCreator from './Stores/Visualization/VisualizationStore';
 import VisualizationState from './Stores/Visualization/VisualizationState';
 import PredictionStoreCreator from './Stores/Predictions/Setup/PredictionStore';
+import test from './Firebase/firebaseConfig';
+test();
 
 export const VisualizationStore = VisualizationStoreCreator();
 export const VisualizationProvenance = initProvenanceRedux<VisualizationState>(
