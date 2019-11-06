@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import styled from 'styled-components';
 
-import { Brush } from '../Types/Brush';
-import { BrushResizeType } from '../Types/BrushResizeEnum';
+import {Brush} from '../Types/Brush';
+import {BrushResizeType} from '../Types/BrushResizeEnum';
 
 interface Props {
   x1: number;
@@ -14,7 +14,7 @@ interface Props {
   onResizeStart: (
     event: React.MouseEvent<any, MouseEvent>,
     brush: Brush,
-    resizeDirection: BrushResizeType
+    resizeDirection: BrushResizeType,
   ) => void;
   onResize: (event: React.MouseEvent<any, MouseEvent>, brush: Brush) => void;
   onResizeEnd: (event: React.MouseEvent<any, MouseEvent>) => void;
@@ -33,7 +33,7 @@ function SingleBrushComponent({
   resizeControlSize,
   onResizeStart,
   onResize,
-  onResizeEnd
+  onResizeEnd,
 }: Props) {
   if (!resizeControlSize) {
     resizeControlSize = 7;
@@ -50,21 +50,6 @@ function SingleBrushComponent({
 
   return (
     <>
-      <g
-        className="close-icon"
-        transform={`translate(${x2 - 5}, ${y1 - 5})`}
-        display={showCloseIcon ? "visible" : "none"}
-      >
-        <CloseIcon dominantBaseline="middle" textAnchor="middle">
-          &#xf05e;
-        </CloseIcon>
-        <RemoveBrushCircle
-          r="10"
-          onClick={() => {
-            removeBrush(brush);
-          }}
-        />
-      </g>
       <BrushRectangle
         x={x1}
         y={y1}
@@ -158,13 +143,28 @@ function SingleBrushComponent({
         }
         onMouseUp={event => onResizeEnd(event)}
       />
+
+      <g
+        className="close-icon"
+        transform={`translate(${x2 - 10}, ${y1 + 10})`}
+        display={showCloseIcon ? 'visible' : 'none'}>
+        <CloseIcon dominantBaseline="middle" textAnchor="middle">
+          &#xf05e;
+        </CloseIcon>
+        <RemoveBrushCircle
+          r="10"
+          onClick={() => {
+            removeBrush(brush);
+          }}
+        />
+      </g>
     </>
   );
 }
 
 export default SingleBrushComponent;
 
-const BrushRectangle = styled("rect")`
+const BrushRectangle = styled('rect')`
   fill: lightgray;
   opacity: 0.2;
   stroke: black;
@@ -195,14 +195,14 @@ const TRBLResizeRectangle = styled(ResizeRectangle)`
   cursor: nesw-resize;
 `;
 
-const CloseIcon = styled("text")`
+const CloseIcon = styled('text')`
   font-family: FontAwesome;
   font-size: 1.5em;
   fill: red;
 `;
 
-const RemoveBrushCircle = styled("circle")`
+const RemoveBrushCircle = styled('circle')`
   cursor: pointer;
   fill: #777;
-  opacity: 0.001;
+  opacity: 0.01;
 `;
