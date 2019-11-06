@@ -45,7 +45,9 @@ const PlotControl: FC<Props> = ({
 }: Props) => {
   const [addingPlot, setAddingPlot] = useState(false);
 
-  const [singlePlot, setSinglePlot] = useState<SinglePlot>({} as SinglePlot);
+  const [singlePlot, setSinglePlot] = useState<SinglePlot>({
+    color: dataset.categoricalColumns[0],
+  } as SinglePlot);
 
   const AddPlotComponent = (
     <Menu compact>
@@ -75,19 +77,19 @@ const PlotControl: FC<Props> = ({
             'numeric',
           )}></Dropdown>
       </Menu.Item>
-      <Menu.Item>
-        <Label>Color</Label>
-        <Dropdown
-          placeholder="Color"
-          selection
-          onChange={(_, data) => {
-            setSinglePlot({...singlePlot, color: data.value as string});
-          }}
-          options={convertToDropdownFormat(
-            dataset.columnMaps,
-            'categorical',
-          )}></Dropdown>
-      </Menu.Item>
+      {/* <Menu.Item> */}
+      {/*   <Label>Color</Label> */}
+      {/*   <Dropdown */}
+      {/*     placeholder="Color" */}
+      {/*     selection */}
+      {/*     onChange={(_, data) => { */}
+      {/*       setSinglePlot({...singlePlot, color: data.value as string}); */}
+      {/*     }} */}
+      {/*     options={convertToDropdownFormat( */}
+      {/*       dataset.columnMaps, */}
+      {/*       'categorical', */}
+      {/*     )}></Dropdown> */}
+      {/* </Menu.Item> */}
       <Menu.Item>
         <Button
           icon
