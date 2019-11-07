@@ -1,8 +1,9 @@
-import {Dataset, ColumnMap, emptyDataset} from '../../Types/Dataset';
+import {Dataset, ColumnMap, emptyDataset, HASH} from '../../Types/Dataset';
 import {Action, Reducer} from 'redux';
 import {text} from 'd3';
 import {VisualizationProvenance} from '../../..';
 import {recordableReduxActionCreator} from '@visdesignlab/provenance-lib-core/lib/src';
+import {hashCode} from '../../../Utils';
 
 export const DATASET_UPDATE = 'DATASET_UPDATE';
 export type DATASET_UPDATE = typeof DATASET_UPDATE;
@@ -55,6 +56,16 @@ export const loadDataset = async (url: string) => {
   );
   values = Object.keys(values).map((r: any) => values[r]);
 
+  const hashLookup: {[key: string]: any} = {};
+
+  values.forEach(val => {
+    val[HASH] = hashCode(val[labelColumn]);
+    hashLookup[val[HASH]] = val;
+  });
+
+  if (Object.keys(hashLookup).length !== values.length)
+    throw new Error('Update Hash Function');
+
   const parsedDataset: Dataset = {
     ...emptyDataset(),
     labelColumn,
@@ -64,6 +75,7 @@ export const loadDataset = async (url: string) => {
     categoricalColumns,
     data: values,
     columnMaps: column_header_map,
+    hashLookup: hashLookup,
   };
 
   VisualizationProvenance.apply(updateDataset(parsedDataset));
