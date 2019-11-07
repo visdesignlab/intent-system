@@ -1,4 +1,4 @@
-import React, {FC, useState, useCallback} from 'react';
+import React, {FC, useState} from 'react';
 import styled from 'styled-components';
 import Task from './Components/Task';
 import Visualization from './Components/Visualization';
