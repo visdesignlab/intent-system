@@ -48,7 +48,7 @@ const SelectionResults: FC<Props> = ({selections, dataset}: Props) => {
         <Header as="h1" textAlign="center">
           Results
         </Header>
-        <Label>{`Selected Items: ${pointSelectionsCount} (Points)`}</Label>
+        <Label>{`Selected Items: ${pointSelectionsCount} (Click)`}</Label>
         <Label>{`Selected Items: ${intersectionCount} (Intersection)`}</Label>
         <Label>{`Selected Items: ${unionCount} (Union)`}</Label>
         <Label>{`Selected Items: ${totalSelections} (Total)`}</Label>
