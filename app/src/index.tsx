@@ -13,6 +13,7 @@ import VisualizationStoreCreator from './Stores/Visualization/VisualizationStore
 import VisualizationState from './Stores/Visualization/VisualizationState';
 import PredictionStoreCreator from './Stores/Predictions/Setup/PredictionStore';
 import test from './Firebase/firebaseConfig';
+import setupFirebase from './Firebase/firebaseConfig';
 test();
 
 export const VisualizationStore = VisualizationStoreCreator();
@@ -32,6 +33,13 @@ export const predictionStore = PredictionStoreCreator();
 export let datasetName = 'gapminder_world';
 
 export const getDatasetUrl = (datasetName: string) => `/dataset/${datasetName}`;
+
+export const {config, app: firebaseApp, firestore} = setupFirebase();
+
+firestore
+  .collection('test')
+  .doc('Hello')
+  .set(config, {merge: true});
 
 axios
   .get('/dataset')

@@ -14,3 +14,9 @@ code {
 .selection_highlight {
   fill: red !important;
 }
+
+.suggestion_highlight {
+  fill: #b4c5aa !important;
+  stroke: none !important;
+  opacity: 1 !important;
+}
