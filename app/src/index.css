@@ -16,7 +16,7 @@ code {
 }
 
 .suggestion_highlight {
-  fill: #b4c5aa !important;
+  fill: red !important;
   stroke: none !important;
   opacity: 1 !important;
 }
