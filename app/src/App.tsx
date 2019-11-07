@@ -55,7 +55,7 @@ const App: FC<Props> = ({dataset, plots, addPlot}: Props) => {
     addPlot(plot2);
   }
 
-  const [showCategories, setShowCategories] = useState(true);
+  const [showCategories, setShowCategories] = useState(false);
 
   const changeShowCategories = (shouldShow: boolean) => {
     setShowCategories(shouldShow);
@@ -91,7 +91,7 @@ const App: FC<Props> = ({dataset, plots, addPlot}: Props) => {
         </VisDiv>
       </TaskVisDiv>
       <Provider store={predictionStore}>
-        <Predictions></Predictions>
+        <Predictions dataset={dataset}></Predictions>
       </Provider>
     </MainDiv>
   );

@@ -3,9 +3,13 @@ import {Prediction} from '../contract';
 import {connect} from 'react-redux';
 import {Segment, Header, Popup, Label} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {scaleLinear} from 'd3';
+import {scaleLinear, selectAll} from 'd3';
+import {Dataset} from '../Stores/Types/Dataset';
+import {hashCode} from '../Utils';
 
-interface OwnProps {}
+interface OwnProps {
+  dataset: Dataset;
+}
 
 interface StateProps {
   dimensions: string[];
@@ -21,8 +25,10 @@ const Predictions: FC<Props> = ({
   selectedIds,
   predictions,
   time,
+  dataset,
 }: Props) => {
   const svgRef: RefObject<SVGSVGElement> = useRef<SVGSVGElement>(null);
+  const {data, labelColumn} = dataset;
 
   if (!predictions) predictions = [];
 
@@ -70,7 +76,34 @@ const Predictions: FC<Props> = ({
                 </div>
               }
               trigger={
-                <g transform={`translate(0, ${(barHeight + 5) * idx})`}>
+                <g
+                  transform={`translate(0, ${(barHeight + 5) * idx})`}
+                  onMouseOver={() => {
+                    const {dataIds = []} = pred;
+                    const countries = dataIds.map(d =>
+                      hashCode(data[d][labelColumn]),
+                    );
+
+                    countries.forEach(code => {
+                      selectAll(`.${code}`).classed(
+                        'suggestion_highlight',
+                        true,
+                      );
+                    });
+                  }}
+                  onMouseOut={() => {
+                    const {dataIds = []} = pred;
+                    const countries = dataIds.map(d =>
+                      hashCode(data[d][labelColumn]),
+                    );
+
+                    countries.forEach(code => {
+                      selectAll(`.${code}`).classed(
+                        'suggestion_highlight',
+                        false,
+                      );
+                    });
+                  }}>
                   <rect
                     height={barHeight}
                     width={svgRef.current ? svgRef.current.clientWidth : 0}
