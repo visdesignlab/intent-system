@@ -1,4 +1,4 @@
-import React, {FC, useState, useCallback, useEffect, useMemo} from 'react';
+import React, {FC, useState, useCallback, useMemo} from 'react';
 import styled from 'styled-components';
 import {updateParticipant} from '../Stores/Visualization/Setup/ParticipantRedux';
 import {connect} from 'react-redux';
@@ -119,7 +119,6 @@ const Visualization: FC<Props> = ({
         setOtherSelection([...otherSelection]);
         break;
       case PointSelectionEnum.REMOVE:
-        console.log('REmoveing');
         otherSelection = otherSelection.filter((p: any) => p !== point);
         setOtherSelection([...otherSelection]);
         break;
@@ -131,7 +130,6 @@ const Visualization: FC<Props> = ({
   const totalSelections: SelectionRecord = useMemo(() => {
     const brushSelections: BrushSelectionDictionary = {};
     const pointSelections: PointSelectionArray = [...otherSelection];
-    console.log('Updating selections');
     Object.values(otherBrushes).forEach((brush: any) => {
       Object.entries(brush).forEach(f => {
         const [point, count]: [string, number] = f as any;
