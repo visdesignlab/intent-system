@@ -1,51 +1,50 @@
 import './index.css';
 import 'semantic-ui-css/semantic.min.css';
+
+import { initProvenanceRedux } from '@visdesignlab/provenance-lib-core/lib/src';
 import axios from 'axios';
-import {initProvenanceRedux} from '@visdesignlab/provenance-lib-core/lib/src';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {Provider} from 'react-redux';
+import { Provider } from 'react-redux';
 
-import * as serviceWorker from './serviceWorker';
 import App from './App';
-import {loadDataset} from './Stores/Visualization/Setup/DatasetRedux';
-import VisualizationStoreCreator from './Stores/Visualization/VisualizationStore';
-import VisualizationState from './Stores/Visualization/VisualizationState';
-import PredictionStoreCreator from './Stores/Predictions/Setup/PredictionStore';
-import test from './Firebase/firebaseConfig';
 import setupFirebase from './Firebase/firebaseConfig';
-test();
+import * as serviceWorker from './serviceWorker';
+import PredictionStoreCreator from './Stores/Predictions/Setup/PredictionStore';
+import { loadDataset } from './Stores/Visualization/Setup/DatasetRedux';
+import VisualizationState from './Stores/Visualization/VisualizationState';
+import VisualizationStoreCreator from './Stores/Visualization/VisualizationStore';
 
 export const VisualizationStore = VisualizationStoreCreator();
 export const VisualizationProvenance = initProvenanceRedux<VisualizationState>(
   VisualizationStore,
-  (_: any) => {},
+  (_: any) => {}
 );
 export const datasets = [
-  'draft_combine',
-  'slc_housing',
-  'nba_players',
-  'gapminder_world',
+  "draft_combine",
+  "slc_housing",
+  "nba_players",
+  "gapminder_world"
 ];
 
 export const predictionStore = PredictionStoreCreator();
 
-export let datasetName = 'gapminder_world';
+export let datasetName = "gapminder_world";
 
 export const getDatasetUrl = (datasetName: string) => `/dataset/${datasetName}`;
 
-export const {config, app: firebaseApp, firestore} = setupFirebase();
+export const { config, app: firebaseApp, firestore } = setupFirebase();
 
 firestore
-  .collection('test')
-  .doc('Hello')
-  .set(config, {merge: true});
+  .collection("test")
+  .doc("Hello")
+  .set(config, { merge: true });
 
 axios
-  .get('/dataset')
+  .get("/dataset")
   .then(async response => {
     const datasets = response.data;
-    datasetName = datasets.filter((d: string) => d.includes('gapminder'))[0];
+    datasetName = datasets.filter((d: string) => d.includes("gapminder"))[0];
     await loadDataset(getDatasetUrl(datasetName));
     startRender();
   })
@@ -58,7 +57,7 @@ function startRender() {
         <App />
       </Provider>
     </Provider>,
-    document.getElementById('root'),
+    document.getElementById("root")
   );
 }
 

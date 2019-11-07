@@ -1,7 +1,7 @@
 import React, {FC, RefObject, useRef} from 'react';
 import {Prediction} from '../contract';
 import {connect} from 'react-redux';
-import {Segment, Header, Popup, Label} from 'semantic-ui-react';
+import {Segment, Header, Popup, Label, Button} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {scaleLinear, selectAll} from 'd3';
 import {Dataset} from '../Stores/Types/Dataset';
@@ -57,71 +57,91 @@ const Predictions: FC<Props> = ({
       </Segment>
       <PredictionsDiv>
         <svg ref={svgRef} height="100%" width="100%">
-          {predictions.map((pred, idx) => (
-            <Popup
-              key={idx}
-              content={
-                <div>
-                  <Header>{pred.intent}</Header>
-                  <pre>
-                    {JSON.stringify(
-                      pred,
-                      (key, val) => {
-                        if (key === 'dataIds') return undefined;
-                        return val;
-                      },
-                      2,
-                    )}
-                  </pre>
-                </div>
-              }
-              trigger={
-                <g
-                  transform={`translate(0, ${(barHeight + 5) * idx})`}
-                  onMouseOver={() => {
-                    const {dataIds = []} = pred;
-                    const countries = dataIds.map(d =>
-                      hashCode(data[d][labelColumn]),
-                    );
+          {predictions.map((pred, idx) => {
+            const {dataIds = []} = pred;
+            const countries = dataIds.map(d => hashCode(data[d][labelColumn]));
 
-                    countries.forEach(code => {
-                      selectAll(`.${code}`).classed(
-                        'suggestion_highlight',
-                        true,
-                      );
-                    });
-                  }}
-                  onMouseOut={() => {
-                    const {dataIds = []} = pred;
-                    const countries = dataIds.map(d =>
-                      hashCode(data[d][labelColumn]),
-                    );
+            let isHighlighted = false;
+            return (
+              <Popup
+                key={idx}
+                hoverable
+                content={
+                  <div>
+                    <Header>{pred.intent}</Header>
+                    <Button
+                      compact
+                      onClick={() => {
+                        countries.forEach(code => {
+                          if (
+                            !selectAll(`.${code}`).classed(
+                              'suggestion_highlight',
+                            )
+                          ) {
+                            isHighlighted = false;
+                            return;
+                          }
+                          isHighlighted = true;
+                        });
 
-                    countries.forEach(code => {
-                      selectAll(`.${code}`).classed(
-                        'suggestion_highlight',
-                        false,
-                      );
-                    });
-                  }}>
-                  <rect
-                    height={barHeight}
-                    width={svgRef.current ? svgRef.current.clientWidth : 0}
-                    fill="#A8D3EE"
-                    opacity="0.3"></rect>
-                  <rect
-                    height={barHeight}
-                    width={barScale(pred.rank)}
-                    fill="#A8D3EE"
-                    opacity="0.9"></rect>
-                  <text
-                    transform={`translate(10, ${barHeight / 2})`}
-                    dominantBaseline="middle">
-                    {pred.intent}
-                  </text>
-                </g>
-              }></Popup>
-          ))}
+                        if (!isHighlighted) {
+                          selectAll('.mark').classed(
+                            'suggestion_highlight',
+                            false,
+                          );
+
+                          countries.forEach(code => {
+                            selectAll(`.${code}`).classed(
+                              'suggestion_highlight',
+                              true,
+                            );
+                          });
+                        } else {
+                          countries.forEach(code => {
+                            selectAll(`.${code}`).classed(
+                              'suggestion_highlight',
+                              false,
+                            );
+                          });
+                        }
+                      }}
+                      color={isHighlighted ? 'red' : 'blue'}
+                      size="tiny">
+                      {isHighlighted ? 'Hide Items' : 'Show Items'}
+                    </Button>
+                    <pre>
+                      {JSON.stringify(
+                        pred,
+                        (key, val) => {
+                          if (key === 'dataIds') return undefined;
+                          return val;
+                        },
+                        2,
+                      )}
+                    </pre>
+                  </div>
+                }
+                trigger={
+                  <g transform={`translate(0, ${(barHeight + 5) * idx})`}>
+                    <rect
+                      height={barHeight}
+                      width={svgRef.current ? svgRef.current.clientWidth : 0}
+                      fill="#A8D3EE"
+                      opacity="0.3"></rect>
+                    <rect
+                      height={barHeight}
+                      width={barScale(pred.rank)}
+                      fill="#A8D3EE"
+                      opacity="0.9"></rect>
+                    <text
+                      transform={`translate(10, ${barHeight / 2})`}
+                      dominantBaseline="middle">
+                      {pred.intent}
+                    </text>
+                  </g>
+                }></Popup>
+            );
+          })}
         </svg>
       </PredictionsDiv>
     </div>
