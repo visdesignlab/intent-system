@@ -1,4 +1,4 @@
-import React, {FC, useState} from 'react';
+import React, {FC, useState, useCallback} from 'react';
 import styled from 'styled-components';
 import Task from './Components/Task';
 import Visualization from './Components/Visualization';
@@ -10,6 +10,7 @@ import {addPlot} from './Stores/Visualization/Setup/PlotsRedux';
 import PlotControl from './Components/PlotControl';
 import {predictionStore} from '.';
 import Predictions from './Components/Predictions';
+import SelectionResults from './Components/SelectionResults';
 
 interface OwnProps {}
 interface DispatchProps {
@@ -20,6 +21,16 @@ interface StateProps {
   dataset: Dataset;
 }
 type Props = OwnProps & StateProps & DispatchProps;
+
+export type BrushSelectionDictionary = {[key: string]: number};
+
+export type PointSelectionArray = number[];
+
+export interface SelectionRecord {
+  brushSelections: BrushSelectionDictionary;
+  maxBrushCount: number;
+  pointSelections: PointSelectionArray;
+}
 
 const App: FC<Props> = ({dataset, plots, addPlot}: Props) => {
   if (plots.length === 0 && dataset.name !== '') {
@@ -50,6 +61,16 @@ const App: FC<Props> = ({dataset, plots, addPlot}: Props) => {
     setShowCategories(shouldShow);
   };
 
+  const [selections, setSelections] = useState<SelectionRecord>({
+    brushSelections: {},
+    maxBrushCount: 0,
+    pointSelections: [],
+  });
+
+  const updateSelections = (sel: SelectionRecord) => {
+    if (selections !== sel) setSelections({...sel});
+  };
+
   return (
     <MainDiv>
       <TaskVisDiv>
@@ -59,7 +80,14 @@ const App: FC<Props> = ({dataset, plots, addPlot}: Props) => {
             showCategories={showCategories}
             setShowCategories={changeShowCategories}
           />
-          <Visualization showCategories={showCategories} />
+          <VisResDiv>
+            <Visualization
+              selRecord={selections}
+              updateSelections={updateSelections}
+              showCategories={showCategories}
+            />
+            <SelectionResults selections={selections}></SelectionResults>
+          </VisResDiv>
         </VisDiv>
       </TaskVisDiv>
       <Provider store={predictionStore}>
@@ -104,6 +132,14 @@ const TaskVisDiv = styled('div')`
 const VisDiv = styled('div')`
   display: grid;
   grid-template-rows: 1fr 10fr;
+
+  width: 100%;
+  height: 100%;
+`;
+
+const VisResDiv = styled('div')`
+  display: grid;
+  grid-template-columns: 3fr 1fr;
 
   width: 100%;
   height: 100%;

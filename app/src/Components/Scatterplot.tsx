@@ -12,7 +12,7 @@ import {connect} from 'react-redux';
 import {Popup} from 'semantic-ui-react';
 import styled from 'styled-components';
 
-import {Dataset} from '../Stores/Types/Dataset';
+import {Dataset, HASH} from '../Stores/Types/Dataset';
 import {SinglePlot} from '../Stores/Types/Plots';
 import {removePlot, updatePlot} from '../Stores/Visualization/Setup/PlotsRedux';
 import VisualizationState from '../Stores/Visualization/VisualizationState';
@@ -313,6 +313,7 @@ const Scatterplot: FC<Props> = ({
                     ? (colorScale(d.color) as string)
                     : defaultMarkColor
                 }
+                className={`mark ${dataset.data[i][HASH]}`}
                 cx={xScale(d.x)}
                 cy={yScale(d.y)}
                 r={4}></IntersectionMark>
@@ -324,6 +325,7 @@ const Scatterplot: FC<Props> = ({
                       ? (colorScale(d.color) as string)
                       : defaultMarkColor
                   }
+                  className={`mark ${dataset.data[i][HASH]}`}
                   cx={xScale(d.x)}
                   cy={yScale(d.y)}
                   r={4}></IntersectionMark>
@@ -334,6 +336,7 @@ const Scatterplot: FC<Props> = ({
                       ? (colorScale(d.color) as string)
                       : defaultMarkColor
                   }
+                  className={`mark ${dataset.data[i][HASH]}`}
                   cx={xScale(d.x)}
                   cy={yScale(d.y)}
                   r={4}></UnionMark>
@@ -360,6 +363,7 @@ const Scatterplot: FC<Props> = ({
                     ? (colorScale(d.color) as string)
                     : defaultMarkColor
                 }
+                className={`mark ${dataset.data[i][HASH]}`}
                 cx={xScale(d.x)}
                 cy={yScale(d.y)}
                 r={4}></RegularMark>

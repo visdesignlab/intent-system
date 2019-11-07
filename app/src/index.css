@@ -10,3 +10,7 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.selection_highlight {
+  fill: red !important;
+}
