@@ -43,7 +43,7 @@ const SelectionResults: FC<Props> = ({selections, dataset}: Props) => {
   const {data, labelColumn} = dataset;
 
   return (
-    <div style={{height: '100%'}}>
+    <div style={{height: '60vh'}}>
       <Segment>
         <Header as="h1" textAlign="center">
           Results
@@ -53,7 +53,7 @@ const SelectionResults: FC<Props> = ({selections, dataset}: Props) => {
         <Label>{`Selected Items: ${unionCount} (Union)`}</Label>
         <Label>{`Selected Items: ${totalSelections} (Total)`}</Label>
       </Segment>
-      <div style={{height: '40%', overflow: 'auto'}}>
+      <div style={{height: '100%', overflow: 'scroll'}}>
         <List>
           {selectedLists.map(selectionId => {
             const selectionObject = data[selectionId];

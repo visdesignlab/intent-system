@@ -1,4 +1,5 @@
 import React, {FC} from 'react';
+import {Segment} from 'semantic-ui-react';
 
 interface OwnProps {
   text: string;
@@ -7,7 +8,7 @@ interface OwnProps {
 type Props = OwnProps;
 
 const Task: FC<Props> = ({text}: Props) => {
-  return <div>{text}</div>;
+  return <Segment>{text}</Segment>;
 };
 
 export default Task;

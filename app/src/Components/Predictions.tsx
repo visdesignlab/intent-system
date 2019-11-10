@@ -1,12 +1,12 @@
-import { scaleLinear, selectAll } from 'd3';
-import React, { FC, RefObject, useRef } from 'react';
-import { connect } from 'react-redux';
-import { Button, Header, Label, Popup, Segment } from 'semantic-ui-react';
+import {scaleLinear, selectAll} from 'd3';
+import React, {FC, RefObject, useRef} from 'react';
+import {connect} from 'react-redux';
+import {Button, Header, Label, Popup, Segment} from 'semantic-ui-react';
 import styled from 'styled-components';
 
-import { Prediction } from '../contract';
-import { Dataset } from '../Stores/Types/Dataset';
-import { hashCode } from '../Utils';
+import {Prediction} from '../contract';
+import {Dataset} from '../Stores/Types/Dataset';
+import {hashCode} from '../Utils';
 
 interface OwnProps {
   dataset: Dataset;
@@ -26,10 +26,10 @@ const Predictions: FC<Props> = ({
   selectedIds,
   predictions,
   time,
-  dataset
+  dataset,
 }: Props) => {
   const svgRef: RefObject<SVGSVGElement> = useRef<SVGSVGElement>(null);
-  const { data, labelColumn } = dataset;
+  const {data, labelColumn} = dataset;
 
   if (!predictions) predictions = [];
 
@@ -59,7 +59,7 @@ const Predictions: FC<Props> = ({
       <PredictionsDiv>
         <svg ref={svgRef} height="100%" width="100%">
           {predictions.map((pred, idx) => {
-            const { dataIds = [] } = pred;
+            const {dataIds = []} = pred;
             const countries = dataIds.map(d => hashCode(data[d][labelColumn]));
 
             let isHighlighted = false;
@@ -76,7 +76,7 @@ const Predictions: FC<Props> = ({
                         countries.forEach(code => {
                           if (
                             !selectAll(`.${code}`).classed(
-                              "suggestion_highlight"
+                              'suggestion_highlight',
                             )
                           ) {
                             isHighlighted = false;
@@ -86,39 +86,38 @@ const Predictions: FC<Props> = ({
                         });
 
                         if (!isHighlighted) {
-                          selectAll(".mark").classed(
-                            "suggestion_highlight",
-                            false
+                          selectAll('.mark').classed(
+                            'suggestion_highlight',
+                            false,
                           );
 
                           countries.forEach(code => {
                             selectAll(`.${code}`).classed(
-                              "suggestion_highlight",
-                              true
+                              'suggestion_highlight',
+                              true,
                             );
                           });
                         } else {
                           countries.forEach(code => {
                             selectAll(`.${code}`).classed(
-                              "suggestion_highlight",
-                              false
+                              'suggestion_highlight',
+                              false,
                             );
                           });
                         }
                       }}
-                      color={isHighlighted ? "red" : "blue"}
-                      size="tiny"
-                    >
-                      {isHighlighted ? "Hide Items" : "Show Items"}
+                      color={isHighlighted ? 'red' : 'blue'}
+                      size="tiny">
+                      {isHighlighted ? 'Hide Items' : 'Show Items'}
                     </Button>
                     <pre>
                       {JSON.stringify(
                         pred,
                         (key, val) => {
-                          if (key === "dataIds") return undefined;
+                          if (key === 'dataIds') return undefined;
                           return val;
                         },
-                        2
+                        2,
                       )}
                     </pre>
                   </div>
@@ -129,23 +128,19 @@ const Predictions: FC<Props> = ({
                       height={barHeight}
                       width={svgRef.current ? svgRef.current.clientWidth : 0}
                       fill="#A8D3EE"
-                      opacity="0.3"
-                    ></rect>
+                      opacity="0.3"></rect>
                     <rect
                       height={barHeight}
                       width={barScale(pred.rank)}
                       fill="#A8D3EE"
-                      opacity="0.9"
-                    ></rect>
+                      opacity="0.9"></rect>
                     <text
                       transform={`translate(10, ${barHeight / 2})`}
-                      dominantBaseline="middle"
-                    >
+                      dominantBaseline="middle">
                       {pred.intent}
                     </text>
                   </g>
-                }
-              ></Popup>
+                }></Popup>
             );
           })}
         </svg>
@@ -160,13 +155,13 @@ const mapStateToProps = (state: any): StateProps => {
     dimensions: state.predictionSet.dimensions,
     selectedIds: state.predictionSet.selectedIds,
     predictions: state.predictionSet.predictions,
-    time: state.predictionSet.time
+    time: state.predictionSet.time,
   };
 };
 
 export default connect(mapStateToProps)(Predictions);
 
-const PredictionsDiv = styled("div")`
+const PredictionsDiv = styled('div')`
   padding: 1em;
   height: 100%;
   width: 100%;
