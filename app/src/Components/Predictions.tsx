@@ -63,6 +63,7 @@ const Predictions: FC<Props> = ({
             const countries = dataIds.map(d => hashCode(data[d][labelColumn]));
 
             let isHighlighted = false;
+
             return (
               <Popup
                 key={idx}
@@ -91,12 +92,16 @@ const Predictions: FC<Props> = ({
                             false,
                           );
 
-                          countries.forEach(code => {
-                            selectAll(`.${code}`).classed(
-                              'suggestion_highlight',
-                              true,
-                            );
-                          });
+                          if (pred.intent === 'Range') {
+                            console.log('Test');
+                          } else {
+                            countries.forEach(code => {
+                              selectAll(`.${code}`).classed(
+                                'suggestion_highlight',
+                                true,
+                              );
+                            });
+                          }
                         } else {
                           countries.forEach(code => {
                             selectAll(`.${code}`).classed(
@@ -150,7 +155,6 @@ const Predictions: FC<Props> = ({
 };
 
 const mapStateToProps = (state: any): StateProps => {
-  console.log(state.predictionSet);
   return {
     dimensions: state.predictionSet.dimensions,
     selectedIds: state.predictionSet.selectedIds,
