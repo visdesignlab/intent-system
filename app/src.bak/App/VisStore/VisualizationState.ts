@@ -1,6 +1,11 @@
-import { InteractionHistory, MultiBrushBehavior, PredictionSet, VisualizationType } from '@visdesignlab/intent-contract';
+import {
+  InteractionHistory,
+  MultiBrushBehavior,
+  PredictionSet,
+  VisualizationType,
+} from '@visdesignlab/intent-contract';
 
-import { Dataset } from './Dataset';
+import {Dataset} from './Dataset';
 
 export interface VisualizationState {
   dataset: Dataset;

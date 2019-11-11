@@ -1,3 +1,4 @@
 export default interface ParticipantDetails {
-  name: string;
+  uniqueId: string;
+  name?: string;
 }
