@@ -94,7 +94,6 @@ axios
   .catch(err => console.log(err));
 
 function startRender(participant: ParticipantDetails = undefined as any) {
-  console.log('Rendering');
   ReactDOM.render(
     <Provider store={predictionStore}>
       <Provider store={VisualizationStore}>
