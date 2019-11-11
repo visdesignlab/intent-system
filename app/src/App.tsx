@@ -55,7 +55,7 @@ const App: FC<Props> = ({dataset, plots, addPlot}: Props) => {
     addPlot(plot2);
   }
 
-  const [showCategories, setShowCategories] = useState(true);
+  const [showCategories, setShowCategories] = useState(false);
 
   const changeShowCategories = (shouldShow: boolean) => {
     setShowCategories(shouldShow);
@@ -91,7 +91,7 @@ const App: FC<Props> = ({dataset, plots, addPlot}: Props) => {
         </VisDiv>
       </TaskVisDiv>
       <Provider store={predictionStore}>
-        <Predictions></Predictions>
+        <Predictions dataset={dataset}></Predictions>
       </Provider>
     </MainDiv>
   );
@@ -117,6 +117,8 @@ const MainDiv = styled('div')`
   height: 100vh;
   width: 100vw;
 
+  max-height: 100vh;
+
   display: grid;
   grid-template-columns: 3fr 1fr;
 `;
@@ -124,6 +126,8 @@ const MainDiv = styled('div')`
 const TaskVisDiv = styled('div')`
   width: 100%;
   height: 100%;
+
+  max-height: 100vh;
 
   display: grid;
   grid-template-rows: 1fr 15fr;
@@ -134,12 +138,11 @@ const VisDiv = styled('div')`
   grid-template-rows: 1fr 10fr;
 
   width: 100%;
-  height: 100%;
 `;
 
 const VisResDiv = styled('div')`
   display: grid;
-  grid-template-columns: 3fr 1fr;
+  grid-template-columns: 4fr 1fr;
 
   width: 100%;
   height: 100%;

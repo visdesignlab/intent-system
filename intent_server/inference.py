@@ -6,6 +6,7 @@ from .vendor.interactions import Interaction, InteractionTypeKind, PredictionSet
 
 from typing import List, Set
 import pandas as pd
+import sys
 
 
 def is_point_selection(interaction: Interaction) -> bool:
@@ -87,8 +88,12 @@ class Inference:
 
         # Perform ranking
         ranks = map(lambda m: m.to_prediction(sel_array, relevant_data), self.intents)
+        print(self.info(dims), file=sys.stderr)
+
+        predictions = [p for preds in ranks for p in preds]
+
         return PredictionSet(
-            predictions=[p for preds in ranks for p in preds],
+            predictions=predictions,
             dimensions=dims.dims,
             selected_ids=list(map(float, ids)))
 

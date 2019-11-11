@@ -35,7 +35,7 @@ export const InteractionsReducer: Reducer<
         multiBrushBehavior: action.args.multiBrushBehavior,
         interactionHistory: interactions,
       };
-      console.log('IH', request);
+      // console.log('IH', request);
       axios
         .post(`/dataset/${datasetName}/predict`, request)
         .then(response => {
