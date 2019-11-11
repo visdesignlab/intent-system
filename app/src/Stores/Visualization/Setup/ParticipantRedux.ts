@@ -11,7 +11,8 @@ interface ParticipantUpdateAction extends Action<UPDATE_PARTICIPANT> {
 }
 
 const dummyParticipant: ParticipantDetails = {
-  name: 'UNKNOWN',
+  uniqueId: null as any,
+  name: null as any,
 };
 
 export const updateParticipant = (participant: ParticipantDetails) =>

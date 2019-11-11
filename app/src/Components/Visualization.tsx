@@ -1,8 +1,6 @@
 import React, {FC, useState, useCallback, useMemo} from 'react';
 import styled from 'styled-components';
-import {updateParticipant} from '../Stores/Visualization/Setup/ParticipantRedux';
 import {connect} from 'react-redux';
-import {VisualizationProvenance} from '..';
 import VisualizationState from '../Stores/Visualization/VisualizationState';
 import {Dataset} from '../Stores/Types/Dataset';
 import {Plots} from '../Stores/Types/Plots';
@@ -33,9 +31,7 @@ interface StateProps {
   plots: Plots;
 }
 
-interface DispatchProps {
-  update: any;
-}
+interface DispatchProps {}
 
 type Props = OwnProps & DispatchProps & StateProps;
 
@@ -207,21 +203,12 @@ const Visualization: FC<Props> = ({
   );
 };
 
-const mapDispatchToProps = (): DispatchProps => ({
-  update: (name: string) => {
-    VisualizationProvenance.apply(updateParticipant({name: name}));
-  },
-});
-
 const mapStateToProps = (state: VisualizationState): StateProps => ({
   dataset: state.dataset,
   plots: state.plots,
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(Visualization);
+export default connect(mapStateToProps)(Visualization);
 
 const MainSvg = styled('svg')`
   width: 100%;
