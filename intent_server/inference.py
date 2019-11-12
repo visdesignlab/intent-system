@@ -4,7 +4,9 @@ from .algorithms import Outlier, Skyline, Range, KMeansCluster, Categories, DBSC
 
 from .vendor.interactions import Interaction, InteractionTypeKind, PredictionSet, MultiBrushBehavior
 
+from sklearn.naive_bayes import BernoulliNB 
 from typing import List, Set
+import numpy as np
 import pandas as pd
 import sys
 
@@ -85,10 +87,27 @@ class Inference:
         sel_array = self.dataset.selection(ids)
 
         relevant_data = self.dataset.subset(dims)
+        
+        outputs = pd.concat(
+            map(lambda intent: intent.compute(relevant_data), self.intents),
+            axis='columns')
+        
+        train = outputs.T.to_numpy()
+        labels = outputs.columns.tolist()
+
+        print(train.shape)
+        print(labels)
+
+        clf = BernoulliNB(fit_prior=False, binarize=0.5)
+        clf.fit(train, labels)
+        
+        print(sel_array.transpose().shape)
+        print(clf.predict(sel_array.transpose()))
+        print(clf.predict_proba(sel_array.transpose()))
+        print(clf.classes_)
 
         # Perform ranking
         ranks = map(lambda m: m.to_prediction(sel_array, relevant_data), self.intents)
-        print(self.info(dims), file=sys.stderr)
 
         predictions = [p for preds in ranks for p in preds]
 
