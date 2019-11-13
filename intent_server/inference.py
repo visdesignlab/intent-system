@@ -88,7 +88,7 @@ class Inference:
         relevant_data = self.dataset.subset(dims)
 
         outputs = pd.concat(
-            map(lambda intent: intent.compute(relevant_data), self.intents),
+            map(lambda intent: intent.compute(relevant_data), self.intents),  # type: ignore
             axis='columns')
 
         # Perform ranking
