@@ -4,6 +4,7 @@ from .algorithms import Outlier, Skyline, Range, KMeansCluster, Categories, DBSC
 
 from .vendor.interactions import Interaction, InteractionTypeKind, PredictionSet, MultiBrushBehavior
 
+from sklearn.naive_bayes import BernoulliNB
 from typing import List, Set
 import pandas as pd
 import sys
@@ -86,11 +87,33 @@ class Inference:
 
         relevant_data = self.dataset.subset(dims)
 
+        outputs = pd.concat(
+            map(lambda intent: intent.compute(relevant_data), self.intents),  # type: ignore
+            axis='columns')
+
         # Perform ranking
         ranks = map(lambda m: m.to_prediction(sel_array, relevant_data), self.intents)
         print(self.info(dims), file=sys.stderr)
 
         predictions = [p for preds in ranks for p in preds]
+
+        # Add probailities
+        train = outputs.T.to_numpy()
+        labels = outputs.columns.tolist()
+
+        clf = BernoulliNB(fit_prior=False, binarize=0.5)
+        clf.fit(train, labels)
+
+        # dictionary containing the probabilities
+        probs = dict(zip(
+            clf.classes_.flatten().tolist(),
+            clf.predict_proba(sel_array.transpose()).flatten().tolist()))
+
+        for p in predictions:
+            if p.intent in probs:
+                if p.info is None:
+                    p.info = dict()
+                p.info['probability'] = probs[p.intent]
 
         return PredictionSet(
             predictions=predictions,
