@@ -91,11 +91,10 @@ class Inference:
         outputs = pd.concat(
             map(lambda intent: intent.compute(relevant_data), self.intents),
             axis='columns')
-        
-        
 
         # Perform ranking
         ranks = map(lambda m: m.to_prediction(sel_array, relevant_data), self.intents)
+        print(self.info(dims), file=sys.stderr)
 
         predictions = [p for preds in ranks for p in preds]
 
