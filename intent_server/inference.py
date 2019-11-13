@@ -4,9 +4,8 @@ from .algorithms import Outlier, Skyline, Range, KMeansCluster, Categories, DBSC
 
 from .vendor.interactions import Interaction, InteractionTypeKind, PredictionSet, MultiBrushBehavior
 
-from sklearn.naive_bayes import BernoulliNB 
+from sklearn.naive_bayes import BernoulliNB
 from typing import List, Set
-import numpy as np
 import pandas as pd
 import sys
 
@@ -87,7 +86,7 @@ class Inference:
         sel_array = self.dataset.selection(ids)
 
         relevant_data = self.dataset.subset(dims)
-        
+
         outputs = pd.concat(
             map(lambda intent: intent.compute(relevant_data), self.intents),
             axis='columns')
@@ -104,7 +103,7 @@ class Inference:
 
         clf = BernoulliNB(fit_prior=False, binarize=0.5)
         clf.fit(train, labels)
-        
+
         # dictionary containing the probabilities
         probs = dict(zip(
             clf.classes_.flatten().tolist(),
