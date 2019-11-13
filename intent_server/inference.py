@@ -98,7 +98,7 @@ class Inference:
 
         predictions = [p for preds in ranks for p in preds]
 
-        # Add probanilities
+        # Add probailities
         train = outputs.T.to_numpy()
         labels = outputs.columns.tolist()
 
