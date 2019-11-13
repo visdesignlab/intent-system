@@ -92,24 +92,30 @@ class Inference:
             map(lambda intent: intent.compute(relevant_data), self.intents),
             axis='columns')
         
-        train = outputs.T.to_numpy()
-        labels = outputs.columns.tolist()
-
-        print(train.shape)
-        print(labels)
-
-        clf = BernoulliNB(fit_prior=False, binarize=0.5)
-        clf.fit(train, labels)
         
-        print(sel_array.transpose().shape)
-        print(clf.predict(sel_array.transpose()))
-        print(clf.predict_proba(sel_array.transpose()))
-        print(clf.classes_)
 
         # Perform ranking
         ranks = map(lambda m: m.to_prediction(sel_array, relevant_data), self.intents)
 
         predictions = [p for preds in ranks for p in preds]
+
+        # Add probanilities
+        train = outputs.T.to_numpy()
+        labels = outputs.columns.tolist()
+
+        clf = BernoulliNB(fit_prior=False, binarize=0.5)
+        clf.fit(train, labels)
+        
+        # dictionary containing the probabilities
+        probs = dict(zip(
+            clf.classes_.flatten().tolist(),
+            clf.predict_proba(sel_array.transpose()).flatten().tolist()))
+
+        for p in predictions:
+            if p.intent in probs:
+                if p.info is None:
+                    p.info = dict()
+                p.info['probability'] = probs[p.intent]
 
         return PredictionSet(
             predictions=predictions,
