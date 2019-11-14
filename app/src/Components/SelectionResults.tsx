@@ -49,6 +49,8 @@ const SelectionResults: FC<Props> = ({selections, dataset}: Props) => {
 
   const {data, labelColumn} = dataset;
 
+  const detailedSelectedList = selectedLists.map(idx => data[idx]);
+
   return (
     <div style={{height: '45vh'}}>
       <Segment>
@@ -80,25 +82,17 @@ const SelectionResults: FC<Props> = ({selections, dataset}: Props) => {
                     false,
                   );
                 }}>
-                <Checkbox
-                  label={selectionLabel}
-                  checked={finalSelection.includes(selectionLabel)}
-                  onChange={() => {
-                    if (finalSelection.includes(selectionLabel)) {
-                      setFinalSelection(
-                        finalSelection.filter(sel => sel !== selectionLabel),
-                      );
-                    } else {
-                      setFinalSelection([...finalSelection, selectionLabel]);
-                    }
-                  }}></Checkbox>
+                {selectionLabel}
               </List.Item>
             );
           })}
         </List>
       </Segment>
       <Segment textAlign="center">
-        <Button primary onClick={() => console.log(finalSelection)}>
+        <Button
+          primary
+          disabled={selectedLists.length === 0}
+          onClick={() => console.table(detailedSelectedList)}>
           Submit
         </Button>
       </Segment>
