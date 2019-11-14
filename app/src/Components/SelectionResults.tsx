@@ -1,4 +1,4 @@
-import React, {FC, useState} from 'react';
+import React, {FC} from 'react';
 import {Dataset} from '../Stores/Types/Dataset';
 import {connect} from 'react-redux';
 import VisualizationState from '../Stores/Visualization/VisualizationState';
