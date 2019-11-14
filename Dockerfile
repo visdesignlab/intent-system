@@ -23,5 +23,5 @@ RUN cd app \
   && cd ..
 
 RUN pipenv install
-# 
-# CMD ["./server.sh"]
+ 
+CMD ["./server.sh"]
