@@ -22,6 +22,7 @@ export const PredictionsReducer: Reducer<
 > = (current = {} as any, action: UpdatePredictionAction) => {
   switch (action.type) {
     case UPDATE_PREDICTION:
+      console.log(action.args, action.args.predictions.length);
       return action.args;
     default:
       return current;
