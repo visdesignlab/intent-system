@@ -20,6 +20,7 @@ import VisualizationStoreCreator from './Stores/Visualization/VisualizationStore
 import {defaultStudyState, StudyState} from './Stores/Study/StudyState';
 import ParticipantDetails from './Stores/Types/ParticipantDetails';
 import Events from './Stores/Types/EventEnum';
+import {getRandomUserCode} from './Utils';
 
 export const VisualizationStore = VisualizationStoreCreator();
 export const VisualizationProvenance = initProvenanceRedux<VisualizationState>(
@@ -67,29 +68,25 @@ axios
     datasetName = datasets.filter((d: string) => d.includes('gapminder'))[0];
     await loadDataset(getDatasetUrl(datasetName));
 
-    if (window.location.href.includes('#test')) {
-      studyProvenance.applyAction({
-        label: Events.SET_PARTICIPANT,
-        action: () => {
-          let currentState = studyProvenance.graph().current.state;
-          if (currentState) {
-            currentState = {
-              ...currentState,
-              participant: {
-                uniqueId: 'Test User',
-              },
-              event: Events.SET_PARTICIPANT,
-              eventTime: new Date(),
-            };
-          }
+    studyProvenance.applyAction({
+      label: Events.SET_PARTICIPANT,
+      action: () => {
+        let currentState = studyProvenance.graph().current.state;
+        if (currentState) {
+          currentState = {
+            ...currentState,
+            participant: {
+              uniqueId: getRandomUserCode(),
+            },
+            event: Events.SET_PARTICIPANT,
+            eventTime: new Date(),
+          };
+        }
 
-          return currentState as StudyState;
-        },
-        args: [],
-      });
-    } else {
-      startRender();
-    }
+        return currentState as StudyState;
+      },
+      args: [],
+    });
   })
   .catch(err => console.log(err));
 
