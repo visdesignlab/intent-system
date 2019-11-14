@@ -88,7 +88,7 @@ const PlotControl: FC<Props> = ({
             plot.brushes = {};
             plot.selectedPoints = [];
             addPlot(plot);
-            setSinglePlot({} as any);
+            setSinglePlot({color: dataset.categoricalColumns[0]} as any);
             setAddingPlot(false);
           }}>
           <Icon name="check"></Icon>
@@ -99,7 +99,7 @@ const PlotControl: FC<Props> = ({
           icon
           color="red"
           onClick={() => {
-            setSinglePlot({} as any);
+            setSinglePlot({color: dataset.categoricalColumns[0]} as any);
             setAddingPlot(false);
           }}>
           <Icon name="close"></Icon>
