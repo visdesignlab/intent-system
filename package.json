@@ -10,7 +10,7 @@
     "postinstall": "cd app && yarn install",
     "update-env": "conda env update -f environment.yml",
     "free-port": "node freeport.js",
-    "build-env": "yarn install && yarn run update-env",
+    "build-env": "yarn install && pipenv install",
     "server": "./server.sh debug",
     "app": "cd app && yarn start",
     "python-bindgen": "quicktype --src app/src/contract/index.ts --src-lang typescript --lang python --out intent_server/vendor/interactions.py || echo 'Please install npm package quicktype globally'",
