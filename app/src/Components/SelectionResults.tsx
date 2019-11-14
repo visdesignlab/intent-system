@@ -3,14 +3,7 @@ import {Dataset} from '../Stores/Types/Dataset';
 import {connect} from 'react-redux';
 import VisualizationState from '../Stores/Visualization/VisualizationState';
 import {SelectionRecord} from '../App';
-import {
-  Header,
-  Segment,
-  Label,
-  List,
-  Button,
-  Checkbox,
-} from 'semantic-ui-react';
+import {Header, Segment, Label, List, Button} from 'semantic-ui-react';
 import {selectAll} from 'd3';
 import {hashCode} from '../Utils';
 
@@ -28,8 +21,6 @@ type Props = OwnProps & StateProps & DispatchProps;
 
 const SelectionResults: FC<Props> = ({selections, dataset}: Props) => {
   let pointSelectionsCount: number = selections.pointSelections.length;
-
-  const [finalSelection, setFinalSelection] = useState<string[]>([]);
 
   const {maxBrushCount, brushSelections} = selections;
 
