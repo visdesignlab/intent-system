@@ -64,6 +64,9 @@ const Predictions: FC<Props> = ({
 
             let isHighlighted = false;
 
+            const info: any = pred.info;
+            const {probability} = info;
+
             return (
               <Popup
                 key={idx}
@@ -139,6 +142,15 @@ const Predictions: FC<Props> = ({
                       width={barScale(pred.rank)}
                       fill="#A8D3EE"
                       opacity="0.9"></rect>
+                    {probability && (
+                      <line
+                        stroke="black"
+                        strokeWidth={0.5}
+                        x1={barScale(probability)}
+                        x2={barScale(probability)}
+                        y1="0"
+                        y2={barHeight}></line>
+                    )}
                     <text
                       transform={`translate(10, ${barHeight / 2})`}
                       dominantBaseline="middle">
