@@ -1,4 +1,5 @@
 #! /bin/bash
+pipenv install
 if [ "$#" -eq "0" ];  then
     pipenv run python3 run.py
 else
