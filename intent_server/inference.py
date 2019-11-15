@@ -107,7 +107,7 @@ class Inference:
         # dictionary containing the probabilities
         probs = dict(zip(
             clf.classes_.flatten().tolist(),
-            clf.predict_proba(sel_array.astype(bool).transpose()).flatten().tolist()))
+            clf.predict_proba(sel_array.transpose()).flatten().tolist()))
 
         for p in predictions:
             if p.intent in probs:
