@@ -4,7 +4,7 @@ from .algorithms import Outlier, Skyline, Range, KMeansCluster, Categories, DBSC
 
 from .vendor.interactions import Interaction, InteractionTypeKind, PredictionSet, MultiBrushBehavior
 
-from sklearn.naive_bayes import BernoulliNB
+from sklearn.naive_bayes import MultinomialNB
 from typing import List, Set
 import pandas as pd
 import sys
@@ -99,15 +99,15 @@ class Inference:
 
         # Add probailities
         train = outputs.T.to_numpy()
-        labels = outputs.columns.tolist()
+        labels = outputs.columns.values.tolist()
 
-        clf = BernoulliNB(fit_prior=False, binarize=0.5)
+        clf = MultinomialNB(fit_prior=False)
         clf.fit(train, labels)
 
         # dictionary containing the probabilities
         probs = dict(zip(
             clf.classes_.flatten().tolist(),
-            clf.predict_proba(sel_array.transpose()).flatten().tolist()))
+            clf.predict_proba(sel_array.astype(bool).transpose()).flatten().tolist()))
 
         for p in predictions:
             if p.intent in probs:
