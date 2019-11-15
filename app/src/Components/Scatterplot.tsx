@@ -27,7 +27,7 @@ import {
   PointDeselection,
 } from '../contract';
 import {ADD_INTERACTION} from '../Stores/Visualization/Setup/InteractionsRedux';
-import {PointSelectionEnum} from './Visualization';
+import {PointSelectionEnum, OtherPointSelections} from './Visualization';
 
 interface OwnProps {
   plot: SinglePlot;
@@ -37,8 +37,12 @@ interface OwnProps {
   showCategories: boolean;
   otherBrushes: any;
   update: any;
-  otherPointSelection: any;
-  updateOtherPointSelection: any;
+  otherPointSelection: OtherPointSelections;
+  updateOtherPointSelection: (
+    plotid: string,
+    point: number,
+    type: PointSelectionEnum,
+  ) => void;
   markSize: string | number;
 }
 
@@ -280,6 +284,10 @@ const Scatterplot: FC<Props> = ({
     </g>
   );
 
+  const clickSelectedPoints = Object.keys(otherPointSelection).flatMap(
+    key => otherPointSelection[key],
+  );
+
   const defaultMarkColor = '#37c3fa';
 
   const MarksLayer = (
@@ -288,9 +296,14 @@ const Scatterplot: FC<Props> = ({
         <Popup
           key={i}
           trigger={
-            otherPointSelection.includes(i) ? (
+            clickSelectedPoints.includes(i) ? (
               <IntersectionMark
                 onClick={() => {
+                  if (
+                    !otherPointSelection[plot.id] ||
+                    !otherPointSelection[plot.id].includes(i)
+                  )
+                    return;
                   let points = plot.selectedPoints.filter(p => p !== i);
 
                   plot.selectedPoints = points;

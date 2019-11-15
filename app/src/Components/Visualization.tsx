@@ -20,6 +20,12 @@ export enum PointSelectionEnum {
   REMOVE = 'REMOVE',
 }
 
+export type OtherPointSelections = {[key: string]: number[]};
+
+export type PointCountInPlot = {[key: number]: number};
+
+export type BrushRecordForPlot = {[key: string]: PointCountInPlot};
+
 interface OwnProps {
   showCategories: boolean;
   updateSelections: (sel: SelectionRecord) => void;
@@ -71,7 +77,7 @@ const Visualization: FC<Props> = ({
   }
 
   const [otherBrushes, setOtherBrushes] = useState({} as any);
-  let [otherSelection, setOtherSelection] = useState([] as number[]);
+  let [otherSelection, setOtherSelection] = useState<OtherPointSelections>({});
 
   const columnCount = actualCount >= 3 ? 3 : actualCount;
   const dividedHeight = height / rowCount;
@@ -109,14 +115,16 @@ const Visualization: FC<Props> = ({
     point: number,
     type: PointSelectionEnum,
   ) => {
+    let selForPlot = otherSelection[plotid] ? otherSelection[plotid] : [];
     switch (type) {
       case PointSelectionEnum.ADD:
-        otherSelection.push(point);
-        setOtherSelection([...otherSelection]);
+        selForPlot.push(point);
+        const test = {...otherSelection, [plotid]: [...selForPlot]};
+        setOtherSelection(test);
         break;
       case PointSelectionEnum.REMOVE:
-        otherSelection = otherSelection.filter((p: any) => p !== point);
-        setOtherSelection([...otherSelection]);
+        selForPlot = selForPlot.filter((p: any) => p !== point);
+        setOtherSelection({...otherSelection, [plotid]: [...selForPlot]});
         break;
       default:
         return;
@@ -125,7 +133,9 @@ const Visualization: FC<Props> = ({
 
   const totalSelections: SelectionRecord = useMemo(() => {
     const brushSelections: BrushSelectionDictionary = {};
-    const pointSelections: PointSelectionArray = [...otherSelection];
+    const pointSelections: PointSelectionArray = [
+      ...Object.keys(otherSelection).flatMap(key => otherSelection[key]),
+    ];
     Object.values(otherBrushes).forEach((brush: any) => {
       Object.entries(brush).forEach(f => {
         const [point, count]: [string, number] = f as any;
@@ -170,7 +180,6 @@ const Visualization: FC<Props> = ({
                 totalHeight / 2})`}>
               {plots.map((plot, i) => {
                 const xPos = plotDimension * xPosGen();
-                console.log(xPos);
                 return (
                   <g
                     key={`${plot.id} ${i}`}
