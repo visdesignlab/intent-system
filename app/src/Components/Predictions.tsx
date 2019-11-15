@@ -48,10 +48,10 @@ const Predictions: FC<Props> = ({
 
   const stringTime = time.toFixed(2);
 
-  console.log(isLoading);
-
   const loadingScreen = (
-    <Loader size="massive" active inline="centered"></Loader>
+    <Loader size="massive" active inline="centered">
+      Recomputing Predictions
+    </Loader>
   );
 
   return (
