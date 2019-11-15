@@ -169,11 +169,12 @@ const Visualization: FC<Props> = ({
                 2 -
                 totalHeight / 2})`}>
               {plots.map((plot, i) => {
+                const xPos = plotDimension * xPosGen();
+                console.log(xPos);
                 return (
                   <g
                     key={`${plot.id} ${i}`}
-                    transform={`translate(${plotDimension *
-                      xPosGen()}, ${plotDimension *
+                    transform={`translate(${xPos}, ${plotDimension *
                       Math.floor(i / breakCount)})`}>
                     <rect
                       height={plotDimension}
@@ -190,6 +191,7 @@ const Visualization: FC<Props> = ({
                       otherBrushes={otherBrushes}
                       otherPointSelection={otherSelection}
                       updateOtherPointSelection={updatePoints}
+                      markSize={`${0.25 / rowCount}em`}
                       colorScale={colorScale}></Scatterplot>
                   </g>
                 );

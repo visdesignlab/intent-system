@@ -39,6 +39,7 @@ interface OwnProps {
   update: any;
   otherPointSelection: any;
   updateOtherPointSelection: any;
+  markSize: string | number;
 }
 
 interface StateProps {
@@ -92,6 +93,7 @@ const Scatterplot: FC<Props> = ({
   otherBrushes,
   otherPointSelection,
   updateOtherPointSelection,
+  markSize,
 }: Props) => {
   const xAxisRef: RefObject<SVGGElement> = createRef();
   const yAxisRef: RefObject<SVGGElement> = createRef();
@@ -316,7 +318,7 @@ const Scatterplot: FC<Props> = ({
                 className={`mark ${dataset.data[i][HASH]}`}
                 cx={xScale(d.x)}
                 cy={yScale(d.y)}
-                r={4}></IntersectionMark>
+                r={markSize}></IntersectionMark>
             ) : selectedIndices[i] ? (
               selectedIndices[i] === maxIntersection ? (
                 <IntersectionMark
@@ -328,7 +330,7 @@ const Scatterplot: FC<Props> = ({
                   className={`mark ${dataset.data[i][HASH]}`}
                   cx={xScale(d.x)}
                   cy={yScale(d.y)}
-                  r={4}></IntersectionMark>
+                  r={markSize}></IntersectionMark>
               ) : (
                 <UnionMark
                   fill={
@@ -339,7 +341,7 @@ const Scatterplot: FC<Props> = ({
                   className={`mark ${dataset.data[i][HASH]}`}
                   cx={xScale(d.x)}
                   cy={yScale(d.y)}
-                  r={4}></UnionMark>
+                  r={markSize}></UnionMark>
               )
             ) : (
               <RegularMark
@@ -366,7 +368,7 @@ const Scatterplot: FC<Props> = ({
                 className={`mark ${dataset.data[i][HASH]}`}
                 cx={xScale(d.x)}
                 cy={yScale(d.y)}
-                r={4}></RegularMark>
+                r={markSize}></RegularMark>
             )
           }
           content={
@@ -563,7 +565,7 @@ const RegularMark = styled('circle')<MarkProps>`
   opacity: 0.6;
   cursor: pointer;
   &:hover {
-    r: 7px;
+    r: 0.35em;
   }
 `;
 
