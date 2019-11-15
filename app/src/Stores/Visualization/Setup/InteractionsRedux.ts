@@ -9,6 +9,7 @@ import {
 import axios from 'axios';
 import {datasetName, predictionStore} from '../../..';
 import {updatePredictions} from '../../Predictions/Setup/PredictionRedux';
+import {updatePredictionLoading} from '../../Predictions/Setup/PredictionLoadingRedux';
 
 export const ADD_INTERACTION = 'ADD_INTERACTION';
 export type ADD_INTERACTION = typeof ADD_INTERACTION;
@@ -36,10 +37,12 @@ export const InteractionsReducer: Reducer<
         interactionHistory: interactions,
       };
       // console.log('IH', request);
+      predictionStore.dispatch(updatePredictionLoading(true));
       axios
         .post(`/dataset/${datasetName}/predict`, request)
         .then(response => {
           predictionStore.dispatch(updatePredictions(response.data));
+          predictionStore.dispatch(updatePredictionLoading(false));
         })
         .catch(err => {
           console.log(err);
