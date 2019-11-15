@@ -76,7 +76,7 @@ const Visualization: FC<Props> = ({
     rowCount += 1;
   }
 
-  const [otherBrushes, setOtherBrushes] = useState({} as any);
+  const [otherBrushes, setOtherBrushes] = useState<BrushRecordForPlot>({});
   let [otherSelection, setOtherSelection] = useState<OtherPointSelections>({});
 
   const columnCount = actualCount >= 3 ? 3 : actualCount;
@@ -100,7 +100,7 @@ const Visualization: FC<Props> = ({
     .domain(uniqueValues)
     .range(schemeSet2);
 
-  const update = (plotid: string, brs: any) => {
+  const updateOtherBrushes = (plotid: string, brs: PointCountInPlot) => {
     if (
       otherBrushes[plotid] &&
       JSON.stringify(brs) === JSON.stringify(otherBrushes[plotid])
@@ -196,7 +196,7 @@ const Visualization: FC<Props> = ({
                       size={plotDimension}
                       showCategories={showCategories}
                       lastPlot={plots.length === 1}
-                      update={update}
+                      update={updateOtherBrushes}
                       otherBrushes={otherBrushes}
                       otherPointSelection={otherSelection}
                       updateOtherPointSelection={updatePoints}
