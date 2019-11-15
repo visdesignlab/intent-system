@@ -27,7 +27,11 @@ import {
   PointDeselection,
 } from '../contract';
 import {ADD_INTERACTION} from '../Stores/Visualization/Setup/InteractionsRedux';
-import {PointSelectionEnum, OtherPointSelections} from './Visualization';
+import {
+  PointSelectionEnum,
+  OtherPointSelections,
+  PointCountInPlot,
+} from './Visualization';
 
 interface OwnProps {
   plot: SinglePlot;
@@ -36,7 +40,7 @@ interface OwnProps {
   colorScale: ScaleOrdinal<string, unknown>;
   showCategories: boolean;
   otherBrushes: any;
-  update: any;
+  update: (plotid: string, brs: PointCountInPlot) => void;
   otherPointSelection: OtherPointSelections;
   updateOtherPointSelection: (
     plotid: string,
