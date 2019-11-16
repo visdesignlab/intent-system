@@ -44,6 +44,8 @@ const App: FC<Props> = ({participant, dataset, plots, addPlot}: Props) => {
       y: dataset.numericColumns[1],
       color: dataset.categoricalColumns[0],
       brushes: {},
+      brushSelections: {},
+      combinedBrushSelections: {},
       selectedPoints: [],
     };
     const plot2: SinglePlot = {
@@ -52,6 +54,8 @@ const App: FC<Props> = ({participant, dataset, plots, addPlot}: Props) => {
       y: dataset.numericColumns[2],
       color: dataset.categoricalColumns[0],
       brushes: {},
+      brushSelections: {},
+      combinedBrushSelections: {},
       selectedPoints: [],
     };
 

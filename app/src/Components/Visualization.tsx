@@ -3,7 +3,11 @@ import styled from 'styled-components';
 import {connect} from 'react-redux';
 import VisualizationState from '../Stores/Visualization/VisualizationState';
 import {Dataset} from '../Stores/Types/Dataset';
-import {Plots} from '../Stores/Types/Plots';
+import {
+  Plots,
+  BrushRecordForPlot,
+  PointCountInPlot,
+} from '../Stores/Types/Plots';
 import Scatterplot from './Scatterplot';
 import Legend from './Legend';
 import {scaleOrdinal, schemeSet2, max} from 'd3';
@@ -19,12 +23,6 @@ export enum PointSelectionEnum {
   ADD = 'ADD',
   REMOVE = 'REMOVE',
 }
-
-export type OtherPointSelections = {[key: string]: number[]};
-
-export type PointCountInPlot = {[key: number]: number};
-
-export type BrushRecordForPlot = {[key: string]: PointCountInPlot};
 
 interface OwnProps {
   showCategories: boolean;
@@ -62,6 +60,8 @@ const Visualization: FC<Props> = ({
     }
   }, []);
 
+  console.log('Rendering Visualization.tsx');
+
   const margin = 50;
   const height = dimensions.height - 2 * margin;
   const width = dimensions.width - 2 * margin;
@@ -77,7 +77,6 @@ const Visualization: FC<Props> = ({
   }
 
   const [otherBrushes, setOtherBrushes] = useState<BrushRecordForPlot>({});
-  let [otherSelection, setOtherSelection] = useState<OtherPointSelections>({});
 
   const columnCount = actualCount >= 3 ? 3 : actualCount;
   const dividedHeight = height / rowCount;
@@ -110,32 +109,11 @@ const Visualization: FC<Props> = ({
     setOtherBrushes(JSON.parse(JSON.stringify(otherBrushes)));
   };
 
-  const updatePoints = (
-    plotid: string,
-    point: number,
-    type: PointSelectionEnum,
-  ) => {
-    let selForPlot = otherSelection[plotid] ? otherSelection[plotid] : [];
-    switch (type) {
-      case PointSelectionEnum.ADD:
-        selForPlot.push(point);
-        const test = {...otherSelection, [plotid]: [...selForPlot]};
-        setOtherSelection(test);
-        break;
-      case PointSelectionEnum.REMOVE:
-        selForPlot = selForPlot.filter((p: any) => p !== point);
-        setOtherSelection({...otherSelection, [plotid]: [...selForPlot]});
-        break;
-      default:
-        return;
-    }
-  };
-
   const totalSelections: SelectionRecord = useMemo(() => {
     const brushSelections: BrushSelectionDictionary = {};
-    const pointSelections: PointSelectionArray = [
-      ...Object.keys(otherSelection).flatMap(key => otherSelection[key]),
-    ];
+    const pointSelections: PointSelectionArray = plots.flatMap(
+      p => p.selectedPoints,
+    );
     Object.values(otherBrushes).forEach((brush: any) => {
       Object.entries(brush).forEach(f => {
         const [point, count]: [string, number] = f as any;
@@ -152,7 +130,7 @@ const Visualization: FC<Props> = ({
       maxBrushCount: maxBcount,
     };
     return totalSelections;
-  }, [otherBrushes, otherSelection]);
+  }, [otherBrushes, plots]);
 
   if (!areEqual(totalSelections, selRecord)) updateSelections(totalSelections);
 
@@ -180,6 +158,9 @@ const Visualization: FC<Props> = ({
                 totalHeight / 2})`}>
               {plots.map((plot, i) => {
                 const xPos = plotDimension * xPosGen();
+
+                const otherPlots = plots.filter(p => p.id !== plot.id);
+
                 return (
                   <g
                     key={`${plot.id} ${i}`}
@@ -193,13 +174,12 @@ const Visualization: FC<Props> = ({
                       stroke="red"></rect>
                     <Scatterplot
                       plot={plot}
+                      otherPlots={otherPlots}
                       size={plotDimension}
                       showCategories={showCategories}
                       lastPlot={plots.length === 1}
                       update={updateOtherBrushes}
                       otherBrushes={otherBrushes}
-                      otherPointSelection={otherSelection}
-                      updateOtherPointSelection={updatePoints}
                       markSize={`${0.25 / rowCount}em`}
                       colorScale={colorScale}></Scatterplot>
                   </g>

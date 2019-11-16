@@ -13,7 +13,12 @@ import {Popup} from 'semantic-ui-react';
 import styled from 'styled-components';
 
 import {Dataset, HASH} from '../Stores/Types/Dataset';
-import {SinglePlot} from '../Stores/Types/Plots';
+import {
+  SinglePlot,
+  OtherPointSelections,
+  PointCountInPlot,
+  combineBrushSelectionInSinglePlot,
+} from '../Stores/Types/Plots';
 import {removePlot, updatePlot} from '../Stores/Visualization/Setup/PlotsRedux';
 import VisualizationState from '../Stores/Visualization/VisualizationState';
 import BrushComponent from './Brush/Components/BrushComponent';
@@ -27,26 +32,16 @@ import {
   PointDeselection,
 } from '../contract';
 import {ADD_INTERACTION} from '../Stores/Visualization/Setup/InteractionsRedux';
-import {
-  PointSelectionEnum,
-  OtherPointSelections,
-  PointCountInPlot,
-} from './Visualization';
 
 interface OwnProps {
   plot: SinglePlot;
+  otherPlots: SinglePlot[];
   size: number;
   lastPlot: boolean;
   colorScale: ScaleOrdinal<string, unknown>;
   showCategories: boolean;
   otherBrushes: any;
   update: (plotid: string, brs: PointCountInPlot) => void;
-  otherPointSelection: OtherPointSelections;
-  updateOtherPointSelection: (
-    plotid: string,
-    point: number,
-    type: PointSelectionEnum,
-  ) => void;
   markSize: string | number;
 }
 
@@ -84,6 +79,7 @@ type Props = OwnProps & StateProps & DispatchProps;
 
 const Scatterplot: FC<Props> = ({
   plot,
+  otherPlots,
   size,
   showCategories,
   dataset,
@@ -99,12 +95,12 @@ const Scatterplot: FC<Props> = ({
   colorScale,
   update,
   otherBrushes,
-  otherPointSelection,
-  updateOtherPointSelection,
   markSize,
 }: Props) => {
   const xAxisRef: RefObject<SVGGElement> = createRef();
   const yAxisRef: RefObject<SVGGElement> = createRef();
+
+  console.log('Triggered me in SinglePlot');
 
   const {x, y, color, brushes} = plot;
   const data = dataset.data.map(v => ({
@@ -230,9 +226,9 @@ const Scatterplot: FC<Props> = ({
             });
             return;
           }
+
           const currPlot = {...plot};
-          currPlot.brushes = {...brushes};
-          updatePlot(currPlot, false);
+
           let {x1, x2, y1, y2} = affectedBrush.extents;
           [x1, x2, y1, y2] = [
             xScale.invert(x1 * width - extentPadding),
@@ -241,7 +237,7 @@ const Scatterplot: FC<Props> = ({
             yScale.invert(y2 * height - extentPadding),
           ];
 
-          const selectedIndices: {[key: number]: number} = {};
+          const selectedIndices: PointCountInPlot = {};
 
           data.forEach((d, i) => {
             if (d.x >= x1 && d.x <= x2 && d.y <= y1 && d.y >= y2) {
@@ -251,6 +247,20 @@ const Scatterplot: FC<Props> = ({
               selectedIndices[i] += 1;
             }
           });
+
+          const brushRecordForPlot = {
+            ...currPlot.brushSelections,
+            [affectedBrush.id]: selectedIndices,
+          };
+
+          currPlot.brushes = {...brushes};
+          currPlot.brushSelections = {...brushRecordForPlot};
+          currPlot.combinedBrushSelections = combineBrushSelectionInSinglePlot(
+            currPlot,
+          );
+
+          console.log(currPlot.brushes, currPlot.combinedBrushSelections);
+          updatePlot(currPlot, false);
 
           const selection: RectangularSelection = {
             plot,
@@ -288,6 +298,17 @@ const Scatterplot: FC<Props> = ({
     </g>
   );
 
+  const otherPointSelection: OtherPointSelections = [
+    plot,
+    ...otherPlots,
+  ].reduce(
+    (acc: OtherPointSelections, curr) => {
+      acc[curr.id] = curr.selectedPoints;
+      return acc;
+    },
+    {} as OtherPointSelections,
+  );
+
   const clickSelectedPoints = Object.keys(otherPointSelection).flatMap(
     key => otherPointSelection[key],
   );
@@ -319,12 +340,6 @@ const Scatterplot: FC<Props> = ({
                       kind: 'deselection',
                     },
                     multiBrushBehavior,
-                  );
-
-                  updateOtherPointSelection(
-                    plot.id,
-                    i,
-                    PointSelectionEnum.REMOVE,
                   );
                 }}
                 fill={
@@ -375,7 +390,6 @@ const Scatterplot: FC<Props> = ({
                     },
                     multiBrushBehavior,
                   );
-                  updateOtherPointSelection(plot.id, i, PointSelectionEnum.ADD);
                 }}
                 fill={
                   showCategories
