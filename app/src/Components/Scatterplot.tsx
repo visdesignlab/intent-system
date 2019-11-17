@@ -1,12 +1,4 @@
-import {
-  axisBottom,
-  axisLeft,
-  max,
-  min,
-  scaleLinear,
-  select,
-  ScaleOrdinal,
-} from 'd3';
+import {axisBottom, axisLeft, scaleLinear, select, ScaleOrdinal} from 'd3';
 import React, {createRef, FC, RefObject, useEffect, useState} from 'react';
 import {connect} from 'react-redux';
 import {Popup} from 'semantic-ui-react';
@@ -18,6 +10,7 @@ import {
   OtherPointSelections,
   PointCountInPlot,
   combineBrushSelectionInSinglePlot,
+  combineBrushSelectionInMultiplePlots,
 } from '../Stores/Types/Plots';
 import {removePlot, updatePlot} from '../Stores/Visualization/Setup/PlotsRedux';
 import VisualizationState from '../Stores/Visualization/VisualizationState';
@@ -32,6 +25,7 @@ import {
   PointDeselection,
 } from '../contract';
 import {ADD_INTERACTION} from '../Stores/Visualization/Setup/InteractionsRedux';
+import {min, max} from 'lodash';
 
 interface OwnProps {
   plot: SinglePlot;
@@ -40,8 +34,6 @@ interface OwnProps {
   lastPlot: boolean;
   colorScale: ScaleOrdinal<string, unknown>;
   showCategories: boolean;
-  otherBrushes: any;
-  update: (plotid: string, brs: PointCountInPlot) => void;
   markSize: string | number;
 }
 
@@ -93,8 +85,6 @@ const Scatterplot: FC<Props> = ({
   addPointDeselection,
   addPointSelection,
   colorScale,
-  update,
-  otherBrushes,
   markSize,
 }: Props) => {
   const xAxisRef: RefObject<SVGGElement> = createRef();
@@ -102,7 +92,7 @@ const Scatterplot: FC<Props> = ({
 
   console.log('Triggered me in SinglePlot');
 
-  const {x, y, color, brushes} = plot;
+  const {x, y, color} = plot;
   const data = dataset.data.map(v => ({
     x: v[x],
     y: v[y],
@@ -146,50 +136,54 @@ const Scatterplot: FC<Props> = ({
     }
   }, [size, xAxisRef, xScale, yAxisRef, yScale]);
 
-  const selectedIndices: {[key: number]: number} = {};
-
   const extentPadding = 5;
   const [height, width] = [
     Math.abs(paddedSize + extentPadding - (0 - extentPadding)),
     Math.abs(0 - extentPadding - (paddedSize + extentPadding)),
   ];
 
-  let maxIntersection = 1;
+  const selectedIndices: {
+    [key: number]: number;
+  } = combineBrushSelectionInMultiplePlots([plot, ...otherPlots]);
 
-  data.forEach((d, i) => {
-    Object.values(brushes).forEach((brush: any) => {
-      let {x1, x2, y1, y2} = brush.extents;
-      [x1, x2, y1, y2] = [
-        xScale.invert(x1 * width - extentPadding),
-        xScale.invert(x2 * width - extentPadding),
-        yScale.invert(y1 * height - extentPadding),
-        yScale.invert(y2 * height - extentPadding),
-      ];
+  console.log(selectedIndices);
 
-      if (d.x >= x1 && d.x <= x2 && d.y <= y1 && d.y >= y2) {
-        if (!selectedIndices[i]) {
-          selectedIndices[i] = 0;
-        }
-        selectedIndices[i] += 1;
-        if (selectedIndices[i] > maxIntersection)
-          maxIntersection = selectedIndices[i];
-      }
-    });
-  });
+  let maxIntersection = max(Object.values(selectedIndices));
 
-  if (selectedIndices !== otherBrushes[plot.id])
-    update(plot.id, selectedIndices);
-  Object.keys(otherBrushes)
-    .filter(k => k !== plot.id)
-    .forEach(key => {
-      const selections = otherBrushes[key];
+  // data.forEach((d, i) => {
+  //   Object.values(brushes).forEach((brush: any) => {
+  //     let {x1, x2, y1, y2} = brush.extents;
+  //     [x1, x2, y1, y2] = [
+  //       xScale.invert(x1 * width - extentPadding),
+  //       xScale.invert(x2 * width - extentPadding),
+  //       yScale.invert(y1 * height - extentPadding),
+  //       yScale.invert(y2 * height - extentPadding),
+  //     ];
 
-      Object.entries(selections).forEach(entry => {
-        const [key, val] = entry as any;
-        if (!selectedIndices[key]) selectedIndices[key] = 0;
-        selectedIndices[key] += val;
-      });
-    });
+  //     if (d.x >= x1 && d.x <= x2 && d.y <= y1 && d.y >= y2) {
+  //       if (!selectedIndices[i]) {
+  //         selectedIndices[i] = 0;
+  //       }
+  //       selectedIndices[i] += 1;
+  //       if (selectedIndices[i] > maxIntersection)
+  //         maxIntersection = selectedIndices[i];
+  //     }
+  //   });
+  // });
+
+  // if (selectedIndices !== otherBrushes[plot.id])
+  //   update(plot.id, selectedIndices);
+  // Object.keys(otherBrushes)
+  //   .filter(k => k !== plot.id)
+  //   .forEach(key => {
+  //     const selections = otherBrushes[key];
+
+  //     Object.entries(selections).forEach(entry => {
+  //       const [key, val] = entry as any;
+  //       if (!selectedIndices[key]) selectedIndices[key] = 0;
+  //       selectedIndices[key] += val;
+  //     });
+  //   });
 
   const BrushLayer = (
     <g
@@ -230,6 +224,7 @@ const Scatterplot: FC<Props> = ({
           const currPlot = {...plot};
 
           let {x1, x2, y1, y2} = affectedBrush.extents;
+
           [x1, x2, y1, y2] = [
             xScale.invert(x1 * width - extentPadding),
             xScale.invert(x2 * width - extentPadding),
@@ -239,14 +234,16 @@ const Scatterplot: FC<Props> = ({
 
           const selectedIndices: PointCountInPlot = {};
 
-          data.forEach((d, i) => {
-            if (d.x >= x1 && d.x <= x2 && d.y <= y1 && d.y >= y2) {
-              if (!selectedIndices[i]) {
-                selectedIndices[i] = 0;
+          if (affectType !== BrushAffectType.REMOVE) {
+            data.forEach((d, i) => {
+              if (d.x >= x1 && d.x <= x2 && d.y <= y1 && d.y >= y2) {
+                if (!selectedIndices[i]) {
+                  selectedIndices[i] = 0;
+                }
+                selectedIndices[i] += 1;
               }
-              selectedIndices[i] += 1;
-            }
-          });
+            });
+          }
 
           const brushRecordForPlot = {
             ...currPlot.brushSelections,
@@ -259,7 +256,6 @@ const Scatterplot: FC<Props> = ({
             currPlot,
           );
 
-          console.log(currPlot.brushes, currPlot.combinedBrushSelections);
           updatePlot(currPlot, false);
 
           const selection: RectangularSelection = {
@@ -476,7 +472,6 @@ const Scatterplot: FC<Props> = ({
                 clearAllBrush();
                 plot.brushes = {};
                 updatePlot({...plot}, false);
-                update(plot.id, {});
                 removePlot(plot);
               }}></rect>
           </CloseGroup>

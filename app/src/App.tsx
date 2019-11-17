@@ -1,11 +1,16 @@
-import React, {FC, useState} from 'react';
+import React, {FC, useState, useMemo} from 'react';
 import styled from 'styled-components';
 import Task from './Components/Task';
 import Visualization from './Components/Visualization';
 import VisualizationState from './Stores/Visualization/VisualizationState';
 import {Dataset} from './Stores/Types/Dataset';
 import {connect, Provider} from 'react-redux';
-import {SinglePlot, Plots} from './Stores/Types/Plots';
+import {
+  SinglePlot,
+  Plots,
+  PointCountInPlot,
+  combineBrushSelectionInMultiplePlots,
+} from './Stores/Types/Plots';
 import {addPlot} from './Stores/Visualization/Setup/PlotsRedux';
 import PlotControl from './Components/PlotControl';
 import {predictionStore} from '.';
@@ -13,6 +18,7 @@ import Predictions from './Components/Predictions';
 import SelectionResults from './Components/SelectionResults';
 import ParticipantDetails from './Stores/Types/ParticipantDetails';
 import UserDetailsModal from './Components/UserDetailsModal';
+import {max} from 'lodash';
 
 interface OwnProps {
   participant: ParticipantDetails;
@@ -26,7 +32,7 @@ interface StateProps {
 }
 type Props = OwnProps & StateProps & DispatchProps;
 
-export type BrushSelectionDictionary = {[key: string]: number};
+export type BrushSelectionDictionary = PointCountInPlot;
 
 export type PointSelectionArray = number[];
 
@@ -69,15 +75,24 @@ const App: FC<Props> = ({participant, dataset, plots, addPlot}: Props) => {
     setShowCategories(shouldShow);
   };
 
-  const [selections, setSelections] = useState<SelectionRecord>({
-    brushSelections: {},
-    maxBrushCount: 0,
-    pointSelections: [],
-  });
+  const totalSelections: SelectionRecord = useMemo(() => {
+    const brushSelections: BrushSelectionDictionary = combineBrushSelectionInMultiplePlots(
+      plots,
+    );
 
-  const updateSelections = (sel: SelectionRecord) => {
-    if (selections !== sel) setSelections({...sel});
-  };
+    const pointSelections: PointSelectionArray = plots.flatMap(
+      p => p.selectedPoints,
+    );
+
+    const maxBcount = max(Object.values(brushSelections)) || 0;
+
+    const totalSelections: SelectionRecord = {
+      brushSelections,
+      pointSelections,
+      maxBrushCount: maxBcount,
+    };
+    return totalSelections;
+  }, [plots]);
 
   const study = (
     <MainDiv>
@@ -89,12 +104,8 @@ const App: FC<Props> = ({participant, dataset, plots, addPlot}: Props) => {
             setShowCategories={changeShowCategories}
           />
           <VisResDiv>
-            <Visualization
-              selRecord={selections}
-              updateSelections={updateSelections}
-              showCategories={showCategories}
-            />
-            <SelectionResults selections={selections}></SelectionResults>
+            <Visualization showCategories={showCategories} />
+            <SelectionResults selections={totalSelections}></SelectionResults>
           </VisResDiv>
         </VisDiv>
       </TaskVisDiv>
