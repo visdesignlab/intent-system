@@ -34,8 +34,10 @@ const SelectionResults: FC<Props> = ({selections, dataset}: Props) => {
   let totalSelections: number = unionCount + pointSelectionsCount;
 
   const selectedLists: number[] = [
-    ...Object.keys(brushSelections).map(d => parseInt(d)),
-    ...selections.pointSelections,
+    ...new Set([
+      ...Object.keys(brushSelections).map(d => parseInt(d)),
+      ...selections.pointSelections,
+    ]),
   ];
 
   const {data, labelColumn} = dataset;
