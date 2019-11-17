@@ -150,41 +150,6 @@ const Scatterplot: FC<Props> = ({
 
   let maxIntersection = max(Object.values(selectedIndices));
 
-  // data.forEach((d, i) => {
-  //   Object.values(brushes).forEach((brush: any) => {
-  //     let {x1, x2, y1, y2} = brush.extents;
-  //     [x1, x2, y1, y2] = [
-  //       xScale.invert(x1 * width - extentPadding),
-  //       xScale.invert(x2 * width - extentPadding),
-  //       yScale.invert(y1 * height - extentPadding),
-  //       yScale.invert(y2 * height - extentPadding),
-  //     ];
-
-  //     if (d.x >= x1 && d.x <= x2 && d.y <= y1 && d.y >= y2) {
-  //       if (!selectedIndices[i]) {
-  //         selectedIndices[i] = 0;
-  //       }
-  //       selectedIndices[i] += 1;
-  //       if (selectedIndices[i] > maxIntersection)
-  //         maxIntersection = selectedIndices[i];
-  //     }
-  //   });
-  // });
-
-  // if (selectedIndices !== otherBrushes[plot.id])
-  //   update(plot.id, selectedIndices);
-  // Object.keys(otherBrushes)
-  //   .filter(k => k !== plot.id)
-  //   .forEach(key => {
-  //     const selections = otherBrushes[key];
-
-  //     Object.entries(selections).forEach(entry => {
-  //       const [key, val] = entry as any;
-  //       if (!selectedIndices[key]) selectedIndices[key] = 0;
-  //       selectedIndices[key] += val;
-  //     });
-  //   });
-
   const BrushLayer = (
     <g
       onMouseDown={() => setMouseIsDown(true)}
