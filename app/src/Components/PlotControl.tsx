@@ -19,6 +19,7 @@ import {addPlot} from '../Stores/Visualization/Setup/PlotsRedux';
 import VisualizationState from '../Stores/Visualization/VisualizationState';
 
 interface OwnProps {
+  isSubmitted: boolean;
   showCategories: boolean;
   setShowCategories: (shouldShow: boolean) => void;
 }
@@ -37,6 +38,7 @@ type Props = OwnProps & StateProps & DispatchProps;
 
 const PlotControl: FC<Props> = ({
   showCategories,
+  isSubmitted,
   setShowCategories,
   multiBrushBehavior,
   changeBrushBehavior,
@@ -117,7 +119,7 @@ const PlotControl: FC<Props> = ({
   );
 
   const AddPlotButton = (
-    <Button onClick={() => setAddingPlot(true)}>
+    <Button disabled={isSubmitted} onClick={() => setAddingPlot(true)}>
       <Icon name="add"></Icon>
       Add plot
     </Button>
@@ -137,6 +139,7 @@ const PlotControl: FC<Props> = ({
   const MultiBrushBehaviorToggle = (
     <Radio
       toggle
+      disabled={isSubmitted}
       checked={multiBrushBehavior === MultiBrushBehavior.UNION}
       label="Union"
       onChange={() => {

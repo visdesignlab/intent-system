@@ -100,6 +100,7 @@ const App: FC<Props> = ({task, dataset, plots, addPlot}: Props) => {
         <Task text={task ? task.text : ''} />
         <VisDiv>
           <PlotControl
+            isSubmitted={isSubmitted}
             showCategories={showCategories}
             setShowCategories={changeShowCategories}
           />
