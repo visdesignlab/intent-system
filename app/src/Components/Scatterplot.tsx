@@ -220,7 +220,7 @@ const Scatterplot: FC<Props> = ({
           updatePlot(currPlot, false);
 
           const selection: RectangularSelection = {
-            plot,
+            plot: currPlot as any,
             dataIds: Object.keys(selectedIndices).map(d => parseInt(d)),
             brushId: affectedBrush.id,
             left: x1,

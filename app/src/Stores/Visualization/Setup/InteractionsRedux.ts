@@ -7,9 +7,11 @@ import {
   PredictionRequest,
 } from '../../../contract';
 import axios from 'axios';
-import {datasetName, predictionStore} from '../../..';
+import {datasetName, predictionStore, studyProvenance} from '../../..';
 import {updatePredictions} from '../../Predictions/Setup/PredictionRedux';
 import {updatePredictionLoading} from '../../Predictions/Setup/PredictionLoadingRedux';
+import Events from '../../Types/EventEnum';
+import {StudyState} from '../../Study/StudyState';
 
 export const ADD_INTERACTION = 'ADD_INTERACTION';
 export type ADD_INTERACTION = typeof ADD_INTERACTION;
@@ -47,6 +49,18 @@ export const InteractionsReducer: Reducer<
         .catch(err => {
           console.log(err);
         });
+
+      studyProvenance.applyAction({
+        label: Events.ADD_INTERACTION,
+        action: () => {
+          let currentState = studyProvenance.graph().current.state;
+          if (currentState) {
+            currentState = {...currentState, interactions};
+          }
+          return currentState as StudyState;
+        },
+        args: [],
+      });
 
       return interactions;
     default:
