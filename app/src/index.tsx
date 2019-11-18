@@ -22,6 +22,7 @@ import Events from './Stores/Types/EventEnum';
 import {getRandomUserCode} from './Utils';
 import TaskList from './Stores/Study/TaskList';
 import TaskDetails from './Stores/Types/TaskDetails';
+import ParticipantDetails from './Stores/Types/ParticipantDetails';
 
 export const VisualizationStore = VisualizationStoreCreator();
 export const VisualizationProvenance = initProvenanceRedux<VisualizationState>(
@@ -37,24 +38,6 @@ export const datasets = [
 
 export const studyProvenance = initProvenance(defaultStudyState);
 
-// studyProvenance.addGlobalObserver(() => {
-//   const currentState = studyProvenance.graph().current.state;
-//   if (currentState && currentState.participant) {
-//     console.log('Adding to firebase', currentState);
-
-// });
-
-studyProvenance.addObserver('task', ((state: any) => {
-  console.log('Logged');
-  const {participant} = state;
-  firestore
-    .collection(participant.uniqueId)
-    .doc('studyData')
-    .set(studyProvenance.graph(), {merge: true});
-
-  startRender(state.task);
-}) as any);
-
 export const predictionStore = PredictionStoreCreator();
 
 export let datasetName = 'gapminder_world';
@@ -63,10 +46,54 @@ export const getDatasetUrl = (datasetName: string) => `/dataset/${datasetName}`;
 
 export const {config, app: firebaseApp, firestore} = setupFirebase();
 
+export const participant: ParticipantDetails = {
+  uniqueId: getRandomUserCode(),
+};
+
+const logToFirebase = () => {
+  console.log('Logged');
+  const masterList = firestore.collection('master').doc('list');
+
+  masterList
+    .get()
+    .then(doc => {
+      let list: string[] = [];
+      if (doc.exists) {
+        list = (doc.data() as any).list;
+      }
+
+      firestore
+        .collection('master')
+        .doc('list')
+        .set({
+          list: [...list, participant.uniqueId],
+        });
+
+      firestore
+        .collection(participant.uniqueId)
+        .doc('studyData')
+        .set(studyProvenance.graph(), {merge: true});
+    })
+    .catch(err => {
+      console.error(err);
+      throw new Error('Cannot log!');
+    });
+};
+
+studyProvenance.addObserver('interactions', () => {
+  logToFirebase();
+});
+
+studyProvenance.addObserver('task', ((state: any) => {
+  logToFirebase();
+  startRender(state.task);
+}) as any);
+
 export function initializeTaskManager() {
-  let currentTask = 0;
+  let currentTask = 1;
 
   const startTask = (taskOrder: number = currentTask) => {
+    const t = new Date();
     studyProvenance.applyAction({
       label: Events.SET_TASK,
       action: () => {
@@ -74,9 +101,14 @@ export function initializeTaskManager() {
         if (currentState) {
           currentState = {
             ...currentState,
-            task: TaskList[taskOrder],
-            event: Events.SET_PARTICIPANT,
-            eventTime: new Date(),
+            task: TaskList.find(t => t.order === currentTask) || {
+              taskId: -1,
+              order: -1,
+              text: 'Something went wrong!',
+            },
+            event: Events.SET_TASK,
+            startTime: t,
+            eventTime: t,
           };
         }
 
@@ -117,7 +149,7 @@ axios
           currentState = {
             ...currentState,
             participant: {
-              uniqueId: getRandomUserCode(),
+              uniqueId: participant.uniqueId,
             },
             event: Events.SET_PARTICIPANT,
             eventTime: new Date(),
