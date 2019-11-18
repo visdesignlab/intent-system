@@ -16,12 +16,11 @@ import PlotControl from './Components/PlotControl';
 import {predictionStore} from '.';
 import Predictions from './Components/Predictions';
 import SelectionResults from './Components/SelectionResults';
-import ParticipantDetails from './Stores/Types/ParticipantDetails';
-import UserDetailsModal from './Components/UserDetailsModal';
 import {max} from 'lodash';
+import TaskDetails from './Stores/Types/TaskDetails';
 
 interface OwnProps {
-  participant: ParticipantDetails;
+  task: TaskDetails;
 }
 interface DispatchProps {
   addPlot: (plot: SinglePlot) => void;
@@ -42,7 +41,7 @@ export interface SelectionRecord {
   pointSelections: PointSelectionArray;
 }
 
-const App: FC<Props> = ({participant, dataset, plots, addPlot}: Props) => {
+const App: FC<Props> = ({task, dataset, plots, addPlot}: Props) => {
   if (plots.length === 0 && dataset.name !== '') {
     const plot: SinglePlot = {
       id: new Date().valueOf().toString(),
@@ -97,7 +96,7 @@ const App: FC<Props> = ({participant, dataset, plots, addPlot}: Props) => {
   const study = (
     <MainDiv>
       <TaskVisDiv>
-        <Task text={participant ? participant.uniqueId : ''} />
+        <Task text={task ? task.text : ''} />
         <VisDiv>
           <PlotControl
             showCategories={showCategories}
@@ -115,9 +114,7 @@ const App: FC<Props> = ({participant, dataset, plots, addPlot}: Props) => {
     </MainDiv>
   );
 
-  const userDetailsAndConsent = <UserDetailsModal></UserDetailsModal>;
-
-  return participant ? study : userDetailsAndConsent;
+  return study;
 };
 
 const mapStateToProps = (state: VisualizationState): StateProps => ({
