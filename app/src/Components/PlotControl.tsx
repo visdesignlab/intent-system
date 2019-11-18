@@ -45,8 +45,16 @@ const PlotControl: FC<Props> = ({
 }: Props) => {
   const [addingPlot, setAddingPlot] = useState(false);
 
-  const [singlePlot, setSinglePlot] = useState<SinglePlot>({
+  const defaultSinglePlot: SinglePlot = ({
     color: dataset.categoricalColumns[0],
+    brushes: {},
+    brushSelections: {},
+    combinedBrushSelections: {},
+    selectedPoints: [],
+  } as unknown) as SinglePlot;
+
+  const [singlePlot, setSinglePlot] = useState<SinglePlot>({
+    ...defaultSinglePlot,
   } as SinglePlot);
 
   const AddPlotComponent = (
@@ -88,7 +96,7 @@ const PlotControl: FC<Props> = ({
             plot.brushes = {};
             plot.selectedPoints = [];
             addPlot(plot);
-            setSinglePlot({color: dataset.categoricalColumns[0]} as any);
+            setSinglePlot({...defaultSinglePlot} as any);
             setAddingPlot(false);
           }}>
           <Icon name="check"></Icon>
@@ -99,7 +107,7 @@ const PlotControl: FC<Props> = ({
           icon
           color="red"
           onClick={() => {
-            setSinglePlot({color: dataset.categoricalColumns[0]} as any);
+            setSinglePlot({...defaultSinglePlot} as any);
             setAddingPlot(false);
           }}>
           <Icon name="close"></Icon>

@@ -42,8 +42,6 @@ const Visualization: FC<Props> = ({showCategories, dataset, plots}: Props) => {
     }
   }, []);
 
-  console.log('Rendering Visualization.tsx');
-
   const margin = 50;
   const height = dimensions.height - 2 * margin;
   const width = dimensions.width - 2 * margin;

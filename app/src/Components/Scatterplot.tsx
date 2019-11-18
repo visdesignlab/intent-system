@@ -90,8 +90,6 @@ const Scatterplot: FC<Props> = ({
   const xAxisRef: RefObject<SVGGElement> = createRef();
   const yAxisRef: RefObject<SVGGElement> = createRef();
 
-  console.log('Triggered me in SinglePlot');
-
   const {x, y, color} = plot;
   const data = dataset.data.map(v => ({
     x: v[x],
@@ -145,8 +143,6 @@ const Scatterplot: FC<Props> = ({
   const selectedIndices: {
     [key: number]: number;
   } = combineBrushSelectionInMultiplePlots([plot, ...otherPlots]);
-
-  console.log(selectedIndices);
 
   let maxIntersection = max(Object.values(selectedIndices));
 
