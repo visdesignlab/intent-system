@@ -86,7 +86,7 @@ const SelectionResults: FC<Props> = ({selections, dataset}: Props) => {
           primary
           disabled={selectedLists.length === 0}
           onClick={() => console.table(detailedSelectedList)}>
-          Submit
+          Submit ({selectedLists.length} selected)
         </Button>
       </Segment>
     </div>
