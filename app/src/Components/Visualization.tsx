@@ -16,6 +16,7 @@ export enum PointSelectionEnum {
 
 interface OwnProps {
   showCategories: boolean;
+  isSubmitted: boolean;
 }
 
 interface StateProps {
@@ -27,7 +28,12 @@ interface DispatchProps {}
 
 type Props = OwnProps & DispatchProps & StateProps;
 
-const Visualization: FC<Props> = ({showCategories, dataset, plots}: Props) => {
+const Visualization: FC<Props> = ({
+  isSubmitted,
+  showCategories,
+  dataset,
+  plots,
+}: Props) => {
   const [dimensions, setDimensions] = useState<{
     height: number;
     width: number;
@@ -131,6 +137,13 @@ const Visualization: FC<Props> = ({showCategories, dataset, plots}: Props) => {
         )}
         )
       </g>
+      {isSubmitted && (
+        <rect
+          height={dimensions.height}
+          width={dimensions.width}
+          fill="none"
+          pointerEvents="all"></rect>
+      )}
     </MainSvg>
   );
 };

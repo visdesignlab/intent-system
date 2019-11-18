@@ -69,6 +69,7 @@ const App: FC<Props> = ({task, dataset, plots, addPlot}: Props) => {
   }
 
   const [showCategories, setShowCategories] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const changeShowCategories = (shouldShow: boolean) => {
     setShowCategories(shouldShow);
@@ -103,8 +104,13 @@ const App: FC<Props> = ({task, dataset, plots, addPlot}: Props) => {
             setShowCategories={changeShowCategories}
           />
           <VisResDiv>
-            <Visualization showCategories={showCategories} />
-            <SelectionResults selections={totalSelections}></SelectionResults>
+            <Visualization
+              isSubmitted={isSubmitted}
+              showCategories={showCategories}
+            />
+            <SelectionResults
+              changeIsSubmitted={() => setIsSubmitted(true)}
+              selections={totalSelections}></SelectionResults>
           </VisResDiv>
         </VisDiv>
       </TaskVisDiv>

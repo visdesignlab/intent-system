@@ -9,6 +9,7 @@ import {hashCode} from '../Utils';
 
 interface OwnProps {
   selections: SelectionRecord;
+  changeIsSubmitted: (isSubmitted: boolean) => void;
 }
 
 interface StateProps {
@@ -19,7 +20,11 @@ interface DispatchProps {}
 
 type Props = OwnProps & StateProps & DispatchProps;
 
-const SelectionResults: FC<Props> = ({selections, dataset}: Props) => {
+const SelectionResults: FC<Props> = ({
+  selections,
+  changeIsSubmitted,
+  dataset,
+}: Props) => {
   let pointSelectionsCount: number = selections.pointSelections.length;
 
   const {maxBrushCount, brushSelections} = selections;
@@ -85,7 +90,10 @@ const SelectionResults: FC<Props> = ({selections, dataset}: Props) => {
         <Button
           primary
           disabled={selectedLists.length === 0}
-          onClick={() => console.table(detailedSelectedList)}>
+          onClick={() => {
+            console.table(detailedSelectedList);
+            changeIsSubmitted(true);
+          }}>
           Submit ({selectedLists.length} selected)
         </Button>
       </Segment>
