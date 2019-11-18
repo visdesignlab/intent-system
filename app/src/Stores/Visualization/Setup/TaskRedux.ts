@@ -17,6 +17,7 @@ export const updateTask = (task: TaskDetails): TaskUpdateAction => ({
 const dummyTask: TaskDetails = {
   taskId: -1,
   order: -1,
+  text: '',
 };
 
 export const TaskReducer: Reducer<TaskDetails, TaskUpdateAction> = (

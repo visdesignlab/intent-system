@@ -18,9 +18,10 @@ import {loadDataset} from './Stores/Visualization/Setup/DatasetRedux';
 import VisualizationState from './Stores/Visualization/VisualizationState';
 import VisualizationStoreCreator from './Stores/Visualization/VisualizationStore';
 import {defaultStudyState, StudyState} from './Stores/Study/StudyState';
-import ParticipantDetails from './Stores/Types/ParticipantDetails';
 import Events from './Stores/Types/EventEnum';
 import {getRandomUserCode} from './Utils';
+import TaskList from './Stores/Study/TaskList';
+import TaskDetails from './Stores/Types/TaskDetails';
 
 export const VisualizationStore = VisualizationStoreCreator();
 export const VisualizationProvenance = initProvenanceRedux<VisualizationState>(
@@ -43,14 +44,15 @@ export const studyProvenance = initProvenance(defaultStudyState);
 
 // });
 
-studyProvenance.addObserver('participant', ((state: any) => {
+studyProvenance.addObserver('task', ((state: any) => {
+  console.log('Logged');
   const {participant} = state;
   firestore
     .collection(participant.uniqueId)
     .doc('studyData')
     .set(studyProvenance.graph(), {merge: true});
 
-  startRender(state.participant);
+  startRender(state.task);
 }) as any);
 
 export const predictionStore = PredictionStoreCreator();
@@ -60,6 +62,45 @@ export let datasetName = 'gapminder_world';
 export const getDatasetUrl = (datasetName: string) => `/dataset/${datasetName}`;
 
 export const {config, app: firebaseApp, firestore} = setupFirebase();
+
+export function initializeTaskManager() {
+  let currentTask = 0;
+
+  const startTask = (taskOrder: number = currentTask) => {
+    studyProvenance.applyAction({
+      label: Events.SET_TASK,
+      action: () => {
+        let currentState = studyProvenance.graph().current.state;
+        if (currentState) {
+          currentState = {
+            ...currentState,
+            task: TaskList[taskOrder],
+            event: Events.SET_PARTICIPANT,
+            eventTime: new Date(),
+          };
+        }
+
+        return currentState as StudyState;
+      },
+      args: [],
+    });
+  };
+
+  return {
+    task: () => TaskList[currentTask],
+    startCurrentTask: startTask,
+    advanceTask: () => {
+      if (currentTask + 1 < TaskList.length) {
+        currentTask++;
+        startTask();
+      } else {
+        console.log('Done');
+      }
+    },
+  };
+}
+
+export const taskManager = initializeTaskManager();
 
 axios
   .get('/dataset')
@@ -87,14 +128,16 @@ axios
       },
       args: [],
     });
+
+    taskManager.startCurrentTask();
   })
   .catch(err => console.log(err));
 
-function startRender(participant: ParticipantDetails = undefined as any) {
+function startRender(task: TaskDetails = null as any) {
   ReactDOM.render(
     <Provider store={predictionStore}>
       <Provider store={VisualizationStore}>
-        <App participant={participant} />
+        <App task={task} />
       </Provider>
     </Provider>,
     document.getElementById('root'),

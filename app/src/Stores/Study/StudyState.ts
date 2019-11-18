@@ -27,7 +27,11 @@ export const defaultStudyState: StudyState = {
     uniqueId: null as any,
     name: null as any,
   },
-  task: null as any,
+  task: {
+    taskId: -1,
+    order: -1,
+    text: '',
+  },
   event: null as any,
   startTime: null as any,
   endTime: null as any,
