@@ -57,16 +57,20 @@ const logToFirebase = () => {
   masterList
     .get()
     .then(doc => {
-      let list: string[] = [];
+      let list: {[key: string]: number} = {};
       if (doc.exists) {
         list = (doc.data() as any).list;
       }
+
+      list[participant.uniqueId] = list[participant.uniqueId]
+        ? list[participant.uniqueId] + 1
+        : 1;
 
       firestore
         .collection('master')
         .doc('list')
         .set({
-          list: [...list, participant.uniqueId],
+          list: list,
         });
 
       firestore
@@ -90,7 +94,7 @@ studyProvenance.addObserver('task', ((state: any) => {
 }) as any);
 
 export function initializeTaskManager() {
-  let currentTask = 1;
+  let currentTask = 4;
 
   const startTask = (taskOrder: number = currentTask) => {
     const t = new Date();
