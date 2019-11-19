@@ -29,7 +29,7 @@ export const addInteraction = (interaction: Interaction) =>
 
 let cancel: any;
 
-function getPredictions(
+export function getPredictions(
   interactions: InteractionHistory,
   request: PredictionRequest,
 ) {

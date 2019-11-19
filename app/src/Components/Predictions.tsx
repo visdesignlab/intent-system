@@ -49,24 +49,30 @@ const Predictions: FC<Props> = ({
   const stringTime = time.toFixed(2);
 
   const loadingScreen = (
-    <Loader size="massive" active inline="centered">
+    <Loader
+      size="massive"
+      active
+      inline="centered"
+      style={{
+        display: 'absolute',
+      }}>
       Recomputing Predictions
     </Loader>
   );
 
   return (
-    <div>
+    <MasterPredictionDiv>
       <Segment>
         <Header as="h1" textAlign="center">
           Predictions
-        </Header>
-
-        {predictions.length > 0 && (
           <Label>{`Time required: ${stringTime} seconds`}</Label>
-        )}
+        </Header>
       </Segment>
-      {isLoading && loadingScreen}
-      <PredictionsDiv>
+      <div
+        style={{
+          padding: '1em',
+        }}>
+        {isLoading && loadingScreen}
         <svg ref={svgRef} height="100%" width="100%">
           {!isLoading &&
             predictions.map((pred, idx) => {
@@ -174,8 +180,11 @@ const Predictions: FC<Props> = ({
               );
             })}
         </svg>
-      </PredictionsDiv>
-    </div>
+      </div>
+      <Segment textAlign="center">
+        <Button>Hello</Button>
+      </Segment>
+    </MasterPredictionDiv>
   );
 };
 
@@ -191,8 +200,15 @@ const mapStateToProps = (state: PredictionState): StateProps => {
 
 export default connect(mapStateToProps)(Predictions);
 
+const MasterPredictionDiv = styled('div')`
+  display: grid;
+  grid-template-rows: 1fr 10fr 1fr;
+`;
+
 const PredictionsDiv = styled('div')`
   padding: 1em;
   height: 100%;
   width: 100%;
+  display: grid;
+  grid-template-rows: 5fr 1fr;
 `;
