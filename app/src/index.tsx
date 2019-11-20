@@ -70,13 +70,16 @@ const logToFirebase = () => {
         .collection('master')
         .doc('list')
         .set({
-          list: list,
+          list,
         });
 
       firestore
         .collection(participant.uniqueId)
         .doc('studyData')
-        .set(studyProvenance.graph(), {merge: true});
+        .set(
+          {graphString: JSON.stringify(studyProvenance.graph())},
+          {merge: true},
+        );
     })
     .catch(err => {
       console.error(err);
@@ -91,6 +94,10 @@ studyProvenance.addObserver('interactions', () => {
 studyProvenance.addObserver('task', ((state: any) => {
   logToFirebase();
   startRender(state.task);
+}) as any);
+
+studyProvenance.addObserver('selectedPrediction', ((state: any) => {
+  logToFirebase();
 }) as any);
 
 export function initializeTaskManager() {

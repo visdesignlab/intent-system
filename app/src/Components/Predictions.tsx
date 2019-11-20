@@ -1,16 +1,28 @@
 import {scaleLinear, selectAll} from 'd3';
-import React, {FC, RefObject, useRef} from 'react';
+import React, {FC, RefObject, useRef, useState} from 'react';
 import {connect} from 'react-redux';
-import {Button, Header, Label, Popup, Segment, Loader} from 'semantic-ui-react';
+import {
+  Button,
+  Header,
+  Label,
+  Popup,
+  Segment,
+  Loader,
+  Form,
+} from 'semantic-ui-react';
 import styled from 'styled-components';
 
 import {Prediction} from '../contract';
 import {Dataset} from '../Stores/Types/Dataset';
 import {hashCode} from '../Utils';
 import {PredictionState} from '../Stores/Predictions/PredictionsState';
+import Events from '../Stores/Types/EventEnum';
+import {studyProvenance} from '..';
+import {StudyState} from '../Stores/Study/StudyState';
 
 interface OwnProps {
   dataset: Dataset;
+  isSubmitted: boolean;
 }
 
 interface StateProps {
@@ -24,6 +36,7 @@ interface StateProps {
 type Props = OwnProps & StateProps;
 
 const Predictions: FC<Props> = ({
+  isSubmitted,
   dimensions,
   selectedIds,
   predictions,
@@ -33,6 +46,11 @@ const Predictions: FC<Props> = ({
 }: Props) => {
   const svgRef: RefObject<SVGSVGElement> = useRef<SVGSVGElement>(null);
   const {data, labelColumn} = dataset;
+
+  const [selectedPrediction, setSelectedPrediction] = useState<Prediction>(
+    null as any,
+  );
+  const [predictionComment, setPredictionComment] = useState('');
 
   if (!predictions) predictions = [];
 
@@ -60,6 +78,30 @@ const Predictions: FC<Props> = ({
     </Loader>
   );
 
+  if (predictions.length > 0) {
+    const regression: Prediction = {
+      intent: 'Regression',
+      rank: 0,
+      info: undefined,
+      dataIds: [],
+    };
+
+    const knowledge: Prediction = {
+      intent: 'Domain Knowledge',
+      rank: 0,
+      info: undefined,
+      dataIds: [],
+    };
+
+    const other: Prediction = {
+      intent: 'Other',
+      rank: 0,
+      info: undefined,
+      dataIds: [],
+    };
+    predictions = [...predictions, regression, knowledge, other];
+  }
+
   return (
     <MasterPredictionDiv>
       <Segment>
@@ -68,10 +110,7 @@ const Predictions: FC<Props> = ({
           <Label>{`Time required: ${stringTime} seconds`}</Label>
         </Header>
       </Segment>
-      <div
-        style={{
-          padding: '1em',
-        }}>
+      <div>
         {isLoading && loadingScreen}
         <svg ref={svgRef} height="100%" width="100%">
           {!isLoading &&
@@ -84,7 +123,7 @@ const Predictions: FC<Props> = ({
               let isHighlighted = false;
 
               const info: any = pred.info;
-              const {probability} = info;
+              const {probability} = info || 0;
 
               return (
                 <Popup
@@ -133,8 +172,8 @@ const Predictions: FC<Props> = ({
                             });
                           }
                         }}
-                        color={isHighlighted ? 'red' : 'blue'}
-                        size="tiny">
+                        size="tiny"
+                        primary>
                         {isHighlighted ? 'Hide Items' : 'Show Items'}
                       </Button>
                       <pre>
@@ -150,7 +189,18 @@ const Predictions: FC<Props> = ({
                     </div>
                   }
                   trigger={
-                    <g transform={`translate(0, ${(barHeight + 5) * idx})`}>
+                    <g
+                      transform={`translate(0, ${(barHeight + 5) * idx})`}
+                      onClick={() => {
+                        console.log(pred);
+                        if (!isSubmitted) return;
+                        if (
+                          selectedPrediction &&
+                          pred.intent === selectedPrediction.intent
+                        )
+                          setSelectedPrediction(null as any);
+                        else setSelectedPrediction(pred);
+                      }}>
                       <rect
                         height={barHeight}
                         width={svgRef.current ? svgRef.current.clientWidth : 0}
@@ -175,6 +225,17 @@ const Predictions: FC<Props> = ({
                         dominantBaseline="middle">
                         {pred.intent}
                       </text>
+                      {selectedPrediction &&
+                        selectedPrediction.intent === pred.intent && (
+                          <rect
+                            height={barHeight}
+                            width={
+                              svgRef.current ? svgRef.current.clientWidth : 0
+                            }
+                            stroke="black"
+                            fill="none"
+                            opacity="1"></rect>
+                        )}
                     </g>
                   }></Popup>
               );
@@ -182,7 +243,58 @@ const Predictions: FC<Props> = ({
         </svg>
       </div>
       <Segment textAlign="center">
-        <Button>Hello</Button>
+        <Form>
+          <Form.TextArea
+            disabled={selectedPrediction === null}
+            required={
+              selectedPrediction &&
+              ['Regression', 'Domain Knowledge', 'Other'].includes(
+                selectedPrediction.intent,
+              )
+            }
+            value={predictionComment.length > 0 ? predictionComment : ''}
+            onChange={(_, data) => setPredictionComment(data.value as string)}
+            label="More Info"
+            placeholder="Please tell us more about your intent"></Form.TextArea>
+          <Form.Field
+            disabled={selectedPrediction === null}
+            control={Button}
+            onClick={() => {
+              if (
+                selectedPrediction &&
+                ['Regression', 'Domain Knowledge', 'Other'].includes(
+                  selectedPrediction.intent,
+                ) &&
+                predictionComment.length === 0
+              )
+                return;
+              studyProvenance.applyAction({
+                label: Events.SUBMIT_PREDICTION,
+                action: () => {
+                  let currentState = studyProvenance.graph().current.state;
+                  if (currentState) {
+                    currentState = {
+                      ...currentState,
+                      event: Events.SUBMIT_PREDICTION,
+                      predictionSet: {
+                        dimensions,
+                        selectedIds,
+                        predictions,
+                      },
+                      selectedPrediction: {
+                        prediction: selectedPrediction,
+                        comment: predictionComment,
+                      },
+                    };
+                  }
+                  return currentState as StudyState;
+                },
+                args: [],
+              });
+            }}>
+            Submit
+          </Form.Field>
+        </Form>
       </Segment>
     </MasterPredictionDiv>
   );
@@ -201,14 +313,7 @@ const mapStateToProps = (state: PredictionState): StateProps => {
 export default connect(mapStateToProps)(Predictions);
 
 const MasterPredictionDiv = styled('div')`
-  display: grid;
-  grid-template-rows: 1fr 10fr 1fr;
-`;
-
-const PredictionsDiv = styled('div')`
   padding: 1em;
-  height: 100%;
-  width: 100%;
   display: grid;
-  grid-template-rows: 5fr 1fr;
+  grid-template-rows: 1fr 8.5fr 2.5fr;
 `;

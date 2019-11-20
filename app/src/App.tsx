@@ -116,7 +116,7 @@ const App: FC<Props> = ({task, dataset, plots, addPlot}: Props) => {
         </VisDiv>
       </TaskVisDiv>
       <Provider store={predictionStore}>
-        <Predictions dataset={dataset}></Predictions>
+        <Predictions isSubmitted={isSubmitted} dataset={dataset}></Predictions>
       </Provider>
     </MainDiv>
   );
