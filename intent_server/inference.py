@@ -7,7 +7,6 @@ from .vendor.interactions import Interaction, InteractionTypeKind, PredictionSet
 from sklearn.naive_bayes import MultinomialNB
 from typing import List, Set
 import pandas as pd
-import sys
 
 
 def is_point_selection(interaction: Interaction) -> bool:
