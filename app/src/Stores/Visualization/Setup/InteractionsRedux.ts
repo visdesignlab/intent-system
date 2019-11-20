@@ -27,6 +27,43 @@ export interface AddInteractionAction extends Action<ADD_INTERACTION> {
 export const addInteraction = (interaction: Interaction) =>
   recordableReduxActionCreator('Add Interaction', ADD_INTERACTION, interaction);
 
+let cancel: any;
+
+export function getPredictions(
+  interactions: InteractionHistory,
+  request: PredictionRequest,
+) {
+  cancel && cancel();
+
+  predictionStore.dispatch(updatePredictionLoading(true));
+  axios
+    .post(`/dataset/${datasetName}/predict`, request, {
+      cancelToken: new axios.CancelToken(c => (cancel = c)),
+    })
+    .then(response => {
+      predictionStore.dispatch(updatePredictions(response.data));
+      predictionStore.dispatch(updatePredictionLoading(false));
+    })
+    .catch(err => {
+      if (!axios.isCancel(err)) {
+        predictionStore.dispatch(updatePredictionLoading(false));
+        console.log(err);
+      }
+    });
+
+  studyProvenance.applyAction({
+    label: Events.ADD_INTERACTION,
+    action: () => {
+      let currentState = studyProvenance.graph().current.state;
+      if (currentState) {
+        currentState = {...currentState, interactions};
+      }
+      return currentState as StudyState;
+    },
+    args: [],
+  });
+}
+
 export const InteractionsReducer: Reducer<
   InteractionHistory,
   AddInteractionAction
@@ -38,29 +75,8 @@ export const InteractionsReducer: Reducer<
         multiBrushBehavior: action.args.multiBrushBehavior,
         interactionHistory: interactions,
       };
-      // console.log('IH', request);
-      predictionStore.dispatch(updatePredictionLoading(true));
-      axios
-        .post(`/dataset/${datasetName}/predict`, request)
-        .then(response => {
-          predictionStore.dispatch(updatePredictions(response.data));
-          predictionStore.dispatch(updatePredictionLoading(false));
-        })
-        .catch(err => {
-          console.log(err);
-        });
 
-      studyProvenance.applyAction({
-        label: Events.ADD_INTERACTION,
-        action: () => {
-          let currentState = studyProvenance.graph().current.state;
-          if (currentState) {
-            currentState = {...currentState, interactions};
-          }
-          return currentState as StudyState;
-        },
-        args: [],
-      });
+      getPredictions(interactions, request);
 
       return interactions;
     default:

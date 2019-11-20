@@ -38,6 +38,9 @@ export const defaultStudyState: StudyState = {
   eventTime: null as any,
   interactions: [],
   predictionSet: null as any,
-  selectedPrediction: null as any,
+  selectedPrediction: {
+    prediction: null,
+    comment: undefined,
+  },
   answer: null as any,
 };
