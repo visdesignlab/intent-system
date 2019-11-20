@@ -93,7 +93,6 @@ class Inference:
 
         # Perform ranking
         ranks = map(lambda m: m.to_prediction(sel_array, relevant_data), self.intents)
-        print(self.info(dims), file=sys.stderr)
 
         predictions = [p for preds in ranks for p in preds]
 
