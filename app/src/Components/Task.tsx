@@ -9,9 +9,11 @@ type Props = OwnProps;
 
 const Task: FC<Props> = ({text}: Props) => {
   return (
-    <Segment textAlign="center">
-      <Header>{text}</Header>
-    </Segment>
+    <div style={{padding: '1em 1em 0 1em'}}>
+      <Segment textAlign="center">
+        <Header>{text}</Header>
+      </Segment>
+    </div>
   );
 };
 
