@@ -10,7 +10,6 @@ import {
   Radio,
 } from 'semantic-ui-react';
 
-import {VisualizationProvenance} from '..';
 import {MultiBrushBehavior} from '../contract';
 import {ColumnMap, Dataset} from '../Stores/Types/Dataset';
 import {SinglePlot} from '../Stores/Types/Plots';
@@ -191,7 +190,6 @@ const PlotControl: FC<Props> = (props: Props) => {
 const mapDispatchToProps = (dispatch: any): DispatchProps => ({
   addPlot: (plot: SinglePlot) => {
     dispatch(addPlot(plot));
-    console.table(Object.values(VisualizationProvenance.graph().nodes));
   },
   changeBrushBehavior: (mbb: MultiBrushBehavior) => {
     dispatch({

@@ -2,7 +2,7 @@ import json
 
 import pandas as pd
 import numpy as np
-
+import sys
 from .dimensions import Dimensions
 from typing import Dict, Set
 
@@ -52,6 +52,8 @@ class Dataset:
             label = raw_json['labelColumn']
             data = pd.DataFrame.from_dict(raw_json['values'], orient='index')
             return Dataset(label, data, name)
+
+
 
     @staticmethod
     def load_housing_data() -> 'Dataset':
@@ -158,4 +160,48 @@ class Dataset:
                 'unit': 'label',
                 'type': 'label'
             }
-        })
+            })
+
+    @staticmethod
+    def load_cluster_data() -> 'Dataset':
+        df = pd.read_csv('data/clusters.csv');
+        convert_dict = {
+                'X': 'float',
+                'Y': 'float',
+                'Z': 'float',
+                'Label': 'category',
+                'Cluster': 'category',
+                }
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+        df['Cluster'] = df['Cluster'].apply(str)
+        print(df.dtypes, file=sys.stderr)
+        return Dataset('Label', df, 'Cluster', {
+            'X': {
+                'text': 'X',
+                'unit': "",
+                'type': 'numeric'
+                },
+
+            'Y': {
+                'text': 'Y',
+                'unit': "",
+                'type': 'numeric'
+                },
+            'Z': {
+                'text': 'Z',
+                'unit': "",
+                'type': 'numeric'
+                },
+            'Cluster': {
+                'text': 'Cluster',
+                'unit': 'Categorical',
+                'type': 'categorical'
+                },
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'type': 'label'
+                },
+            })
+
