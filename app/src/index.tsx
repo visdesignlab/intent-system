@@ -24,8 +24,8 @@ import TaskList from './Stores/Study/TaskList';
 import TaskDetails from './Stores/Types/TaskDetails';
 import ParticipantDetails from './Stores/Types/ParticipantDetails';
 
-export const VisualizationStore = VisualizationStoreCreator();
-export const VisualizationProvenance = initProvenanceRedux<VisualizationState>(
+export let VisualizationStore = VisualizationStoreCreator();
+export let VisualizationProvenance = initProvenanceRedux<VisualizationState>(
   VisualizationStore,
   (_: any) => {},
 );
@@ -38,7 +38,7 @@ export const datasets = [
 
 export const studyProvenance = initProvenance(defaultStudyState);
 
-export const predictionStore = PredictionStoreCreator();
+export let predictionStore = PredictionStoreCreator();
 
 export let datasetName = 'gapminder_world';
 
@@ -101,7 +101,7 @@ studyProvenance.addObserver('selectedPrediction', ((state: any) => {
 }) as any);
 
 export function initializeTaskManager() {
-  let currentTask = 4;
+  let currentTask = 1;
 
   const startTask = (taskOrder: number = currentTask) => {
     const t = new Date();
@@ -112,7 +112,7 @@ export function initializeTaskManager() {
         if (currentState) {
           currentState = {
             ...currentState,
-            task: TaskList.find(t => t.order === currentTask) || {
+            task: TaskList.find(t => t.order === taskOrder) || {
               taskId: -1,
               order: -1,
               text: 'Something went wrong!',
@@ -135,7 +135,7 @@ export function initializeTaskManager() {
     advanceTask: () => {
       if (currentTask + 1 < TaskList.length) {
         currentTask++;
-        startTask();
+        startTask(currentTask);
       } else {
         console.log('Done');
       }
@@ -176,11 +176,21 @@ axios
   })
   .catch(err => console.log(err));
 
-function startRender(task: TaskDetails = null as any) {
+async function startRender(task: TaskDetails = null as any) {
+  VisualizationStore = VisualizationStoreCreator();
+  VisualizationProvenance = initProvenanceRedux<VisualizationState>(
+    VisualizationStore,
+    (_: any) => {},
+  );
+
+  predictionStore = PredictionStoreCreator();
+
+  await loadDataset(getDatasetUrl(datasetName));
+
   ReactDOM.render(
     <Provider store={predictionStore}>
       <Provider store={VisualizationStore}>
-        <App task={task} />
+        <App key={task.order} task={task} />
       </Provider>
     </Provider>,
     document.getElementById('root'),

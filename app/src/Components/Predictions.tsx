@@ -17,7 +17,7 @@ import {Dataset} from '../Stores/Types/Dataset';
 import {hashCode} from '../Utils';
 import {PredictionState} from '../Stores/Predictions/PredictionsState';
 import Events from '../Stores/Types/EventEnum';
-import {studyProvenance} from '..';
+import {studyProvenance, taskManager} from '..';
 import {StudyState} from '../Stores/Study/StudyState';
 
 interface OwnProps {
@@ -51,6 +51,7 @@ const Predictions: FC<Props> = ({
     null as any,
   );
   const [predictionComment, setPredictionComment] = useState('');
+  const [finalSubmitted, setFinalSubmitted] = useState(false);
 
   if (!predictions) predictions = [];
 
@@ -277,44 +278,58 @@ const Predictions: FC<Props> = ({
             onChange={(_, data) => setPredictionComment(data.value as string)}
             label="More Info"
             placeholder="Please tell us more about your intent"></Form.TextArea>
-          <Form.Field
-            disabled={selectedPrediction === null}
-            control={Button}
-            onClick={() => {
-              if (
-                selectedPrediction &&
-                ['Regression', 'Domain Knowledge', 'Other'].includes(
-                  selectedPrediction.intent,
-                ) &&
-                predictionComment.length === 0
-              )
-                return;
-              studyProvenance.applyAction({
-                label: Events.SUBMIT_PREDICTION,
-                action: () => {
-                  let currentState = studyProvenance.graph().current.state;
-                  if (currentState) {
-                    currentState = {
-                      ...currentState,
-                      event: Events.SUBMIT_PREDICTION,
-                      predictionSet: {
-                        dimensions,
-                        selectedIds,
-                        predictions,
-                      },
-                      selectedPrediction: {
-                        prediction: selectedPrediction,
-                        comment: predictionComment,
-                      },
-                    };
-                  }
-                  return currentState as StudyState;
-                },
-                args: [],
-              });
-            }}>
-            Submit
-          </Form.Field>
+          {!finalSubmitted ? (
+            <Form.Field
+              disabled={selectedPrediction === null}
+              control={Button}
+              primary
+              onClick={() => {
+                if (
+                  selectedPrediction &&
+                  ['Regression', 'Domain Knowledge', 'Other'].includes(
+                    selectedPrediction.intent,
+                  ) &&
+                  predictionComment.length === 0
+                )
+                  return;
+                studyProvenance.applyAction({
+                  label: Events.SUBMIT_PREDICTION,
+                  action: () => {
+                    let currentState = studyProvenance.graph().current.state;
+                    if (currentState) {
+                      currentState = {
+                        ...currentState,
+                        event: Events.SUBMIT_PREDICTION,
+                        predictionSet: {
+                          dimensions,
+                          selectedIds,
+                          predictions,
+                        },
+                        selectedPrediction: {
+                          prediction: selectedPrediction,
+                          comment: predictionComment,
+                        },
+                      };
+                    }
+                    return currentState as StudyState;
+                  },
+                  args: [],
+                });
+                setFinalSubmitted(true);
+              }}>
+              Submit
+            </Form.Field>
+          ) : (
+            <Form.Field
+              control={Button}
+              onClick={() => {
+                console.log('Hello');
+                taskManager.advanceTask();
+              }}
+              color="green">
+              Next
+            </Form.Field>
+          )}
         </Form>
       </Segment>
     </MasterPredictionDiv>
@@ -336,5 +351,5 @@ export default connect(mapStateToProps)(Predictions);
 const MasterPredictionDiv = styled('div')`
   padding: 1em;
   display: grid;
-  grid-template-rows: 1fr 8.5fr 2.5fr;
+  grid-template-rows: 1fr 7fr 3fr;
 `;

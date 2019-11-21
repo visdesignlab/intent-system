@@ -6,6 +6,9 @@ import {SelectionRecord} from '../App';
 import {Header, Segment, Label, List, Button} from 'semantic-ui-react';
 import {selectAll} from 'd3';
 import {hashCode} from '../Utils';
+import Events from '../Stores/Types/EventEnum';
+import {studyProvenance} from '..';
+import {StudyState} from '../Stores/Study/StudyState';
 
 interface OwnProps {
   selections: SelectionRecord;
@@ -91,7 +94,24 @@ const SelectionResults: FC<Props> = ({
           primary
           disabled={selectedLists.length === 0}
           onClick={() => {
-            console.table(detailedSelectedList);
+            studyProvenance.applyAction({
+              label: Events.SUBMIT_ANSWER,
+              args: [],
+              action: () => {
+                let currentState = studyProvenance.graph().current.state;
+                if (currentState) {
+                  currentState = {
+                    ...currentState,
+                    event: Events.SUBMIT_PREDICTION,
+                    answer: {
+                      submissions: detailedSelectedList,
+                      comment: '',
+                    },
+                  };
+                }
+                return currentState as StudyState;
+              },
+            });
             changeIsSubmitted(true);
           }}>
           Submit ({selectedLists.length} selected)
