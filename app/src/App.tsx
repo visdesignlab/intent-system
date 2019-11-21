@@ -53,19 +53,8 @@ const App: FC<Props> = ({task, dataset, plots, addPlot}: Props) => {
       combinedBrushSelections: {},
       selectedPoints: [],
     };
-    const plot2: SinglePlot = {
-      id: `test-${new Date().valueOf().toString()}`,
-      x: dataset.numericColumns[1],
-      y: dataset.numericColumns[2],
-      color: dataset.categoricalColumns[0],
-      brushes: {},
-      brushSelections: {},
-      combinedBrushSelections: {},
-      selectedPoints: [],
-    };
 
     addPlot(plot);
-    addPlot(plot2);
   }
 
   const [showCategories, setShowCategories] = useState(false);
