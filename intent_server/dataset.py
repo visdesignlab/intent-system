@@ -53,8 +53,6 @@ class Dataset:
             data = pd.DataFrame.from_dict(raw_json['values'], orient='index')
             return Dataset(label, data, name)
 
-
-
     @staticmethod
     def load_housing_data() -> 'Dataset':
         df = pd.concat([
@@ -164,7 +162,7 @@ class Dataset:
 
     @staticmethod
     def load_cluster_data() -> 'Dataset':
-        df = pd.read_csv('data/clusters.csv');
+        df = pd.read_csv('data/clusters.csv')
         convert_dict = {
                 'X': 'float',
                 'Y': 'float',
@@ -204,4 +202,3 @@ class Dataset:
                 'type': 'label'
                 },
             })
-
