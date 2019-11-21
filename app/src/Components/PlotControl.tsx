@@ -36,15 +36,17 @@ interface DispatchProps {
 
 type Props = OwnProps & StateProps & DispatchProps;
 
-const PlotControl: FC<Props> = ({
-  showCategories,
-  isSubmitted,
-  setShowCategories,
-  multiBrushBehavior,
-  changeBrushBehavior,
-  dataset,
-  addPlot,
-}: Props) => {
+const PlotControl: FC<Props> = (props: Props) => {
+  const {
+    showCategories,
+    isSubmitted,
+    setShowCategories,
+    multiBrushBehavior,
+    changeBrushBehavior,
+    dataset,
+    addPlot,
+  } = props;
+
   const [addingPlot, setAddingPlot] = useState(false);
 
   const defaultSinglePlot: SinglePlot = ({
@@ -119,7 +121,7 @@ const PlotControl: FC<Props> = ({
   );
 
   const AddPlotButton = (
-    <Button disabled={isSubmitted} onClick={() => setAddingPlot(true)}>
+    <Button primary disabled={isSubmitted} onClick={() => setAddingPlot(true)}>
       <Icon name="add"></Icon>
       Add plot
     </Button>
