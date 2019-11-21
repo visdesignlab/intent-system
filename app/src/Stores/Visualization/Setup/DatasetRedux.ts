@@ -59,7 +59,7 @@ export const loadDataset = async (url: string) => {
   const hashLookup: {[key: string]: any} = {};
 
   values.forEach(val => {
-    val[HASH] = hashCode(val[labelColumn]);
+    val[HASH] = hashCode(val[labelColumn].toString());
     hashLookup[val[HASH]] = val;
   });
 

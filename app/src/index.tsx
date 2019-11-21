@@ -52,12 +52,16 @@ export let participant: ParticipantDetails = {
 
 console.log(participant.uniqueId);
 
+let isExploreMode = false;
+
 if (window.location.href.includes('#')) {
   const uniqueId = window.location.href.split('#')[1];
+  if (uniqueId === 'explorer') isExploreMode = true;
   participant.uniqueId = `${participant.uniqueId}-${uniqueId}`;
 }
 
 const logToFirebase = () => {
+  if (isExploreMode) return;
   console.log('Logged');
   const masterList = firestore.collection('master').doc('list');
 
@@ -156,7 +160,7 @@ axios
   .get('/dataset')
   .then(async response => {
     const datasets = response.data;
-    datasetName = datasets.filter((d: string) => d.includes('gapminder'))[0];
+    datasetName = datasets.filter((d: string) => d.includes('cluster'))[0];
     await loadDataset(getDatasetUrl(datasetName));
 
     studyProvenance.applyAction({
