@@ -102,6 +102,10 @@ const Predictions: FC<Props> = ({
     predictions = [...predictions, regression, knowledge, other];
   }
 
+  const detailedDimensionList: string[] = dimensions
+    ? dimensions.map(d => dataset.columnMaps[d].text)
+    : [];
+
   return (
     <MasterPredictionDiv>
       <Segment>
@@ -124,6 +128,20 @@ const Predictions: FC<Props> = ({
 
               const info: any = pred.info;
               const {probability} = info || 0;
+
+              const {intent} = pred;
+
+              let intentName = '';
+
+              if (intent.includes('Cluster')) {
+                intentName = `Cluster ${intent.split(':').reverse()[0]}`;
+              } else if (intent.includes('Category')) {
+                intentName = `${intent.split(':').reverse()[0]}`;
+              } else if (intent.includes('Skyline')) {
+                intentName = `Skyline across: ${detailedDimensionList.join(
+                  ' - ',
+                )}`;
+              }
 
               return (
                 <Popup
@@ -221,9 +239,12 @@ const Predictions: FC<Props> = ({
                           y2={barHeight}></line>
                       )}
                       <text
+                        style={{
+                          textTransform: 'capitalize',
+                        }}
                         transform={`translate(10, ${barHeight / 2})`}
                         dominantBaseline="middle">
-                        {pred.intent}
+                        {intentName ? intentName : pred.intent}
                       </text>
                       {selectedPrediction &&
                         selectedPrediction.intent === pred.intent && (
