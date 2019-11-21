@@ -50,6 +50,8 @@ export let participant: ParticipantDetails = {
   uniqueId: getRandomUserCode(),
 };
 
+console.log(participant.uniqueId);
+
 if (window.location.href.includes('#')) {
   const uniqueId = window.location.href.split('#')[1];
   participant.uniqueId = `${participant.uniqueId}-${uniqueId}`;
