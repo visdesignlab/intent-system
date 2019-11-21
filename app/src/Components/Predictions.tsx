@@ -145,121 +145,133 @@ const Predictions: FC<Props> = ({
               }
 
               return (
-                <Popup
+                <g
                   key={idx}
-                  hoverable
-                  content={
-                    <div>
-                      <Header>{pred.intent}</Header>
-                      <Button
-                        compact
-                        onClick={() => {
-                          countries.forEach(code => {
-                            if (
-                              !selectAll(`.${code}`).classed(
+                  transform={`translate(0, ${(barHeight + 5) * idx})`}
+                  onClick={() => {
+                    console.log(pred);
+                    if (!isSubmitted) return;
+                    if (
+                      selectedPrediction &&
+                      pred.intent === selectedPrediction.intent
+                    )
+                      setSelectedPrediction(null as any);
+                    else setSelectedPrediction(pred);
+                  }}>
+                  <rect
+                    height={barHeight}
+                    width={svgRef.current ? svgRef.current.clientWidth : 0}
+                    fill="#A8D3EE"
+                    opacity="0.3"></rect>
+                  <rect
+                    height={barHeight}
+                    width={barScale(pred.rank)}
+                    fill="#A8D3EE"
+                    opacity="0.9"></rect>
+                  {probability && (
+                    <line
+                      stroke="black"
+                      strokeWidth={0.5}
+                      x1={barScale(probability)}
+                      x2={barScale(probability)}
+                      y1="0"
+                      y2={barHeight}></line>
+                  )}
+                  <text
+                    style={{
+                      textTransform: 'capitalize',
+                    }}
+                    transform={`translate(10, ${barHeight / 2})`}
+                    dominantBaseline="middle">
+                    {intentName ? intentName : pred.intent}
+                  </text>
+                  {selectedPrediction &&
+                    selectedPrediction.intent === pred.intent && (
+                      <rect
+                        height={barHeight}
+                        width={svgRef.current ? svgRef.current.clientWidth : 0}
+                        stroke="black"
+                        fill="none"
+                        opacity="1"></rect>
+                    )}
+                  <Popup
+                    key={idx}
+                    hoverable
+                    content={
+                      <div>
+                        <Header>{pred.intent}</Header>
+                        <Button
+                          compact
+                          onClick={() => {
+                            countries.forEach(code => {
+                              if (
+                                !selectAll(`.${code}`).classed(
+                                  'suggestion_highlight',
+                                )
+                              ) {
+                                isHighlighted = false;
+                                return;
+                              }
+                              isHighlighted = true;
+                            });
+
+                            if (!isHighlighted) {
+                              selectAll('.mark').classed(
                                 'suggestion_highlight',
-                              )
-                            ) {
-                              isHighlighted = false;
-                              return;
-                            }
-                            isHighlighted = true;
-                          });
+                                false,
+                              );
 
-                          if (!isHighlighted) {
-                            selectAll('.mark').classed(
-                              'suggestion_highlight',
-                              false,
-                            );
-
-                            if (pred.intent === 'Range') {
-                              console.log('Test');
+                              if (pred.intent === 'Range') {
+                                console.log('Test');
+                              } else {
+                                countries.forEach(code => {
+                                  selectAll(`.${code}`).classed(
+                                    'suggestion_highlight',
+                                    true,
+                                  );
+                                });
+                              }
                             } else {
                               countries.forEach(code => {
                                 selectAll(`.${code}`).classed(
                                   'suggestion_highlight',
-                                  true,
+                                  false,
                                 );
                               });
                             }
-                          } else {
-                            countries.forEach(code => {
-                              selectAll(`.${code}`).classed(
-                                'suggestion_highlight',
-                                false,
-                              );
-                            });
-                          }
-                        }}
-                        size="tiny"
-                        primary>
-                        {isHighlighted ? 'Hide Items' : 'Show Items'}
-                      </Button>
-                      <pre>
-                        {JSON.stringify(
-                          pred,
-                          (key, val) => {
-                            if (key === 'dataIds') return undefined;
-                            return val;
-                          },
-                          2,
-                        )}
-                      </pre>
-                    </div>
-                  }
-                  trigger={
-                    <g
-                      transform={`translate(0, ${(barHeight + 5) * idx})`}
-                      onClick={() => {
-                        console.log(pred);
-                        if (!isSubmitted) return;
-                        if (
-                          selectedPrediction &&
-                          pred.intent === selectedPrediction.intent
-                        )
-                          setSelectedPrediction(null as any);
-                        else setSelectedPrediction(pred);
-                      }}>
-                      <rect
-                        height={barHeight}
-                        width={svgRef.current ? svgRef.current.clientWidth : 0}
-                        fill="#A8D3EE"
-                        opacity="0.3"></rect>
-                      <rect
-                        height={barHeight}
-                        width={barScale(pred.rank)}
-                        fill="#A8D3EE"
-                        opacity="0.9"></rect>
-                      {probability && (
-                        <line
-                          stroke="black"
-                          strokeWidth={0.5}
-                          x1={barScale(probability)}
-                          x2={barScale(probability)}
-                          y1="0"
-                          y2={barHeight}></line>
-                      )}
+                          }}
+                          size="tiny"
+                          primary>
+                          {isHighlighted ? 'Hide Items' : 'Show Items'}
+                        </Button>
+                        <pre>
+                          {JSON.stringify(
+                            pred,
+                            (key, val) => {
+                              if (key === 'dataIds') return undefined;
+                              return val;
+                            },
+                            2,
+                          )}
+                        </pre>
+                      </div>
+                    }
+                    position="top right"
+                    trigger={
                       <text
+                        transform={`translate(${(svgRef.current
+                          ? svgRef.current.clientWidth
+                          : 0) - 20}, ${barHeight / 2})`}
                         style={{
-                          textTransform: 'capitalize',
-                        }}
-                        transform={`translate(10, ${barHeight / 2})`}
-                        dominantBaseline="middle">
-                        {intentName ? intentName : pred.intent}
+                          fontFamily: 'FontAwesome',
+                          fontSize: '1em',
+                          dominantBaseline: 'middle',
+                          opacity: 0.3,
+                        }}>
+                        &#xf05a;
                       </text>
-                      {selectedPrediction &&
-                        selectedPrediction.intent === pred.intent && (
-                          <rect
-                            height={barHeight}
-                            width={
-                              svgRef.current ? svgRef.current.clientWidth : 0
-                            }
-                            stroke="black"
-                            fill="none"
-                            opacity="1"></rect>
-                        )}
-                    </g>
-                  }></Popup>
+                    }></Popup>
+                </g>
               );
             })}
         </svg>
