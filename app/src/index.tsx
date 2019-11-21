@@ -46,9 +46,14 @@ export const getDatasetUrl = (datasetName: string) => `/dataset/${datasetName}`;
 
 export const {config, app: firebaseApp, firestore} = setupFirebase();
 
-export const participant: ParticipantDetails = {
+export let participant: ParticipantDetails = {
   uniqueId: getRandomUserCode(),
 };
+
+if (window.location.href.includes('#')) {
+  const uniqueId = window.location.href.split('#')[1];
+  participant.uniqueId = `${participant.uniqueId}-${uniqueId}`;
+}
 
 const logToFirebase = () => {
   console.log('Logged');
