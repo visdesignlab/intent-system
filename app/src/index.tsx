@@ -24,6 +24,15 @@ import TaskList from './Stores/Study/TaskList';
 import TaskDetails from './Stores/Types/TaskDetails';
 import ParticipantDetails from './Stores/Types/ParticipantDetails';
 
+if (process.env.NODE_ENV !== 'production') {
+  const whyDidYouRender = require('@welldone-software/why-did-you-render');
+
+  whyDidYouRender(React, {
+    // exclude: [],
+    exclude: [/^Switch/, /^Router/, /^Route/, /^Connect/],
+  });
+}
+
 export let VisualizationStore = VisualizationStoreCreator();
 export let VisualizationProvenance = initProvenanceRedux<VisualizationState>(
   VisualizationStore,

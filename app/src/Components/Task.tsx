@@ -1,5 +1,6 @@
 import React, {FC} from 'react';
 import {Segment, Header} from 'semantic-ui-react';
+import {pure} from 'recompose';
 
 interface OwnProps {
   text: string;
@@ -17,4 +18,4 @@ const Task: FC<Props> = ({text}: Props) => {
   );
 };
 
-export default Task;
+export default pure(Task);

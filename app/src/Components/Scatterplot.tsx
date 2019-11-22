@@ -384,7 +384,9 @@ const Scatterplot: FC<Props> = ({
               <tspan style={{fontWeight: 'bold'}}>
                 {dataset.columnMaps[plot.x].text}
               </tspan>
-              (<tspan>{dataset.columnMaps[plot.x].unit}</tspan>)
+              {dataset.columnMaps[plot.x].unit.length > 0 && (
+                <tspan>{dataset.columnMaps[plot.x].unit}</tspan>
+              )}
             </text>
           </g>
           <g>
@@ -396,7 +398,9 @@ const Scatterplot: FC<Props> = ({
               <tspan style={{fontWeight: 'bold'}}>
                 {dataset.columnMaps[plot.y].text}{' '}
               </tspan>
-              (<tspan>{dataset.columnMaps[plot.y].unit}</tspan>)
+              {dataset.columnMaps[plot.y].unit.length > 0 && (
+                <tspan>{dataset.columnMaps[plot.y].unit}</tspan>
+              )}
             </text>
           </g>
         </g>
