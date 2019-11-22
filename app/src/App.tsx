@@ -22,6 +22,7 @@ import {areEqual} from './Utils';
 
 interface OwnProps {
   task: TaskDetails;
+  isExploreMode: boolean;
 }
 interface DispatchProps {
   addPlot: (plot: SinglePlot) => void;
@@ -42,7 +43,13 @@ export interface SelectionRecord {
   pointSelections: PointSelectionArray;
 }
 
-const App: FC<Props> = ({task, dataset, plots, addPlot}: Props) => {
+const App: FC<Props> = ({
+  task,
+  isExploreMode,
+  dataset,
+  plots,
+  addPlot,
+}: Props) => {
   const emptyString = '';
 
   if (plots.length === 0 && dataset.name !== '') {
@@ -89,27 +96,33 @@ const App: FC<Props> = ({task, dataset, plots, addPlot}: Props) => {
 
   const study = (
     <div style={mainDivStyle}>
-      <div style={taskVisDiv}>
-        <Task text={task ? task.text : emptyString} />
+      <div style={taskVisDiv(isExploreMode)}>
+        {!isExploreMode && <Task text={task ? task.text : emptyString} />}
         <div style={visDiv}>
           <PlotControl
+            isExploreMode={isExploreMode}
             isSubmitted={isSubmitted}
             showCategories={showCategories}
             setShowCategories={setShowCategories}
           />
-          <div style={visResDiv}>
+          <div style={visResDiv(isExploreMode)}>
             <Visualization
               isSubmitted={isSubmitted}
               showCategories={showCategories}
             />
-            <SelectionResults
-              changeIsSubmitted={setIsSubmitted}
-              selections={totalSelections}></SelectionResults>
+            {!isExploreMode && (
+              <SelectionResults
+                changeIsSubmitted={setIsSubmitted}
+                selections={totalSelections}></SelectionResults>
+            )}
           </div>
         </div>
       </div>
       <Provider store={predictionStore}>
-        <Predictions isSubmitted={isSubmitted} dataset={dataset}></Predictions>
+        <Predictions
+          isExploreMode={isExploreMode}
+          isSubmitted={isSubmitted}
+          dataset={dataset}></Predictions>
       </Provider>
     </div>
   );
@@ -141,12 +154,14 @@ const mainDivStyle: CSSProperties = {
   gridTemplateColumns: '3fr 1fr',
 };
 
-const taskVisDiv: CSSProperties = {
-  width: '100%',
-  height: ' 100%',
-  maxHeight: '100vh',
-  display: 'grid',
-  gridTemplateRows: '1fr 15fr',
+const taskVisDiv = (isExploreMode: boolean = false): CSSProperties => {
+  return {
+    width: '100%',
+    height: ' 100%',
+    maxHeight: '100vh',
+    display: 'grid',
+    gridTemplateRows: isExploreMode ? '1fr' : '1fr 15fr',
+  };
 };
 
 const visDiv: CSSProperties = {
@@ -155,9 +170,9 @@ const visDiv: CSSProperties = {
   width: '100%',
 };
 
-const visResDiv: CSSProperties = {
+const visResDiv = (isExploreMode: boolean = false): CSSProperties => ({
   display: 'grid',
-  gridTemplateColumns: '4fr 1fr',
+  gridTemplateColumns: isExploreMode ? '1fr' : '4fr 1fr',
   width: '100%',
   height: '100%',
-};
+});
