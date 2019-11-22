@@ -1,5 +1,5 @@
-import React, {FC, useState, useMemo} from 'react';
-import styled from 'styled-components';
+import React, {FC, useState, CSSProperties} from 'react';
+
 import Task from './Components/Task';
 import Visualization from './Components/Visualization';
 import VisualizationState from './Stores/Visualization/VisualizationState';
@@ -18,6 +18,7 @@ import Predictions from './Components/Predictions';
 import SelectionResults from './Components/SelectionResults';
 import {max} from 'lodash';
 import TaskDetails from './Stores/Types/TaskDetails';
+import {areEqual} from './Utils';
 
 interface OwnProps {
   task: TaskDetails;
@@ -42,6 +43,8 @@ export interface SelectionRecord {
 }
 
 const App: FC<Props> = ({task, dataset, plots, addPlot}: Props) => {
+  const emptyString = '';
+
   if (plots.length === 0 && dataset.name !== '') {
     const plot: SinglePlot = {
       id: new Date().valueOf().toString(),
@@ -60,54 +63,55 @@ const App: FC<Props> = ({task, dataset, plots, addPlot}: Props) => {
   const [showCategories, setShowCategories] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const changeShowCategories = (shouldShow: boolean) => {
-    setShowCategories(shouldShow);
+  const [totalSelections, setTotalSelections] = useState<SelectionRecord>({
+    brushSelections: {},
+    pointSelections: [],
+    maxBrushCount: 0,
+  });
+
+  const brushSelections: BrushSelectionDictionary = combineBrushSelectionInMultiplePlots(
+    plots,
+  );
+
+  const pointSelections: PointSelectionArray = plots.flatMap(
+    p => p.selectedPoints,
+  );
+
+  const maxBcount = max(Object.values(brushSelections)) || 0;
+
+  const totalSels: SelectionRecord = {
+    brushSelections,
+    pointSelections,
+    maxBrushCount: maxBcount,
   };
 
-  const totalSelections: SelectionRecord = useMemo(() => {
-    const brushSelections: BrushSelectionDictionary = combineBrushSelectionInMultiplePlots(
-      plots,
-    );
-
-    const pointSelections: PointSelectionArray = plots.flatMap(
-      p => p.selectedPoints,
-    );
-
-    const maxBcount = max(Object.values(brushSelections)) || 0;
-
-    const totalSelections: SelectionRecord = {
-      brushSelections,
-      pointSelections,
-      maxBrushCount: maxBcount,
-    };
-    return totalSelections;
-  }, [plots]);
+  if (!areEqual(totalSels, totalSelections)) setTotalSelections(totalSels);
 
   const study = (
-    <MainDiv>
-      <TaskVisDiv>
-        <Task text={task ? task.text : ''} />
-        <VisDiv>
+    <div style={mainDivStyle}>
+      <div style={taskVisDiv}>
+        <Task text={task ? task.text : emptyString} />
+        <div style={visDiv}>
           <PlotControl
             isSubmitted={isSubmitted}
             showCategories={showCategories}
-            setShowCategories={changeShowCategories}
+            setShowCategories={setShowCategories}
           />
-          <VisResDiv>
+          <div style={visResDiv}>
             <Visualization
               isSubmitted={isSubmitted}
               showCategories={showCategories}
             />
             <SelectionResults
-              changeIsSubmitted={() => setIsSubmitted(true)}
+              changeIsSubmitted={setIsSubmitted}
               selections={totalSelections}></SelectionResults>
-          </VisResDiv>
-        </VisDiv>
-      </TaskVisDiv>
+          </div>
+        </div>
+      </div>
       <Provider store={predictionStore}>
         <Predictions isSubmitted={isSubmitted} dataset={dataset}></Predictions>
       </Provider>
-    </MainDiv>
+    </div>
   );
 
   return study;
@@ -129,37 +133,31 @@ export default connect(
   mapDispatchToProps,
 )(App);
 
-const MainDiv = styled('div')`
-  height: 100vh;
-  width: 100vw;
+const mainDivStyle: CSSProperties = {
+  height: '100vh',
+  maxHeight: '100vh',
+  width: '100vw',
+  display: 'grid',
+  gridTemplateColumns: '3fr 1fr',
+};
 
-  max-height: 100vh;
+const taskVisDiv: CSSProperties = {
+  width: '100%',
+  height: ' 100%',
+  maxHeight: '100vh',
+  display: 'grid',
+  gridTemplateRows: '1fr 15fr',
+};
 
-  display: grid;
-  grid-template-columns: 3fr 1fr;
-`;
+const visDiv: CSSProperties = {
+  display: 'grid',
+  gridTemplateRows: '1fr 10fr',
+  width: '100%',
+};
 
-const TaskVisDiv = styled('div')`
-  width: 100%;
-  height: 100%;
-
-  max-height: 100vh;
-
-  display: grid;
-  grid-template-rows: 1fr 15fr;
-`;
-
-const VisDiv = styled('div')`
-  display: grid;
-  grid-template-rows: 1fr 10fr;
-
-  width: 100%;
-`;
-
-const VisResDiv = styled('div')`
-  display: grid;
-  grid-template-columns: 4fr 1fr;
-
-  width: 100%;
-  height: 100%;
-`;
+const visResDiv: CSSProperties = {
+  display: 'grid',
+  gridTemplateColumns: '4fr 1fr',
+  width: '100%',
+  height: '100%',
+};

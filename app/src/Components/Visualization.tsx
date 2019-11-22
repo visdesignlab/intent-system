@@ -7,6 +7,7 @@ import {Plots} from '../Stores/Types/Plots';
 import Scatterplot from './Scatterplot';
 import Legend from './Legend';
 import {scaleOrdinal, schemeSet2} from 'd3';
+import {pure} from 'recompose';
 import _ from 'lodash';
 
 export enum PointSelectionEnum {
@@ -153,7 +154,7 @@ const mapStateToProps = (state: VisualizationState): StateProps => ({
   plots: state.plots,
 });
 
-export default connect(mapStateToProps)(Visualization);
+export default connect(mapStateToProps)(pure(Visualization));
 
 const MainSvg = styled('svg')`
   width: 100%;

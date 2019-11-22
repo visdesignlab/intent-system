@@ -16,6 +16,7 @@ import {SinglePlot} from '../Stores/Types/Plots';
 import {CHANGE_BRUSH_BEHAVIOR} from '../Stores/Visualization/Setup/MultiBrushRedux';
 import {addPlot} from '../Stores/Visualization/Setup/PlotsRedux';
 import VisualizationState from '../Stores/Visualization/VisualizationState';
+import {areEqual} from '../Utils';
 
 interface OwnProps {
   isSubmitted: boolean;
@@ -35,6 +36,13 @@ interface DispatchProps {
 
 type Props = OwnProps & StateProps & DispatchProps;
 
+const defaultSinglePlot: SinglePlot = ({
+  brushes: {},
+  brushSelections: {},
+  combinedBrushSelections: {},
+  selectedPoints: [],
+} as unknown) as SinglePlot;
+
 const PlotControl: FC<Props> = (props: Props) => {
   const {
     showCategories,
@@ -46,16 +54,9 @@ const PlotControl: FC<Props> = (props: Props) => {
     addPlot,
   } = props;
 
+  defaultSinglePlot.color = dataset.categoricalColumns[0];
+
   const [addingPlot, setAddingPlot] = useState(false);
-
-  const defaultSinglePlot: SinglePlot = ({
-    color: dataset.categoricalColumns[0],
-    brushes: {},
-    brushSelections: {},
-    combinedBrushSelections: {},
-    selectedPoints: [],
-  } as unknown) as SinglePlot;
-
   const [singlePlot, setSinglePlot] = useState<SinglePlot>({
     ...defaultSinglePlot,
   } as SinglePlot);
@@ -110,7 +111,8 @@ const PlotControl: FC<Props> = (props: Props) => {
           icon
           color="red"
           onClick={() => {
-            setSinglePlot({...defaultSinglePlot} as any);
+            if (!areEqual(singlePlot, defaultSinglePlot))
+              setSinglePlot({...defaultSinglePlot} as any);
             setAddingPlot(false);
           }}>
           <Icon name="close"></Icon>
@@ -188,15 +190,12 @@ const PlotControl: FC<Props> = (props: Props) => {
 };
 
 const mapDispatchToProps = (dispatch: any): DispatchProps => ({
-  addPlot: (plot: SinglePlot) => {
-    dispatch(addPlot(plot));
-  },
-  changeBrushBehavior: (mbb: MultiBrushBehavior) => {
+  addPlot: (plot: SinglePlot) => dispatch(addPlot(plot)),
+  changeBrushBehavior: (mbb: MultiBrushBehavior) =>
     dispatch({
       type: CHANGE_BRUSH_BEHAVIOR,
       args: mbb,
-    });
-  },
+    }),
 });
 
 const mapStateToProps = (state: VisualizationState): StateProps => ({
@@ -218,7 +217,10 @@ function convertToDropdownFormat(
     .filter(col => columnMap[col].type === type)
     .map(col => ({
       key: col,
-      text: `${columnMap[col].text} (${columnMap[col].unit})`,
+      text:
+        columnMap[col].unit.length > 0
+          ? `${columnMap[col].text} (${columnMap[col].unit})`
+          : `${columnMap[col].text}`,
       value: col,
     }));
 }

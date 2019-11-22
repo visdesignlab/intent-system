@@ -57,6 +57,7 @@ export function changeDataset(dsName: string) {
 }
 
 function renderApp() {
+  console.log('Test 2');
   ReactDOM.render(
     <Provider store={studyStore.store()}>
       <Provider store={VisStore.visStore()}>
