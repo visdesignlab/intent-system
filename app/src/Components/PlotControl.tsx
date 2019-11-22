@@ -19,6 +19,7 @@ import VisualizationState from '../Stores/Visualization/VisualizationState';
 import {areEqual} from '../Utils';
 
 interface OwnProps {
+  isExploreMode: boolean;
   isSubmitted: boolean;
   showCategories: boolean;
   setShowCategories: (shouldShow: boolean) => void;
@@ -45,6 +46,7 @@ const defaultSinglePlot: SinglePlot = ({
 
 const PlotControl: FC<Props> = (props: Props) => {
   const {
+    isExploreMode,
     showCategories,
     isSubmitted,
     setShowCategories,
@@ -171,8 +173,11 @@ const PlotControl: FC<Props> = (props: Props) => {
     </>
   );
 
+  const DatasetSwitcher = <div>Switch</div>;
+
   const Control = (
     <Menu compact>
+      {isExploreMode && <Menu.Item>{DatasetSwitcher}</Menu.Item>}
       <Menu.Item>{AddPlotButton}</Menu.Item>
       <Menu.Item>{HideCategoryToggle}</Menu.Item>
       {showCategories && <Menu.Item>{AddCategoryDropdown}</Menu.Item>}

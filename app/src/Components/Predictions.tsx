@@ -1,5 +1,5 @@
 import {scaleLinear, selectAll} from 'd3';
-import React, {FC, RefObject, useRef, useState} from 'react';
+import React, {FC, RefObject, useRef, useState, CSSProperties} from 'react';
 import {connect} from 'react-redux';
 import {
   Button,
@@ -10,7 +10,6 @@ import {
   Loader,
   Form,
 } from 'semantic-ui-react';
-import styled from 'styled-components';
 
 import {Prediction} from '../contract';
 import {Dataset} from '../Stores/Types/Dataset';
@@ -21,6 +20,7 @@ import {studyProvenance, taskManager} from '..';
 import {StudyState} from '../Stores/Study/StudyState';
 
 interface OwnProps {
+  isExploreMode: boolean;
   dataset: Dataset;
   isSubmitted: boolean;
 }
@@ -36,6 +36,7 @@ interface StateProps {
 type Props = OwnProps & StateProps;
 
 const Predictions: FC<Props> = ({
+  isExploreMode,
   isSubmitted,
   dimensions,
   selectedIds,
@@ -108,7 +109,7 @@ const Predictions: FC<Props> = ({
     : [];
 
   return (
-    <MasterPredictionDiv>
+    <div style={masterPredictionDiv(isExploreMode)}>
       <Segment>
         <Header as="h1" textAlign="center">
           Predictions
@@ -276,75 +277,77 @@ const Predictions: FC<Props> = ({
             })}
         </svg>
       </div>
-      <Segment textAlign="center">
-        <Form>
-          <Form.TextArea
-            disabled={selectedPrediction === null}
-            required={
-              selectedPrediction &&
-              ['Regression', 'Domain Knowledge', 'Other'].includes(
-                selectedPrediction.intent,
-              )
-            }
-            value={predictionComment.length > 0 ? predictionComment : ''}
-            onChange={(_, data) => setPredictionComment(data.value as string)}
-            label="More Info"
-            placeholder="Please tell us more about your intent"></Form.TextArea>
-          {!finalSubmitted ? (
-            <Form.Field
+      {!isExploreMode && (
+        <Segment textAlign="center">
+          <Form>
+            <Form.TextArea
               disabled={selectedPrediction === null}
-              control={Button}
-              primary
-              onClick={() => {
-                if (
-                  selectedPrediction &&
-                  ['Regression', 'Domain Knowledge', 'Other'].includes(
-                    selectedPrediction.intent,
-                  ) &&
-                  predictionComment.length === 0
+              required={
+                selectedPrediction &&
+                ['Regression', 'Domain Knowledge', 'Other'].includes(
+                  selectedPrediction.intent,
                 )
-                  return;
-                studyProvenance.applyAction({
-                  label: Events.SUBMIT_PREDICTION,
-                  action: () => {
-                    let currentState = studyProvenance.graph().current.state;
-                    if (currentState) {
-                      currentState = {
-                        ...currentState,
-                        event: Events.SUBMIT_PREDICTION,
-                        predictionSet: {
-                          dimensions,
-                          selectedIds,
-                          predictions,
-                        },
-                        selectedPrediction: {
-                          prediction: selectedPrediction,
-                          comment: predictionComment,
-                        },
-                      };
-                    }
-                    return currentState as StudyState;
-                  },
-                  args: [],
-                });
-                setFinalSubmitted(true);
-              }}>
-              Submit
-            </Form.Field>
-          ) : (
-            <Form.Field
-              control={Button}
-              onClick={() => {
-                console.log('Hello');
-                taskManager.advanceTask();
-              }}
-              color="green">
-              Next
-            </Form.Field>
-          )}
-        </Form>
-      </Segment>
-    </MasterPredictionDiv>
+              }
+              value={predictionComment.length > 0 ? predictionComment : ''}
+              onChange={(_, data) => setPredictionComment(data.value as string)}
+              label="More Info"
+              placeholder="Please tell us more about your intent"></Form.TextArea>
+            {!finalSubmitted ? (
+              <Form.Field
+                disabled={selectedPrediction === null}
+                control={Button}
+                primary
+                onClick={() => {
+                  if (
+                    selectedPrediction &&
+                    ['Regression', 'Domain Knowledge', 'Other'].includes(
+                      selectedPrediction.intent,
+                    ) &&
+                    predictionComment.length === 0
+                  )
+                    return;
+                  studyProvenance.applyAction({
+                    label: Events.SUBMIT_PREDICTION,
+                    action: () => {
+                      let currentState = studyProvenance.graph().current.state;
+                      if (currentState) {
+                        currentState = {
+                          ...currentState,
+                          event: Events.SUBMIT_PREDICTION,
+                          predictionSet: {
+                            dimensions,
+                            selectedIds,
+                            predictions,
+                          },
+                          selectedPrediction: {
+                            prediction: selectedPrediction,
+                            comment: predictionComment,
+                          },
+                        };
+                      }
+                      return currentState as StudyState;
+                    },
+                    args: [],
+                  });
+                  setFinalSubmitted(true);
+                }}>
+                Submit
+              </Form.Field>
+            ) : (
+              <Form.Field
+                control={Button}
+                onClick={() => {
+                  console.log('Hello');
+                  taskManager.advanceTask();
+                }}
+                color="green">
+                Next
+              </Form.Field>
+            )}
+          </Form>
+        </Segment>
+      )}
+    </div>
   );
 };
 
@@ -360,8 +363,8 @@ const mapStateToProps = (state: PredictionState): StateProps => {
 
 export default connect(mapStateToProps)(Predictions);
 
-const MasterPredictionDiv = styled('div')`
-  padding: 1em;
-  display: grid;
-  grid-template-rows: 1fr 7fr 3fr;
-`;
+const masterPredictionDiv = (isExploreMode: boolean): CSSProperties => ({
+  padding: '1em',
+  display: 'grid',
+  gridTemplateRows: isExploreMode ? '1fr 10fr' : '1fr 7fr 3fr',
+});

@@ -38,6 +38,7 @@ export let VisualizationProvenance = initProvenanceRedux<VisualizationState>(
   VisualizationStore,
   (_: any) => {},
 );
+
 export const datasets = [
   'draft_combine',
   'slc_housing',
@@ -210,7 +211,7 @@ async function startRender(task: TaskDetails = null as any) {
   ReactDOM.render(
     <Provider store={predictionStore}>
       <Provider store={VisualizationStore}>
-        <App key={task.order} task={task} />
+        <App key={task.order} task={task} isExploreMode={isExploreMode} />
       </Provider>
     </Provider>,
     document.getElementById('root'),
