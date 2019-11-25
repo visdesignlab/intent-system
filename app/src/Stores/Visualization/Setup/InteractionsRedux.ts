@@ -12,7 +12,6 @@ import {updatePredictions} from '../../Predictions/Setup/PredictionRedux';
 import {updatePredictionLoading} from '../../Predictions/Setup/PredictionLoadingRedux';
 import Events from '../../Types/EventEnum';
 import {StudyState} from '../../Study/StudyState';
-import {areEqual} from '../../../Utils';
 
 export const ADD_INTERACTION = 'ADD_INTERACTION';
 export type ADD_INTERACTION = typeof ADD_INTERACTION;
