@@ -46,7 +46,6 @@ const defaultSinglePlot: SinglePlot = ({
 
 const PlotControl: FC<Props> = (props: Props) => {
   const {
-    isExploreMode,
     showCategories,
     isSubmitted,
     setShowCategories,
@@ -173,11 +172,8 @@ const PlotControl: FC<Props> = (props: Props) => {
     </>
   );
 
-  const DatasetSwitcher = <div>Switch</div>;
-
   const Control = (
     <Menu compact>
-      {isExploreMode && <Menu.Item>{DatasetSwitcher}</Menu.Item>}
       <Menu.Item>{AddPlotButton}</Menu.Item>
       <Menu.Item>{HideCategoryToggle}</Menu.Item>
       {showCategories && <Menu.Item>{AddCategoryDropdown}</Menu.Item>}
