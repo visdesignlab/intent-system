@@ -3,12 +3,12 @@ import {Dataset} from '../Stores/Types/Dataset';
 import {connect} from 'react-redux';
 import VisualizationState from '../Stores/Visualization/VisualizationState';
 import {SelectionRecord} from '../App';
-import {Header, Label, List, Button, Card} from 'semantic-ui-react';
+import {Header, Label, List, Card} from 'semantic-ui-react';
 import {selectAll} from 'd3';
 import {hashCode} from '../Utils';
-import Events from '../Stores/Types/EventEnum';
-import {studyProvenance} from '..';
-import {StudyState} from '../Stores/Study/StudyState';
+// import Events from '../Stores/Types/EventEnum';
+// import {studyProvenance} from '..';
+// import {StudyState} from '../Stores/Study/StudyState';
 
 interface OwnProps {
   selections: SelectionRecord;
@@ -23,11 +23,7 @@ interface DispatchProps {}
 
 type Props = OwnProps & StateProps & DispatchProps;
 
-const SelectionResults: FC<Props> = ({
-  selections,
-  changeIsSubmitted,
-  dataset,
-}: Props) => {
+const SelectionResults: FC<Props> = ({selections, dataset}: Props) => {
   let pointSelectionsCount: number = selections.pointSelections.length;
 
   const {maxBrushCount, brushSelections} = selections;
@@ -50,18 +46,77 @@ const SelectionResults: FC<Props> = ({
 
   const {data, labelColumn} = dataset;
 
-  const detailedSelectedList = selectedLists.map(idx => data[idx]);
+  // const detailedSelectedList = selectedLists.map(idx => data[idx]);
 
   return (
     <Card fluid style={resultsDivStyle}>
-      <Card.Content>
-        <Header as="h1" textAlign="center">
+      <Card.Content
+        style={{
+          paddingTop: 0,
+          paddingBottom: 0,
+        }}>
+        <Header as="h2" textAlign="center" style={{margin: 0}}>
           Selections
         </Header>
-        <Label>{`Selected Items: ${pointSelectionsCount} (Click)`}</Label>
-        <Label>{`Selected Items: ${intersectionCount} (Intersection)`}</Label>
-        <Label>{`Selected Items: ${unionCount} (Union)`}</Label>
-        <Label>{`Selected Items: ${totalSelections} (Total)`}</Label>
+        {/* <Label>{`Selected Items: ${pointSelectionsCount} (Click)`}</Label> */}
+        {/* <Label>{`Selected Items: ${intersectionCount} (Intersection)`}</Label> */}
+        {/* <Label>{`Selected Items: ${unionCount} (Union)`}</Label> */}
+        {/* <Label>{`Selected Items: ${totalSelections} (Total)`}</Label> */}
+        <svg height="150" width="100%">
+          <rect
+            height="100%"
+            width="100%"
+            fill="gray"
+            opacity="0.1"
+            stroke="black"
+            strokeWidth="3px"></rect>
+          <text transform={`translate(10, ${15})`} dominantBaseline="middle">
+            {`Total: ${totalSelections}`}
+          </text>
+
+          <g transform={`translate(100, 75)`}>
+            <circle r="50" stroke="none" fill="red" opacity="0.5" />
+            <text
+              transform={`translate(0, ${-34})`}
+              style={{
+                dominantBaseline: 'middle',
+                textAnchor: 'middle',
+                fontSize: '1.1em',
+              }}>
+              {`U: ${unionCount}`}
+            </text>
+            <circle r="25" stroke="none" fill="blue" opacity="0.2" />
+            <text
+              style={{
+                dominantBaseline: 'middle',
+                textAnchor: 'middle',
+                fontSize: '1.1em',
+              }}>
+              {`I: ${intersectionCount}`}
+            </text>
+          </g>
+          <g transform={`translate(300, 75)`}>
+            <circle r="50" stroke="black" fill="none" opacity="0.5" />
+            <text
+              style={{
+                fontFamily: 'FontAwesome',
+                dominantBaseline: 'middle',
+                textAnchor: 'middle',
+                fontSize: '1.5em',
+              }}>
+              &#xf25a;
+            </text>
+            <text
+              transform={`translate(0, ${30})`}
+              style={{
+                dominantBaseline: 'middle',
+                textAnchor: 'middle',
+                fontSize: '0.95em',
+              }}>
+              {`Clicked: ${pointSelectionsCount}`}
+            </text>
+          </g>
+        </svg>
       </Card.Content>
       <Card.Content style={{overflow: 'scroll', padding: '1em'}}>
         <List>
@@ -89,34 +144,34 @@ const SelectionResults: FC<Props> = ({
           })}
         </List>
       </Card.Content>
-      <Card.Content textAlign="center">
-        <Button
-          primary
-          disabled={selectedLists.length === 0}
-          onClick={() => {
-            studyProvenance.applyAction({
-              label: Events.SUBMIT_ANSWER,
-              args: [],
-              action: () => {
-                let currentState = studyProvenance.graph().current.state;
-                if (currentState) {
-                  currentState = {
-                    ...currentState,
-                    event: Events.SUBMIT_PREDICTION,
-                    answer: {
-                      submissions: detailedSelectedList,
-                      comment: '',
-                    },
-                  };
-                }
-                return currentState as StudyState;
-              },
-            });
-            changeIsSubmitted(true);
-          }}>
-          Submit ({selectedLists.length} selected)
-        </Button>
-      </Card.Content>
+      {/* <Card.Content textAlign="center"> */}
+      {/*   <Button */}
+      {/*     primary */}
+      {/*     disabled={selectedLists.length === 0} */}
+      {/*     onClick={() => { */}
+      {/*       studyProvenance.applyAction({ */}
+      {/*         label: Events.SUBMIT_ANSWER, */}
+      {/*         args: [], */}
+      {/*         action: () => { */}
+      {/*           let currentState = studyProvenance.graph().current.state; */}
+      {/*           if (currentState) { */}
+      {/*             currentState = { */}
+      {/*               ...currentState, */}
+      {/*               event: Events.SUBMIT_PREDICTION, */}
+      {/*               answer: { */}
+      {/*                 submissions: detailedSelectedList, */}
+      {/*                 comment: '', */}
+      {/*               }, */}
+      {/*             }; */}
+      {/*           } */}
+      {/*           return currentState as StudyState; */}
+      {/*         }, */}
+      {/*       }); */}
+      {/*       changeIsSubmitted(true); */}
+      {/*     }}> */}
+      {/*     Submit ({selectedLists.length} selected) */}
+      {/*   </Button> */}
+      {/* </Card.Content> */}
     </Card>
   );
 };
