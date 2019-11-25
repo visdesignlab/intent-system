@@ -3,7 +3,7 @@ import {Dataset} from '../Stores/Types/Dataset';
 import {connect} from 'react-redux';
 import VisualizationState from '../Stores/Visualization/VisualizationState';
 import {SelectionRecord} from '../App';
-import {Header, Label, List, Card} from 'semantic-ui-react';
+import {Header, List, Card} from 'semantic-ui-react';
 import {selectAll} from 'd3';
 import {hashCode} from '../Utils';
 // import Events from '../Stores/Types/EventEnum';
