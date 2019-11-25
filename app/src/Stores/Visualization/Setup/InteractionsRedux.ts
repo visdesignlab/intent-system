@@ -12,6 +12,7 @@ import {updatePredictions} from '../../Predictions/Setup/PredictionRedux';
 import {updatePredictionLoading} from '../../Predictions/Setup/PredictionLoadingRedux';
 import Events from '../../Types/EventEnum';
 import {StudyState} from '../../Study/StudyState';
+import {areEqual} from '../../../Utils';
 
 export const ADD_INTERACTION = 'ADD_INTERACTION';
 export type ADD_INTERACTION = typeof ADD_INTERACTION;
@@ -29,11 +30,27 @@ export const addInteraction = (interaction: Interaction) =>
 
 let cancel: any;
 
-export function getPredictions(
-  interactions: InteractionHistory,
-  request: PredictionRequest,
+let previousPredictionRequest: PredictionRequest = {
+  multiBrushBehavior: MultiBrushBehavior.UNION,
+  interactionHistory: [],
+};
+
+export function getPredictionAfterBrushSwitch(
+  multiBrushBehavior: MultiBrushBehavior,
 ) {
+  previousPredictionRequest.multiBrushBehavior = multiBrushBehavior;
+  getPredictions(previousPredictionRequest);
+}
+
+export function getPredictions(request: PredictionRequest) {
+  if (areEqual(previousPredictionRequest, request)) {
+    return;
+  }
+
+  previousPredictionRequest = request;
   cancel && cancel();
+
+  const interactions = request.interactionHistory;
 
   predictionStore.dispatch(updatePredictionLoading(true));
   axios
@@ -76,7 +93,7 @@ export const InteractionsReducer: Reducer<
         interactionHistory: interactions,
       };
 
-      getPredictions(interactions, request);
+      getPredictions(request);
 
       return interactions;
     default:
