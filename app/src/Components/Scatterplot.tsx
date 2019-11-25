@@ -107,10 +107,10 @@ const Scatterplot: FC<Props> = ({
     clearSelections = () => {
       handler();
       plot.brushes = {};
-      plot.selectedPoints = [];
       plot.brushSelections = {};
       plot.combinedBrushSelections = {};
       const selections = [...plot.selectedPoints];
+      plot.selectedPoints = [];
       addPointDeselection(
         {
           plot,
