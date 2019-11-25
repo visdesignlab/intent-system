@@ -149,7 +149,7 @@ const Predictions: FC<Props> = ({
                   .split(':')
                   .reverse()[0]
                   .split(';');
-                console.log(minMax);
+
                 intentName = `Skyline across: ${detailedDimensionList
                   .map((d, i) => `${d} (${minMax[i]})`)
                   .join(' - ')}`;
@@ -160,8 +160,38 @@ const Predictions: FC<Props> = ({
                   key={idx}
                   transform={`translate(0, ${(barHeight + 5) * idx})`}
                   onClick={() => {
-                    console.log(pred);
-                    if (!isSubmitted) return;
+                    countries.forEach(code => {
+                      if (
+                        !selectAll(`.${code}`).classed('suggestion_highlight')
+                      ) {
+                        isHighlighted = false;
+                        return;
+                      }
+                      isHighlighted = true;
+                    });
+
+                    if (!isHighlighted) {
+                      selectAll('.mark').classed('suggestion_highlight', false);
+
+                      if (pred.intent === 'Range') {
+                        console.log('Test');
+                      } else {
+                        countries.forEach(code => {
+                          selectAll(`.${code}`).classed(
+                            'suggestion_highlight',
+                            true,
+                          );
+                        });
+                      }
+                    } else {
+                      countries.forEach(code => {
+                        selectAll(`.${code}`).classed(
+                          'suggestion_highlight',
+                          false,
+                        );
+                      });
+                    }
+
                     if (
                       selectedPrediction &&
                       pred.intent === selectedPrediction.intent
@@ -253,7 +283,7 @@ const Predictions: FC<Props> = ({
                           }}
                           size="tiny"
                           primary>
-                          {isHighlighted ? 'Hide Items' : 'Show Items'}
+                          Show Items
                         </Button>
                         <pre>
                           {JSON.stringify(
