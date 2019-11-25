@@ -1,9 +1,9 @@
-import React, {FC} from 'react';
+import React, {FC, CSSProperties} from 'react';
 import {Dataset} from '../Stores/Types/Dataset';
 import {connect} from 'react-redux';
 import VisualizationState from '../Stores/Visualization/VisualizationState';
 import {SelectionRecord} from '../App';
-import {Header, Segment, Label, List, Button} from 'semantic-ui-react';
+import {Header, Label, List, Button, Card} from 'semantic-ui-react';
 import {selectAll} from 'd3';
 import {hashCode} from '../Utils';
 import Events from '../Stores/Types/EventEnum';
@@ -53,17 +53,17 @@ const SelectionResults: FC<Props> = ({
   const detailedSelectedList = selectedLists.map(idx => data[idx]);
 
   return (
-    <div style={{height: '45vh'}}>
-      <Segment>
+    <Card fluid style={resultsDivStyle}>
+      <Card.Content>
         <Header as="h1" textAlign="center">
-          Results
+          Selections
         </Header>
         <Label>{`Selected Items: ${pointSelectionsCount} (Click)`}</Label>
         <Label>{`Selected Items: ${intersectionCount} (Intersection)`}</Label>
         <Label>{`Selected Items: ${unionCount} (Union)`}</Label>
         <Label>{`Selected Items: ${totalSelections} (Total)`}</Label>
-      </Segment>
-      <Segment style={{height: '100%', overflow: 'scroll', padding: '1em'}}>
+      </Card.Content>
+      <Card.Content style={{overflow: 'scroll', padding: '1em'}}>
         <List>
           {selectedLists.map(selectionId => {
             const selectionObject = data[selectionId];
@@ -88,8 +88,8 @@ const SelectionResults: FC<Props> = ({
             );
           })}
         </List>
-      </Segment>
-      <Segment textAlign="center">
+      </Card.Content>
+      <Card.Content textAlign="center">
         <Button
           primary
           disabled={selectedLists.length === 0}
@@ -116,8 +116,8 @@ const SelectionResults: FC<Props> = ({
           }}>
           Submit ({selectedLists.length} selected)
         </Button>
-      </Segment>
-    </div>
+      </Card.Content>
+    </Card>
   );
 };
 
@@ -126,3 +126,11 @@ export default connect(
     dataset: state.dataset,
   }),
 )(SelectionResults);
+
+const resultsDivStyle: CSSProperties = {
+  display: 'grid',
+  gridTemplateRows: 'min-content 1fr min-content',
+  height: '50vh',
+  margin: 0,
+  padding: '1em',
+};

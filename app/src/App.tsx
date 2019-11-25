@@ -110,20 +110,20 @@ const App: FC<Props> = ({
               isSubmitted={isSubmitted}
               showCategories={showCategories}
             />
-            {!isExploreMode && (
-              <SelectionResults
-                changeIsSubmitted={setIsSubmitted}
-                selections={totalSelections}></SelectionResults>
-            )}
           </div>
         </div>
       </div>
-      <Provider store={predictionStore}>
-        <Predictions
-          isExploreMode={isExploreMode}
-          isSubmitted={isSubmitted}
-          dataset={dataset}></Predictions>
-      </Provider>
+      <div style={resPred}>
+        <SelectionResults
+          changeIsSubmitted={setIsSubmitted}
+          selections={totalSelections}></SelectionResults>
+        <Provider store={predictionStore}>
+          <Predictions
+            isExploreMode={isExploreMode}
+            isSubmitted={isSubmitted}
+            dataset={dataset}></Predictions>
+        </Provider>
+      </div>
     </div>
   );
 
@@ -152,6 +152,12 @@ const mainDivStyle: CSSProperties = {
   width: '100vw',
   display: 'grid',
   gridTemplateColumns: '3fr 1fr',
+};
+
+const resPred: CSSProperties = {
+  display: 'grid',
+  gridTemplateRows: '1fr 1fr',
+  height: '100vh',
 };
 
 const taskVisDiv = (isExploreMode: boolean = false): CSSProperties => {

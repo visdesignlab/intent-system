@@ -62,7 +62,7 @@ export let participant: ParticipantDetails = {
 
 console.log(participant.uniqueId);
 
-let isExploreMode = false;
+let isExploreMode = true;
 
 if (window.location.href.includes('#')) {
   const uniqueId = window.location.href.split('#')[1];
