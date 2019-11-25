@@ -43,10 +43,6 @@ export function getPredictionAfterBrushSwitch(
 }
 
 export function getPredictions(request: PredictionRequest) {
-  if (areEqual(previousPredictionRequest, request)) {
-    return;
-  }
-
   previousPredictionRequest = request;
   cancel && cancel();
 
