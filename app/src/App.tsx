@@ -110,6 +110,7 @@ const App: FC<Props> = ({
         {!isExploreMode && <Task text={task ? task.text : emptyString} />}
         <div style={visDiv}>
           <PlotControl
+            plots={plots}
             isExploreMode={isExploreMode}
             isSubmitted={isSubmitted}
             showCategories={showCategories}

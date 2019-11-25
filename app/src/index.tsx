@@ -69,7 +69,6 @@ if (window.location.href.includes('#')) {
 }
 
 const logToFirebase = () => {
-  console.log('Logged');
   const masterList = firestore.collection('master').doc('list');
 
   masterList

@@ -328,7 +328,8 @@ const Scatterplot: FC<Props> = ({
                 cy={yScale(d.y)}
                 r={markSize}></IntersectionMark>
             ) : selectedIndices[i] ? (
-              selectedIndices[i] === maxIntersection ? (
+              selectedIndices[i] === maxIntersection ||
+              multiBrushBehavior === MultiBrushBehavior.UNION ? (
                 <IntersectionMark
                   fill={
                     showCategories

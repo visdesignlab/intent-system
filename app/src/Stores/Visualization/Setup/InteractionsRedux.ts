@@ -16,10 +16,22 @@ import {StudyState} from '../../Study/StudyState';
 export const ADD_INTERACTION = 'ADD_INTERACTION';
 export type ADD_INTERACTION = typeof ADD_INTERACTION;
 
+export const UPDATE_INTERACTION_HISTORY = 'UPDATE_INTERACTION_HISTORY';
+export type UPDATE_INTERACTION_HISTORY = typeof UPDATE_INTERACTION_HISTORY;
+
 export interface AddInteractionAction extends Action<ADD_INTERACTION> {
   type: ADD_INTERACTION;
   args: {
     interaction: Interaction;
+    multiBrushBehavior: MultiBrushBehavior;
+  };
+}
+
+export interface UpdateInteractionHistoryAction
+  extends Action<UPDATE_INTERACTION_HISTORY> {
+  type: UPDATE_INTERACTION_HISTORY;
+  args: {
+    interaction: Interaction[];
     multiBrushBehavior: MultiBrushBehavior;
   };
 }
@@ -76,20 +88,38 @@ export function getPredictions(request: PredictionRequest) {
   });
 }
 
+export type InteractionActions =
+  | AddInteractionAction
+  | UpdateInteractionHistoryAction;
+
 export const InteractionsReducer: Reducer<
   InteractionHistory,
-  AddInteractionAction
-> = (current: InteractionHistory = [], action: AddInteractionAction) => {
+  InteractionActions
+> = (current: InteractionHistory = [], action: InteractionActions) => {
+  let interactions: Interaction[] = [];
+  let request: PredictionRequest = {
+    multiBrushBehavior: MultiBrushBehavior.UNION,
+    interactionHistory: [],
+  };
   switch (action.type) {
     case ADD_INTERACTION:
-      const interactions = [...current, action.args.interaction];
-      const request: PredictionRequest = {
+      interactions = [...current, action.args.interaction];
+      request = {
         multiBrushBehavior: action.args.multiBrushBehavior,
         interactionHistory: interactions,
       };
 
       getPredictions(request);
 
+      return interactions;
+    case UPDATE_INTERACTION_HISTORY:
+      interactions = [...action.args.interaction];
+      request = {
+        multiBrushBehavior: action.args.multiBrushBehavior,
+        interactionHistory: interactions,
+      };
+
+      getPredictions(request);
       return interactions;
     default:
       return current;

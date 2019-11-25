@@ -12,13 +12,17 @@ import {
 
 import {MultiBrushBehavior} from '../contract';
 import {ColumnMap, Dataset} from '../Stores/Types/Dataset';
-import {SinglePlot} from '../Stores/Types/Plots';
+import {SinglePlot, Plots} from '../Stores/Types/Plots';
 import {CHANGE_BRUSH_BEHAVIOR} from '../Stores/Visualization/Setup/MultiBrushRedux';
-import {addPlot} from '../Stores/Visualization/Setup/PlotsRedux';
+import {
+  addPlot,
+  updateAllPlots,
+} from '../Stores/Visualization/Setup/PlotsRedux';
 import VisualizationState from '../Stores/Visualization/VisualizationState';
 import {areEqual} from '../Utils';
 
 interface OwnProps {
+  plots: Plots;
   isExploreMode: boolean;
   isSubmitted: boolean;
   showCategories: boolean;
@@ -33,6 +37,7 @@ interface StateProps {
 
 interface DispatchProps {
   addPlot: (plot: SinglePlot) => void;
+  updatePlots: (plots: Plots) => void;
   changeBrushBehavior: (multiBrushBehaviour: MultiBrushBehavior) => void;
 }
 
@@ -55,6 +60,8 @@ const PlotControl: FC<Props> = (props: Props) => {
     dataset,
     addPlot,
     clearAll,
+    plots,
+    updatePlots,
   } = props;
 
   defaultSinglePlot.color = dataset.categoricalColumns[0];
@@ -176,6 +183,7 @@ const PlotControl: FC<Props> = (props: Props) => {
 
   function clearAllSelections() {
     clearAll();
+    updatePlots(plots);
   }
 
   const ClearSelection = (
@@ -205,6 +213,9 @@ const PlotControl: FC<Props> = (props: Props) => {
 
 const mapDispatchToProps = (dispatch: any): DispatchProps => ({
   addPlot: (plot: SinglePlot) => dispatch(addPlot(plot)),
+  updatePlots: (plots: Plots) => {
+    dispatch(updateAllPlots(plots));
+  },
   changeBrushBehavior: (mbb: MultiBrushBehavior) =>
     dispatch({
       type: CHANGE_BRUSH_BEHAVIOR,
