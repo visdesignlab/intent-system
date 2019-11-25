@@ -35,6 +35,7 @@ interface OwnProps {
   colorScale: ScaleOrdinal<string, unknown>;
   showCategories: boolean;
   markSize: string | number;
+  clearBrushDictionarySetup: (plotid: string, handler: () => void) => void;
 }
 
 interface StateProps {
@@ -86,6 +87,7 @@ const Scatterplot: FC<Props> = ({
   addPointSelection,
   colorScale,
   markSize,
+  clearBrushDictionarySetup,
 }: Props) => {
   const xAxisRef: RefObject<SVGGElement> = createRef();
   const yAxisRef: RefObject<SVGGElement> = createRef();
@@ -99,11 +101,28 @@ const Scatterplot: FC<Props> = ({
 
   const [mouseIsDown, setMouseIsDown] = useState(false);
 
-  let clearAllBrush = () => {};
+  let clearSelections = () => {};
 
-  const clearAllBrushSetup = (handler: () => void) => {
-    clearAllBrush = handler;
-  };
+  function clearAllBrushSetup(handler: () => void) {
+    clearSelections = () => {
+      handler();
+      plot.brushes = {};
+      plot.selectedPoints = [];
+      plot.brushSelections = {};
+      plot.combinedBrushSelections = {};
+      const selections = [...plot.selectedPoints];
+      addPointDeselection(
+        {
+          plot,
+          dataIds: selections,
+          kind: 'deselection',
+        },
+        multiBrushBehavior,
+      );
+      updatePlot({...plot}, false);
+    };
+    clearBrushDictionarySetup(plot.id, clearSelections);
+  }
 
   const padding = 50;
   const paddedSize = size - 2 * padding;
@@ -433,10 +452,7 @@ const Scatterplot: FC<Props> = ({
               width={100}
               opacity={0.01}
               onClick={() => {
-                console.log('Remove');
-                clearAllBrush();
-                plot.brushes = {};
-                updatePlot({...plot}, false);
+                clearSelections();
                 removePlot(plot);
               }}></rect>
           </CloseGroup>

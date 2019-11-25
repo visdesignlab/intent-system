@@ -23,6 +23,7 @@ interface OwnProps {
   isSubmitted: boolean;
   showCategories: boolean;
   setShowCategories: (shouldShow: boolean) => void;
+  clearAll: () => void;
 }
 
 interface StateProps {
@@ -53,6 +54,7 @@ const PlotControl: FC<Props> = (props: Props) => {
     changeBrushBehavior,
     dataset,
     addPlot,
+    clearAll,
   } = props;
 
   defaultSinglePlot.color = dataset.categoricalColumns[0];
@@ -172,12 +174,23 @@ const PlotControl: FC<Props> = (props: Props) => {
     </>
   );
 
+  function clearAllSelections() {
+    clearAll();
+  }
+
+  const ClearSelection = (
+    <Button color="red" onClick={clearAllSelections}>
+      Clear Selections
+    </Button>
+  );
+
   const Control = (
     <Menu compact>
       <Menu.Item>{AddPlotButton}</Menu.Item>
       <Menu.Item>{HideCategoryToggle}</Menu.Item>
       {showCategories && <Menu.Item>{AddCategoryDropdown}</Menu.Item>}
       <Menu.Item>{MultiBrushBehaviorToggle}</Menu.Item>
+      <Menu.Item>{ClearSelection}</Menu.Item>
     </Menu>
   );
 

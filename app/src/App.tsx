@@ -94,6 +94,16 @@ const App: FC<Props> = ({
 
   if (!areEqual(totalSels, totalSelections)) setTotalSelections(totalSels);
 
+  let clearAllHandler: () => void = () => {};
+
+  function clearAllHandlerSetup(handler: () => void) {
+    clearAllHandler = handler;
+  }
+
+  function clearAll() {
+    clearAllHandler();
+  }
+
   const study = (
     <div style={mainDivStyle}>
       <div style={taskVisDiv(isExploreMode)}>
@@ -104,9 +114,11 @@ const App: FC<Props> = ({
             isSubmitted={isSubmitted}
             showCategories={showCategories}
             setShowCategories={setShowCategories}
+            clearAll={clearAll}
           />
           <div style={visResDiv(isExploreMode)}>
             <Visualization
+              clearAllHandlerSetup={clearAllHandlerSetup}
               isSubmitted={isSubmitted}
               showCategories={showCategories}
             />

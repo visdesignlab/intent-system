@@ -66,16 +66,16 @@ const SelectionResults: FC<Props> = ({selections, dataset}: Props) => {
           <rect
             height="100%"
             width="100%"
-            fill="gray"
+            fill="#375E97"
             opacity="0.1"
-            stroke="black"
+            stroke="#375E97"
             strokeWidth="3px"></rect>
           <text transform={`translate(10, ${15})`} dominantBaseline="middle">
             {`Total: ${totalSelections}`}
           </text>
 
           <g transform={`translate(100, 75)`}>
-            <circle r="50" stroke="none" fill="red" opacity="0.5" />
+            <circle r="50" stroke="none" fill="#FB6542" opacity="0.5" />
             <text
               transform={`translate(0, ${-34})`}
               style={{
@@ -85,7 +85,7 @@ const SelectionResults: FC<Props> = ({selections, dataset}: Props) => {
               }}>
               {`U: ${unionCount}`}
             </text>
-            <circle r="25" stroke="none" fill="blue" opacity="0.2" />
+            <circle r="25" stroke="none" fill="#3F681C" opacity="0.4" />
             <text
               style={{
                 dominantBaseline: 'middle',
@@ -96,7 +96,7 @@ const SelectionResults: FC<Props> = ({selections, dataset}: Props) => {
             </text>
           </g>
           <g transform={`translate(300, 75)`}>
-            <circle r="50" stroke="black" fill="none" opacity="0.5" />
+            <circle r="50" fill="#FFBB00" opacity="0.5" />
             <text
               style={{
                 fontFamily: 'FontAwesome',
