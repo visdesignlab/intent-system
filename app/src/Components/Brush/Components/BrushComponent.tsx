@@ -164,7 +164,6 @@ const BrushComponent: FC<Props> = ({
   };
 
   const removeAllBrushes = () => {
-    console.log('Hello');
     const brs = JSON.parse(JSON.stringify(brushes));
     setBrushes({});
     onBrushUpdate({...brushes}, brs, BrushAffectType.REMOVE_ALL);

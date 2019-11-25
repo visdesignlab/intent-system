@@ -1,5 +1,6 @@
 import {Action, Reducer} from 'redux';
 import {MultiBrushBehavior} from '../../../contract';
+import {getPredictionAfterBrushSwitch} from './InteractionsRedux';
 
 export const CHANGE_BRUSH_BEHAVIOR = 'CHANGE_BRUSH_BEHAVIOR';
 export type CHANGE_BRUSH_BEHAVIOR = typeof CHANGE_BRUSH_BEHAVIOR;
@@ -23,6 +24,7 @@ export const MultiBrushBehaviorReducer: Reducer<
 ) => {
   switch (action.type) {
     case CHANGE_BRUSH_BEHAVIOR:
+      getPredictionAfterBrushSwitch(action.args);
       return action.args;
     default:
       return current;

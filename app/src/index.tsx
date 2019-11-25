@@ -50,8 +50,6 @@ export const studyProvenance = initProvenance(defaultStudyState);
 
 export let predictionStore = PredictionStoreCreator();
 
-export let datasetName = 'gapminder_world';
-
 export const getDatasetUrl = (datasetName: string) => `/dataset/${datasetName}`;
 
 export const {config, app: firebaseApp, firestore} = setupFirebase();
@@ -71,8 +69,6 @@ if (window.location.href.includes('#')) {
 }
 
 const logToFirebase = () => {
-  if (isExploreMode) return;
-  console.log('Logged');
   const masterList = firestore.collection('master').doc('list');
 
   masterList
@@ -166,11 +162,13 @@ export function initializeTaskManager() {
 
 export const taskManager = initializeTaskManager();
 
+export let datasetName = 'cluster';
+
 axios
   .get('/dataset')
   .then(async response => {
     const datasets = response.data;
-    datasetName = datasets.filter((d: string) => d.includes('cluster'))[0];
+    datasetName = datasets.filter((d: string) => d.includes(datasetName))[0];
     await loadDataset(getDatasetUrl(datasetName));
 
     studyProvenance.applyAction({

@@ -18,6 +18,7 @@ export enum PointSelectionEnum {
 interface OwnProps {
   showCategories: boolean;
   isSubmitted: boolean;
+  clearAllHandlerSetup: (handler: () => void) => void;
 }
 
 interface StateProps {
@@ -34,6 +35,7 @@ const Visualization: FC<Props> = ({
   showCategories,
   dataset,
   plots,
+  clearAllHandlerSetup,
 }: Props) => {
   const [dimensions, setDimensions] = useState<{
     height: number;
@@ -84,6 +86,18 @@ const Visualization: FC<Props> = ({
     .domain(uniqueValues)
     .range(schemeSet2);
 
+  const clearBrushDictionary: {[key: string]: () => void} = {};
+
+  function clearAllBrushes() {
+    Object.values(clearBrushDictionary).forEach(handler => handler());
+  }
+
+  clearAllHandlerSetup(clearAllBrushes);
+
+  function clearBrushDictionarySetup(plotid: string, handler: () => void) {
+    clearBrushDictionary[plotid] = handler;
+  }
+
   return (
     <MainSvg ref={measuredRef}>
       {showCategories && (
@@ -124,6 +138,7 @@ const Visualization: FC<Props> = ({
                       stroke="red"></rect>
                     <Scatterplot
                       plot={plot}
+                      clearBrushDictionarySetup={clearBrushDictionarySetup}
                       otherPlots={otherPlots}
                       size={plotDimension}
                       showCategories={showCategories}

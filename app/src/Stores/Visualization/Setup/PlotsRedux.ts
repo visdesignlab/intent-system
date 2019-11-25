@@ -2,7 +2,12 @@ import {Action, Reducer, Dispatch} from 'redux';
 import {SinglePlot, Plots} from '../../Types/Plots';
 import {recordableReduxActionCreator} from '@visdesignlab/provenance-lib-core/lib/src';
 import {VisualizationProvenance} from '../../..';
-import {ADD_INTERACTION, AddInteractionAction} from './InteractionsRedux';
+import {
+  ADD_INTERACTION,
+  AddInteractionAction,
+  UpdateInteractionHistoryAction,
+  UPDATE_INTERACTION_HISTORY,
+} from './InteractionsRedux';
 import VisualizationState from '../VisualizationState';
 import {ThunkDispatch} from 'redux-thunk';
 import {VisualizationType, Interaction} from '../../../contract';
@@ -39,6 +44,7 @@ export const addPlot = (plot: SinglePlot) => (
   VisualizationProvenance.apply(
     recordableReduxActionCreator(`Add Plot: ${plot.id}`, ADD_PLOT, plot),
   );
+
   const interaction: Interaction = {
     visualizationType: VisualizationType.Grid,
     interactionType: {
@@ -58,6 +64,34 @@ export const addPlot = (plot: SinglePlot) => (
     type: ADD_INTERACTION,
     args: {
       interaction,
+      multiBrushBehavior,
+    },
+  });
+};
+
+export const updateAllPlots = (plots: Plots) => (
+  dispatch: ThunkDispatch<{}, {}, UpdateInteractionHistoryAction>,
+  getState: () => VisualizationState,
+) => {
+  const interactions: Interaction[] = plots.map(plot => ({
+    visualizationType: VisualizationType.Grid,
+    interactionType: {
+      kind: 'ADD',
+      plot: {
+        id: plot.id,
+        x: plot.x,
+        y: plot.y,
+        color: plot.color,
+      },
+    },
+  }));
+
+  const multiBrushBehavior = getState().multiBrushBehaviour;
+
+  dispatch({
+    type: UPDATE_INTERACTION_HISTORY,
+    args: {
+      interaction: interactions,
       multiBrushBehavior,
     },
   });
