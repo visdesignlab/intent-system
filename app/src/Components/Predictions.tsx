@@ -117,7 +117,7 @@ const Predictions: FC<Props> = ({
       </Card.Content>
       <Card.Content
         style={{
-          overflow: 'scroll',
+          overflow: 'auto',
         }}>
         {isLoading && loadingScreen}
         <svg
