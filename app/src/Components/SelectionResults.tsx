@@ -118,7 +118,7 @@ const SelectionResults: FC<Props> = ({selections, dataset}: Props) => {
           </g>
         </svg>
       </Card.Content>
-      <Card.Content style={{overflow: 'scroll', padding: '1em'}}>
+      <Card.Content style={{overflow: 'auto', padding: '1em'}}>
         <List>
           {selectedLists.map(selectionId => {
             const selectionObject = data[selectionId];
