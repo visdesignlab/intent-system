@@ -42,8 +42,9 @@ class IntentBinary(Intent, ABC):
 
 
 class IntentMulticlassInstance(IntentBinary):
-    def __init__(self, reference: pd.DataFrame):
+    def __init__(self, parent: 'IntentMulticlass', reference: pd.DataFrame):
         self.reference = reference
+        self.parent = parent
 
     def to_string(self) -> str:
         return self.reference.columns[0]  # type: ignore
@@ -52,12 +53,18 @@ class IntentMulticlassInstance(IntentBinary):
         return self.reference.applymap(int)
 
     def info(self) -> Optional[Dict[str, Any]]:
-        return None
+        return self.parent.info()
 
 
 class IntentMulticlass(Intent, ABC):
     def to_prediction(self, selection: np.ndarray, df: pd.DataFrame) -> List[Prediction]:
         computed = self.compute(df)
-        outputs = map(lambda i: IntentMulticlassInstance(
-            computed[[i]]).to_prediction(selection, df), computed.columns)
+        outputs = map(lambda i:
+                      IntentMulticlassInstance(self,
+                                               computed[[i]]).to_prediction(selection, df),
+                      computed.columns)
         return [x for y in outputs for x in y]
+
+    @abstractmethod
+    def info(self) -> Optional[Dict[str, Any]]:
+        pass

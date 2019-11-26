@@ -3,6 +3,7 @@ from sklearn.cluster import KMeans
 import pandas as pd
 
 from ..intent import IntentMulticlass
+from typing import Optional, Dict, Any
 
 
 class KMeansCluster(IntentMulticlass):
@@ -28,3 +29,6 @@ class KMeansCluster(IntentMulticlass):
                 index=df.index, dtype=int),
                 values), axis='columns')
         return result
+
+    def info(self) -> Optional[Dict[str, Any]]:
+        return {"params": self.kmeans.get_params()}
