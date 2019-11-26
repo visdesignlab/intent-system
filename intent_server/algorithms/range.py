@@ -82,7 +82,7 @@ class Range(Intent):
 
         return [Prediction(
             intent=self.to_string(),
-            rank=0.3,
+            rank=1 / (model.get_depth() * model.get_depth()),
             data_ids=[],
             info={"rules": list(paths)},
             suggestion=suggestion)]
