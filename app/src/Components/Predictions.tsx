@@ -111,7 +111,7 @@ const Predictions: FC<Props> = ({
     <Card fluid style={masterPredictionDiv}>
       <Card.Content>
         <Header as="h1" textAlign="center">
-          Intents
+          Predictions
           <Label>{`Time required: ${stringTime} seconds`}</Label>
         </Header>
       </Card.Content>
