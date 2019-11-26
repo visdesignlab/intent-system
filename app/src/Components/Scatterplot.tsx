@@ -128,11 +128,13 @@ const Scatterplot: FC<Props> = ({
   const paddedSize = size - 2 * padding;
   const xScale = scaleLinear()
     .domain([min(data.map(d => d.x)), max(data.map(d => d.x))])
-    .range([0, paddedSize]);
+    .range([0, paddedSize])
+    .nice();
 
   const yScale = scaleLinear()
     .domain([max(data.map(d => d.y)), min(data.map(d => d.y))])
-    .range([0, paddedSize]);
+    .range([0, paddedSize])
+    .nice();
 
   useEffect(() => {
     if (xAxisRef.current) {
