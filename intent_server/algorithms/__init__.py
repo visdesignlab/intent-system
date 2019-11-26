@@ -6,4 +6,4 @@ from .skyline import Skyline
 from .dbscan import DBSCANCluster
 from .inverse import Inverse
 
-__all__ = ["Categories", "KMeansCluster", "Outlier", "Range", "Skyline", "Inverse"]
+__all__ = ["Categories", "KMeansCluster", "Outlier", "Range", "Skyline", "DBSCANCluster", "Inverse"]
