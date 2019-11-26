@@ -404,10 +404,10 @@ const Scatterplot: FC<Props> = ({
               fontSize="1.2em"
               textAnchor="middle">
               <tspan style={{fontWeight: 'bold'}}>
-                {dataset.columnMaps[plot.x].text}
+                {`${dataset.columnMaps[plot.x].text} `}
               </tspan>
               {dataset.columnMaps[plot.x].unit.length > 0 && (
-                <tspan>{dataset.columnMaps[plot.x].unit}</tspan>
+                <tspan>{`(${dataset.columnMaps[plot.x].unit})`}</tspan>
               )}
             </text>
           </g>
@@ -418,10 +418,10 @@ const Scatterplot: FC<Props> = ({
               textAnchor="middle"
               transform={`translate(-40, ${paddedSize / 2})rotate(270)`}>
               <tspan style={{fontWeight: 'bold'}}>
-                {dataset.columnMaps[plot.y].text}{' '}
+                {`${dataset.columnMaps[plot.y].text} `}
               </tspan>
               {dataset.columnMaps[plot.y].unit.length > 0 && (
-                <tspan>{dataset.columnMaps[plot.y].unit}</tspan>
+                <tspan>{`(${dataset.columnMaps[plot.y].unit})`}</tspan>
               )}
             </text>
           </g>
