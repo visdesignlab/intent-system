@@ -40,5 +40,5 @@ class LinearRegression(IntentMulticlass):
 
     def info(self) -> Optional[Dict[str, Any]]:
         return {
-            "coeff": list(self.reg.coef_),
+            "coef": list(self.reg.coef_),
             "intercept": self.reg.intercept_}
