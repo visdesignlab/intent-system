@@ -4,6 +4,7 @@ from sklearn import preprocessing
 import pandas as pd
 
 from ..intent import IntentMulticlass
+from typing import Optional, Dict, Any
 
 
 class DBSCANCluster(IntentMulticlass):
@@ -33,3 +34,6 @@ class DBSCANCluster(IntentMulticlass):
                 index=df.index, dtype=int),
                 values), axis='columns')
         return result
+
+    def info(self) -> Optional[Dict[str, Any]]:
+        return {"params": self.dbscan.get_params()}

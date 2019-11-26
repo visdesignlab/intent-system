@@ -2,6 +2,7 @@ import pandas as pd
 
 from ..dataset import Dataset
 from ..intent import IntentMulticlass
+from typing import Optional, Dict, Any
 
 
 def expand_column(col: pd.DataFrame, description: str) -> pd.DataFrame:
@@ -27,3 +28,6 @@ class Categories(IntentMulticlass):
 
     def compute(self, df: pd.DataFrame) -> pd.DataFrame:
         return self.expanded
+
+    def info(self) -> Optional[Dict[str, Any]]:
+        return None
