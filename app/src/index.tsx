@@ -162,7 +162,7 @@ export function initializeTaskManager() {
 
 export const taskManager = initializeTaskManager();
 
-export let datasetName = 'cluster';
+export let datasetName = 'gapminder_world';
 
 axios
   .get('/dataset')
