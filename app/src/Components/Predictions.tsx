@@ -160,44 +160,50 @@ const Predictions: FC<Props> = ({
                   key={idx}
                   transform={`translate(0, ${(barHeight + 5) * idx})`}
                   onClick={() => {
-                    countries.forEach(code => {
-                      if (
-                        !selectAll(`.${code}`).classed('suggestion_highlight')
-                      ) {
-                        isHighlighted = false;
-                        return;
-                      }
-                      isHighlighted = true;
-                    });
+                    const isThisPredSelected =
+                      selectedPrediction &&
+                      pred.intent === selectedPrediction.intent;
 
-                    if (!isHighlighted) {
-                      selectAll('.mark').classed('suggestion_highlight', false);
-
+                    if (isThisPredSelected) {
+                      selectAll('.mark').classed('tone_down_others', false);
+                    } else {
+                      selectAll('.mark').classed('tone_down_others', true);
                       if (pred.intent === 'Range') {
                         console.log('Test');
                       } else {
                         countries.forEach(code => {
                           selectAll(`.${code}`).classed(
-                            'suggestion_highlight',
-                            true,
+                            'tone_down_others',
+                            false,
                           );
                         });
                       }
-                    } else {
-                      countries.forEach(code => {
-                        selectAll(`.${code}`).classed(
-                          'suggestion_highlight',
-                          false,
-                        );
-                      });
                     }
 
-                    if (
-                      selectedPrediction &&
-                      pred.intent === selectedPrediction.intent
-                    )
-                      setSelectedPrediction(null as any);
+                    if (isThisPredSelected) setSelectedPrediction(null as any);
                     else setSelectedPrediction(pred);
+
+                    // if (!isHighlighted) {
+                    //   selectAll('.mark').classed('suggestion_highlight', false);
+
+                    //   if (pred.intent === 'Range') {
+                    //     console.log('Test');
+                    //   } else {
+                    //     countries.forEach(code => {
+                    //       selectAll(`.${code}`).classed(
+                    //         'suggestion_highlight',
+                    //         true,
+                    //       );
+                    //     });
+                    //   }
+                    // } else {
+                    //   countries.forEach(code => {
+                    //     selectAll(`.${code}`).classed(
+                    //       'suggestion_highlight',
+                    //       false,
+                    //     );
+                    //   });
+                    // }
                   }}>
                   <rect
                     height={barHeight}

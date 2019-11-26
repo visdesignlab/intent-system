@@ -143,7 +143,7 @@ const Visualization: FC<Props> = ({
                       size={plotDimension}
                       showCategories={showCategories}
                       lastPlot={plots.length === 1}
-                      markSize={`${0.25 / rowCount}em`}
+                      markSize={`${0.35 / rowCount}em`}
                       colorScale={colorScale}></Scatterplot>
                   </g>
                 );

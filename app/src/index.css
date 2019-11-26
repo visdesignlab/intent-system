@@ -11,6 +11,10 @@ code {
     monospace;
 }
 
+.tone_down_others {
+  opacity: 0.05 !important;
+}
+
 .selection_highlight {
   fill: red !important;
 }

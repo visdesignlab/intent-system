@@ -293,7 +293,7 @@ const Scatterplot: FC<Props> = ({
     key => otherPointSelection[key],
   );
 
-  const defaultMarkColor = '#37c3fa';
+  const defaultMarkColor = 'black';
 
   const MarksLayer = (
     <g style={{pointerEvents: mouseIsDown ? 'none' : 'all'}} className="marks">
@@ -599,7 +599,7 @@ interface MarkProps {
 
 const RegularMark = styled('circle')<MarkProps>`
   fill: ${props => (props.fill ? props.fill : 'black')};
-  opacity: 0.6;
+  opacity: 0.4;
   cursor: pointer;
   &:hover {
     r: 0.35em;
@@ -607,15 +607,11 @@ const RegularMark = styled('circle')<MarkProps>`
 `;
 
 const UnionMark = styled(RegularMark)<MarkProps>`
-  fill: ${props => (props.fill ? props.fill : 'black')};
-  stroke: black;
-  stroke-width: 1.5px;
-  opacity: 0.6;
+  fill: #2c7fb8;
+  opacity: 0.9;
 `;
 
 const IntersectionMark = styled(RegularMark)<MarkProps>`
-  fill: ${props => (props.fill ? props.fill : 'black')};
-  stroke: red;
-  stroke-width: 1.5px;
-  opacity: 0.6;
+  fill: #d95f0e;
+  opacity: 0.9;
 `;
