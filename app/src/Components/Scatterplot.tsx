@@ -448,7 +448,7 @@ const Scatterplot: FC<Props> = ({
               textAnchor="middle"
               dominantBaseline="middle"
               transform={`translate(50, 10)`}>
-              Remove
+              Remove Plot
             </text>
             <rect
               height={20}
