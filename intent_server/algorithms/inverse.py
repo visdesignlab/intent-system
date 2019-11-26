@@ -1,7 +1,7 @@
 import pandas as pd
 
 from ..intent import IntentBinary
-from typing import Optional, Dict, Any, List
+from typing import Optional, Dict, Any
 
 
 class Inverse(IntentBinary):
