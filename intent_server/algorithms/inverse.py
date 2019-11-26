@@ -16,5 +16,6 @@ class Inverse(IntentBinary):
 
     def compute(self, df: pd.DataFrame) -> pd.DataFrame:
         result = self.intent.compute(df)
-        result = result ^ 1
+        result = result ^ 1  # XOR
+        result.rename(columns={self.intent.to_string(): self.to_string()}, inplace=True)
         return result
