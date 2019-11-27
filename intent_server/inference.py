@@ -1,6 +1,7 @@
 from .dataset import Dataset
 from .dimensions import Dimensions
-from .algorithms import Outlier, Skyline, Range, KMeansCluster, Categories, DBSCANCluster
+from .algorithms import LinearRegression, Outlier, Skyline, Range, KMeansCluster
+from .algorithms import Categories, DBSCANCluster, Inverse
 
 from .vendor.interactions import Interaction, InteractionTypeKind, PredictionSet, MultiBrushBehavior
 
@@ -57,11 +58,13 @@ class Inference:
         self.dataset = dataset
         self.intents = [
             Outlier(),
+            Inverse(Outlier()),
             Skyline(),
             Range(),
             KMeansCluster(),
             DBSCANCluster(),
             Categories(dataset),
+            LinearRegression(0.1),
         ]
 
     def predict(self, interactions: List[Interaction], op: MultiBrushBehavior) -> PredictionSet:
