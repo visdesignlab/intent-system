@@ -2,9 +2,8 @@ import React, {FC, useState, CSSProperties} from 'react';
 
 import Task from './Components/Task';
 import Visualization from './Components/Visualization';
-import VisualizationState from './Stores/Visualization/VisualizationState';
 import {Dataset} from './Stores/Types/Dataset';
-import {connect, Provider} from 'react-redux';
+import {connect} from 'react-redux';
 import {
   SinglePlot,
   Plots,
@@ -13,12 +12,12 @@ import {
 } from './Stores/Types/Plots';
 import {addPlot} from './Stores/Visualization/Setup/PlotsRedux';
 import PlotControl from './Components/PlotControl';
-import {predictionStore} from '.';
 import Predictions from './Components/Predictions';
 import SelectionResults from './Components/SelectionResults';
 import {max} from 'lodash';
 import TaskDetails from './Stores/Types/TaskDetails';
 import {areEqual} from './Utils';
+import {AppStore} from './Stores/CombinedStore';
 
 interface OwnProps {
   task: TaskDetails;
@@ -130,12 +129,10 @@ const App: FC<Props> = ({
         <SelectionResults
           changeIsSubmitted={setIsSubmitted}
           selections={totalSelections}></SelectionResults>
-        <Provider store={predictionStore}>
-          <Predictions
-            isExploreMode={isExploreMode}
-            isSubmitted={isSubmitted}
-            dataset={dataset}></Predictions>
-        </Provider>
+        <Predictions
+          isExploreMode={isExploreMode}
+          isSubmitted={isSubmitted}
+          dataset={dataset}></Predictions>
       </div>
     </div>
   );
@@ -143,9 +140,9 @@ const App: FC<Props> = ({
   return study;
 };
 
-const mapStateToProps = (state: VisualizationState): StateProps => ({
-  dataset: state.dataset,
-  plots: state.plots,
+const mapStateToProps = (state: AppStore): StateProps => ({
+  dataset: state.visualization.dataset,
+  plots: state.visualization.plots,
 });
 
 const mapDispatchToProps = (dispatch: any): DispatchProps => ({

@@ -7,7 +7,7 @@ import {
   PredictionRequest,
 } from '../../../contract';
 import axios from 'axios';
-import {datasetName, predictionStore, studyProvenance} from '../../..';
+import {datasetName, studyProvenance, AppStore} from '../../..';
 import {updatePredictions} from '../../Predictions/Setup/PredictionRedux';
 import {updatePredictionLoading} from '../../Predictions/Setup/PredictionLoadingRedux';
 import Events from '../../Types/EventEnum';
@@ -59,32 +59,35 @@ export function getPredictions(request: PredictionRequest) {
 
   const interactions = request.interactionHistory;
 
-  predictionStore.dispatch(updatePredictionLoading(true));
-  axios
-    .post(`/dataset/${datasetName}/predict`, request, {
-      cancelToken: new axios.CancelToken(c => (cancel = c)),
-    })
-    .then(response => {
-      predictionStore.dispatch(updatePredictions(response.data));
-      predictionStore.dispatch(updatePredictionLoading(false));
-    })
-    .catch(err => {
-      if (!axios.isCancel(err)) {
-        predictionStore.dispatch(updatePredictionLoading(false));
-        console.log(err);
-      }
-    });
+  setTimeout(() => {
+    AppStore.dispatch(updatePredictionLoading(true));
 
-  studyProvenance.applyAction({
-    label: Events.ADD_INTERACTION,
-    action: () => {
-      let currentState = studyProvenance.graph().current.state;
-      if (currentState) {
-        currentState = {...currentState, interactions};
-      }
-      return currentState as StudyState;
-    },
-    args: [],
+    axios
+      .post(`/dataset/${datasetName}/predict`, request, {
+        cancelToken: new axios.CancelToken(c => (cancel = c)),
+      })
+      .then(response => {
+        AppStore.dispatch(updatePredictions(response.data));
+        AppStore.dispatch(updatePredictionLoading(false));
+      })
+      .catch(err => {
+        if (!axios.isCancel(err)) {
+          AppStore.dispatch(updatePredictionLoading(false));
+          console.log(err);
+        }
+      });
+
+    studyProvenance.applyAction({
+      label: Events.ADD_INTERACTION,
+      action: () => {
+        let currentState = studyProvenance.graph().current.state;
+        if (currentState) {
+          currentState = {...currentState, interactions};
+        }
+        return currentState as StudyState;
+      },
+      args: [],
+    });
   });
 }
 

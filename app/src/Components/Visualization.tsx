@@ -1,7 +1,6 @@
 import React, {FC, useState, useCallback} from 'react';
 import styled from 'styled-components';
 import {connect} from 'react-redux';
-import VisualizationState from '../Stores/Visualization/VisualizationState';
 import {Dataset} from '../Stores/Types/Dataset';
 import {Plots} from '../Stores/Types/Plots';
 import Scatterplot from './Scatterplot';
@@ -9,6 +8,7 @@ import Legend from './Legend';
 import {scaleOrdinal, schemeSet2} from 'd3';
 import {pure} from 'recompose';
 import _ from 'lodash';
+import {AppStore} from '../Stores/CombinedStore';
 
 export enum PointSelectionEnum {
   ADD = 'ADD',
@@ -164,9 +164,9 @@ const Visualization: FC<Props> = ({
   );
 };
 
-const mapStateToProps = (state: VisualizationState): StateProps => ({
-  dataset: state.dataset,
-  plots: state.plots,
+const mapStateToProps = (state: AppStore): StateProps => ({
+  dataset: state.visualization.dataset,
+  plots: state.visualization.plots,
 });
 
 export default connect(mapStateToProps)(pure(Visualization));

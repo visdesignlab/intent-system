@@ -1,11 +1,11 @@
 import React, {FC, CSSProperties} from 'react';
 import {Dataset} from '../Stores/Types/Dataset';
 import {connect} from 'react-redux';
-import VisualizationState from '../Stores/Visualization/VisualizationState';
 import {SelectionRecord} from '../App';
 import {Header, List, Card} from 'semantic-ui-react';
 import {selectAll} from 'd3';
 import {hashCode} from '../Utils';
+import {AppStore} from '../Stores/CombinedStore';
 // import Events from '../Stores/Types/EventEnum';
 // import {studyProvenance} from '..';
 // import {StudyState} from '../Stores/Study/StudyState';
@@ -177,8 +177,8 @@ const SelectionResults: FC<Props> = ({selections, dataset}: Props) => {
 };
 
 export default connect(
-  (state: VisualizationState): StateProps => ({
-    dataset: state.dataset,
+  (state: AppStore): StateProps => ({
+    dataset: state.visualization.dataset,
   }),
 )(SelectionResults);
 
