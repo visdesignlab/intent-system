@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request, redirect
-import sys
+
 from .dataset import Dataset
 from .dimensions import Dimensions
 from .inference import Inference
