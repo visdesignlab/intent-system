@@ -5,13 +5,13 @@ import thunk from 'redux-thunk';
 import {HideZeroPredictionsReducer} from './HideZeroPredictionsReducer';
 import {PredictionLoadingReducer} from './PredictionLoadingRedux';
 
-function PredictionStoreCreator(state?: PredictionState) {
-  const PredictionReducer = combineReducers<PredictionState>({
-    predictionSet: PredictionsReducer,
-    hideZeroPredictions: HideZeroPredictionsReducer,
-    isLoading: PredictionLoadingReducer,
-  });
+export const PredictionReducer = combineReducers<PredictionState>({
+  predictionSet: PredictionsReducer,
+  hideZeroPredictions: HideZeroPredictionsReducer,
+  isLoading: PredictionLoadingReducer,
+});
 
+function PredictionStoreCreator(state?: PredictionState) {
   return createStore<PredictionState, any, any, any>(
     PredictionReducer,
     state,
