@@ -1,4 +1,4 @@
-import React, {FC, useState} from 'react';
+import React, {FC, useState, useEffect} from 'react';
 import {connect} from 'react-redux';
 import {
   Button,
@@ -20,6 +20,8 @@ import {
 } from '../Stores/Visualization/Setup/PlotsRedux';
 import VisualizationState from '../Stores/Visualization/VisualizationState';
 import {areEqual} from '../Utils';
+import axios from 'axios';
+import {datasetName, loadDatasetByName} from '..';
 
 interface OwnProps {
   plots: Plots;
@@ -50,6 +52,24 @@ const defaultSinglePlot: SinglePlot = ({
   selectedPoints: [],
 } as unknown) as SinglePlot;
 
+export type DatasetDropdownOption = {
+  key: string;
+  text: string;
+  value: string;
+};
+
+export type DatasetDropdownOptions = DatasetDropdownOption[];
+
+function getDatasetOptions(
+  datasets: {key: string; name: string}[],
+): DatasetDropdownOptions {
+  return datasets.map(ds => ({
+    key: ds.key,
+    text: ds.name,
+    value: ds.key,
+  }));
+}
+
 const PlotControl: FC<Props> = (props: Props) => {
   const {
     showCategories,
@@ -65,6 +85,15 @@ const PlotControl: FC<Props> = (props: Props) => {
   } = props;
 
   defaultSinglePlot.color = dataset.categoricalColumns[0];
+
+  const [datasets, setDatasets] = useState<DatasetDropdownOptions>([]);
+
+  useEffect(() => {
+    axios.get('./dataset').then(response => {
+      const datasets = response.data;
+      setDatasets(getDatasetOptions(datasets));
+    });
+  }, []);
 
   const [addingPlot, setAddingPlot] = useState(false);
   const [singlePlot, setSinglePlot] = useState<SinglePlot>({
@@ -192,8 +221,19 @@ const PlotControl: FC<Props> = (props: Props) => {
     </Button>
   );
 
+  const DatasetSwitcher = (
+    <Dropdown
+      options={datasets}
+      defaultValue={datasetName}
+      onChange={(_, data) => {
+        clearAllSelections();
+        loadDatasetByName(data.value as string);
+      }}></Dropdown>
+  );
+
   const Control = (
     <Menu compact>
+      <Menu.Item>{DatasetSwitcher}</Menu.Item>
       <Menu.Item>{AddPlotButton}</Menu.Item>
       <Menu.Item>{HideCategoryToggle}</Menu.Item>
       {showCategories && <Menu.Item>{AddCategoryDropdown}</Menu.Item>}
