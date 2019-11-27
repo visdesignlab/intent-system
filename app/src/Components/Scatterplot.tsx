@@ -295,12 +295,21 @@ const Scatterplot: FC<Props> = ({
 
   const defaultMarkColor = 'black';
 
+  const ignoreColumns = ['HASH', labelColumn];
+  const currentColumns = [plot.x, plot.y];
+  let keysArray = Object.keys(
+    dataset.data.length > 0 ? dataset.data[0] : {},
+  ).filter(key => !ignoreColumns.includes(key));
+
+  keysArray = [
+    ...currentColumns,
+    ...keysArray.filter(k => !currentColumns.includes(k)),
+  ];
+
   const MarksLayer = (
     <g style={{pointerEvents: mouseIsDown ? 'none' : 'all'}} className="marks">
       {data.map((d, i) => {
         const markData = dataset.data[i];
-        const ignoreColumns = ['HASH', labelColumn];
-        const currentColumns = [plot.x, plot.y];
 
         return (
           <Popup
@@ -392,23 +401,35 @@ const Scatterplot: FC<Props> = ({
               <div>
                 <h1>{dataset.data[i][labelColumn]}</h1>
                 <Table singleLine>
-                  <Table.Header>
+                  <Table.Header
+                    style={{
+                      fontWeight: 'boldest',
+                    }}>
                     <Table.Row>
                       <Table.HeaderCell>Property</Table.HeaderCell>
                       <Table.HeaderCell>Value</Table.HeaderCell>
                     </Table.Row>
                   </Table.Header>
                   <Table.Body>
-                    {Object.keys(markData)
-                      .filter(key => !ignoreColumns.includes(key))
-                      .map(key => (
-                        <Table.Row key={key}>
+                    {keysArray.map(key => {
+                      return (
+                        <Table.Row
+                          key={key}
+                          style={{
+                            fontWeight: currentColumns.includes(key)
+                              ? 'bold'
+                              : 'regular',
+                          }}>
                           <Table.Cell>
                             {dataset.columnMaps[key].text}
                           </Table.Cell>
-                          <Table.Cell>{markData[key]}</Table.Cell>
+                          <Table.Cell>{`${markData[key]}${dataset.columnMaps[
+                            key
+                          ].unit.length > 0 &&
+                            ` (${dataset.columnMaps[key].unit})`}`}</Table.Cell>
                         </Table.Row>
-                      ))}
+                      );
+                    })}
                   </Table.Body>
                 </Table>
               </div>
@@ -602,7 +623,10 @@ const RegularMark = styled('circle')<MarkProps>`
   opacity: 0.4;
   cursor: pointer;
   &:hover {
-    r: 0.35em;
+    stroke: gold;
+    opacity: 1;
+    stroke-width: 4px;
+    stroke-opacity: 1;
   }
 `;
 

@@ -154,6 +154,10 @@ const mapDispatchToProps = (dispatch: any): DispatchProps => ({
   },
 });
 
+// (App as any).whyDidYouRender = {
+//   logOnDifferentValues: true,
+// };
+
 export default connect(
   mapStateToProps,
   mapDispatchToProps,

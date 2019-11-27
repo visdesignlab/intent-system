@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request, redirect
-
+import sys
 from .dataset import Dataset
 from .dimensions import Dimensions
 from .inference import Inference
@@ -8,10 +8,16 @@ from .vendor.interactions import prediction_request_from_dict
 import time
 
 # Load and preprocess the dataset
+# datasets = {
+#     'slc_housing': Dataset.load_housing_data(),
+#     'draft_combine': Dataset.load_draft_combine_data(),
+#     'nba_players': Dataset.load_nba_data(),
+#     'gapminder_world': Dataset.load_gapminderworld_data(),
+#     'cluster': Dataset.load_cluster_data()
+# }
+
 datasets = {
     'slc_housing': Dataset.load_housing_data(),
-    'draft_combine': Dataset.load_draft_combine_data(),
-    'nba_players': Dataset.load_nba_data(),
     'gapminder_world': Dataset.load_gapminderworld_data(),
     'cluster': Dataset.load_cluster_data()
 }
@@ -26,7 +32,13 @@ def index():  # type: ignore
 
 @views.route('/dataset', methods=['GET'])
 def route_dataset_list():  # type: ignore
-    return jsonify(list(datasets.keys()))
+    finalDatasets = []
+    for key in list(datasets.keys()):
+        finalDatasets.append({
+                'key': key,
+                'name': datasets[key].name
+            })
+    return jsonify(finalDatasets)
 
 
 @views.route('/dataset/<dataset_name>', methods=['GET'])

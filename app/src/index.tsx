@@ -5,7 +5,6 @@ import {
   initProvenanceRedux,
   initProvenance,
 } from '@visdesignlab/provenance-lib-core/lib/src';
-import axios from 'axios';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {Provider} from 'react-redux';
@@ -164,38 +163,14 @@ export const taskManager = initializeTaskManager();
 
 export let datasetName = 'gapminder_world';
 
-axios
-  .get('/dataset')
-  .then(async response => {
-    const datasets = response.data;
-    datasetName = datasets.filter((d: string) => d.includes(datasetName))[0];
-    await loadDataset(getDatasetUrl(datasetName));
+export async function loadDatasetByName(ds: string = datasetName) {
+  if (datasetName !== ds) datasetName = ds;
+  startRender();
+}
 
-    studyProvenance.applyAction({
-      label: Events.SET_PARTICIPANT,
-      action: () => {
-        let currentState = studyProvenance.graph().current.state;
-        if (currentState) {
-          currentState = {
-            ...currentState,
-            participant: {
-              uniqueId: participant.uniqueId,
-            },
-            event: Events.SET_PARTICIPANT,
-            eventTime: new Date(),
-          };
-        }
+startRender();
 
-        return currentState as StudyState;
-      },
-      args: [],
-    });
-
-    taskManager.startCurrentTask();
-  })
-  .catch(err => console.log(err));
-
-async function startRender(task: TaskDetails = null as any) {
+async function startRender(task: TaskDetails = TaskList[0]) {
   VisualizationStore = VisualizationStoreCreator();
   VisualizationProvenance = initProvenanceRedux<VisualizationState>(
     VisualizationStore,
