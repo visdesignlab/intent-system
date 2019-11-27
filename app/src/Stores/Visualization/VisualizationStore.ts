@@ -8,16 +8,16 @@ import {MultiBrushBehaviorReducer} from './Setup/MultiBrushRedux';
 import {PlotsReducer} from './Setup/PlotsRedux';
 import {InteractionsReducer} from './Setup/InteractionsRedux';
 
-function VisualizationStoreCreator(state?: Partial<VisualizationState>) {
-  const VisualizationReducer = combineReducers<VisualizationState>({
-    dataset: DatasetReducer,
-    participant: ParticipantDetailsReducer,
-    task: TaskReducer,
-    multiBrushBehaviour: MultiBrushBehaviorReducer,
-    plots: PlotsReducer,
-    interactions: InteractionsReducer,
-  });
+export const VisualizationReducer = combineReducers<VisualizationState>({
+  dataset: DatasetReducer,
+  participant: ParticipantDetailsReducer,
+  task: TaskReducer,
+  multiBrushBehaviour: MultiBrushBehaviorReducer,
+  plots: PlotsReducer,
+  interactions: InteractionsReducer,
+});
 
+function VisualizationStoreCreator(state?: Partial<VisualizationState>) {
   return createStore<VisualizationState, any, any, any>(
     VisualizationReducer,
     state,

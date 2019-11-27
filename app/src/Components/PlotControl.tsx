@@ -18,10 +18,10 @@ import {
   addPlot,
   updateAllPlots,
 } from '../Stores/Visualization/Setup/PlotsRedux';
-import VisualizationState from '../Stores/Visualization/VisualizationState';
 import {areEqual} from '../Utils';
 import axios from 'axios';
 import {datasetName, loadDatasetByName} from '..';
+import {AppStore} from '../Stores/CombinedStore';
 
 interface OwnProps {
   plots: Plots;
@@ -263,9 +263,9 @@ const mapDispatchToProps = (dispatch: any): DispatchProps => ({
     }),
 });
 
-const mapStateToProps = (state: VisualizationState): StateProps => ({
-  dataset: state.dataset,
-  multiBrushBehavior: state.multiBrushBehaviour,
+const mapStateToProps = (state: AppStore): StateProps => ({
+  dataset: state.visualization.dataset,
+  multiBrushBehavior: state.visualization.multiBrushBehaviour,
 });
 
 export default connect(

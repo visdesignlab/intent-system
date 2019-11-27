@@ -14,10 +14,10 @@ import {
 import {Prediction} from '../contract';
 import {Dataset} from '../Stores/Types/Dataset';
 import {hashCode} from '../Utils';
-import {PredictionState} from '../Stores/Predictions/PredictionsState';
 import Events from '../Stores/Types/EventEnum';
 import {studyProvenance, taskManager} from '..';
 import {StudyState} from '../Stores/Study/StudyState';
+import {AppState} from '../Stores/CombinedStore';
 
 interface OwnProps {
   isExploreMode: boolean;
@@ -103,9 +103,23 @@ const Predictions: FC<Props> = ({
     predictions = [...predictions, regression, knowledge, other];
   }
 
-  const detailedDimensionList: string[] = dimensions
-    ? dimensions.map(d => dataset.columnMaps[d].text)
-    : [];
+  let detailedDimensionList: string[] = [];
+
+  let hasAllDims = true;
+
+  if (dimensions) {
+    dimensions.forEach(dim => {
+      hasAllDims = hasAllDims && dataset.columns.includes(dim);
+    });
+  }
+
+  if (dimensions && hasAllDims) {
+    detailedDimensionList = dimensions
+      ? dimensions.map(d => {
+          return dataset.columnMaps[d].text;
+        })
+      : [];
+  }
 
   return (
     <Card fluid style={masterPredictionDiv}>
@@ -395,13 +409,13 @@ const Predictions: FC<Props> = ({
   );
 };
 
-const mapStateToProps = (state: PredictionState): StateProps => {
+const mapStateToProps = (state: AppState): StateProps => {
   return {
-    dimensions: state.predictionSet.dimensions,
-    selectedIds: state.predictionSet.selectedIds,
-    predictions: state.predictionSet.predictions,
-    time: (state.predictionSet as any).time,
-    isLoading: state.isLoading,
+    dimensions: state.prediction.predictionSet.dimensions,
+    selectedIds: state.prediction.predictionSet.selectedIds,
+    predictions: state.prediction.predictionSet.predictions,
+    time: (state.prediction.predictionSet as any).time,
+    isLoading: state.prediction.isLoading,
   };
 };
 
