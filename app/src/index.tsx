@@ -12,16 +12,15 @@ import {Provider} from 'react-redux';
 import App from './App';
 import setupFirebase from './Firebase/firebaseConfig';
 import * as serviceWorker from './serviceWorker';
-import PredictionStoreCreator from './Stores/Predictions/Setup/PredictionStore';
+
 import {loadDataset} from './Stores/Visualization/Setup/DatasetRedux';
-import VisualizationState from './Stores/Visualization/VisualizationState';
-import VisualizationStoreCreator from './Stores/Visualization/VisualizationStore';
 import {defaultStudyState, StudyState} from './Stores/Study/StudyState';
 import Events from './Stores/Types/EventEnum';
 import {getRandomUserCode} from './Utils';
 import TaskList from './Stores/Study/TaskList';
 import TaskDetails from './Stores/Types/TaskDetails';
 import ParticipantDetails from './Stores/Types/ParticipantDetails';
+import {combinedVisPredStore, AppState} from './Stores/CombinedStore';
 
 if (process.env.NODE_ENV !== 'production') {
   const whyDidYouRender = require('@welldone-software/why-did-you-render');
@@ -32,11 +31,15 @@ if (process.env.NODE_ENV !== 'production') {
   });
 }
 
-export let VisualizationStore = VisualizationStoreCreator();
-export let VisualizationProvenance = initProvenanceRedux<VisualizationState>(
-  VisualizationStore,
-  (_: any) => {},
-);
+export let AppStore = combinedVisPredStore();
+
+export let AppProvenance = initProvenanceRedux<AppState>(AppStore, _ => {});
+
+// export let VisualizationStore = VisualizationStoreCreator();
+// export let VisualizationProvenance = initProvenanceRedux<VisualizationState>(
+//   VisualizationStore,
+//   (_: any) => {},
+// );
 
 export const datasets = [
   'draft_combine',
@@ -47,7 +50,7 @@ export const datasets = [
 
 export const studyProvenance = initProvenance(defaultStudyState);
 
-export let predictionStore = PredictionStoreCreator();
+// export let predictionStore = PredictionStoreCreator();
 
 export const getDatasetUrl = (datasetName: string) => `/dataset/${datasetName}`;
 
@@ -171,21 +174,14 @@ export async function loadDatasetByName(ds: string = datasetName) {
 startRender();
 
 async function startRender(task: TaskDetails = TaskList[0]) {
-  VisualizationStore = VisualizationStoreCreator();
-  VisualizationProvenance = initProvenanceRedux<VisualizationState>(
-    VisualizationStore,
-    (_: any) => {},
-  );
-
-  predictionStore = PredictionStoreCreator();
+  AppStore = combinedVisPredStore();
+  AppProvenance = initProvenanceRedux<AppState>(AppStore, _ => {});
 
   await loadDataset(getDatasetUrl(datasetName));
 
   ReactDOM.render(
-    <Provider store={predictionStore}>
-      <Provider store={VisualizationStore}>
-        <App key={task.order} task={task} isExploreMode={isExploreMode} />
-      </Provider>
+    <Provider store={AppStore}>
+      <App key={task.order} task={task} isExploreMode={isExploreMode} />
     </Provider>,
     document.getElementById('root'),
   );

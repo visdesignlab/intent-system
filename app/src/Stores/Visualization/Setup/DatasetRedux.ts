@@ -1,7 +1,7 @@
 import {Dataset, ColumnMap, emptyDataset, HASH} from '../../Types/Dataset';
 import {Action, Reducer} from 'redux';
 import {text} from 'd3';
-import {VisualizationProvenance} from '../../..';
+import {AppProvenance} from '../../..';
 import {recordableReduxActionCreator} from '@visdesignlab/provenance-lib-core/lib/src';
 import {hashCode} from '../../../Utils';
 
@@ -78,7 +78,7 @@ export const loadDataset = async (url: string) => {
     hashLookup: hashLookup,
   };
 
-  VisualizationProvenance.apply(updateDataset(parsedDataset));
+  AppProvenance.apply(updateDataset(parsedDataset));
 
   // console.log(VisualizationProvenance.graph().current.state);
   // console.table(Object.values(VisualizationProvenance.graph().nodes));

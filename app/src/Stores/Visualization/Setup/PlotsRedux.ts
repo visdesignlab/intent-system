@@ -1,16 +1,16 @@
 import {Action, Reducer, Dispatch} from 'redux';
 import {SinglePlot, Plots} from '../../Types/Plots';
 import {recordableReduxActionCreator} from '@visdesignlab/provenance-lib-core/lib/src';
-import {VisualizationProvenance} from '../../..';
+import {AppProvenance} from '../../..';
 import {
   ADD_INTERACTION,
   AddInteractionAction,
   UpdateInteractionHistoryAction,
   UPDATE_INTERACTION_HISTORY,
 } from './InteractionsRedux';
-import VisualizationState from '../VisualizationState';
 import {ThunkDispatch} from 'redux-thunk';
 import {VisualizationType, Interaction} from '../../../contract';
+import {AppState} from '../../CombinedStore';
 
 export const ADD_PLOT = 'ADD_PLOT';
 export const REMOVE_PLOT = 'REMOVE_PLOT';
@@ -39,9 +39,9 @@ export type PlotAction = AddPlotAction | UpdatePlotAction | RemovePlotAction;
 
 export const addPlot = (plot: SinglePlot) => (
   dispatch: ThunkDispatch<{}, {}, AddInteractionAction>,
-  getState: () => VisualizationState,
+  getState: () => AppState,
 ) => {
-  VisualizationProvenance.apply(
+  AppProvenance.apply(
     recordableReduxActionCreator(`Add Plot: ${plot.id}`, ADD_PLOT, plot),
   );
 
@@ -58,7 +58,7 @@ export const addPlot = (plot: SinglePlot) => (
     },
   };
 
-  const multiBrushBehavior = getState().multiBrushBehaviour;
+  const multiBrushBehavior = getState().visualization.multiBrushBehaviour;
 
   dispatch({
     type: ADD_INTERACTION,
@@ -71,7 +71,7 @@ export const addPlot = (plot: SinglePlot) => (
 
 export const updateAllPlots = (plots: Plots) => (
   dispatch: ThunkDispatch<{}, {}, UpdateInteractionHistoryAction>,
-  getState: () => VisualizationState,
+  getState: () => AppState,
 ) => {
   const interactions: Interaction[] = plots.map(plot => ({
     visualizationType: VisualizationType.Grid,
@@ -86,7 +86,7 @@ export const updateAllPlots = (plots: Plots) => (
     },
   }));
 
-  const multiBrushBehavior = getState().multiBrushBehaviour;
+  const multiBrushBehavior = getState().visualization.multiBrushBehaviour;
 
   dispatch({
     type: UPDATE_INTERACTION_HISTORY,
@@ -100,16 +100,13 @@ export const updateAllPlots = (plots: Plots) => (
 export const updatePlot = (
   plot: SinglePlot,
   addInteraction: boolean = true,
-) => (
-  dispatch: Dispatch<AddInteractionAction>,
-  getState: () => VisualizationState,
-) => {
-  VisualizationProvenance.apply(
+) => (dispatch: Dispatch<AddInteractionAction>, getState: () => AppState) => {
+  AppProvenance.apply(
     recordableReduxActionCreator(`Update Plot: ${plot.id}`, UPDATE_PLOT, plot),
   );
 
   if (addInteraction) {
-    const multiBrushBehavior = getState().multiBrushBehaviour;
+    const multiBrushBehavior = getState().visualization.multiBrushBehaviour;
 
     const interaction: Interaction = {
       visualizationType: VisualizationType.Grid,
@@ -136,9 +133,9 @@ export const updatePlot = (
 
 export const removePlot = (plot: SinglePlot) => (
   dispatch: Dispatch<AddInteractionAction>,
-  getState: () => VisualizationState,
+  getState: () => AppState,
 ) => {
-  VisualizationProvenance.apply(
+  AppProvenance.apply(
     recordableReduxActionCreator(`Remove Plot: ${plot.id}`, REMOVE_PLOT, plot),
   );
   const interaction: Interaction = {
@@ -154,7 +151,7 @@ export const removePlot = (plot: SinglePlot) => (
     },
   };
 
-  const multiBrushBehavior = getState().multiBrushBehaviour;
+  const multiBrushBehavior = getState().visualization.multiBrushBehaviour;
 
   dispatch({
     type: ADD_INTERACTION,

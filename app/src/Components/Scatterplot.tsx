@@ -13,7 +13,6 @@ import {
   combineBrushSelectionInMultiplePlots,
 } from '../Stores/Types/Plots';
 import {removePlot, updatePlot} from '../Stores/Visualization/Setup/PlotsRedux';
-import VisualizationState from '../Stores/Visualization/VisualizationState';
 import BrushComponent from './Brush/Components/BrushComponent';
 import {ThunkDispatch} from 'redux-thunk';
 import {BrushAffectType} from './Brush/Types/Brush';
@@ -26,6 +25,7 @@ import {
 } from '../contract';
 import {ADD_INTERACTION} from '../Stores/Visualization/Setup/InteractionsRedux';
 import {min, max} from 'lodash';
+import {AppState} from '../Stores/CombinedStore';
 
 interface OwnProps {
   plot: SinglePlot;
@@ -514,9 +514,9 @@ const Scatterplot: FC<Props> = ({
   );
 };
 
-const mapStateToProps = (state: VisualizationState): StateProps => ({
-  dataset: state.dataset,
-  multiBrushBehavior: state.multiBrushBehaviour,
+const mapStateToProps = (state: AppState): StateProps => ({
+  dataset: state.visualization.dataset,
+  multiBrushBehavior: state.visualization.multiBrushBehaviour,
 });
 
 const mapDispatchToProps = (
@@ -636,6 +636,6 @@ const UnionMark = styled(RegularMark)<MarkProps>`
 `;
 
 const IntersectionMark = styled(RegularMark)<MarkProps>`
-  fill: #d95f0e;
+  fill: rgb(244, 106, 15);
   opacity: 0.9;
 `;
