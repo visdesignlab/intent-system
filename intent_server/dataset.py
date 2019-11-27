@@ -2,7 +2,6 @@ import json
 
 import pandas as pd
 import numpy as np
-import sys
 from .dimensions import Dimensions
 from typing import Dict, Set
 
@@ -52,7 +51,6 @@ class Dataset:
             label = raw_json['labelColumn']
             data = pd.DataFrame.from_dict(raw_json['values'], orient='index')
             return Dataset(label, data, name)
-
 
     @staticmethod
     def load_nba_data() -> 'Dataset':
@@ -146,7 +144,7 @@ class Dataset:
         df = df.astype(convert_dict)
         df['Label'] = df['Label'].apply(str)
         df['Cluster'] = df['Cluster'].apply(str)
-        print(df.dtypes, file=sys.stderr)
+
         return Dataset('Label', df, 'Cluster', {
             'X': {
                 'text': 'X',
@@ -208,72 +206,72 @@ class Dataset:
                 'unit': 'label',
                 'type': 'label'
                 },
-            'Acres':{
+            'Acres': {
                 'text': 'Acres',
                 'unit': '',
                 'type': 'numeric'
                 },
-            'BsmntFin':{
+            'BsmntFin': {
                 'text': 'Basement Finish',
                 'unit': '',
                 'type': 'numeric'
                 },
-            'Deck':{
+            'Deck': {
                 'text': 'Deck',
                 'unit': '',
                 'type': 'numeric'
                 },
-            'Style':{
+            'Style': {
                 'text': 'Style',
                 'unit': '',
                 'type': 'categorical'
                 },
-            'EWCoord':{
+            'EWCoord': {
                 'text': 'Longitude',
                 'unit': '',
                 'type': 'numeric'
                 },
-            'GaragCap':{
+            'GaragCap': {
                 'text': 'Garage Capcity',
                 'unit': '',
                 'type': 'numeric'
                 },
-            'HouseNbr':{
+            'HouseNbr': {
                 'text': 'House Number',
                 'unit': '',
                 'type': 'numeric'
                 },
-            'LstPrice':{
+            'LstPrice': {
                 'text': 'List Price',
                 'unit': '$',
                 'type': 'numeric'
                 },
-            'NSCoord':{
+            'NSCoord': {
                 'text': 'Latitude',
                 'unit': '',
                 'type': 'numeric'
                 },
-            'Taxes':{
+            'Taxes': {
                 'text': 'Taxes',
                 'unit': '$',
                 'type': 'numeric'
                 },
-            'TotBed':{
+            'TotBed': {
                 'text': 'Total Bedrooms',
                 'unit': '#',
                 'type': 'numeric'
                 },
-            'TotBth':{
+            'TotBth': {
                 'text': 'Total Bathrooms',
                 'unit': '',
                 'type': 'numeric'
                 },
-            'TotSqf':{
+            'TotSqf': {
                 'text': 'Total Square Footage',
                 'unit': 'sq. ft.',
                 'type': 'numeric'
                 },
-            'YearBlt':{
+            'YearBlt': {
                 'text': 'Year Built',
                 'unit': '',
                 'type': 'numeric'
