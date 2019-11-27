@@ -53,33 +53,6 @@ class Dataset:
             data = pd.DataFrame.from_dict(raw_json['values'], orient='index')
             return Dataset(label, data, name)
 
-    @staticmethod
-    def load_housing_data() -> 'Dataset':
-        df = pd.concat([
-            pd.read_csv('data/housing/train1.csv', thousands=','),
-            pd.read_csv('data/housing/train2.csv', thousands=','),
-        ], ignore_index=True)
-        selection = df[[
-            'ListNo',
-            'Acres',
-            'BsmntFin',
-            'Deck',
-            'Style',
-            'EWCoord',
-            'GaragCap',
-            'HouseNbr',
-            'LstPrice',
-            'NSCoord',
-            'Taxes',
-            'TotBed',
-            'TotBth',
-            'TotSqf',
-            'YearBlt',
-        ]]
-        # Remove some outliers
-        selection = selection[selection.Acres < 1]
-        selection = selection[selection.Deck < 6]
-        return Dataset('ListNo', selection.astype({'ListNo': str}), 'SLC Housing')
 
     @staticmethod
     def load_nba_data() -> 'Dataset':
@@ -200,5 +173,109 @@ class Dataset:
                 'text': 'Label',
                 'unit': 'label',
                 'type': 'label'
+                },
+            })
+
+    @staticmethod
+    def load_housing_data() -> 'Dataset':
+        df = pd.concat([
+            pd.read_csv('data/housing/train1.csv', thousands=','),
+            pd.read_csv('data/housing/train2.csv', thousands=','),
+        ], ignore_index=True)
+        selection = df[[
+            'ListNo',
+            'Acres',
+            'BsmntFin',
+            'Deck',
+            'Style',
+            'EWCoord',
+            'GaragCap',
+            'HouseNbr',
+            'LstPrice',
+            'NSCoord',
+            'Taxes',
+            'TotBed',
+            'TotBth',
+            'TotSqf',
+            'YearBlt',
+        ]]
+        # Remove some outliers
+        selection = selection[selection.Acres < 1]
+        selection = selection[selection.Deck < 6]
+        return Dataset('ListNo', selection.astype({'ListNo': str}), 'SLC Housing', {
+            'ListNo': {
+                'text': 'Listing No',
+                'unit': 'label',
+                'type': 'label'
+                },
+            'Acres':{
+                'text': 'Acres',
+                'unit': '',
+                'type': 'numeric'
+                },
+            'BsmntFin':{
+                'text': 'Basement Finish',
+                'unit': '',
+                'type': 'numeric'
+                },
+            'Deck':{
+                'text': 'Deck',
+                'unit': '',
+                'type': 'numeric'
+                },
+            'Style':{
+                'text': 'Style',
+                'unit': '',
+                'type': 'categorical'
+                },
+            'EWCoord':{
+                'text': 'Longitude',
+                'unit': '',
+                'type': 'numeric'
+                },
+            'GaragCap':{
+                'text': 'Garage Capcity',
+                'unit': '',
+                'type': 'numeric'
+                },
+            'HouseNbr':{
+                'text': 'House Number',
+                'unit': '',
+                'type': 'numeric'
+                },
+            'LstPrice':{
+                'text': 'List Price',
+                'unit': '$',
+                'type': 'numeric'
+                },
+            'NSCoord':{
+                'text': 'Latitude',
+                'unit': '',
+                'type': 'numeric'
+                },
+            'Taxes':{
+                'text': 'Taxes',
+                'unit': '$',
+                'type': 'numeric'
+                },
+            'TotBed':{
+                'text': 'Total Bedrooms',
+                'unit': '#',
+                'type': 'numeric'
+                },
+            'TotBth':{
+                'text': 'Total Bathrooms',
+                'unit': '',
+                'type': 'numeric'
+                },
+            'TotSqf':{
+                'text': 'Total Square Footage',
+                'unit': 'sq. ft.',
+                'type': 'numeric'
+                },
+            'YearBlt':{
+                'text': 'Year Built',
+                'unit': '',
+                'type': 'numeric'
                 },
             })
