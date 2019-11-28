@@ -84,13 +84,29 @@ class Inference:
 
         ids = relevant_ids(interactions, op)
 
-        filtered = list(filter(lambda x: x.interaction_type.data_ids, interactions))
-        list_of_dims = map(lambda interaction: [interaction.interaction_type.plot.x,  # type: ignore
-                                                interaction.interaction_type.plot.y]  # type: ignore
-                           if interaction.interaction_type.plot  # type: ignore
-                           else ["", ""], filtered)  # type: ignore
+        # Filters removed plots
+        inactive_plots = set()
+        for inter in interactions:
+            if inter.interaction_type.kind is InteractionTypeKind.REMOVE:
+                inactive_plots.add(inter.interaction_type.plot.id)
+            elif inter.interaction_type.kind is InteractionTypeKind.ADD:
+                inactive_plots.discard(inter.interaction_type.plot.id)
 
+        filtered = list(filter(lambda x: x.interaction_type.data_ids and not (
+            x.interaction_type.plot.id in inactive_plots), interactions))
+
+        list_of_dims = list(map(lambda interaction: [interaction.interaction_type.plot.x,  # type: ignore
+                                                     interaction.interaction_type.plot.y]  # type: ignore
+                                if interaction.interaction_type.plot  # type: ignore
+                                else ["", ""], filtered))  # type: ignore
+
+        tuple_dims = set(map(lambda x: Dimensions(x), list_of_dims))
         dims = Dimensions(list(set([y for x in list_of_dims for y in x])))
+        tuple_dims.discard(dims)
+        tuple_dims = list(tuple_dims)
+
+        print(dims)
+        print(tuple_dims)
 
         if len(ids) == 0:
             return PredictionSet(
@@ -101,17 +117,19 @@ class Inference:
         sel_array = self.dataset.selection(ids)
         relevant_data = self.dataset.subset(dims)
 
-        # Also unzips
-        list_of_predictions, computed = itertools.tee(map(
-            lambda intent: intent.to_prediction(sel_array, relevant_data), self.intents))
-
         list_of_predictions = []
         list_of_computed = []
 
         for intent in self.intents:
+            # All dimensions
             pred, comp = intent.to_prediction(sel_array, relevant_data)
             list_of_predictions.extend(pred)
             list_of_computed.append(comp)
+
+            for d in tuple_dims:
+                pred, comp = intent.to_prediction(sel_array, self.dataset.subset(d))
+                list_of_predictions.extend(pred)
+                list_of_computed.append(comp)
 
         # Add probailities
         outputs = pd.concat(list_of_computed, axis='columns')
@@ -132,6 +150,7 @@ class Inference:
                     p.info = dict()
                 p.info['probability'] = probs[p.intent]
 
+        # Some intents don't have a probability so we add them seperately.
         special_predictions = list(map(lambda si: si.to_prediction(
             sel_array, relevant_data), self.special_intents))
         flat_list = [item for sublist in special_predictions for item in sublist]
