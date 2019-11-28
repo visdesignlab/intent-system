@@ -2,11 +2,11 @@ from sklearn.cluster import KMeans
 
 import pandas as pd
 
-from ..intent import IntentMulticlass
+from ..intent import Intent
 from typing import Optional, Dict, Any
 
 
-class KMeansCluster(IntentMulticlass):
+class KMeansCluster(Intent):
     def __init__(self) -> None:
         self.kmeans = KMeans(n_clusters=3, random_state=0)
 

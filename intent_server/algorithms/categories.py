@@ -1,7 +1,7 @@
 import pandas as pd
 
 from ..dataset import Dataset
-from ..intent import IntentMulticlass
+from ..intent import Intent
 from typing import Optional, Dict, Any
 
 
@@ -15,7 +15,7 @@ def expand_column(col: pd.DataFrame, description: str) -> pd.DataFrame:
     return result
 
 
-class Categories(IntentMulticlass):
+class Categories(Intent):
     def __init__(self, data: Dataset) -> None:
         baseName = 'Category'
         self.baseName = baseName

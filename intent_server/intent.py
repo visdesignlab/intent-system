@@ -37,32 +37,3 @@ class Intent(ABC):
     @abstractmethod
     def to_string(self) -> str:
         pass
-
-
-class IntentMulticlassInstance(Intent):
-    def __init__(self, parent: 'IntentMulticlass', reference: pd.DataFrame):
-        self.reference = reference
-        self.parent = parent
-
-    def to_string(self) -> str:
-        return self.reference.columns[0]  # type: ignore
-
-    def compute(self, df: pd.DataFrame) -> pd.DataFrame:
-        return self.reference.applymap(int)
-
-    def info(self) -> Optional[Dict[str, Any]]:
-        return self.parent.info()
-
-
-class IntentMulticlass(Intent, ABC):
-    # def to_prediction(self, selection: np.ndarray, df: pd.DataFrame) -> List[Prediction]:
-    #     computed = self.compute(df)
-    #     outputs = map(lambda i:
-    #                   IntentMulticlassInstance(self,
-    #                                            computed[[i]]).to_prediction(selection, df),
-    #                   computed.columns)
-    #     return [x for y in outputs for x in y]
-
-    @abstractmethod
-    def info(self) -> Optional[Dict[str, Any]]:
-        pass

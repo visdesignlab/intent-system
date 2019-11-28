@@ -3,6 +3,7 @@ import pandas as pd
 from ..intent import Intent
 from typing import Optional, Dict, Any
 
+
 # TODO: Only works for binary intents!
 class Inverse(Intent):
     def __init__(self, intent: Intent, prefix: str = "Non-") -> None:
