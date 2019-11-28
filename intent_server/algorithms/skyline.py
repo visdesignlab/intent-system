@@ -1,4 +1,4 @@
-from ..intent import IntentMulticlass
+from ..intent import Intent
 
 import pandas as pd
 import numpy as np
@@ -26,7 +26,7 @@ def permutation_to_str(data: np.ndarray) -> str:
     return ';'.join(map(lambda x: 'Max' if x == -1 else 'Min', data))
 
 
-class Skyline(IntentMulticlass):
+class Skyline(Intent):
     def __init__(self) -> None:
         pass
 

@@ -1,4 +1,4 @@
-from ..intent import IntentMulticlass
+from ..intent import Intent
 
 from sklearn import preprocessing
 from sklearn.linear_model import LinearRegression as LR
@@ -8,7 +8,7 @@ import numpy as np
 from typing import Optional, Dict, Any
 
 
-class LinearRegression(IntentMulticlass):
+class LinearRegression(Intent):
     def __init__(self, threshold: float) -> None:
         self.threshold = threshold
         self.reg = LR()

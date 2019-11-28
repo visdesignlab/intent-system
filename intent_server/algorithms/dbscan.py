@@ -3,11 +3,11 @@ from sklearn import preprocessing
 
 import pandas as pd
 
-from ..intent import IntentMulticlass
+from ..intent import Intent
 from typing import Optional, Dict, Any
 
 
-class DBSCANCluster(IntentMulticlass):
+class DBSCANCluster(Intent):
     def __init__(self) -> None:
         self.dbscan = DBSCAN()
 

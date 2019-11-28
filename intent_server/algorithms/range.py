@@ -6,7 +6,7 @@ from ..vendor.interactions import Prediction
 import pandas as pd
 import numpy as np
 
-from typing import List, Set, Tuple
+from typing import List, Set, Tuple, Optional, Dict, Any
 
 
 def decision_rules(model: tree, selection: np.ndarray, df: pd.DataFrame) -> Set[Tuple[str, ...]]:
@@ -55,6 +55,9 @@ class Range(Intent):
 
     def compute(self, df: pd.DataFrame) -> pd.DataFrame:
         return pd.DataFrame(index=df.index)
+
+    def info(self) -> Optional[Dict[str, Any]]:
+        return None
 
     def to_prediction(self, selection: np.ndarray, df: pd.DataFrame) -> List[Prediction]:
 
