@@ -58,11 +58,7 @@ const SelectionResults: FC<Props> = ({selections, dataset}: Props) => {
         <Header as="h2" textAlign="center" style={{margin: 0}}>
           Selections
         </Header>
-        {/* <Label>{`Selected Items: ${pointSelectionsCount} (Click)`}</Label> */}
-        {/* <Label>{`Selected Items: ${intersectionCount} (Intersection)`}</Label> */}
-        {/* <Label>{`Selected Items: ${unionCount} (Union)`}</Label> */}
-        {/* <Label>{`Selected Items: ${totalSelections} (Total)`}</Label> */}
-        <svg height="150" width="100%">
+        <svg height="100" width="100%">
           <rect
             height="100%"
             width="100%"
@@ -74,8 +70,8 @@ const SelectionResults: FC<Props> = ({selections, dataset}: Props) => {
             {`Total: ${totalSelections}`}
           </text>
 
-          <g transform={`translate(100, 75)`}>
-            <circle r="50" stroke="none" fill="#FB6542" opacity="0.5" />
+          <g transform={`translate(100, 50)`}>
+            <circle r="40" stroke="none" fill="#FB6542" opacity="0.5" />
             <text
               transform={`translate(0, ${-34})`}
               style={{
@@ -95,8 +91,8 @@ const SelectionResults: FC<Props> = ({selections, dataset}: Props) => {
               {`I: ${intersectionCount}`}
             </text>
           </g>
-          <g transform={`translate(300, 75)`}>
-            <circle r="50" fill="#FFBB00" opacity="0.5" />
+          <g transform={`translate(300, 50)`}>
+            <circle r="40" fill="#FFBB00" opacity="0.5" />
             <text
               style={{
                 fontFamily: 'FontAwesome',
@@ -144,34 +140,6 @@ const SelectionResults: FC<Props> = ({selections, dataset}: Props) => {
           })}
         </List>
       </Card.Content>
-      {/* <Card.Content textAlign="center"> */}
-      {/*   <Button */}
-      {/*     primary */}
-      {/*     disabled={selectedLists.length === 0} */}
-      {/*     onClick={() => { */}
-      {/*       studyProvenance.applyAction({ */}
-      {/*         label: Events.SUBMIT_ANSWER, */}
-      {/*         args: [], */}
-      {/*         action: () => { */}
-      {/*           let currentState = studyProvenance.graph().current.state; */}
-      {/*           if (currentState) { */}
-      {/*             currentState = { */}
-      {/*               ...currentState, */}
-      {/*               event: Events.SUBMIT_PREDICTION, */}
-      {/*               answer: { */}
-      {/*                 submissions: detailedSelectedList, */}
-      {/*                 comment: '', */}
-      {/*               }, */}
-      {/*             }; */}
-      {/*           } */}
-      {/*           return currentState as StudyState; */}
-      {/*         }, */}
-      {/*       }); */}
-      {/*       changeIsSubmitted(true); */}
-      {/*     }}> */}
-      {/*     Submit ({selectedLists.length} selected) */}
-      {/*   </Button> */}
-      {/* </Card.Content> */}
     </Card>
   );
 };

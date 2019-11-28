@@ -97,36 +97,43 @@ class Dataset:
             'cmu': {
                 'text': 'Child Mortality Rate',
                 'unit': '0-5 year-old dying per 1000 born',
-                'type': 'numeric'
+                'short': 'A',
+                'type': 'numeric',
             },
             'gdp': {
                 'text': "GDP",
                 'unit': 'per capita',
+                'short': 'B',
                 'type': 'numeric'
             },
             'life': {
                 'text': 'Life Expectancy',
                 'unit': 'Years',
+                'short': 'C',
                 'type': 'numeric'
             },
             'tfr': {
                 'text': 'Total Fertility Rate',
                 'unit': 'babies per woman',
+                'short': 'D',
                 'type': 'numeric'
             },
             'population': {
                 'text': 'Population',
                 'unit': 'number of people',
+                'short': 'E',
                 'type': 'numeric'
             },
             'continent': {
                 'text': 'Continent',
                 'unit': 'Categorical',
+                'short': 'F',
                 'type': 'categorical'
             },
             'country': {
                 'text': 'Country',
                 'unit': 'label',
+                'short': 'G',
                 'type': 'label'
             }
             })
@@ -149,27 +156,32 @@ class Dataset:
             'X': {
                 'text': 'X',
                 'unit': "",
+                'short': 'A',
                 'type': 'numeric'
                 },
 
             'Y': {
                 'text': 'Y',
                 'unit': "",
+                'short': 'B',
                 'type': 'numeric'
                 },
             'Z': {
                 'text': 'Z',
                 'unit': "",
+                'short': 'C',
                 'type': 'numeric'
                 },
             'Cluster': {
                 'text': 'Cluster',
                 'unit': 'Categorical',
+                'short': 'D',
                 'type': 'categorical'
                 },
             'Label': {
                 'text': 'Label',
                 'unit': 'label',
+                'short': 'E',
                 'type': 'label'
                 },
             })
@@ -204,76 +216,91 @@ class Dataset:
             'ListNo': {
                 'text': 'Listing No',
                 'unit': 'label',
+                'short': 'A',
                 'type': 'label'
                 },
             'Acres': {
                 'text': 'Acres',
                 'unit': '',
+                'short': 'B',
                 'type': 'numeric'
                 },
             'BsmntFin': {
                 'text': 'Basement Finish',
                 'unit': '',
+                'short': 'C',
                 'type': 'numeric'
                 },
             'Deck': {
                 'text': 'Deck',
                 'unit': '',
+                'short': 'D',
                 'type': 'numeric'
                 },
             'Style': {
                 'text': 'Style',
                 'unit': '',
+                'short': 'E',
                 'type': 'categorical'
                 },
             'EWCoord': {
                 'text': 'Longitude',
                 'unit': '',
+                'short': 'F',
                 'type': 'numeric'
                 },
             'GaragCap': {
                 'text': 'Garage Capcity',
                 'unit': '',
+                'short': 'G',
                 'type': 'numeric'
                 },
             'HouseNbr': {
                 'text': 'House Number',
                 'unit': '',
+                'short': 'H',
                 'type': 'numeric'
                 },
             'LstPrice': {
                 'text': 'List Price',
                 'unit': '$',
+                'short': 'I',
                 'type': 'numeric'
                 },
             'NSCoord': {
                 'text': 'Latitude',
                 'unit': '',
+                'short': 'J',
                 'type': 'numeric'
                 },
             'Taxes': {
                 'text': 'Taxes',
                 'unit': '$',
+                'short': 'K',
                 'type': 'numeric'
                 },
             'TotBed': {
                 'text': 'Total Bedrooms',
                 'unit': '#',
+                'short': 'L',
                 'type': 'numeric'
                 },
             'TotBth': {
                 'text': 'Total Bathrooms',
                 'unit': '',
+                'short': 'M',
                 'type': 'numeric'
                 },
             'TotSqf': {
                 'text': 'Total Square Footage',
                 'unit': 'sq. ft.',
+                'short': 'N',
                 'type': 'numeric'
                 },
             'YearBlt': {
                 'text': 'Year Built',
                 'unit': '',
+                'short': 'O',
                 'type': 'numeric'
                 },
             })

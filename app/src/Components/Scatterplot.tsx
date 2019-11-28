@@ -451,6 +451,7 @@ const Scatterplot: FC<Props> = ({
               transform={`translate(${paddedSize / 2}, 40)`}
               fontSize="1.2em"
               textAnchor="middle">
+              <tspan>{`${dataset.columnMaps[plot.x].short} | `}</tspan>
               <tspan style={{fontWeight: 'bold'}}>
                 {`${dataset.columnMaps[plot.x].text} `}
               </tspan>
@@ -465,6 +466,7 @@ const Scatterplot: FC<Props> = ({
               fontSize="1.2em"
               textAnchor="middle"
               transform={`translate(-40, ${paddedSize / 2})rotate(270)`}>
+              <tspan>{`${dataset.columnMaps[plot.y].short} | `}</tspan>
               <tspan style={{fontWeight: 'bold'}}>
                 {`${dataset.columnMaps[plot.y].text} `}
               </tspan>
