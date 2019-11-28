@@ -8,6 +8,7 @@ from .vendor.interactions import Interaction, InteractionTypeKind, PredictionSet
 from sklearn.naive_bayes import MultinomialNB
 from typing import List, Set
 import pandas as pd
+import itertools
 
 
 def is_point_selection(interaction: Interaction) -> bool:
@@ -60,11 +61,23 @@ class Inference:
             Outlier(),
             Inverse(Outlier()),
             Skyline(),
-            Range(),
-            KMeansCluster(),
-            DBSCANCluster(),
+            KMeansCluster(2),
+            KMeansCluster(3),
+            KMeansCluster(4),
+            KMeansCluster(5),
+            KMeansCluster(6),
+            KMeansCluster(7),
+            DBSCANCluster(0.25),
+            DBSCANCluster(0.5),
+            DBSCANCluster(0.75),
+            DBSCANCluster(1),
             Categories(dataset),
+            LinearRegression(0.05),
+            LinearRegression(0.08),
             LinearRegression(0.1),
+        ]
+        self.special_intents = [
+            Range(),
         ]
 
     def predict(self, interactions: List[Interaction], op: MultiBrushBehavior) -> PredictionSet:
@@ -86,19 +99,22 @@ class Inference:
                 selected_ids=list(map(float, ids)))
 
         sel_array = self.dataset.selection(ids)
-
         relevant_data = self.dataset.subset(dims)
 
-        outputs = pd.concat(
-            map(lambda intent: intent.compute(relevant_data), self.intents),  # type: ignore
-            axis='columns')
+        # Also unzips
+        list_of_predictions, computed = itertools.tee(map(
+            lambda intent: intent.to_prediction(sel_array, relevant_data), self.intents))
 
-        # Perform ranking
-        ranks = map(lambda m: m.to_prediction(sel_array, relevant_data), self.intents)
+        list_of_predictions = []
+        list_of_computed = []
 
-        predictions = [p for preds in ranks for p in preds]
+        for intent in self.intents:
+            pred, comp = intent.to_prediction(sel_array, relevant_data)
+            list_of_predictions.extend(pred)
+            list_of_computed.append(comp)
 
         # Add probailities
+        outputs = pd.concat(list_of_computed, axis='columns')
         train = outputs.T.to_numpy()
         labels = outputs.columns.values.tolist()
 
@@ -110,14 +126,19 @@ class Inference:
             clf.classes_.flatten().tolist(),
             clf.predict_proba(sel_array.transpose()).flatten().tolist()))
 
-        for p in predictions:
+        for p in list_of_predictions:
             if p.intent in probs:
                 if p.info is None:
                     p.info = dict()
                 p.info['probability'] = probs[p.intent]
 
+        special_predictions = list(map(lambda si: si.to_prediction(
+            sel_array, relevant_data), self.special_intents))
+        flat_list = [item for sublist in special_predictions for item in sublist]
+        list_of_predictions.extend(flat_list)
+
         return PredictionSet(
-            predictions=predictions,
+            predictions=list_of_predictions,
             dimensions=dims.dims,
             selected_ids=list(map(float, ids)))
 

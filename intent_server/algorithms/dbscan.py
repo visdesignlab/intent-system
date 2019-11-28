@@ -8,8 +8,8 @@ from typing import Optional, Dict, Any
 
 
 class DBSCANCluster(Intent):
-    def __init__(self) -> None:
-        self.dbscan = DBSCAN()
+    def __init__(self, eps) -> None:
+        self.dbscan = DBSCAN(eps)
 
     def to_string(self) -> str:
         return 'Cluster:DBSCAN'

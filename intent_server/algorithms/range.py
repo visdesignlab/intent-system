@@ -1,6 +1,5 @@
 from sklearn import tree
 
-from ..intent import Intent
 from ..vendor.interactions import Prediction
 
 import pandas as pd
@@ -46,7 +45,7 @@ def decision_rules(model: tree, selection: np.ndarray, df: pd.DataFrame) -> Set[
     return paths
 
 
-class Range(Intent):
+class Range:
     def __init__(self) -> None:
         pass
 

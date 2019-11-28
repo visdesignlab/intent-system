@@ -40,5 +40,6 @@ class LinearRegression(Intent):
 
     def info(self) -> Optional[Dict[str, Any]]:
         return {
+            "threshold": self.threshold,
             "coef": list(self.reg.coef_),
             "intercept": self.reg.intercept_}
