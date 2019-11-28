@@ -141,16 +141,16 @@ const Scatterplot: FC<Props> = ({
   useEffect(() => {
     if (xAxisRef.current) {
       const xAxis = axisBottom(xScale).tickFormat((d: any) => {
-        if (d > 10000000) return `${d / 10000000}M`;
-        if (d > 1000) return `${d / 1000}K`;
+        if (d >= 500000) return `${d / 1000000}M`;
+        if (d >= 1000) return `${d / 1000}K`;
         return d;
       });
       select(xAxisRef.current).call(xAxis);
     }
     if (yAxisRef.current) {
       const yAxis = axisLeft(yScale).tickFormat((d: any) => {
-        if (d > 10000000) return `${d / 10000000}M`;
-        if (d > 1000) return `${d / 1000}K`;
+        if (d >= 500000) return `${d / 1000000}M`;
+        if (d >= 1000) return `${d / 1000}K`;
         return d;
       });
       select(yAxisRef.current).call(yAxis);

@@ -6,9 +6,6 @@ import {Header, List, Card} from 'semantic-ui-react';
 import {selectAll} from 'd3';
 import {hashCode} from '../Utils';
 import {AppState} from '../Stores/CombinedStore';
-// import Events from '../Stores/Types/EventEnum';
-// import {studyProvenance} from '..';
-// import {StudyState} from '../Stores/Study/StudyState';
 
 interface OwnProps {
   selections: SelectionRecord;
@@ -45,8 +42,6 @@ const SelectionResults: FC<Props> = ({selections, dataset}: Props) => {
   ];
 
   const {data, labelColumn} = dataset;
-
-  // const detailedSelectedList = selectedLists.map(idx => data[idx]);
 
   return (
     <Card fluid style={resultsDivStyle}>

@@ -8,11 +8,19 @@ import {
   PredictionListJaccardItem,
   PredictionListNBItem,
 } from './PredictionListItem';
+import {
+  PredictionType,
+  getPredictionType,
+} from '../../Stores/Predictions/PredictionsState';
 
 interface Props {
   dataset: Dataset;
   barHeight: number;
   predictions: Prediction[];
+}
+
+interface TypedPrediction extends Prediction {
+  type: PredictionType;
 }
 
 const PredictionList: FC<Props> = ({
@@ -41,11 +49,18 @@ const PredictionList: FC<Props> = ({
     }
   }
 
+  const extendedPredictions: TypedPrediction[] = predictions.map(pred => {
+    const exPred: TypedPrediction = {...pred, type: null as any};
+
+    exPred.type = getPredictionType(pred.intent);
+    return exPred;
+  });
+
   const {data, labelColumn} = dataset;
 
   return (
     <Table compact>
-      {predictions.length > 0 && (
+      {extendedPredictions.length > 0 && (
         <>
           <Table.Header>
             <Table.Row>
@@ -55,11 +70,16 @@ const PredictionList: FC<Props> = ({
             </Table.Row>
           </Table.Header>
           <Table.Body>
-            {predictions.map(pred => {
+            {extendedPredictions.map(pred => {
               const {dataIds = []} = pred;
               const countries = dataIds.map(d =>
                 hashCode(data[d][labelColumn]),
               );
+
+              const {intent, type} = pred;
+              if (!type) {
+                console.log(intent, type);
+              }
 
               return (
                 <Table.Row

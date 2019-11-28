@@ -51,30 +51,6 @@ const Predictions: FC<Props> = ({
     </Loader>
   );
 
-  if (predictions.length > 0) {
-    const regression: Prediction = {
-      intent: 'Regression',
-      rank: 0,
-      info: undefined,
-      dataIds: [],
-    };
-
-    const knowledge: Prediction = {
-      intent: 'Domain Knowledge',
-      rank: 0,
-      info: undefined,
-      dataIds: [],
-    };
-
-    const other: Prediction = {
-      intent: 'Other',
-      rank: 0,
-      info: undefined,
-      dataIds: [],
-    };
-    predictions = [...predictions, regression, knowledge, other];
-  }
-
   return (
     <Card fluid style={masterPredictionDiv}>
       <Card.Content>
