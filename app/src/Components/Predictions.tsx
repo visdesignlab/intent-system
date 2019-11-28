@@ -36,7 +36,6 @@ interface StateProps {
 type Props = OwnProps & StateProps;
 
 const Predictions: FC<Props> = ({
-  isSubmitted,
   dimensions,
   selectedIds,
   predictions,
@@ -411,11 +410,11 @@ const Predictions: FC<Props> = ({
 
 const mapStateToProps = (state: AppState): StateProps => {
   return {
-    dimensions: state.prediction.predictionSet.dimensions,
-    selectedIds: state.prediction.predictionSet.selectedIds,
-    predictions: state.prediction.predictionSet.predictions,
-    time: (state.prediction.predictionSet as any).time,
-    isLoading: state.prediction.isLoading,
+    dimensions: state.predictionSet.dimensions,
+    selectedIds: state.predictionSet.selectedIds,
+    predictions: state.predictionSet.predictions,
+    time: (state.predictionSet as any).time,
+    isLoading: state.isLoading,
   };
 };
 

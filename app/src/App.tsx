@@ -17,7 +17,7 @@ import SelectionResults from './Components/SelectionResults';
 import {max} from 'lodash';
 import TaskDetails from './Stores/Types/TaskDetails';
 import {areEqual} from './Utils';
-import {AppStore} from './Stores/CombinedStore';
+import {AppState} from './Stores/CombinedStore';
 
 interface OwnProps {
   task: TaskDetails;
@@ -140,9 +140,9 @@ const App: FC<Props> = ({
   return study;
 };
 
-const mapStateToProps = (state: AppStore): StateProps => ({
-  dataset: state.visualization.dataset,
-  plots: state.visualization.plots,
+const mapStateToProps = (state: AppState): StateProps => ({
+  dataset: state.dataset,
+  plots: state.plots,
 });
 
 const mapDispatchToProps = (dispatch: any): DispatchProps => ({

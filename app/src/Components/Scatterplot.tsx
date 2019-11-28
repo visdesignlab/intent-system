@@ -515,8 +515,8 @@ const Scatterplot: FC<Props> = ({
 };
 
 const mapStateToProps = (state: AppState): StateProps => ({
-  dataset: state.visualization.dataset,
-  multiBrushBehavior: state.visualization.multiBrushBehaviour,
+  dataset: state.dataset,
+  multiBrushBehavior: state.multiBrushBehaviour,
 });
 
 const mapDispatchToProps = (

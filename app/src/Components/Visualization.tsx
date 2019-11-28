@@ -8,7 +8,7 @@ import Legend from './Legend';
 import {scaleOrdinal, schemeSet2} from 'd3';
 import {pure} from 'recompose';
 import _ from 'lodash';
-import {AppStore} from '../Stores/CombinedStore';
+import {AppState} from '../Stores/CombinedStore';
 
 export enum PointSelectionEnum {
   ADD = 'ADD',
@@ -164,9 +164,9 @@ const Visualization: FC<Props> = ({
   );
 };
 
-const mapStateToProps = (state: AppStore): StateProps => ({
-  dataset: state.visualization.dataset,
-  plots: state.visualization.plots,
+const mapStateToProps = (state: AppState): StateProps => ({
+  dataset: state.dataset,
+  plots: state.plots,
 });
 
 export default connect(mapStateToProps)(pure(Visualization));

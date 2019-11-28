@@ -21,7 +21,7 @@ import {
 import {areEqual} from '../Utils';
 import axios from 'axios';
 import {datasetName, loadDatasetByName} from '..';
-import {AppStore} from '../Stores/CombinedStore';
+import {AppState} from '../Stores/CombinedStore';
 
 interface OwnProps {
   plots: Plots;
@@ -263,9 +263,9 @@ const mapDispatchToProps = (dispatch: any): DispatchProps => ({
     }),
 });
 
-const mapStateToProps = (state: AppStore): StateProps => ({
-  dataset: state.visualization.dataset,
-  multiBrushBehavior: state.visualization.multiBrushBehaviour,
+const mapStateToProps = (state: AppState): StateProps => ({
+  dataset: state.dataset,
+  multiBrushBehavior: state.multiBrushBehaviour,
 });
 
 export default connect(
