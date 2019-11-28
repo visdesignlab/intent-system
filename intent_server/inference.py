@@ -1,14 +1,13 @@
 from .dataset import Dataset
 from .dimensions import Dimensions
 from .algorithms import LinearRegression, Outlier, Skyline, Range, KMeansCluster
-from .algorithms import Categories, DBSCANCluster, Inverse
+from .algorithms import Categories, DBSCANCluster, Inverse, QuadraticRegression
 
 from .vendor.interactions import Interaction, InteractionTypeKind, PredictionSet, MultiBrushBehavior
 
 from sklearn.naive_bayes import MultinomialNB
 from typing import List, Set
 import pandas as pd
-import itertools
 
 
 def is_point_selection(interaction: Interaction) -> bool:
@@ -75,6 +74,9 @@ class Inference:
             LinearRegression(0.05),
             LinearRegression(0.08),
             LinearRegression(0.1),
+            QuadraticRegression(0.05),
+            QuadraticRegression(0.08),
+            QuadraticRegression(0.1),
         ]
         self.special_intents = [
             Range(),
@@ -88,25 +90,22 @@ class Inference:
         inactive_plots = set()
         for inter in interactions:
             if inter.interaction_type.kind is InteractionTypeKind.REMOVE:
-                inactive_plots.add(inter.interaction_type.plot.id)
+                inactive_plots.add(inter.interaction_type.plot.id)  # type: ignore
             elif inter.interaction_type.kind is InteractionTypeKind.ADD:
-                inactive_plots.discard(inter.interaction_type.plot.id)
+                inactive_plots.discard(inter.interaction_type.plot.id)  # type: ignore
 
         filtered = list(filter(lambda x: x.interaction_type.data_ids and not (
-            x.interaction_type.plot.id in inactive_plots), interactions))
+            x.interaction_type.plot.id in inactive_plots), interactions))  # type: ignore
 
-        list_of_dims = list(map(lambda interaction: [interaction.interaction_type.plot.x,  # type: ignore
-                                                     interaction.interaction_type.plot.y]  # type: ignore
+        list_of_dims = list(map(lambda interaction: [interaction.interaction_type.plot.x,  # type: ignore # noqa: E501
+                                                     interaction.interaction_type.plot.y]  # type: ignore # noqa: E501
                                 if interaction.interaction_type.plot  # type: ignore
                                 else ["", ""], filtered))  # type: ignore
 
         tuple_dims = set(map(lambda x: Dimensions(x), list_of_dims))
         dims = Dimensions(list(set([y for x in list_of_dims for y in x])))
-        tuple_dims.discard(dims)
+        tuple_dims.discard(dims)  # Make sure we don't compute twice
         tuple_dims = list(tuple_dims)
-
-        print(dims)
-        print(tuple_dims)
 
         if len(ids) == 0:
             return PredictionSet(
