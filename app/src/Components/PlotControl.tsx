@@ -278,14 +278,17 @@ function convertToDropdownFormat(
   type: string,
 ): {key: string; value: string; text: string}[] {
   const columns = Object.keys(columnMap);
+
   return columns
     .filter(col => columnMap[col].type === type)
     .map(col => ({
       key: col,
       text:
         columnMap[col].unit.length > 0
-          ? `${columnMap[col].text} (${columnMap[col].unit})`
-          : `${columnMap[col].text}`,
+          ? `${(columnMap[col] as any).short} | ${columnMap[col].text} (${
+              columnMap[col].unit
+            })`
+          : `${(columnMap[col] as any).short} | ${columnMap[col].text}`,
       value: col,
     }));
 }

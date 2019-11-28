@@ -15,6 +15,7 @@ export interface ColumnMetaData {
   text: string;
   unit: string;
   type: string;
+  short: string;
 }
 
 export const HASH = 'HASH';

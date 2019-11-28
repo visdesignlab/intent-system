@@ -16,7 +16,10 @@ code {
 }
 
 .selection_highlight {
-  fill: red !important;
+  stroke: black;
+  opacity: 1;
+  stroke-width: 4px;
+  stroke-opacity: 1;
 }
 
 .suggestion_highlight {
