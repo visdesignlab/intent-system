@@ -1,7 +1,7 @@
 from .dataset import Dataset
 from .dimensions import Dimensions
 from .algorithms import LinearRegression, Outlier, Skyline, Range, KMeansCluster
-from .algorithms import Categories, DBSCANCluster, Inverse
+from .algorithms import Categories, DBSCANCluster, Inverse, QuadraticRegression
 
 from .vendor.interactions import Interaction, InteractionTypeKind, PredictionSet, MultiBrushBehavior
 
@@ -60,24 +60,52 @@ class Inference:
             Outlier(),
             Inverse(Outlier()),
             Skyline(),
-            Range(),
-            KMeansCluster(),
-            DBSCANCluster(),
+            KMeansCluster(2),
+            KMeansCluster(3),
+            KMeansCluster(4),
+            KMeansCluster(5),
+            KMeansCluster(6),
+            KMeansCluster(7),
+            DBSCANCluster(0.25),
+            DBSCANCluster(0.5),
+            DBSCANCluster(0.75),
+            DBSCANCluster(1),
             Categories(dataset),
+            LinearRegression(0.05),
+            LinearRegression(0.08),
             LinearRegression(0.1),
+            QuadraticRegression(0.05),
+            QuadraticRegression(0.08),
+            QuadraticRegression(0.1),
+        ]
+        self.special_intents = [
+            Range(),
         ]
 
     def predict(self, interactions: List[Interaction], op: MultiBrushBehavior) -> PredictionSet:
 
         ids = relevant_ids(interactions, op)
 
-        filtered = list(filter(lambda x: x.interaction_type.data_ids, interactions))
-        list_of_dims = map(lambda interaction: [interaction.interaction_type.plot.x,  # type: ignore
-                                                interaction.interaction_type.plot.y]  # type: ignore
-                           if interaction.interaction_type.plot  # type: ignore
-                           else ["", ""], filtered)  # type: ignore
+        # Filters removed plots
+        inactive_plots = set()
+        for inter in interactions:
+            if inter.interaction_type.kind is InteractionTypeKind.REMOVE:
+                inactive_plots.add(inter.interaction_type.plot.id)  # type: ignore
+            elif inter.interaction_type.kind is InteractionTypeKind.ADD:
+                inactive_plots.discard(inter.interaction_type.plot.id)  # type: ignore
 
+        filtered = list(filter(lambda x: x.interaction_type.data_ids and not (
+            x.interaction_type.plot.id in inactive_plots), interactions))  # type: ignore
+
+        list_of_dims = list(map(lambda interaction: [interaction.interaction_type.plot.x,  # type: ignore # noqa: E501
+                                                     interaction.interaction_type.plot.y]  # type: ignore # noqa: E501
+                                if interaction.interaction_type.plot  # type: ignore
+                                else ["", ""], filtered))  # type: ignore
+
+        tuple_dims = set(map(lambda x: Dimensions(x), list_of_dims))
         dims = Dimensions(list(set([y for x in list_of_dims for y in x])))
+        tuple_dims.discard(dims)  # Make sure we don't compute twice
+        tuple_dims = list(tuple_dims)  # type: ignore
 
         if len(ids) == 0:
             return PredictionSet(
@@ -86,19 +114,24 @@ class Inference:
                 selected_ids=list(map(float, ids)))
 
         sel_array = self.dataset.selection(ids)
-
         relevant_data = self.dataset.subset(dims)
 
-        outputs = pd.concat(
-            map(lambda intent: intent.compute(relevant_data), self.intents),  # type: ignore
-            axis='columns')
+        list_of_predictions = []
+        list_of_computed = []
 
-        # Perform ranking
-        ranks = map(lambda m: m.to_prediction(sel_array, relevant_data), self.intents)
+        for intent in self.intents:
+            # All dimensions
+            pred, comp = intent.to_prediction(sel_array, relevant_data)
+            list_of_predictions.extend(pred)
+            list_of_computed.append(comp)
 
-        predictions = [p for preds in ranks for p in preds]
+            for d in tuple_dims:
+                pred, comp = intent.to_prediction(sel_array, self.dataset.subset(d))
+                list_of_predictions.extend(pred)
+                list_of_computed.append(comp)
 
         # Add probailities
+        outputs = pd.concat(list_of_computed, axis='columns')
         train = outputs.T.to_numpy()
         labels = outputs.columns.values.tolist()
 
@@ -110,14 +143,20 @@ class Inference:
             clf.classes_.flatten().tolist(),
             clf.predict_proba(sel_array.transpose()).flatten().tolist()))
 
-        for p in predictions:
+        for p in list_of_predictions:
             if p.intent in probs:
                 if p.info is None:
                     p.info = dict()
                 p.info['probability'] = probs[p.intent]
 
+        # Some intents don't have a probability so we add them seperately.
+        special_predictions = list(map(lambda si: si.to_prediction(
+            sel_array, relevant_data), self.special_intents))
+        flat_list = [item for sublist in special_predictions for item in sublist]
+        list_of_predictions.extend(flat_list)
+
         return PredictionSet(
-            predictions=predictions,
+            predictions=list_of_predictions,
             dimensions=dims.dims,
             selected_ids=list(map(float, ids)))
 

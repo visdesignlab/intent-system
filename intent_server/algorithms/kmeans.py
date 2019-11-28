@@ -7,8 +7,8 @@ from typing import Optional, Dict, Any
 
 
 class KMeansCluster(Intent):
-    def __init__(self) -> None:
-        self.kmeans = KMeans(n_clusters=3, random_state=0)
+    def __init__(self, n_clusters: int) -> None:
+        self.kmeans = KMeans(n_clusters, random_state=0)
 
     def to_string(self) -> str:
         return 'Cluster:KMeans'

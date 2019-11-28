@@ -6,6 +6,7 @@ from .skyline import Skyline
 from .dbscan import DBSCANCluster
 from .inverse import Inverse
 from .linear_regression import LinearRegression
+from .quadratic_regression import QuadraticRegression
 
 __all__ = ["Categories", "KMeansCluster", "Outlier", "Range",
-           "Skyline", "DBSCANCluster", "Inverse", "LinearRegression"]
+           "Skyline", "DBSCANCluster", "Inverse", "LinearRegression", "QuadraticRegression"]

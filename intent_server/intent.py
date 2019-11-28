@@ -3,9 +3,11 @@ from .vendor.interactions import Prediction
 
 import numpy as np
 import pandas as pd
+import uuid
+import hashlib
 
 from scipy.spatial.distance import jaccard
-from typing import Optional, Dict, Any, List
+from typing import Optional, Dict, Any, List, Tuple
 
 
 def rank_jaccard(intent: pd.DataFrame, selection: pd.DataFrame) -> float:
@@ -13,9 +15,11 @@ def rank_jaccard(intent: pd.DataFrame, selection: pd.DataFrame) -> float:
 
 
 class Intent(ABC):
-    def to_prediction(self, selection: np.ndarray, df: pd.DataFrame) -> List[Prediction]:
+    def to_prediction(self, selection: np.ndarray, df: pd.DataFrame) -> Tuple[List[Prediction], pd.DataFrame]:  # noqa: E501
         computed = self.compute(df)
-        # print(hash(self.__class__))
+        hasher = hashlib.md5((str(uuid.uuid1())).encode('utf-8')).hexdigest()[:10]
+        axes = str(list(df.columns))
+        computed.columns = [hasher + ":" + axes + ":" + str(col) for col in computed.columns]
 
         predictions = []
         for column in computed:
@@ -28,7 +32,7 @@ class Intent(ABC):
                 data_ids=list(map(float, ids)),
                 suggestion=None))
 
-        return predictions
+        return predictions, computed
 
     @abstractmethod
     def compute(self, df: pd.DataFrame) -> pd.DataFrame:

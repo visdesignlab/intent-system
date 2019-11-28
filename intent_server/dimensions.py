@@ -3,7 +3,7 @@ from typing import List
 
 class Dimensions:
     def __init__(self, dims: List[str]) -> None:
-        self.dims = sorted(dims)
+        self.dims = dims
 
     def __hash__(self) -> int:
         return hash("".join(self.dims))

@@ -1,17 +1,20 @@
 from ..intent import Intent
 
 from sklearn import preprocessing
+from sklearn.preprocessing import PolynomialFeatures
 from sklearn.linear_model import LinearRegression as LR
+from sklearn.pipeline import Pipeline
 import pandas as pd
 import numpy as np
 
 from typing import Optional, Dict, Any
 
 
-class LinearRegression(Intent):
+class QuadraticRegression(Intent):
     def __init__(self, threshold: float) -> None:
         self.threshold = threshold
-        self.reg = LR()
+        self.reg = Pipeline([('quad', PolynomialFeatures(degree=2)),
+                             ('linear', LR(fit_intercept=False))])
         self.min_max_scaler_x = preprocessing.MinMaxScaler()
         self.min_max_scaler_y = preprocessing.MinMaxScaler()
 
@@ -36,10 +39,9 @@ class LinearRegression(Intent):
         return result
 
     def to_string(self) -> str:
-        return "LinearRegression"
+        return "QuadraticRegression"
 
     def info(self) -> Optional[Dict[str, Any]]:
         return {
             "threshold": self.threshold,
-            "coef": list(self.reg.coef_),
-            "intercept": self.reg.intercept_}
+        }
