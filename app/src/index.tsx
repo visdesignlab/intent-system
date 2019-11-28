@@ -35,22 +35,7 @@ export let AppStore = combinedVisPredStore();
 
 export let AppProvenance = initProvenanceRedux<AppState>(AppStore, _ => {});
 
-// export let VisualizationStore = VisualizationStoreCreator();
-// export let VisualizationProvenance = initProvenanceRedux<VisualizationState>(
-//   VisualizationStore,
-//   (_: any) => {},
-// );
-
-export const datasets = [
-  'draft_combine',
-  'slc_housing',
-  'nba_players',
-  'gapminder_world',
-];
-
 export const studyProvenance = initProvenance(defaultStudyState);
-
-// export let predictionStore = PredictionStoreCreator();
 
 export const getDatasetUrl = (datasetName: string) => `/dataset/${datasetName}`;
 
@@ -115,7 +100,7 @@ studyProvenance.addObserver('task', ((state: any) => {
   startRender(state.task);
 }) as any);
 
-studyProvenance.addObserver('selectedPrediction', ((state: any) => {
+studyProvenance.addObserver('selectedPrediction', (() => {
   logToFirebase();
 }) as any);
 

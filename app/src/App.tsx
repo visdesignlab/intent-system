@@ -165,7 +165,7 @@ const mainDivStyle: CSSProperties = {
   maxHeight: '100vh',
   width: '100vw',
   display: 'grid',
-  gridTemplateColumns: '3fr 1fr',
+  gridTemplateColumns: '3fr 1.3fr',
 };
 
 const resPred: CSSProperties = {
