@@ -5,7 +5,7 @@ import {SelectionRecord} from '../App';
 import {Header, List, Card} from 'semantic-ui-react';
 import {selectAll} from 'd3';
 import {hashCode} from '../Utils';
-import {AppStore} from '../Stores/CombinedStore';
+import {AppState} from '../Stores/CombinedStore';
 // import Events from '../Stores/Types/EventEnum';
 // import {studyProvenance} from '..';
 // import {StudyState} from '../Stores/Study/StudyState';
@@ -177,8 +177,8 @@ const SelectionResults: FC<Props> = ({selections, dataset}: Props) => {
 };
 
 export default connect(
-  (state: AppStore): StateProps => ({
-    dataset: state.visualization.dataset,
+  (state: AppState): StateProps => ({
+    dataset: state.dataset,
   }),
 )(SelectionResults);
 

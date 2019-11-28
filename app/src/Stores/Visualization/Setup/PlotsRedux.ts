@@ -58,7 +58,7 @@ export const addPlot = (plot: SinglePlot) => (
     },
   };
 
-  const multiBrushBehavior = getState().visualization.multiBrushBehaviour;
+  const multiBrushBehavior = getState().multiBrushBehaviour;
 
   dispatch({
     type: ADD_INTERACTION,
@@ -86,7 +86,7 @@ export const updateAllPlots = (plots: Plots) => (
     },
   }));
 
-  const multiBrushBehavior = getState().visualization.multiBrushBehaviour;
+  const multiBrushBehavior = getState().multiBrushBehaviour;
 
   dispatch({
     type: UPDATE_INTERACTION_HISTORY,
@@ -106,7 +106,7 @@ export const updatePlot = (
   );
 
   if (addInteraction) {
-    const multiBrushBehavior = getState().visualization.multiBrushBehaviour;
+    const multiBrushBehavior = getState().multiBrushBehaviour;
 
     const interaction: Interaction = {
       visualizationType: VisualizationType.Grid,
@@ -151,7 +151,7 @@ export const removePlot = (plot: SinglePlot) => (
     },
   };
 
-  const multiBrushBehavior = getState().visualization.multiBrushBehaviour;
+  const multiBrushBehavior = getState().multiBrushBehaviour;
 
   dispatch({
     type: ADD_INTERACTION,
