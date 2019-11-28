@@ -18,7 +18,7 @@ class Intent(ABC):
         # print(hash(self.__class__))
 
         predictions = []
-        for column in computed: 
+        for column in computed:
             rank = rank_jaccard(computed[column].T, selection.T)
             ids = computed.loc[computed.loc[:, column] == 1].index.values
             predictions.append(Prediction(
@@ -36,4 +36,8 @@ class Intent(ABC):
 
     @abstractmethod
     def to_string(self) -> str:
+        pass
+
+    @abstractmethod
+    def info(self) -> Optional[Dict[str, Any]]:
         pass
