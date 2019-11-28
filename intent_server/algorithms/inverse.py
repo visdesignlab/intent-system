@@ -1,11 +1,11 @@
 import pandas as pd
 
-from ..intent import IntentBinary
+from ..intent import Intent
 from typing import Optional, Dict, Any
 
-
-class Inverse(IntentBinary):
-    def __init__(self, intent: IntentBinary, prefix: str = "Non-") -> None:
+# TODO: Only works for binary intents!
+class Inverse(Intent):
+    def __init__(self, intent: Intent, prefix: str = "Non-") -> None:
         self.intent = intent
         self.prefix = prefix
 

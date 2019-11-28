@@ -38,26 +38,8 @@ class Intent(ABC):
     def to_string(self) -> str:
         pass
 
-class IntentBinary(Intent, ABC):
-    @abstractmethod
-    def info(self) -> Optional[Dict[str, Any]]:
-        pass
 
-    def __rank(self, selection: np.ndarray, computed: pd.DataFrame) -> float:
-        return float(1 - jaccard(computed, selection))
-
-    # def to_prediction(self, selection: np.ndarray, df: pd.DataFrame) -> List[Prediction]:
-    #     belongs_to = self.compute(df)
-    #     ids = belongs_to.loc[belongs_to.iloc[:, 0] == 1].index.values
-
-    #     return [Prediction(
-    #         intent=self.to_string(),
-    #         rank=self.__rank(selection, belongs_to),
-    #         info=self.info(),
-    #         data_ids=list(map(float, ids)), suggestion=None)]
-
-
-class IntentMulticlassInstance(IntentBinary):
+class IntentMulticlassInstance(Intent):
     def __init__(self, parent: 'IntentMulticlass', reference: pd.DataFrame):
         self.reference = reference
         self.parent = parent

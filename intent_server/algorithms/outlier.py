@@ -1,14 +1,14 @@
 from sklearn.neighbors import LocalOutlierFactor
 from sklearn import preprocessing
 
-from ..intent import IntentBinary
+from ..intent import Intent
 
 import pandas as pd
 
 from typing import Optional, Dict, Any, Union
 
 
-class Outlier(IntentBinary):
+class Outlier(Intent):
     def __init__(self, n_neighbors: int = 20, contamination: Union[float, str] = 'auto') -> None:
         self.clf = LocalOutlierFactor(n_neighbors=n_neighbors, contamination=contamination)
 
