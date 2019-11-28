@@ -8,10 +8,27 @@ from scipy.spatial.distance import jaccard
 from typing import Optional, Dict, Any, List
 
 
+def rank_jaccard(intent: pd.DataFrame, selection: pd.DataFrame) -> float:
+    return float(1-jaccard(intent, selection))
+
+
 class Intent(ABC):
-    @abstractmethod
     def to_prediction(self, selection: np.ndarray, df: pd.DataFrame) -> List[Prediction]:
-        pass
+        computed = self.compute(df)
+        # print(hash(self.__class__))
+
+        predictions = []
+        for column in computed: 
+            rank = rank_jaccard(computed[column].T, selection.T)
+            ids = computed.loc[computed.loc[:, column] == 1].index.values
+            predictions.append(Prediction(
+                intent=column,
+                rank=rank,
+                info=self.info(),
+                data_ids=list(map(float, ids)),
+                suggestion=None))
+
+        return predictions
 
     @abstractmethod
     def compute(self, df: pd.DataFrame) -> pd.DataFrame:
@@ -21,7 +38,6 @@ class Intent(ABC):
     def to_string(self) -> str:
         pass
 
-
 class IntentBinary(Intent, ABC):
     @abstractmethod
     def info(self) -> Optional[Dict[str, Any]]:
@@ -30,15 +46,15 @@ class IntentBinary(Intent, ABC):
     def __rank(self, selection: np.ndarray, computed: pd.DataFrame) -> float:
         return float(1 - jaccard(computed, selection))
 
-    def to_prediction(self, selection: np.ndarray, df: pd.DataFrame) -> List[Prediction]:
-        belongs_to = self.compute(df)
-        ids = belongs_to.loc[belongs_to.iloc[:, 0] == 1].index.values
+    # def to_prediction(self, selection: np.ndarray, df: pd.DataFrame) -> List[Prediction]:
+    #     belongs_to = self.compute(df)
+    #     ids = belongs_to.loc[belongs_to.iloc[:, 0] == 1].index.values
 
-        return [Prediction(
-            intent=self.to_string(),
-            rank=self.__rank(selection, belongs_to),
-            info=self.info(),
-            data_ids=list(map(float, ids)), suggestion=None)]
+    #     return [Prediction(
+    #         intent=self.to_string(),
+    #         rank=self.__rank(selection, belongs_to),
+    #         info=self.info(),
+    #         data_ids=list(map(float, ids)), suggestion=None)]
 
 
 class IntentMulticlassInstance(IntentBinary):
@@ -57,13 +73,13 @@ class IntentMulticlassInstance(IntentBinary):
 
 
 class IntentMulticlass(Intent, ABC):
-    def to_prediction(self, selection: np.ndarray, df: pd.DataFrame) -> List[Prediction]:
-        computed = self.compute(df)
-        outputs = map(lambda i:
-                      IntentMulticlassInstance(self,
-                                               computed[[i]]).to_prediction(selection, df),
-                      computed.columns)
-        return [x for y in outputs for x in y]
+    # def to_prediction(self, selection: np.ndarray, df: pd.DataFrame) -> List[Prediction]:
+    #     computed = self.compute(df)
+    #     outputs = map(lambda i:
+    #                   IntentMulticlassInstance(self,
+    #                                            computed[[i]]).to_prediction(selection, df),
+    #                   computed.columns)
+    #     return [x for y in outputs for x in y]
 
     @abstractmethod
     def info(self) -> Optional[Dict[str, Any]]:
