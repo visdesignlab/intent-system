@@ -105,7 +105,7 @@ class Inference:
         tuple_dims = set(map(lambda x: Dimensions(x), list_of_dims))
         dims = Dimensions(list(set([y for x in list_of_dims for y in x])))
         tuple_dims.discard(dims)  # Make sure we don't compute twice
-        tuple_dims = list(tuple_dims)
+        tuple_dims = list(tuple_dims)  # type: ignore
 
         if len(ids) == 0:
             return PredictionSet(
