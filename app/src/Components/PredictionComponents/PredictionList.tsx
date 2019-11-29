@@ -1,4 +1,4 @@
-import React, {FC, useState} from 'react';
+import React, {FC, useState, useMemo} from 'react';
 import {Prediction} from '../../contract';
 import {Dataset} from '../../Stores/Types/Dataset';
 import {selectAll} from 'd3';
@@ -12,11 +12,13 @@ import {
   PredictionType,
   getPredictionType,
 } from '../../Stores/Predictions/PredictionsState';
+import {SelectionRecord} from '../../App';
 
 interface Props {
   dataset: Dataset;
   barHeight: number;
   predictions: Prediction[];
+  selectionRecord: SelectionRecord;
 }
 
 export interface TypedPrediction extends Prediction {
@@ -27,11 +29,23 @@ const PredictionList: FC<Props> = ({
   dataset,
   barHeight,
   predictions,
+  selectionRecord,
 }: Props) => {
   const [
     selectedPrediction,
     setSelectedPrediction,
   ] = useState<Prediction | null>(null);
+
+  const selectedIds: number[] = useMemo(() => {
+    const {brushSelections, pointSelections} = selectionRecord;
+
+    return [
+      ...new Set([
+        ...Object.keys(brushSelections).map(d => parseInt(d)),
+        ...pointSelections,
+      ]),
+    ];
+  }, [selectionRecord]);
 
   function onPredictionClick(pred: Prediction, countries: string[]) {
     const isThisSelected =
@@ -118,6 +132,7 @@ const PredictionList: FC<Props> = ({
                     }></Popup>
                   <Table.Cell>
                     <PredictionListJaccardItem
+                      selectedIds={selectedIds}
                       dataset={dataset}
                       barHeight={barHeight}
                       prediction={pred}
@@ -125,6 +140,7 @@ const PredictionList: FC<Props> = ({
                   </Table.Cell>
                   <Table.Cell>
                     <PredictionListNBItem
+                      selectedIds={selectedIds}
                       dataset={dataset}
                       barHeight={barHeight}
                       prediction={pred}
