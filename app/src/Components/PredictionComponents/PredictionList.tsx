@@ -164,9 +164,9 @@ const PredictionList: FC<Props> = ({
         <>
           <Table.Header>
             <Table.Row>
-              <Table.HeaderCell width="one"></Table.HeaderCell>
               <Table.HeaderCell width="ten">Similarity</Table.HeaderCell>
               <Table.HeaderCell width="one">Probability</Table.HeaderCell>
+              <Table.HeaderCell width="one"></Table.HeaderCell>
             </Table.Row>
           </Table.Header>
           <Table.Body>
@@ -202,6 +202,22 @@ const PredictionList: FC<Props> = ({
                   onClick={() =>
                     onPredictionClick(pred, countries, dimensionArr)
                   }>
+                  <Table.Cell>
+                    <PredictionListJaccardItem
+                      selectedIds={selectedIds}
+                      dataset={dataset}
+                      barHeight={barHeight}
+                      prediction={pred}
+                    />
+                  </Table.Cell>
+                  <Table.Cell>
+                    <PredictionListNBItem
+                      selectedIds={selectedIds}
+                      dataset={dataset}
+                      barHeight={barHeight}
+                      prediction={pred}
+                    />
+                  </Table.Cell>
                   <Popup
                     hoverable
                     position="top right"
@@ -222,22 +238,6 @@ const PredictionList: FC<Props> = ({
                         </pre>
                       </>
                     }></Popup>
-                  <Table.Cell>
-                    <PredictionListJaccardItem
-                      selectedIds={selectedIds}
-                      dataset={dataset}
-                      barHeight={barHeight}
-                      prediction={pred}
-                    />
-                  </Table.Cell>
-                  <Table.Cell>
-                    <PredictionListNBItem
-                      selectedIds={selectedIds}
-                      dataset={dataset}
-                      barHeight={barHeight}
-                      prediction={pred}
-                    />
-                  </Table.Cell>
                 </Table.Row>
               );
             })}
