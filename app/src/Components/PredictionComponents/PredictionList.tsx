@@ -2,7 +2,7 @@ import React, {FC, useState, useMemo} from 'react';
 import {Prediction} from '../../contract';
 import {Dataset} from '../../Stores/Types/Dataset';
 import {selectAll, scaleLinear} from 'd3';
-import {Header, Popup, Table, Icon} from 'semantic-ui-react';
+import {Header, Popup, Table, Icon, Label} from 'semantic-ui-react';
 import {hashCode} from '../../Utils';
 import {
   PredictionListJaccardItem,
@@ -164,8 +164,9 @@ const PredictionList: FC<Props> = ({
         <>
           <Table.Header>
             <Table.Row>
+              <Table.HeaderCell width="one">Dims</Table.HeaderCell>
               <Table.HeaderCell width="ten">Similarity</Table.HeaderCell>
-              <Table.HeaderCell width="one">Probability</Table.HeaderCell>
+              <Table.HeaderCell width="two">Probability</Table.HeaderCell>
               <Table.HeaderCell width="one"></Table.HeaderCell>
             </Table.Row>
           </Table.Header>
@@ -203,9 +204,24 @@ const PredictionList: FC<Props> = ({
                       selectedPrediction.intent === pred.intent) as any
                   }
                   key={`${intent}${hash}${dimensions}${intentName}${intentDetails}${info}`}
-                  onClick={() =>
-                    onPredictionClick(pred, countries, dimensionArr)
-                  }>
+                  onClick={() => {
+                    console.log(pred);
+                    onPredictionClick(pred, countries, dimensionArr);
+                  }}>
+                  <Table.Cell>
+                    {dimensionArr.map(name => {
+                      return (
+                        <Popup
+                          key={name}
+                          content={dataset.columnMaps[name].text}
+                          trigger={
+                            <Label circular size="mini">
+                              {dataset.columnMaps[name].short}
+                            </Label>
+                          }></Popup>
+                      );
+                    })}
+                  </Table.Cell>
                   <Table.Cell>
                     <PredictionListJaccardItem
                       selectedIds={selectedIds}

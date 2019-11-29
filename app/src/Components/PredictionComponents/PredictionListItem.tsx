@@ -3,7 +3,8 @@ import {scaleLinear} from 'd3';
 import {PredictionType} from '../../Stores/Predictions/PredictionsState';
 import {TypedPrediction} from './PredictionList';
 import {Dataset} from '../../Stores/Types/Dataset';
-import * as _ from 'lodash';
+import _ from 'lodash';
+import {Popup} from 'semantic-ui-react';
 
 interface Props {
   dataset: Dataset;
@@ -26,7 +27,6 @@ export const PredictionListJaccardItem: FC<Props> = ({
     .domain([0, 1])
     .range([0, maxWidth]);
 
-  const {columnMaps} = dataset;
   const {intent, type} = prediction;
   const [
     hash = '',
@@ -38,12 +38,6 @@ export const PredictionListJaccardItem: FC<Props> = ({
     type === PredictionType.Range
       ? ['', '', intent, '', '']
       : intent.split(':');
-
-  let dimensionArr = [...dimensions.matchAll(/\w+/g)]
-    .flatMap(d => d)
-    .map((dim: string) => {
-      return columnMaps[dim].short;
-    });
 
   const {dataIds = []} = prediction;
 
@@ -69,15 +63,18 @@ export const PredictionListJaccardItem: FC<Props> = ({
         dominantBaseline="middle"
         transform={`translate(10, ${barHeight / 2})`}>
         <tspan>{`${intentName} `}</tspan>
-        {dimensionArr.length > 0 && (
-          <tspan>{`for ${dimensionArr.join(':')} `}</tspan>
-        )}
-        <tspan style={boldTextStyle}>M: </tspan>
-        {`${matches}; `}
+        <Popup
+          content={`Matches: ${matches}`}
+          trigger={
+            <>
+              <tspan style={boldTextStyle}>M: </tspan>
+              <tspan>{`${matches}; `}</tspan>
+            </>
+          }></Popup>
         <tspan style={boldTextStyle}>NP: </tspan>
-        {`${isnp}; `}
+        <tspan>{`${isnp}; `}</tspan>
         <tspan style={boldTextStyle}>NS: </tspan>
-        {`${ipns}; `}
+        <tspan>{`${ipns}; `}</tspan>
       </text>
     </svg>
   );
