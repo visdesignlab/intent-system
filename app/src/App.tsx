@@ -54,8 +54,8 @@ const App: FC<Props> = ({
   if (plots.length === 0 && dataset.name !== '') {
     const plot: SinglePlot = {
       id: new Date().valueOf().toString(),
-      x: dataset.numericColumns[0],
-      y: dataset.numericColumns[1],
+      x: dataset.numericColumns[6],
+      y: dataset.numericColumns[8],
       color: dataset.categoricalColumns[0],
       brushes: {},
       brushSelections: {},
