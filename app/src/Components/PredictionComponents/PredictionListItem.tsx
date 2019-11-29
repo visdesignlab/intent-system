@@ -68,12 +68,23 @@ export const PredictionListJaccardItem: FC<Props> = ({
       <text
         dominantBaseline="middle"
         transform={`translate(10, ${barHeight / 2})`}>
-        <tspan>{intentName}</tspan>
-        `${dimensions.length > 0 ? `for ${dimensionArr.join(':')}` : ''}`
-        {` || M: ${matches}; NP: ${isnp}; NS: ${ipns}`}
+        <tspan>{`${intentName} `}</tspan>
+        {dimensionArr.length > 0 && (
+          <tspan>{`for ${dimensionArr.join(':')} `}</tspan>
+        )}
+        <tspan style={boldTextStyle}>M: </tspan>
+        {`${matches}; `}
+        <tspan style={boldTextStyle}>NP: </tspan>
+        {`${isnp}; `}
+        <tspan style={boldTextStyle}>NS: </tspan>
+        {`${ipns}; `}
       </text>
     </svg>
   );
+};
+
+const boldTextStyle: CSSProperties = {
+  fontWeight: 'bold',
 };
 
 export const PredictionListNBItem: FC<Props> = ({
