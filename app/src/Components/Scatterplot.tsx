@@ -494,6 +494,7 @@ const Scatterplot: FC<Props> = ({
 
         return (
           <Popup
+            hoverable
             key={i}
             trigger={showCategories ? symbolicMarks(d, i) : circularMarks(d, i)}
             content={
@@ -522,10 +523,11 @@ const Scatterplot: FC<Props> = ({
                           <Table.Cell>
                             {dataset.columnMaps[key].text}
                           </Table.Cell>
-                          <Table.Cell>{`${markData[key]}${dataset.columnMaps[
-                            key
-                          ].unit.length > 0 &&
-                            ` (${dataset.columnMaps[key].unit})`}`}</Table.Cell>
+                          <Table.Cell>{`${markData[key]}${
+                            dataset.columnMaps[key].unit.length > 0
+                              ? ` (${dataset.columnMaps[key].unit})`
+                              : ''
+                          }`}</Table.Cell>
                         </Table.Row>
                       );
                     })}
