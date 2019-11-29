@@ -68,10 +68,9 @@ export const PredictionListJaccardItem: FC<Props> = ({
       <text
         dominantBaseline="middle"
         transform={`translate(10, ${barHeight / 2})`}>
-        {`${intentName} ${
-          dimensions.length > 0 ? `for ${dimensionArr.join(':')}` : ''
-        }`}
-        {` || M: ${matches} NP: ${isnp} NS: ${ipns}`}
+        <tspan>{intentName}</tspan>
+        `${dimensions.length > 0 ? `for ${dimensionArr.join(':')}` : ''}`
+        {` || M: ${matches}; NP: ${isnp}; NS: ${ipns}`}
       </text>
     </svg>
   );

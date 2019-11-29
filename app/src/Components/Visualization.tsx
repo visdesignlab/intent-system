@@ -5,7 +5,7 @@ import {Dataset} from '../Stores/Types/Dataset';
 import {Plots} from '../Stores/Types/Plots';
 import Scatterplot from './Scatterplot';
 import Legend from './Legend';
-import {scaleOrdinal, schemeSet2} from 'd3';
+import {scaleOrdinal, schemeSet2, symbols, symbol} from 'd3';
 import {pure} from 'recompose';
 import _ from 'lodash';
 import {AppState} from '../Stores/CombinedStore';
@@ -125,6 +125,25 @@ const Visualization: FC<Props> = ({
 
                 const otherPlots = plots.filter(p => p.id !== plot.id);
 
+                const totalSymbolCount = symbols.length;
+
+                const categorySymbolMap: any = {};
+
+                _.chain(dataset.data)
+                  .map(n => n[plot.color])
+                  .uniq()
+                  .value()
+                  .forEach((val, idx) => {
+                    if (idx >= totalSymbolCount) {
+                      categorySymbolMap[val] = symbol()
+                        .type(symbols[totalSymbolCount - 1])
+                        .size(80)();
+                    } else
+                      categorySymbolMap[val] = symbol()
+                        .type(symbols[idx])
+                        .size(80)();
+                  });
+
                 return (
                   <g
                     key={`${plot.id} ${i}`}
@@ -138,6 +157,7 @@ const Visualization: FC<Props> = ({
                       stroke="red"></rect>
                     <Scatterplot
                       plot={plot}
+                      categorySymbolMap={categorySymbolMap}
                       clearBrushDictionarySetup={clearBrushDictionarySetup}
                       otherPlots={otherPlots}
                       size={plotDimension}

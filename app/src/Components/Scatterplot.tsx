@@ -33,6 +33,7 @@ interface OwnProps {
   size: number;
   lastPlot: boolean;
   colorScale: ScaleOrdinal<string, unknown>;
+  categorySymbolMap: any;
   showCategories: boolean;
   markSize: string | number;
   clearBrushDictionarySetup: (plotid: string, handler: () => void) => void;
@@ -99,6 +100,7 @@ const Scatterplot: FC<Props> = ({
   colorScale,
   markSize,
   clearBrushDictionarySetup,
+  categorySymbolMap,
 }: Props) => {
   const xAxisRef: RefObject<SVGGElement> = createRef();
   const yAxisRef: RefObject<SVGGElement> = createRef();
@@ -329,6 +331,162 @@ const Scatterplot: FC<Props> = ({
     ...keysArray.filter(k => !currentColumns.includes(k)),
   ];
 
+  function circularMarks(d: any, i: number) {
+    return clickSelectedPoints.includes(i) ? (
+      <IntersectionMark
+        onClick={() => {
+          if (
+            !otherPointSelection[plot.id] ||
+            !otherPointSelection[plot.id].includes(i)
+          )
+            return;
+          let points = plot.selectedPoints.filter(p => p !== i);
+
+          plot.selectedPoints = points;
+          updatePlot({...plot}, false);
+          addPointDeselection(
+            {
+              plot,
+              dataIds: [i],
+              kind: 'deselection',
+            },
+            multiBrushBehavior,
+          );
+        }}
+        className={`mark ${dataset.data[i][HASH]}`}
+        cx={xScale(d.x)}
+        cy={yScale(d.y)}
+        r={markSize}></IntersectionMark>
+    ) : selectedIndices[i] ? (
+      selectedIndices[i] === maxIntersection ||
+      multiBrushBehavior === MultiBrushBehavior.UNION ? (
+        <IntersectionMark
+          className={`mark ${dataset.data[i][HASH]}`}
+          cx={xScale(d.x)}
+          cy={yScale(d.y)}
+          r={markSize}></IntersectionMark>
+      ) : (
+        <UnionMark
+          className={`mark ${dataset.data[i][HASH]}`}
+          cx={xScale(d.x)}
+          cy={yScale(d.y)}
+          r={markSize}></UnionMark>
+      )
+    ) : (
+      <RegularMark
+        onClick={() => {
+          let points = plot.selectedPoints;
+          if (!points.includes(i)) points.push(i);
+          plot.selectedPoints = points;
+          updatePlot({...plot}, false);
+          addPointSelection(
+            {
+              plot,
+              dataIds: [i],
+              kind: 'selection',
+            },
+            multiBrushBehavior,
+          );
+        }}
+        fill={defaultMarkColor}
+        className={`mark ${dataset.data[i][HASH]}`}
+        cx={xScale(d.x)}
+        cy={yScale(d.y)}
+        r={markSize}></RegularMark>
+    );
+  }
+
+  function symbolicMarks(d: any, i: number) {
+    const selectedSymbol = categorySymbolMap[d.color];
+
+    const symbolPath: string = selectedSymbol;
+
+    return clickSelectedPoints.includes(i) ? (
+      <g
+        onClick={() => {
+          if (
+            !otherPointSelection[plot.id] ||
+            !otherPointSelection[plot.id].includes(i)
+          )
+            return;
+          let points = plot.selectedPoints.filter(p => p !== i);
+
+          plot.selectedPoints = points;
+          updatePlot({...plot}, false);
+          addPointDeselection(
+            {
+              plot,
+              dataIds: [i],
+              kind: 'deselection',
+            },
+            multiBrushBehavior,
+          );
+        }}
+        style={{
+          cursor: 'pointer',
+          fill: 'rgb(244, 106, 15)',
+          opacity: '0.9',
+        }}
+        fill={defaultMarkColor}
+        className={`mark ${dataset.data[i][HASH]}`}
+        transform={`translate(${xScale(d.x)}, ${yScale(d.y)})`}>
+        <path d={symbolPath}></path>
+      </g>
+    ) : selectedIndices[i] ? (
+      selectedIndices[i] === maxIntersection ||
+      multiBrushBehavior === MultiBrushBehavior.UNION ? (
+        <g
+          style={{
+            cursor: 'pointer',
+            fill: 'rgb(244, 106, 15)',
+            opacity: '0.9',
+          }}
+          fill={defaultMarkColor}
+          className={`mark ${dataset.data[i][HASH]}`}
+          transform={`translate(${xScale(d.x)}, ${yScale(d.y)})`}>
+          <path d={symbolPath}></path>
+        </g>
+      ) : (
+        <g
+          style={{
+            cursor: 'pointer',
+            fill: '#2c7fb8',
+            opacity: '0.9',
+          }}
+          fill={defaultMarkColor}
+          className={`mark ${dataset.data[i][HASH]}`}
+          transform={`translate(${xScale(d.x)}, ${yScale(d.y)})`}>
+          <path d={symbolPath}></path>
+        </g>
+      )
+    ) : (
+      <g
+        onClick={() => {
+          let points = plot.selectedPoints;
+          if (!points.includes(i)) points.push(i);
+          plot.selectedPoints = points;
+          updatePlot({...plot}, false);
+          addPointSelection(
+            {
+              plot,
+              dataIds: [i],
+              kind: 'selection',
+            },
+            multiBrushBehavior,
+          );
+        }}
+        style={{
+          cursor: 'pointer',
+          opacity: '0.4',
+        }}
+        fill={defaultMarkColor}
+        className={`mark ${dataset.data[i][HASH]}`}
+        transform={`translate(${xScale(d.x)}, ${yScale(d.y)})`}>
+        <path d={symbolPath}></path>
+      </g>
+    );
+  }
+
   const MarksLayer = (
     <g style={{pointerEvents: mouseIsDown ? 'none' : 'all'}} className="marks">
       {data.map((d, i) => {
@@ -337,89 +495,7 @@ const Scatterplot: FC<Props> = ({
         return (
           <Popup
             key={i}
-            trigger={
-              clickSelectedPoints.includes(i) ? (
-                <IntersectionMark
-                  onClick={() => {
-                    if (
-                      !otherPointSelection[plot.id] ||
-                      !otherPointSelection[plot.id].includes(i)
-                    )
-                      return;
-                    let points = plot.selectedPoints.filter(p => p !== i);
-
-                    plot.selectedPoints = points;
-                    updatePlot({...plot}, false);
-                    addPointDeselection(
-                      {
-                        plot,
-                        dataIds: [i],
-                        kind: 'deselection',
-                      },
-                      multiBrushBehavior,
-                    );
-                  }}
-                  fill={
-                    showCategories
-                      ? (colorScale(d.color) as string)
-                      : defaultMarkColor
-                  }
-                  className={`mark ${dataset.data[i][HASH]}`}
-                  cx={xScale(d.x)}
-                  cy={yScale(d.y)}
-                  r={markSize}></IntersectionMark>
-              ) : selectedIndices[i] ? (
-                selectedIndices[i] === maxIntersection ||
-                multiBrushBehavior === MultiBrushBehavior.UNION ? (
-                  <IntersectionMark
-                    fill={
-                      showCategories
-                        ? (colorScale(d.color) as string)
-                        : defaultMarkColor
-                    }
-                    className={`mark ${dataset.data[i][HASH]}`}
-                    cx={xScale(d.x)}
-                    cy={yScale(d.y)}
-                    r={markSize}></IntersectionMark>
-                ) : (
-                  <UnionMark
-                    fill={
-                      showCategories
-                        ? (colorScale(d.color) as string)
-                        : defaultMarkColor
-                    }
-                    className={`mark ${dataset.data[i][HASH]}`}
-                    cx={xScale(d.x)}
-                    cy={yScale(d.y)}
-                    r={markSize}></UnionMark>
-                )
-              ) : (
-                <RegularMark
-                  onClick={() => {
-                    let points = plot.selectedPoints;
-                    if (!points.includes(i)) points.push(i);
-                    plot.selectedPoints = points;
-                    updatePlot({...plot}, false);
-                    addPointSelection(
-                      {
-                        plot,
-                        dataIds: [i],
-                        kind: 'selection',
-                      },
-                      multiBrushBehavior,
-                    );
-                  }}
-                  fill={
-                    showCategories
-                      ? (colorScale(d.color) as string)
-                      : defaultMarkColor
-                  }
-                  className={`mark ${dataset.data[i][HASH]}`}
-                  cx={xScale(d.x)}
-                  cy={yScale(d.y)}
-                  r={markSize}></RegularMark>
-              )
-            }
+            trigger={showCategories ? symbolicMarks(d, i) : circularMarks(d, i)}
             content={
               <div>
                 <h1>{dataset.data[i][labelColumn]}</h1>
@@ -640,12 +716,7 @@ const CloseGroup = styled('g')`
   cursor: pointer;
 `;
 
-interface MarkProps {
-  fill?: string;
-}
-
-const RegularMark = styled('circle')<MarkProps>`
-  fill: ${props => (props.fill ? props.fill : 'black')};
+const RegularMark = styled('circle')`
   opacity: 0.4;
   cursor: pointer;
   &:hover {
@@ -656,12 +727,12 @@ const RegularMark = styled('circle')<MarkProps>`
   }
 `;
 
-const UnionMark = styled(RegularMark)<MarkProps>`
+const UnionMark = styled(RegularMark)`
   fill: #2c7fb8;
   opacity: 0.9;
 `;
 
-const IntersectionMark = styled(RegularMark)<MarkProps>`
+const IntersectionMark = styled(RegularMark)`
   fill: rgb(244, 106, 15);
   opacity: 0.9;
 `;
