@@ -3,20 +3,30 @@ import {scaleLinear} from 'd3';
 import {PredictionType} from '../../Stores/Predictions/PredictionsState';
 import {TypedPrediction} from './PredictionList';
 import {Dataset} from '../../Stores/Types/Dataset';
+import * as _ from 'lodash';
 
 interface Props {
   dataset: Dataset;
   barHeight: number;
   prediction: TypedPrediction;
+  selectedIds: number[];
 }
 
 export const PredictionListJaccardItem: FC<Props> = ({
   dataset,
   prediction,
   barHeight,
+  selectedIds,
 }: Props) => {
-  const {columnMaps} = dataset;
+  let barColor = '#A8D3EE';
 
+  const svgRef = useRef<SVGSVGElement>(null);
+  const maxWidth = svgRef.current ? svgRef.current.clientWidth : 0;
+  const barScale = scaleLinear()
+    .domain([0, 1])
+    .range([0, maxWidth]);
+
+  const {columnMaps} = dataset;
   const {intent, type} = prediction;
   const [
     hash = '',
@@ -35,15 +45,11 @@ export const PredictionListJaccardItem: FC<Props> = ({
       return columnMaps[dim].short;
     });
 
-  const svgRef = useRef<SVGSVGElement>(null);
+  const {dataIds = []} = prediction;
 
-  let barColor = '#A8D3EE';
-
-  const maxWidth = svgRef.current ? svgRef.current.clientWidth : 0;
-
-  const barScale = scaleLinear()
-    .domain([0, 1])
-    .range([0, maxWidth]);
+  const matches = _.intersection(dataIds, selectedIds).length;
+  const ipns = _.difference(dataIds, selectedIds).length;
+  const isnp = _.difference(selectedIds, dataIds).length;
 
   return (
     <svg
@@ -65,6 +71,7 @@ export const PredictionListJaccardItem: FC<Props> = ({
         {`${intentName} ${
           dimensions.length > 0 ? `for ${dimensionArr.join(':')}` : ''
         }`}
+        {` || M: ${matches} NP: ${isnp} NS: ${ipns}`}
       </text>
     </svg>
   );

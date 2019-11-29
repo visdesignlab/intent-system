@@ -1,4 +1,4 @@
-import React, {FC, CSSProperties} from 'react';
+import React, {FC, CSSProperties, useMemo} from 'react';
 import {connect} from 'react-redux';
 import {Header, Label, Loader, Card} from 'semantic-ui-react';
 
@@ -6,11 +6,13 @@ import {Prediction} from '../contract';
 import {Dataset} from '../Stores/Types/Dataset';
 import {AppState} from '../Stores/CombinedStore';
 import PredictionList from './PredictionComponents/PredictionList';
+import {SelectionRecord} from '../App';
 
 interface OwnProps {
   isExploreMode: boolean;
   dataset: Dataset;
   isSubmitted: boolean;
+  selectionRecord: SelectionRecord;
 }
 
 interface StateProps {
@@ -28,8 +30,16 @@ const Predictions: FC<Props> = ({
   time,
   dataset,
   isLoading,
+  selectionRecord,
 }: Props) => {
   if (!predictions) predictions = [];
+
+  const selectionRecordString = JSON.stringify(selectionRecord);
+
+  const memoizedSelectionRecord: SelectionRecord = useMemo(
+    () => JSON.parse(selectionRecordString),
+    [selectionRecordString],
+  );
 
   predictions.sort((a, b) => b.rank - a.rank);
 
@@ -65,6 +75,7 @@ const Predictions: FC<Props> = ({
         }}>
         {isLoading && loadingScreen}
         <PredictionList
+          selectionRecord={memoizedSelectionRecord}
           dataset={dataset}
           barHeight={barHeight}
           predictions={predictions}

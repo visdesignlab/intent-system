@@ -132,7 +132,8 @@ const App: FC<Props> = ({
         <Predictions
           isExploreMode={isExploreMode}
           isSubmitted={isSubmitted}
-          dataset={dataset}></Predictions>
+          dataset={dataset}
+          selectionRecord={totalSelections}></Predictions>
       </div>
     </div>
   );
