@@ -192,6 +192,10 @@ const PredictionList: FC<Props> = ({
                 d => d,
               );
 
+              const fullDimensionName = dimensionArr.map(
+                d => dataset.columnMaps[d].text,
+              );
+
               return (
                 <Table.Row
                   active={
@@ -229,6 +233,7 @@ const PredictionList: FC<Props> = ({
                     content={
                       <>
                         <Header>{intentName}</Header>
+                        <Header as="h3">{fullDimensionName.join(' | ')}</Header>
                         <pre>
                           {JSON.stringify(
                             pred,
