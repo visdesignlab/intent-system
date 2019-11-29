@@ -1,6 +1,6 @@
 import React, {FC, CSSProperties, useMemo} from 'react';
 import {connect} from 'react-redux';
-import {Header, Label, Loader, Card} from 'semantic-ui-react';
+import {Header, Label, Loader, Card, Form} from 'semantic-ui-react';
 
 import {Prediction} from '../contract';
 import {Dataset} from '../Stores/Types/Dataset';
@@ -82,6 +82,9 @@ const Predictions: FC<Props> = ({
         />
       </Card.Content>
       <Card.Content textAlign="center">
+        <Form>
+          <Form.TextArea></Form.TextArea>
+        </Form>
         {/* <Form> */}
         {/*   <Form.TextArea */}
         {/*     disabled={selectedPrediction === null} */}
