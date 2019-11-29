@@ -27,3 +27,9 @@ code {
   stroke: none !important;
   opacity: 1 !important;
 }
+
+.regression-line {
+  stroke: red;
+  color: red;
+  stroke-width: 2px;
+}

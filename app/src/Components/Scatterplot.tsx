@@ -70,6 +70,17 @@ interface DispatchProps {
 
 type Props = OwnProps & StateProps & DispatchProps;
 
+export interface ScaleStorage {
+  x: {
+    range: number[];
+    domain: number[];
+  };
+  y: {
+    range: number[];
+    domain: number[];
+  };
+}
+
 const Scatterplot: FC<Props> = ({
   plot,
   otherPlots,
@@ -128,14 +139,26 @@ const Scatterplot: FC<Props> = ({
 
   const padding = 50;
   const paddedSize = size - 2 * padding;
+
+  const scales: ScaleStorage = {
+    x: {
+      range: [0, paddedSize],
+      domain: [min(data.map(d => d.x)), max(data.map(d => d.x))],
+    },
+    y: {
+      range: [0, paddedSize],
+      domain: [max(data.map(d => d.y)), min(data.map(d => d.y))],
+    },
+  };
+
   const xScale = scaleLinear()
-    .domain([min(data.map(d => d.x)), max(data.map(d => d.x))])
-    .range([0, paddedSize])
+    .domain(scales.x.domain)
+    .range(scales.x.range)
     .nice();
 
   const yScale = scaleLinear()
-    .domain([max(data.map(d => d.y)), min(data.map(d => d.y))])
-    .range([0, paddedSize])
+    .domain(scales.y.domain)
+    .range(scales.y.range)
     .nice();
 
   useEffect(() => {
@@ -436,13 +459,14 @@ const Scatterplot: FC<Props> = ({
             }></Popup>
         );
       })}
+      <g className="regression_line" data-scale={JSON.stringify(scales)}></g>
     </g>
   );
 
   const [first, second] = [BrushLayer, MarksLayer];
 
   return (
-    <g>
+    <g className={`plot${plot.id}`}>
       <g transform={`translate(${padding}, ${padding})`}>
         <g className="axis">
           <g transform={`translate(0, ${xScale.range()[1]})`}>
