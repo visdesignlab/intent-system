@@ -19,7 +19,7 @@ interface Props {
   predictions: Prediction[];
 }
 
-interface TypedPrediction extends Prediction {
+export interface TypedPrediction extends Prediction {
   type: PredictionType;
 }
 
@@ -77,9 +77,16 @@ const PredictionList: FC<Props> = ({
               );
 
               const {intent, type} = pred;
-              if (!type) {
-                console.log(intent, type);
-              }
+              const [
+                hash = '',
+                dimensions = '',
+                intentName = '',
+                intentDetails = '',
+                info = '',
+              ] =
+                type === PredictionType.Range
+                  ? ['', '', intent, '', '']
+                  : intent.split(':');
 
               return (
                 <Table.Row
@@ -87,7 +94,7 @@ const PredictionList: FC<Props> = ({
                     (selectedPrediction &&
                       selectedPrediction.intent === pred.intent) as any
                   }
-                  key={pred.intent}
+                  key={`${intent}${hash}${dimensions}${intentName}${intentDetails}${info}`}
                   onClick={() => onPredictionClick(pred, countries)}>
                   <Popup
                     hoverable
@@ -99,7 +106,7 @@ const PredictionList: FC<Props> = ({
                     }
                     content={
                       <>
-                        <Header>{pred.intent}</Header>
+                        <Header>{intentName}</Header>
                         <pre>
                           {JSON.stringify(
                             pred,
@@ -111,12 +118,14 @@ const PredictionList: FC<Props> = ({
                     }></Popup>
                   <Table.Cell>
                     <PredictionListJaccardItem
+                      dataset={dataset}
                       barHeight={barHeight}
                       prediction={pred}
                     />
                   </Table.Cell>
                   <Table.Cell>
                     <PredictionListNBItem
+                      dataset={dataset}
                       barHeight={barHeight}
                       prediction={pred}
                     />

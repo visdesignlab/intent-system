@@ -1,16 +1,40 @@
 import React, {FC, useRef, CSSProperties} from 'react';
-import {Prediction} from '../../contract';
 import {scaleLinear} from 'd3';
+import {PredictionType} from '../../Stores/Predictions/PredictionsState';
+import {TypedPrediction} from './PredictionList';
+import {Dataset} from '../../Stores/Types/Dataset';
 
 interface Props {
+  dataset: Dataset;
   barHeight: number;
-  prediction: Prediction;
+  prediction: TypedPrediction;
 }
 
 export const PredictionListJaccardItem: FC<Props> = ({
+  dataset,
   prediction,
   barHeight,
 }: Props) => {
+  const {columnMaps} = dataset;
+
+  const {intent, type} = prediction;
+  const [
+    hash = '',
+    dimensions = '',
+    intentName = '',
+    intentDetails = '',
+    info = '',
+  ] =
+    type === PredictionType.Range
+      ? ['', '', intent, '', '']
+      : intent.split(':');
+
+  let dimensionArr = [...dimensions.matchAll(/\w+/g)]
+    .flatMap(d => d)
+    .map((dim: string) => {
+      return columnMaps[dim].short;
+    });
+
   const svgRef = useRef<SVGSVGElement>(null);
 
   let barColor = '#A8D3EE';
@@ -22,7 +46,11 @@ export const PredictionListJaccardItem: FC<Props> = ({
     .range([0, maxWidth]);
 
   return (
-    <svg ref={svgRef} height={barHeight} width="100%">
+    <svg
+      key={`${hash}${dimensions}${intentName}${intentDetails}${info}`}
+      ref={svgRef}
+      height={barHeight}
+      width="100%">
       <rect
         height={barHeight}
         width={maxWidth}
@@ -34,7 +62,7 @@ export const PredictionListJaccardItem: FC<Props> = ({
       <text
         dominantBaseline="middle"
         transform={`translate(10, ${barHeight / 2})`}>
-        {prediction.intent}
+        {`${intentName} for ${dimensionArr.join(':')}`}
       </text>
     </svg>
   );
@@ -44,6 +72,18 @@ export const PredictionListNBItem: FC<Props> = ({
   prediction,
   barHeight,
 }: Props) => {
+  const {intent, type} = prediction;
+  const [
+    hash = '',
+    dimensions = '',
+    intentName = '',
+    intentDetails = '',
+    info = '',
+  ] =
+    type === PredictionType.Range
+      ? ['', '', intent, '', '']
+      : intent.split(':');
+
   const svgRef = useRef<SVGSVGElement>(null);
 
   let barColor = '#f8bf84';
@@ -59,7 +99,11 @@ export const PredictionListNBItem: FC<Props> = ({
   if (prediction.info) barValue = (prediction.info as any).probability || 0;
 
   return (
-    <svg ref={svgRef} height={barHeight} width="100%">
+    <svg
+      key={`${hash}${dimensions}${intentName}${intentDetails}${info}`}
+      ref={svgRef}
+      height={barHeight}
+      width="100%">
       <rect
         height={barHeight}
         width={maxWidth}
@@ -71,7 +115,7 @@ export const PredictionListNBItem: FC<Props> = ({
       <text
         dominantBaseline="middle"
         transform={`translate(10, ${barHeight / 2})`}>
-        {prediction.intent}
+        {barValue.toFixed(2)}
       </text>
     </svg>
   );
