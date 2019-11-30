@@ -1,6 +1,6 @@
-import React, {FC, CSSProperties, useMemo} from 'react';
+import React, {FC, CSSProperties, useMemo, useState} from 'react';
 import {connect} from 'react-redux';
-import {Header, Label, Loader, Card} from 'semantic-ui-react';
+import {Header, Label, Loader, Card, Form} from 'semantic-ui-react';
 
 import {Prediction} from '../contract';
 import {Dataset} from '../Stores/Types/Dataset';
@@ -35,6 +35,8 @@ const Predictions: FC<Props> = ({
   if (!predictions) predictions = [];
 
   const selectionRecordString = JSON.stringify(selectionRecord);
+
+  const [livePredText, setLivePredText] = useState('');
 
   const memoizedSelectionRecord: SelectionRecord = useMemo(
     () => JSON.parse(selectionRecordString),
@@ -82,6 +84,13 @@ const Predictions: FC<Props> = ({
         />
       </Card.Content>
       <Card.Content textAlign="center">
+        <Form>
+          <Form.TextArea
+            value={livePredText}
+            onChange={(_, data) =>
+              setLivePredText(data.value as string)
+            }></Form.TextArea>
+        </Form>
         {/* <Form> */}
         {/*   <Form.TextArea */}
         {/*     disabled={selectedPrediction === null} */}
