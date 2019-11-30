@@ -98,6 +98,25 @@ const Visualization: FC<Props> = ({
     clearBrushDictionary[plotid] = handler;
   }
 
+  const totalSymbolCount = symbols.length;
+
+  const categorySymbolMap: any = {};
+
+  _.chain(dataset.data)
+    .map(n => n[plots[0].color])
+    .uniq()
+    .value()
+    .forEach((val, idx) => {
+      if (idx >= totalSymbolCount) {
+        categorySymbolMap[val] = symbol()
+          .type(symbols[totalSymbolCount - 1])
+          .size(80)();
+      } else
+        categorySymbolMap[val] = symbol()
+          .type(symbols[idx])
+          .size(80)();
+    });
+
   return (
     <MainSvg ref={measuredRef}>
       {showCategories && (
@@ -107,6 +126,7 @@ const Visualization: FC<Props> = ({
             height={margin}
             width={width}
             values={uniqueValues}
+            categorySymbolMap={categorySymbolMap}
           />
         </g>
       )}
@@ -124,25 +144,6 @@ const Visualization: FC<Props> = ({
                 const xPos = plotDimension * xPosGen();
 
                 const otherPlots = plots.filter(p => p.id !== plot.id);
-
-                const totalSymbolCount = symbols.length;
-
-                const categorySymbolMap: any = {};
-
-                _.chain(dataset.data)
-                  .map(n => n[plot.color])
-                  .uniq()
-                  .value()
-                  .forEach((val, idx) => {
-                    if (idx >= totalSymbolCount) {
-                      categorySymbolMap[val] = symbol()
-                        .type(symbols[totalSymbolCount - 1])
-                        .size(80)();
-                    } else
-                      categorySymbolMap[val] = symbol()
-                        .type(symbols[idx])
-                        .size(80)();
-                  });
 
                 return (
                   <g

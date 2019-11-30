@@ -7,13 +7,20 @@ interface OwnProps {
   height: number;
   width: number;
   colorScale: ScaleOrdinal<string, unknown>;
+  categorySymbolMap: any;
 }
 
 interface StateProps {}
 
 type Props = OwnProps & StateProps;
 
-const Legend: FC<Props> = ({values, height, width, colorScale}: Props) => {
+const Legend: FC<Props> = ({
+  values,
+  height,
+  width,
+  colorScale,
+  categorySymbolMap,
+}: Props) => {
   const padding = 5;
   const cellWidth = width / values.length;
   height = height - 2 * padding;
@@ -30,10 +37,7 @@ const Legend: FC<Props> = ({values, height, width, colorScale}: Props) => {
             strokeWidth="0.5"
             fill="#eee"
             opacity="0.3"></rect>
-          <circle
-            transform="translate(15, 20)"
-            r="10"
-            fill={colorScale(val) as string}></circle>
+          <path transform="translate(15, 20)" d={categorySymbolMap[val]}></path>
           <LegendText
             dominantBaseline="middle"
             textAnchor="start"
