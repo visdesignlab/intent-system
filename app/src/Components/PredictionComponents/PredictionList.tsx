@@ -3,7 +3,6 @@ import {Prediction} from '../../contract';
 import {Dataset} from '../../Stores/Types/Dataset';
 import {selectAll, scaleLinear} from 'd3';
 import {Header, Popup, Table, Icon, Label} from 'semantic-ui-react';
-import {hashCode} from '../../Utils';
 import {
   PredictionListJaccardItem,
   PredictionListNBItem,
@@ -168,8 +167,6 @@ const PredictionList: FC<Props> = ({
     exPred.type = getPredictionType(pred.intent);
     return exPred;
   });
-
-  const {data, labelColumn} = dataset;
 
   return (
     <Table compact>
