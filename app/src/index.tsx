@@ -149,7 +149,7 @@ export function initializeTaskManager() {
 
 export const taskManager = initializeTaskManager();
 
-export let datasetName = 'gapminder_world';
+export let datasetName = 'cluster';
 
 export async function loadDatasetByName(ds: string = datasetName) {
   if (datasetName !== ds) datasetName = ds;

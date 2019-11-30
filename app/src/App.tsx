@@ -1,4 +1,4 @@
-import React, {FC, useState, CSSProperties} from 'react';
+import React, {FC, useState, CSSProperties, useMemo} from 'react';
 
 import Task from './Components/Task';
 import Visualization from './Components/Visualization';
@@ -11,7 +11,10 @@ import {
   combineBrushSelectionInMultiplePlots,
 } from './Stores/Types/Plots';
 import {addPlot} from './Stores/Visualization/Setup/PlotsRedux';
-import PlotControl from './Components/PlotControl';
+import PlotControl, {
+  CategoriesDropdownOption,
+  CategoriesDropdownOptions,
+} from './Components/PlotControl';
 import Predictions from './Components/Predictions';
 import SelectionResults from './Components/SelectionResults';
 import {max} from 'lodash';
@@ -51,23 +54,47 @@ const App: FC<Props> = ({
 }: Props) => {
   const emptyString = '';
 
-  if (plots.length === 0 && dataset.name !== '') {
-    const plot: SinglePlot = {
-      id: new Date().valueOf().toString(),
-      x: dataset.numericColumns[0],
-      y: dataset.numericColumns[1],
-      color: dataset.categoricalColumns[0],
-      brushes: {},
-      brushSelections: {},
-      combinedBrushSelections: {},
-      selectedPoints: [],
-    };
-
-    addPlot(plot);
-  }
-
   const [showCategories, setShowCategories] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const categoricalColumnsString = JSON.stringify(dataset.categoricalColumns);
+  const columnMapsString = JSON.stringify(dataset.columnMaps);
+  const memoizedCategoricalList: CategoriesDropdownOptions = useMemo(() => {
+    const categoricalCols: string[] = JSON.parse(categoricalColumnsString);
+    const columnMaps = JSON.parse(columnMapsString);
+    return categoricalCols.map(col => ({
+      key: col,
+      value: col,
+      text: columnMaps[col].text,
+    }));
+  }, [categoricalColumnsString, columnMapsString]);
+
+  const [selectedCategory, setSelectedCategory] = useState<
+    CategoriesDropdownOption
+  >(
+    memoizedCategoricalList.length > 0
+      ? memoizedCategoricalList[0]
+      : {key: '', value: '', text: ''},
+  );
+
+  if (plots.length === 0 && dataset.name !== '') {
+    if (!dataset.categoricalColumns.includes(selectedCategory.value)) {
+      setSelectedCategory(memoizedCategoricalList[0]);
+    } else {
+      const plot: SinglePlot = {
+        id: new Date().valueOf().toString(),
+        x: dataset.numericColumns[0],
+        y: dataset.numericColumns[1],
+        color: dataset.categoricalColumns[0],
+        brushes: {},
+        brushSelections: {},
+        combinedBrushSelections: {},
+        selectedPoints: [],
+      };
+
+      addPlot(plot);
+    }
+  }
 
   const [totalSelections, setTotalSelections] = useState<SelectionRecord>({
     brushSelections: {},
@@ -115,12 +142,18 @@ const App: FC<Props> = ({
             showCategories={showCategories}
             setShowCategories={setShowCategories}
             clearAll={clearAll}
+            categoryDropdownOptions={memoizedCategoricalList}
+            setSelectedCategory={(cat: CategoriesDropdownOption) => {
+              if (areEqual(selectedCategory, cat)) return;
+              setSelectedCategory(cat);
+            }}
           />
           <div style={visResDiv(isExploreMode)}>
             <Visualization
               clearAllHandlerSetup={clearAllHandlerSetup}
               isSubmitted={isSubmitted}
               showCategories={showCategories}
+              selectedCategory={selectedCategory.value}
             />
           </div>
         </div>

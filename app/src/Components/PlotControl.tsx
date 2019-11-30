@@ -29,6 +29,8 @@ interface OwnProps {
   isSubmitted: boolean;
   showCategories: boolean;
   setShowCategories: (shouldShow: boolean) => void;
+  categoryDropdownOptions: CategoriesDropdownOptions;
+  setSelectedCategory: (cat: CategoriesDropdownOption) => void;
   clearAll: () => void;
 }
 
@@ -57,8 +59,10 @@ export type DatasetDropdownOption = {
   text: string;
   value: string;
 };
-
 export type DatasetDropdownOptions = DatasetDropdownOption[];
+
+export type CategoriesDropdownOption = DatasetDropdownOption;
+export type CategoriesDropdownOptions = DatasetDropdownOptions;
 
 function getDatasetOptions(
   datasets: {key: string; name: string}[],
@@ -76,11 +80,13 @@ const PlotControl: FC<Props> = (props: Props) => {
     isSubmitted,
     setShowCategories,
     multiBrushBehavior,
+    setSelectedCategory,
     changeBrushBehavior,
     dataset,
     addPlot,
     clearAll,
     plots,
+    categoryDropdownOptions,
     updatePlots,
   } = props;
 
@@ -193,10 +199,7 @@ const PlotControl: FC<Props> = (props: Props) => {
       }}></Radio>
   );
 
-  const categoriesOptions = convertToDropdownFormat(
-    dataset.columnMaps,
-    'categorical',
-  );
+  const categoriesOptions = categoryDropdownOptions;
 
   const AddCategoryDropdown = (
     <>
@@ -205,7 +208,13 @@ const PlotControl: FC<Props> = (props: Props) => {
         placeholder="Color"
         selection
         options={categoriesOptions}
-        disabled={categoriesOptions.length < 2}
+        onChange={(_, data) => {
+          const {value = ''} = data;
+          const selectedCategory = categoriesOptions.find(
+            c => c.value === value,
+          );
+          if (selectedCategory) setSelectedCategory(selectedCategory);
+        }}
         defaultValue={categoriesOptions[0].value}></Dropdown>
     </>
   );

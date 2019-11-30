@@ -19,6 +19,7 @@ interface OwnProps {
   showCategories: boolean;
   isSubmitted: boolean;
   clearAllHandlerSetup: (handler: () => void) => void;
+  selectedCategory: string;
 }
 
 interface StateProps {
@@ -36,6 +37,7 @@ const Visualization: FC<Props> = ({
   dataset,
   plots,
   clearAllHandlerSetup,
+  selectedCategory,
 }: Props) => {
   const [dimensions, setDimensions] = useState<{
     height: number;
@@ -103,7 +105,7 @@ const Visualization: FC<Props> = ({
   const categorySymbolMap: any = {};
 
   _.chain(dataset.data)
-    .map(n => n[plots[0].color])
+    .map(n => n[selectedCategory])
     .uniq()
     .value()
     .forEach((val, idx) => {
@@ -165,6 +167,7 @@ const Visualization: FC<Props> = ({
                       showCategories={showCategories}
                       lastPlot={plots.length === 1}
                       markSize={`${0.35 / rowCount}em`}
+                      selectedCategory={selectedCategory}
                       colorScale={colorScale}></Scatterplot>
                   </g>
                 );
