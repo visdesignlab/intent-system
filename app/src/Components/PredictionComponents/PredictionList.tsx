@@ -17,6 +17,7 @@ import {Plots, SinglePlot} from '../../Stores/Types/Plots';
 import {useSelector} from 'react-redux';
 import {AppState} from '../../Stores/CombinedStore';
 import {ScaleStorage} from '../Scatterplot';
+import _ from 'lodash';
 
 interface Props {
   dataset: Dataset;
@@ -42,6 +43,8 @@ const PredictionList: FC<Props> = ({
 
   const plots: Plots = useSelector((state: AppState) => state.plots);
 
+  const [highlightCell, setHighlightCell] = useState('');
+
   const selectedIds: number[] = useMemo(() => {
     const {brushSelections, pointSelections} = selectionRecord;
 
@@ -52,6 +55,16 @@ const PredictionList: FC<Props> = ({
       ]),
     ];
   }, [selectionRecord]);
+
+  function onContainmentHover(countries: string[], show: boolean = true) {
+    if (!show) {
+      selectAll('.mark').classed('containment_highlight', false);
+    } else {
+      countries.forEach(code => {
+        selectAll(`.${code}`).classed('containment_highlight', true);
+      });
+    }
+  }
 
   function onPredictionClick(
     pred: TypedPrediction,
@@ -164,7 +177,16 @@ const PredictionList: FC<Props> = ({
         <>
           <Table.Header>
             <Table.Row>
-              <Table.HeaderCell width="one">Dims</Table.HeaderCell>
+              <Table.HeaderCell width="two">Dims</Table.HeaderCell>
+              <Popup
+                trigger={<Table.HeaderCell width="one">M</Table.HeaderCell>}
+                content={'Matches'}></Popup>
+              <Popup
+                trigger={<Table.HeaderCell width="one">NP</Table.HeaderCell>}
+                content={'In Selection But Not Predicted'}></Popup>
+              <Popup
+                trigger={<Table.HeaderCell width="one">NS</Table.HeaderCell>}
+                content={'In Prediction But Not Selected'}></Popup>
               <Table.HeaderCell width="ten">Similarity</Table.HeaderCell>
               <Table.HeaderCell width="two">Probability</Table.HeaderCell>
               <Table.HeaderCell width="one"></Table.HeaderCell>
@@ -173,9 +195,8 @@ const PredictionList: FC<Props> = ({
           <Table.Body>
             {extendedPredictions.map(pred => {
               const {dataIds = []} = pred;
-              const countries = dataIds.map(d =>
-                hashCode(data[d][labelColumn]),
-              );
+
+              const countries = dataIds.map(d => dataset.indexHash[d]);
 
               const {intent, type} = pred;
               const [
@@ -196,6 +217,14 @@ const PredictionList: FC<Props> = ({
               const fullDimensionName = dimensionArr.map(
                 d => dataset.columnMaps[d].text,
               );
+
+              const matches = _.intersection(dataIds, selectedIds);
+              const ipns = _.difference(dataIds, selectedIds);
+              const isnp = _.difference(selectedIds, dataIds);
+
+              const matchCountries = matches.map(m => dataset.indexHash[m]);
+              const ipnsCountries = ipns.map(i => dataset.indexHash[i]);
+              const isnpCountries = isnp.map(i => dataset.indexHash[i]);
 
               return (
                 <Table.Row
@@ -221,6 +250,42 @@ const PredictionList: FC<Props> = ({
                           }></Popup>
                       );
                     })}
+                  </Table.Cell>
+                  <Table.Cell
+                    error={highlightCell === `${pred.intent}M`}
+                    onMouseEnter={() => {
+                      setHighlightCell(`${pred.intent}M`);
+                      onContainmentHover(matchCountries);
+                    }}
+                    onMouseLeave={() => {
+                      setHighlightCell('');
+                      onContainmentHover(matchCountries, false);
+                    }}>
+                    {matches.length}
+                  </Table.Cell>
+                  <Table.Cell
+                    error={highlightCell === `${pred.intent}NP`}
+                    onMouseEnter={() => {
+                      setHighlightCell(`${pred.intent}NP`);
+                      onContainmentHover(isnpCountries);
+                    }}
+                    onMouseLeave={() => {
+                      setHighlightCell('');
+                      onContainmentHover(isnpCountries, false);
+                    }}>
+                    {isnp.length}
+                  </Table.Cell>
+                  <Table.Cell
+                    error={highlightCell === `${pred.intent}NS`}
+                    onMouseEnter={() => {
+                      setHighlightCell(`${pred.intent}NS`);
+                      onContainmentHover(ipnsCountries);
+                    }}
+                    onMouseLeave={() => {
+                      setHighlightCell('');
+                      onContainmentHover(ipnsCountries, false);
+                    }}>
+                    {ipns.length}
                   </Table.Cell>
                   <Table.Cell>
                     <PredictionListJaccardItem
