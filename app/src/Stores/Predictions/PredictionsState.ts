@@ -22,8 +22,11 @@ export function getPredictionType(intent: string): PredictionType {
 
   Object.entries(PredictionType).forEach(entry => {
     if (detectedType) return;
+
     const [type, typeStr] = entry;
-    if (intent.split(':').includes(typeStr)) {
+    if (intent.includes(PredictionType.Category)) {
+      detectedType = PredictionType.Category;
+    } else if (intent.split(':').includes(typeStr)) {
       detectedType = type as any;
     }
   });

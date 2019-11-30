@@ -24,7 +24,7 @@ export const PredictionListJaccardItem: FC<Props> = ({
     .range([0, maxWidth]);
 
   const {intent, type} = prediction;
-  const [
+  let [
     hash = '',
     dimensions = '',
     intentName = '',
@@ -34,6 +34,18 @@ export const PredictionListJaccardItem: FC<Props> = ({
     type === PredictionType.Range
       ? ['', '', intent, '', '']
       : intent.split(':');
+
+  if (type === PredictionType.Category) {
+    if (intentName.includes(PredictionType.Category)) {
+      const splitNames = intentName.split('|');
+      if (splitNames.length > 0)
+        intentName = `Category: ${splitNames.reverse()[0]}`;
+    } else if (info.includes(PredictionType.Category)) {
+      const splitNames = info.split('|');
+      if (splitNames.length > 0)
+        intentName = `Category: ${splitNames.reverse()[0]}`;
+    }
+  }
 
   return (
     <svg
@@ -63,7 +75,7 @@ export const PredictionListNBItem: FC<Props> = ({
   barHeight,
 }: Props) => {
   const {intent, type} = prediction;
-  const [
+  let [
     hash = '',
     dimensions = '',
     intentName = '',
