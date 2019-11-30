@@ -18,7 +18,6 @@ const Legend: FC<Props> = ({
   values,
   height,
   width,
-  colorScale,
   categorySymbolMap,
 }: Props) => {
   const padding = 5;
