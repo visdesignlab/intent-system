@@ -4,7 +4,6 @@ import pandas as pd
 import numpy as np
 from .dimensions import Dimensions
 from typing import Dict, Set
-import copy
 
 
 class Dataset:
