@@ -37,6 +37,7 @@ interface OwnProps {
   showCategories: boolean;
   markSize: string | number;
   clearBrushDictionarySetup: (plotid: string, handler: () => void) => void;
+  selectedCategory: string;
 }
 
 interface StateProps {
@@ -98,6 +99,7 @@ const Scatterplot: FC<Props> = ({
   addPointDeselection,
   addPointSelection,
   colorScale,
+  selectedCategory,
   markSize,
   clearBrushDictionarySetup,
   categorySymbolMap,
@@ -396,9 +398,8 @@ const Scatterplot: FC<Props> = ({
     );
   }
 
-  function symbolicMarks(d: any, i: number) {
-    const selectedSymbol = categorySymbolMap[d.color];
-
+  function symbolicMarks(d: any, markData: any, i: number) {
+    const selectedSymbol = categorySymbolMap[markData[selectedCategory]];
     const symbolPath: string = selectedSymbol;
 
     return clickSelectedPoints.includes(i) ? (
@@ -496,7 +497,11 @@ const Scatterplot: FC<Props> = ({
           <Popup
             hoverable
             key={i}
-            trigger={showCategories ? symbolicMarks(d, i) : circularMarks(d, i)}
+            trigger={
+              showCategories
+                ? symbolicMarks(d, markData, i)
+                : circularMarks(d, i)
+            }
             content={
               <div>
                 <h1>{dataset.data[i][labelColumn]}</h1>

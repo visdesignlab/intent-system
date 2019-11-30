@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 from .dimensions import Dimensions
 from typing import Dict, Set
+import copy
 
 
 class Dataset:
@@ -151,6 +152,9 @@ class Dataset:
         df = df.astype(convert_dict)
         df['Label'] = df['Label'].apply(str)
         df['Cluster'] = df['Cluster'].apply(str)
+        temp = copy.deepcopy(df['Cluster'].values)
+        np.random.shuffle(temp)
+        df['Cluster2'] = temp
 
         return Dataset('Label', df, 'Cluster', {
             'X': {
@@ -178,10 +182,16 @@ class Dataset:
                 'short': 'D',
                 'type': 'categorical'
                 },
+            'Cluster2': {
+                'text': 'Cluster2',
+                'unit': 'Categorical',
+                'short': 'E',
+                'type': 'categorical'
+                },
             'Label': {
                 'text': 'Label',
                 'unit': 'label',
-                'short': 'E',
+                'short': 'F',
                 'type': 'label'
                 },
             })
