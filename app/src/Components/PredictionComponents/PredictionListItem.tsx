@@ -3,8 +3,6 @@ import {scaleLinear} from 'd3';
 import {PredictionType} from '../../Stores/Predictions/PredictionsState';
 import {TypedPrediction} from './PredictionList';
 import {Dataset} from '../../Stores/Types/Dataset';
-import _ from 'lodash';
-import {Popup} from 'semantic-ui-react';
 
 interface Props {
   dataset: Dataset;
@@ -14,10 +12,8 @@ interface Props {
 }
 
 export const PredictionListJaccardItem: FC<Props> = ({
-  dataset,
   prediction,
   barHeight,
-  selectedIds,
 }: Props) => {
   let barColor = '#A8D3EE';
 
@@ -39,12 +35,6 @@ export const PredictionListJaccardItem: FC<Props> = ({
       ? ['', '', intent, '', '']
       : intent.split(':');
 
-  const {dataIds = []} = prediction;
-
-  const matches = _.intersection(dataIds, selectedIds).length;
-  const ipns = _.difference(dataIds, selectedIds).length;
-  const isnp = _.difference(selectedIds, dataIds).length;
-
   return (
     <svg
       key={`${hash}${dimensions}${intentName}${intentDetails}${info}`}
@@ -63,25 +53,9 @@ export const PredictionListJaccardItem: FC<Props> = ({
         dominantBaseline="middle"
         transform={`translate(10, ${barHeight / 2})`}>
         <tspan>{`${intentName} `}</tspan>
-        <Popup
-          content={`Matches: ${matches}`}
-          trigger={
-            <>
-              <tspan style={boldTextStyle}>M: </tspan>
-              <tspan>{`${matches}; `}</tspan>
-            </>
-          }></Popup>
-        <tspan style={boldTextStyle}>NP: </tspan>
-        <tspan>{`${isnp}; `}</tspan>
-        <tspan style={boldTextStyle}>NS: </tspan>
-        <tspan>{`${ipns}; `}</tspan>
       </text>
     </svg>
   );
-};
-
-const boldTextStyle: CSSProperties = {
-  fontWeight: 'bold',
 };
 
 export const PredictionListNBItem: FC<Props> = ({

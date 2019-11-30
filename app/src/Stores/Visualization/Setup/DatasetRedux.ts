@@ -57,10 +57,12 @@ export const loadDataset = async (url: string) => {
   values = Object.keys(values).map((r: any) => values[r]);
 
   const hashLookup: {[key: string]: any} = {};
+  const indexHash: {[key: number]: string} = {};
 
-  values.forEach(val => {
+  values.forEach((val, i) => {
     val[HASH] = hashCode(val[labelColumn].toString());
     hashLookup[val[HASH]] = val;
+    indexHash[i] = val[HASH];
   });
 
   if (Object.keys(hashLookup).length !== values.length)
@@ -76,6 +78,7 @@ export const loadDataset = async (url: string) => {
     data: values,
     columnMaps: column_header_map,
     hashLookup: hashLookup,
+    indexHash,
   };
 
   AppProvenance.apply(updateDataset(parsedDataset));

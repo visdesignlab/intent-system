@@ -33,3 +33,8 @@ code {
   color: red;
   stroke-width: 2px;
 }
+
+.containment_highlight {
+  fill: #84dd63 !important;
+  opacity: 1 !important;
+}

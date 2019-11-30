@@ -7,6 +7,7 @@ export interface Dataset {
   columnMaps: {[key: string]: ColumnMetaData};
   categoricalColumns: string[];
   hashLookup: {[key: string]: any};
+  indexHash: {[key: number]: string};
 }
 
 export type ColumnMap = {[key: string]: ColumnMetaData};
@@ -30,5 +31,6 @@ export function emptyDataset(): Dataset {
     columnMaps: {},
     categoricalColumns: [],
     hashLookup: {},
+    indexHash: {},
   };
 }
