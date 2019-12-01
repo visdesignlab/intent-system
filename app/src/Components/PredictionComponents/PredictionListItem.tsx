@@ -31,7 +31,7 @@ export const PredictionListJaccardItem: FC<Props> = ({
     .domain([0, 1])
     .range([0, maxWidth]);
 
-  let {intentName, type, _info} = prediction;
+  let {intentName, type, _info, intentDetails} = prediction;
   const info = _info;
 
   if (type === PredictionType.Category) {
@@ -43,6 +43,20 @@ export const PredictionListJaccardItem: FC<Props> = ({
       const splitNames = info.split('|');
       if (splitNames.length > 0)
         intentName = `Category: ${splitNames.reverse()[0]}`;
+    }
+  } else if (type === PredictionType.QuadraticRegression) {
+    if (intentDetails.includes('outside')) {
+      intentName = `Quadratic (Outside)`;
+    }
+    if (intentDetails.includes('within')) {
+      intentName = `Quadratic (Within)`;
+    }
+  } else if (type === PredictionType.LinearRegression) {
+    if (intentDetails.includes('outside')) {
+      intentName = `Linear (Outside)`;
+    }
+    if (intentDetails.includes('within')) {
+      intentName = `Linear (Within)`;
     }
   }
 
