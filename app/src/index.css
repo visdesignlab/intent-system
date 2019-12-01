@@ -38,3 +38,11 @@ code {
   fill: #84dd63 !important;
   opacity: 1 !important;
 }
+
+.containtment_hover_cell {
+  background: auto;
+}
+
+.containtment_hover_cell:hover {
+  background: #84dd63 !important;
+}
