@@ -46,17 +46,17 @@ export const PredictionListJaccardItem: FC<Props> = ({
     }
   } else if (type === PredictionType.QuadraticRegression) {
     if (intentDetails.includes('outside')) {
-      intentName = `Quadratic (Outside)`;
+      intentName = 'Outside Quad. Reg.';
     }
     if (intentDetails.includes('within')) {
-      intentName = `Quadratic (Within)`;
+      intentName = 'Within Quad. Reg.';
     }
   } else if (type === PredictionType.LinearRegression) {
     if (intentDetails.includes('outside')) {
-      intentName = `Linear (Outside)`;
+      intentName = 'Outside Lin. Reg.';
     }
     if (intentDetails.includes('within')) {
-      intentName = `Linear (Within)`;
+      intentName = 'Within Lin. Reg.';
     }
   }
 
