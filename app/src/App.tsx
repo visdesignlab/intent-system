@@ -148,6 +148,7 @@ const App: FC<Props> = ({
               if (areEqual(selectedCategory, cat)) return;
               setSelectedCategory(cat);
             }}
+            selectionRecord={totalSelections}
           />
           <div style={visResDiv(isExploreMode)}>
             <Visualization
