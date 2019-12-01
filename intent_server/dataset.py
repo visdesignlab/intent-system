@@ -4,7 +4,6 @@ import pandas as pd
 import numpy as np
 from .dimensions import Dimensions
 from typing import Dict, Set
-import copy
 
 
 class Dataset:
@@ -143,55 +142,46 @@ class Dataset:
     def load_cluster_data() -> 'Dataset':
         df = pd.read_csv('data/clusters.csv')
         convert_dict = {
-                'X': 'float',
-                'Y': 'float',
-                'Z': 'float',
+                'Math': 'float',
+                'Physics': 'float',
+                'CS': 'float',
                 'Label': 'category',
-                'Cluster': 'category',
+                'Profession': 'category',
                 }
         df = df.astype(convert_dict)
         df['Label'] = df['Label'].apply(str)
-        df['Cluster'] = df['Cluster'].apply(str)
-        temp = copy.deepcopy(df['Cluster'].values)
-        np.random.shuffle(temp)
-        df['Cluster2'] = temp
+        df['Profession'] = df['Profession'].apply(str)
 
-        return Dataset('Label', df, 'Cluster', {
-            'X': {
-                'text': 'X',
+        return Dataset('Label', df, 'Clusters', {
+            'Math': {
+                'text': 'Math',
                 'unit': "",
                 'short': 'A',
                 'type': 'numeric'
                 },
 
-            'Y': {
-                'text': 'Y',
+            'Physics': {
+                'text': 'Physics',
                 'unit': "",
                 'short': 'B',
                 'type': 'numeric'
                 },
-            'Z': {
-                'text': 'Z',
+            'CS': {
+                'text': 'CS',
                 'unit': "",
                 'short': 'C',
                 'type': 'numeric'
                 },
-            'Cluster': {
-                'text': 'Cluster',
+            'Profession': {
+                'text': 'Profession',
                 'unit': 'Categorical',
                 'short': 'D',
-                'type': 'categorical'
-                },
-            'Cluster2': {
-                'text': 'Cluster2',
-                'unit': 'Categorical',
-                'short': 'E',
                 'type': 'categorical'
                 },
             'Label': {
                 'text': 'Label',
                 'unit': 'label',
-                'short': 'F',
+                'short': 'E',
                 'type': 'label'
                 },
             })

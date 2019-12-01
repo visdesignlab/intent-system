@@ -1,6 +1,6 @@
-import React, {FC, CSSProperties, useMemo, useState} from 'react';
+import React, {FC, CSSProperties, useMemo} from 'react';
 import {connect} from 'react-redux';
-import {Header, Label, Loader, Card, Form} from 'semantic-ui-react';
+import {Header, Label, Loader, Card} from 'semantic-ui-react';
 
 import {Prediction} from '../contract';
 import {Dataset} from '../Stores/Types/Dataset';
@@ -35,8 +35,6 @@ const Predictions: FC<Props> = ({
   if (!predictions) predictions = [];
 
   const selectionRecordString = JSON.stringify(selectionRecord);
-
-  const [livePredText, setLivePredText] = useState('');
 
   const memoizedSelectionRecord: SelectionRecord = useMemo(
     () => JSON.parse(selectionRecordString),
@@ -83,81 +81,6 @@ const Predictions: FC<Props> = ({
           predictions={predictions}
         />
       </Card.Content>
-      <Card.Content textAlign="center">
-        <Form>
-          <Form.TextArea
-            value={livePredText}
-            onChange={(_, data) =>
-              setLivePredText(data.value as string)
-            }></Form.TextArea>
-        </Form>
-        {/* <Form> */}
-        {/*   <Form.TextArea */}
-        {/*     disabled={selectedPrediction === null} */}
-        {/*     required={ */}
-        {/*       selectedPrediction && */}
-        {/*       ['Regression', 'Domain Knowledge', 'Other'].includes( */}
-        {/*         selectedPrediction.intent, */}
-        {/*       ) */}
-        {/*     } */}
-        {/*     value={predictionComment.length > 0 ? predictionComment : ''} */}
-        {/*     onChange={(_, data) => setPredictionComment(data.value as string)} */}
-        {/*     label="More Info" */}
-        {/*     placeholder="Please tell us more about your intent"></Form.TextArea> */}
-        {/*   {!finalSubmitted ? ( */}
-        {/*     <Form.Field */}
-        {/*       disabled={selectedPrediction === null} */}
-        {/*       control={Button} */}
-        {/*       primary */}
-        {/*       onClick={() => { */}
-        {/*         if ( */}
-        {/*           selectedPrediction && */}
-        {/*           ['Regression', 'Domain Knowledge', 'Other'].includes( */}
-        {/*             selectedPrediction.intent, */}
-        {/*           ) && */}
-        {/*           predictionComment.length === 0 */}
-        {/*         ) */}
-        {/*           return; */}
-        {/*         studyProvenance.applyAction({ */}
-        {/*           label: Events.SUBMIT_PREDICTION, */}
-        {/*           action: () => { */}
-        {/*             let currentState = studyProvenance.graph().current.state; */}
-        {/*             if (currentState) { */}
-        {/*               currentState = { */}
-        {/*                 ...currentState, */}
-        {/*                 event: Events.SUBMIT_PREDICTION, */}
-        {/*                 predictionSet: { */}
-        {/*                   dimensions, */}
-        {/*                   selectedIds, */}
-        {/*                   predictions, */}
-        {/*                 }, */}
-        {/*                 selectedPrediction: { */}
-        {/*                   prediction: selectedPrediction, */}
-        {/*                   comment: predictionComment, */}
-        {/*                 }, */}
-        {/*               }; */}
-        {/*             } */}
-        {/*             return currentState as StudyState; */}
-        {/*           }, */}
-        {/*           args: [], */}
-        {/*         }); */}
-        {/*         setFinalSubmitted(true); */}
-        {/*       }}> */}
-        {/*       Submit */}
-        {/*     </Form.Field> */}
-        {/*   ) : ( */}
-        {/*     <Form.Field */}
-        {/*       control={Button} */}
-        {/*       onClick={() => { */}
-        {/*         console.log('Hello'); */}
-        {/*         taskManager.advanceTask(); */}
-        {/*       }} */}
-        {/*       color="green"> */}
-        {/*       Next */}
-        {/*     </Form.Field> */}
-        {/*   )} */}
-        {/* </Form> */}
-      </Card.Content>
     </Card>
   );
 };
@@ -175,7 +98,6 @@ const mapStateToProps = (state: AppState): StateProps => {
 export default connect(mapStateToProps)(Predictions);
 
 const masterPredictionDiv: CSSProperties = {
-  height: '50vh',
   margin: '0',
   display: 'grid',
   gridTemplateRows: 'min-content 1fr min-content',

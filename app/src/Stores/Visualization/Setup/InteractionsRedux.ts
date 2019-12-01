@@ -59,6 +59,8 @@ export function getPredictions(request: PredictionRequest) {
 
   const interactions = request.interactionHistory;
 
+  console.log(request);
+
   setTimeout(() => {
     AppStore.dispatch(updatePredictionLoading(true));
 

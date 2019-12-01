@@ -148,7 +148,6 @@ export default connect(
 const resultsDivStyle: CSSProperties = {
   display: 'grid',
   gridTemplateRows: 'min-content 1fr min-content',
-  height: '50vh',
   margin: 0,
   padding: '1em',
 };
