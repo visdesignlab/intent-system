@@ -159,14 +159,14 @@ const App: FC<Props> = ({
         </div>
       </div>
       <div style={resPred}>
-        <SelectionResults
-          changeIsSubmitted={setIsSubmitted}
-          selections={totalSelections}></SelectionResults>
         <Predictions
           isExploreMode={isExploreMode}
           isSubmitted={isSubmitted}
           dataset={dataset}
           selectionRecord={totalSelections}></Predictions>
+        <SelectionResults
+          changeIsSubmitted={setIsSubmitted}
+          selections={totalSelections}></SelectionResults>
       </div>
     </div>
   );
