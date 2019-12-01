@@ -282,7 +282,7 @@ const PlotControl: FC<Props> = (props: Props) => {
   }
 
   const ClearSelection = (
-    <Button color="red" onClick={clearAllSelections}>
+    <Button primary onClick={clearAllSelections}>
       Clear Selections
     </Button>
   );
@@ -298,7 +298,10 @@ const PlotControl: FC<Props> = (props: Props) => {
   );
 
   const InvertSelections = (
-    <Button color="green" onClick={() => invertSelections()}>
+    <Button
+      disabled={selectedPoints.length < 1}
+      primary
+      onClick={() => invertSelections()}>
       Invert Selections
     </Button>
   );

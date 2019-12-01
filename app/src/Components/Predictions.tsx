@@ -13,6 +13,7 @@ interface OwnProps {
   dataset: Dataset;
   isSubmitted: boolean;
   selectionRecord: SelectionRecord;
+  clearAll: () => void;
 }
 
 interface StateProps {
@@ -31,6 +32,7 @@ const Predictions: FC<Props> = ({
   dataset,
   isLoading,
   selectionRecord,
+  clearAll,
 }: Props) => {
   if (!predictions) predictions = [];
 
@@ -75,6 +77,7 @@ const Predictions: FC<Props> = ({
         }}>
         {isLoading && loadingScreen}
         <PredictionList
+          clearAll={clearAll}
           selectionRecord={memoizedSelectionRecord}
           dataset={dataset}
           barHeight={barHeight}
