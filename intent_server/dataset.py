@@ -344,6 +344,8 @@ class Dataset:
         # Remove some outliers
         selection = selection[selection.Acres < 1]
         selection = selection[selection.Deck < 6]
+        selection = selection[selection.Taxes < 50000]
+
         return Dataset('ListNo', selection.astype({'ListNo': str}), 'SLC Housing', {
             'ListNo': {
                 'text': 'Listing No',
