@@ -116,8 +116,6 @@ const Scatterplot: FC<Props> = ({
     color: v[color],
   }));
 
-  console.log(selectedCategory);
-
   const [mouseIsDown, setMouseIsDown] = useState(false);
 
   let clearSelections = () => {};
