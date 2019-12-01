@@ -164,6 +164,7 @@ const App: FC<Props> = ({
         <LiveIntent initialText="" />
         <Predictions
           isExploreMode={isExploreMode}
+          clearAll={clearAll}
           isSubmitted={isSubmitted}
           dataset={dataset}
           selectionRecord={totalSelections}></Predictions>
@@ -202,7 +203,7 @@ const mainDivStyle: CSSProperties = {
   maxHeight: '100vh',
   width: '100vw',
   display: 'grid',
-  gridTemplateColumns: '3fr 1.3fr',
+  gridTemplateColumns: '3fr 1.5fr',
 };
 
 const resPred: CSSProperties = {

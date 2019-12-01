@@ -1,8 +1,12 @@
 import React, {FC, useState, useMemo, useEffect} from 'react';
-import {Prediction} from '../../contract';
+import {
+  Prediction,
+  VisualizationType,
+  MultiBrushBehavior,
+} from '../../contract';
 import {Dataset} from '../../Stores/Types/Dataset';
 import {selectAll, scaleLinear} from 'd3';
-import {Header, Popup, Table, Icon, Label} from 'semantic-ui-react';
+import {Header, Popup, Table, Icon, Label, Button} from 'semantic-ui-react';
 import {
   PredictionListJaccardItem,
   PredictionListNBItem,
@@ -13,18 +17,24 @@ import {
 } from '../../Stores/Predictions/PredictionsState';
 import {SelectionRecord} from '../../App';
 import {Plots, SinglePlot} from '../../Stores/Types/Plots';
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 import {AppState} from '../../Stores/CombinedStore';
 import {ScaleStorage} from '../Scatterplot';
 import _ from 'lodash';
 import {pure} from 'recompose';
 import {areEqual} from '../../Utils';
+import {
+  setShouldGetPreds,
+  ADD_INTERACTION,
+} from '../../Stores/Visualization/Setup/InteractionsRedux';
+import {updateAllPlots} from '../../Stores/Visualization/Setup/PlotsRedux';
 
 interface Props {
   dataset: Dataset;
   barHeight: number;
   predictions: Prediction[];
   selectionRecord: SelectionRecord;
+  clearAll: () => void;
 }
 
 export interface TypedPrediction extends Prediction {
@@ -45,6 +55,7 @@ const PredictionList: FC<Props> = ({
   barHeight,
   predictions,
   selectionRecord,
+  clearAll,
 }: Props) => {
   const [
     selectedPrediction,
@@ -251,15 +262,51 @@ const PredictionList: FC<Props> = ({
 
         if (clickedColumn === 'similarity') clickedColumn = 'rank' as any;
 
-        setExtendedPredictions(_.sortBy(extendedPredictions, [clickedColumn]));
+        const exP = _.sortBy(extendedPredictions, [clickedColumn]);
+        if (!areEqual(extendedPredictions, exP)) setExtendedPredictions(exP);
         setSortDirection('ascending');
       } else {
-        setExtendedPredictions(extendedPredictions.reverse());
+        const exP = extendedPredictions.reverse();
+        if (!areEqual(extendedPredictions, exP)) setExtendedPredictions(exP);
         setSortDirection(
           sortDirection === 'ascending' ? 'descending' : 'ascending',
         );
       }
     };
+  }
+
+  const dispatch = useDispatch();
+
+  const multiBrushBehavior = useSelector<AppState, MultiBrushBehavior>(
+    state => state.multiBrushBehaviour,
+  );
+
+  function makePredictionIntoSelection(prediction: TypedPrediction) {
+    const {dataIds = []} = prediction;
+    if (dataIds.length < 1) return;
+
+    setShouldGetPreds(false);
+    clearAll();
+    let plot = plots[0];
+    plot.selectedPoints = [...dataIds];
+    plots[0] = plot;
+    dispatch(updateAllPlots(plots));
+    setShouldGetPreds(true);
+
+    dispatch({
+      type: ADD_INTERACTION,
+      args: {
+        interaction: {
+          visualizationType: VisualizationType.Grid,
+          interactionType: {
+            plot: plots[0],
+            dataIds,
+            kind: 'selection',
+          },
+        },
+        multiBrushBehavior,
+      },
+    });
   }
 
   return (
@@ -311,7 +358,7 @@ const PredictionList: FC<Props> = ({
                 sorted={column === 'probability' ? sortDirection : undefined}>
                 Probability
               </Table.HeaderCell>
-              <Table.HeaderCell width="one"></Table.HeaderCell>
+              <Table.HeaderCell colSpan="3">Options</Table.HeaderCell>
             </Table.Row>
           </Table.Header>
           <Table.Body>
@@ -407,27 +454,63 @@ const PredictionList: FC<Props> = ({
                       prediction={pred}
                     />
                   </Table.Cell>
-                  <Popup
-                    hoverable
-                    position="top right"
-                    trigger={
-                      <Table.Cell>
-                        <Icon name="info circle"></Icon>
-                      </Table.Cell>
-                    }
-                    content={
-                      <>
-                        <Header>{intentName}</Header>
-                        <Header as="h3">{fullDimensionName.join(' | ')}</Header>
-                        <pre>
-                          {JSON.stringify(
-                            pred,
-                            (k, v) => (k === 'dataIds' ? undefined : v),
-                            2,
-                          )}
-                        </pre>
-                      </>
-                    }></Popup>
+                  <Table.Cell>
+                    <Popup
+                      trigger={
+                        <Button
+                          onClick={e => {
+                            e.stopPropagation();
+                            makePredictionIntoSelection(pred);
+                          }}
+                          icon
+                          positive>
+                          <Icon name="checkmark"></Icon>
+                        </Button>
+                      }
+                      content="Turn into selection"></Popup>
+                  </Table.Cell>
+                  <Table.Cell>
+                    <Popup
+                      trigger={
+                        <Button
+                          onClick={e => {
+                            e.stopPropagation();
+                            console.log('World');
+                          }}
+                          icon
+                          disabled
+                          primary>
+                          <Icon name="lock"></Icon>
+                        </Button>
+                      }
+                      content="Lock Intent"></Popup>
+                  </Table.Cell>
+                  <Table.Cell>
+                    <Popup
+                      hoverable
+                      position="top right"
+                      trigger={<Icon name="info circle"></Icon>}
+                      content={
+                        <>
+                          <Header>{intentName}</Header>
+                          <Header as="h3">
+                            {fullDimensionName.join(' | ')}
+                          </Header>
+                          <pre>
+                            {JSON.stringify(
+                              pred,
+                              (k, v) =>
+                                ['dataIds', 'matches', 'isnp', 'ipns'].includes(
+                                  k,
+                                )
+                                  ? undefined
+                                  : v,
+                              2,
+                            )}
+                          </pre>
+                        </>
+                      }></Popup>
+                  </Table.Cell>
                 </Table.Row>
               );
             })}

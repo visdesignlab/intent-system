@@ -87,7 +87,7 @@ const logToFirebase = () => {
     })
     .catch(err => {
       console.error(err);
-      throw new Error('Cannot log!');
+      // throw new Error('Cannot log!');
     });
 };
 
