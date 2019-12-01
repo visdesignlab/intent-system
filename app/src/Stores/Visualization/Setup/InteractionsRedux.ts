@@ -53,13 +53,19 @@ export function getPredictionAfterBrushSwitch(
   getPredictions(previousPredictionRequest);
 }
 
+let shouldGetPreds: boolean = true;
+
+export function setShouldGetPreds(val: boolean) {
+  shouldGetPreds = val;
+}
+
 export function getPredictions(request: PredictionRequest) {
+  if (!shouldGetPreds) return;
+
   previousPredictionRequest = request;
   cancel && cancel();
 
   const interactions = request.interactionHistory;
-
-  console.log(request);
 
   setTimeout(() => {
     AppStore.dispatch(updatePredictionLoading(true));
