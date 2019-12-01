@@ -149,7 +149,7 @@ export function initializeTaskManager() {
 
 export const taskManager = initializeTaskManager();
 
-export let datasetName = 'cluster';
+export let datasetName = 'depression_dataset';
 
 export async function loadDatasetByName(ds: string = datasetName) {
   if (datasetName !== ds) datasetName = ds;

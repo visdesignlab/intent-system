@@ -27,24 +27,28 @@ const Legend: FC<Props> = ({
 
   return (
     <g>
-      {values.map((val, i) => (
-        <g key={val} transform={`translate(${cellWidth * i},${padding})`}>
-          <rect
-            height={height}
-            width={width}
-            stroke="black"
-            strokeWidth="0.5"
-            fill="#eee"
-            opacity="0.3"></rect>
-          <path transform="translate(15, 20)" d={categorySymbolMap[val]}></path>
-          <LegendText
-            dominantBaseline="middle"
-            textAnchor="start"
-            transform={'translate(40, 20)'}>
-            {val}
-          </LegendText>
-        </g>
-      ))}
+      {values.map((val, i) => {
+        return (
+          <g key={val} transform={`translate(${cellWidth * i},${padding})`}>
+            <rect
+              height={height}
+              width={width}
+              stroke="black"
+              strokeWidth="0.5"
+              fill="#eee"
+              opacity="0.3"></rect>
+            <path
+              transform="translate(15, 20)"
+              d={categorySymbolMap[val]}></path>
+            <LegendText
+              dominantBaseline="middle"
+              textAnchor="start"
+              transform={'translate(40, 20)'}>
+              {val}
+            </LegendText>
+          </g>
+        );
+      })}
     </g>
   );
 };

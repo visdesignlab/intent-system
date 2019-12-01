@@ -19,7 +19,8 @@ import time
 datasets = {
     'slc_housing': Dataset.load_housing_data(),
     'gapminder_world': Dataset.load_gapminderworld_data(),
-    'cluster': Dataset.load_cluster_data()
+    'cluster': Dataset.load_cluster_data(),
+    'depression_dataset': Dataset.load_depression_data()
 }
 
 views = Blueprint('views', __name__)

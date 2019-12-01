@@ -80,7 +80,7 @@ const Visualization: FC<Props> = ({
   const xPosGen = getNextXPosition(breakCount);
 
   const uniqueValues = _.chain(dataset.data)
-    .map(n => n[dataset.categoricalColumns[0]])
+    .map(n => n[selectedCategory])
     .uniq()
     .value();
 

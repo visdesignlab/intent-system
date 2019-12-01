@@ -1,5 +1,5 @@
 import json
-
+import sys
 import pandas as pd
 import numpy as np
 from .dimensions import Dimensions
@@ -183,6 +183,138 @@ class Dataset:
                 'unit': 'label',
                 'short': 'E',
                 'type': 'label'
+                },
+            })
+
+    @staticmethod
+    def load_depression_data() -> 'Dataset':
+        df = pd.read_csv('data/depression_dataset.csv')
+        convert_dict = {
+                    "rsn": 'category',
+                    "age": 'int',
+                    "gender": 'category',
+                    "race": 'category',
+                    "bmi": 'float',
+                    "srwcurr": 'float',
+                    "srw1yr": 'float',
+                    "vitd": 'float',
+                    "glyco": 'float',
+                    "sys1": 'float',
+                    "sys2": 'float',
+                    "sys3": 'float',
+                    "cholestrol": 'float',
+                    "sodium": 'float',
+                    "depression": 'float'
+                }
+        print(df.head(), file=sys.stderr)
+        df = df.astype(convert_dict)
+        # df['Label'] = df['Label'].apply(str)
+        # df['Profession'] = df['Profession'].apply(str)
+
+        return Dataset('rsn', df, 'Depression Dataset', {
+                "rsn": {
+                    'text': 'Respondent sequence number',
+                    'unit': '',
+                    "short": "A",
+                    "type": ""
+
+                },
+                "gender": {
+                    'text': 'Gender',
+                    'unit': '',
+                    "short": "C",
+                    "type": "categorical"
+
+                },
+                "race": {
+                    'text': 'Race',
+                    'unit': '',
+                    "short": "D",
+                    "type": "categorical"
+
+                },
+                "depression": {
+                    'text': 'Depression',
+                    'unit': '',
+                    "short": "O",
+                    "type": "numeric"
+                },
+                "bmi": {
+                    'text': 'BMI',
+                    'unit': 'kg/m**2',
+                    "short": "E",
+                    "type": "numeric"
+
+                },
+                "srwcurr": {
+                    'text': 'Current Weight (self reported)',
+                    'unit': 'pounds',
+                    "short": "F",
+                    "type": "numeric"
+
+                },
+                "age": {
+                    'text': 'Age',
+                    'unit': 'Years',
+                    "short": "B",
+                    "type": "numeric"
+
+                },
+                "srw1yr": {
+                    'text': 'Weight 1 year ago (self reported)',
+                    'unit': 'pounds',
+                    "short": "G",
+                    "type": "numeric"
+
+                },
+                "vitd": {
+                    'text': 'Vitamin D',
+                    'unit': 'ng/mL',
+                    "short": "H",
+                    "type": "numeric"
+
+                },
+                "glyco": {
+                    'text': 'Glycohemoglobin',
+                    'unit': '%',
+                    "short": "I",
+                    "type": "numeric"
+
+                },
+                "sys1": {
+                    'text': 'Systolic BP 1st rdg',
+                    'unit': 'mm Hg',
+                    "short": "J",
+                    "type": "numeric"
+
+                },
+                "sys2": {
+                    'text': 'Systolic BP 2nd rdg',
+                    'unit': 'mm Hg',
+                    "short": "K",
+                    "type": "numeric"
+
+                },
+                "sys3": {
+                    'text': 'Systolic BP 3rd rdg',
+                    'unit': 'mm Hg',
+                    "short": "L",
+                    "type": "numeric"
+
+                },
+                "cholestrol": {
+                    'text': 'Cholesterol',
+                    'unit': 'mmol/L',
+                    "short": "M",
+                    "type": "numeric"
+
+                },
+                "sodium": {
+                    'text': 'Sodium',
+                    'unit': 'mmol/L',
+                    "short": "N",
+                    "type": "numeric"
+
                 },
             })
 
