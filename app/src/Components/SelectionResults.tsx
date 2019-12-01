@@ -73,7 +73,11 @@ const SelectionResults: FC<Props> = ({selections, dataset}: Props) => {
             value={intersectionCount}
             label="Intersection"
           />
-          <Statistic color="red" value={pointSelectionsCount} label="Click" />
+          <Statistic
+            color="red"
+            value={pointSelectionsCount}
+            label="Individual"
+          />
           <Statistic value={totalSelections} label="Total" />
         </Statistic.Group>
       </Card.Content>

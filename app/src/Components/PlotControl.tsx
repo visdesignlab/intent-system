@@ -1,5 +1,5 @@
 import React, {FC, useState, useEffect, useMemo} from 'react';
-import {connect, useDispatch, useSelector} from 'react-redux';
+import {connect, useDispatch} from 'react-redux';
 import {
   Button,
   Dropdown,
@@ -24,7 +24,10 @@ import {datasetName, loadDatasetByName} from '..';
 import {AppState} from '../Stores/CombinedStore';
 import {SelectionRecord} from '../App';
 import _ from 'lodash';
-import {ADD_INTERACTION} from '../Stores/Visualization/Setup/InteractionsRedux';
+import {
+  ADD_INTERACTION,
+  setShouldGetPreds,
+} from '../Stores/Visualization/Setup/InteractionsRedux';
 
 interface OwnProps {
   plots: Plots;
@@ -242,11 +245,14 @@ const PlotControl: FC<Props> = (props: Props) => {
   );
 
   function clearAllSelections() {
+    setShouldGetPreds(false);
     clearAll();
+    setShouldGetPreds(true);
     updatePlots(plots);
   }
 
   function invertSelections() {
+    setShouldGetPreds(false);
     clearAll();
 
     const totalPoints = [...Array(dataset.data.length).keys()];
@@ -256,6 +262,7 @@ const PlotControl: FC<Props> = (props: Props) => {
     plot.selectedPoints = [...otherPoints];
     plots[0] = plot;
     updatePlots(plots);
+    setShouldGetPreds(true);
     dispatch({
       type: ADD_INTERACTION,
       args: {
