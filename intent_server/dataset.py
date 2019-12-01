@@ -206,10 +206,7 @@ class Dataset:
                     "sodium": 'float',
                     "depression": 'float'
                 }
-        print(df.head(), file=sys.stderr)
         df = df.astype(convert_dict)
-        # df['Label'] = df['Label'].apply(str)
-        # df['Profession'] = df['Profession'].apply(str)
 
         return Dataset('rsn', df, 'Depression Dataset', {
                 "rsn": {
@@ -320,10 +317,8 @@ class Dataset:
 
     @staticmethod
     def load_housing_data() -> 'Dataset':
-        df = pd.concat([
-            pd.read_csv('data/housing/train1.csv', thousands=','),
-            pd.read_csv('data/housing/train2.csv', thousands=','),
-        ], ignore_index=True)
+        df = pd.read_csv('data/housing.csv')
+
         selection = df[[
             'ListNo',
             'Acres',
