@@ -116,6 +116,8 @@ const Scatterplot: FC<Props> = ({
     color: v[color],
   }));
 
+  console.log(selectedCategory);
+
   const [mouseIsDown, setMouseIsDown] = useState(false);
 
   let clearSelections = () => {};
@@ -324,6 +326,7 @@ const Scatterplot: FC<Props> = ({
 
   const ignoreColumns = ['HASH', labelColumn];
   const currentColumns = [plot.x, plot.y];
+
   let keysArray = Object.keys(
     dataset.data.length > 0 ? dataset.data[0] : {},
   ).filter(key => !ignoreColumns.includes(key));
