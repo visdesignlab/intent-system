@@ -21,6 +21,7 @@ import {max} from 'lodash';
 import TaskDetails from './Stores/Types/TaskDetails';
 import {areEqual} from './Utils';
 import {AppState} from './Stores/CombinedStore';
+import LiveIntent from './Components/LiveIntent';
 
 interface OwnProps {
   task: TaskDetails;
@@ -159,6 +160,7 @@ const App: FC<Props> = ({
         </div>
       </div>
       <div style={resPred}>
+        <LiveIntent />
         <Predictions
           isExploreMode={isExploreMode}
           isSubmitted={isSubmitted}
@@ -204,7 +206,7 @@ const mainDivStyle: CSSProperties = {
 
 const resPred: CSSProperties = {
   display: 'grid',
-  gridTemplateRows: '1fr 1fr',
+  gridTemplateRows: 'min-content 1fr 1fr',
   height: '100vh',
 };
 
