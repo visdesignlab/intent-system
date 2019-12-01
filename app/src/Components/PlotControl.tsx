@@ -1,5 +1,5 @@
-import React, {FC, useState, useEffect} from 'react';
-import {connect} from 'react-redux';
+import React, {FC, useState, useEffect, useMemo} from 'react';
+import {connect, useDispatch, useSelector} from 'react-redux';
 import {
   Button,
   Dropdown,
@@ -10,7 +10,7 @@ import {
   Radio,
 } from 'semantic-ui-react';
 
-import {MultiBrushBehavior} from '../contract';
+import {MultiBrushBehavior, VisualizationType} from '../contract';
 import {ColumnMap, Dataset} from '../Stores/Types/Dataset';
 import {SinglePlot, Plots} from '../Stores/Types/Plots';
 import {CHANGE_BRUSH_BEHAVIOR} from '../Stores/Visualization/Setup/MultiBrushRedux';
@@ -22,6 +22,9 @@ import {areEqual} from '../Utils';
 import axios from 'axios';
 import {datasetName, loadDatasetByName} from '..';
 import {AppState} from '../Stores/CombinedStore';
+import {SelectionRecord} from '../App';
+import _ from 'lodash';
+import {ADD_INTERACTION} from '../Stores/Visualization/Setup/InteractionsRedux';
 
 interface OwnProps {
   plots: Plots;
@@ -31,6 +34,7 @@ interface OwnProps {
   setShowCategories: (shouldShow: boolean) => void;
   categoryDropdownOptions: CategoriesDropdownOptions;
   setSelectedCategory: (cat: CategoriesDropdownOption) => void;
+  selectionRecord: SelectionRecord;
   clearAll: () => void;
 }
 
@@ -88,7 +92,25 @@ const PlotControl: FC<Props> = (props: Props) => {
     plots,
     categoryDropdownOptions,
     updatePlots,
+    selectionRecord,
   } = props;
+
+  const dispatch = useDispatch();
+
+  const selectionRecordString = JSON.stringify(selectionRecord);
+
+  const selectedPoints: number[] = useMemo(() => {
+    const {brushSelections, pointSelections} = JSON.parse(
+      selectionRecordString,
+    );
+
+    return [
+      ...new Set([
+        ...Object.keys(brushSelections).map(d => parseInt(d)),
+        ...pointSelections,
+      ]),
+    ];
+  }, [selectionRecordString]);
 
   defaultSinglePlot.color = dataset.categoricalColumns[0];
 
@@ -224,6 +246,34 @@ const PlotControl: FC<Props> = (props: Props) => {
     updatePlots(plots);
   }
 
+  function invertSelections() {
+    clearAll();
+
+    const totalPoints = [...Array(dataset.data.length).keys()];
+    const otherPoints = _.difference(totalPoints, selectedPoints);
+
+    let plot = plots[0];
+    plot.selectedPoints = [...otherPoints];
+    plots[0] = plot;
+    updatePlots(plots);
+    dispatch({
+      type: ADD_INTERACTION,
+      args: {
+        interaction: {
+          visualizationType: VisualizationType.Grid,
+          interactionType: {
+            plot: plots[0],
+            dataIds: otherPoints,
+            kind: 'selection',
+          },
+        },
+        multiBrushBehavior: multiBrushBehavior,
+      },
+    });
+
+    // selectedPoints
+  }
+
   const ClearSelection = (
     <Button color="red" onClick={clearAllSelections}>
       Clear Selections
@@ -240,6 +290,12 @@ const PlotControl: FC<Props> = (props: Props) => {
       }}></Dropdown>
   );
 
+  const InvertSelections = (
+    <Button color="green" onClick={() => invertSelections()}>
+      Invert Selections
+    </Button>
+  );
+
   const Control = (
     <Menu compact>
       <Menu.Item>{DatasetSwitcher}</Menu.Item>
@@ -247,6 +303,7 @@ const PlotControl: FC<Props> = (props: Props) => {
       <Menu.Item>{HideCategoryToggle}</Menu.Item>
       {showCategories && <Menu.Item>{AddCategoryDropdown}</Menu.Item>}
       <Menu.Item>{MultiBrushBehaviorToggle}</Menu.Item>
+      <Menu.Item>{InvertSelections}</Menu.Item>
       <Menu.Item>{ClearSelection}</Menu.Item>
     </Menu>
   );
