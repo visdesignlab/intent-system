@@ -1,11 +1,12 @@
 import React, {FC, CSSProperties} from 'react';
 import {Dataset} from '../Stores/Types/Dataset';
-import {connect} from 'react-redux';
+import {connect, useSelector} from 'react-redux';
 import {SelectionRecord} from '../App';
-import {Header, List, Card} from 'semantic-ui-react';
+import {Header, List, Card, Statistic} from 'semantic-ui-react';
 import {selectAll} from 'd3';
 import {hashCode} from '../Utils';
 import {AppState} from '../Stores/CombinedStore';
+import {MultiBrushBehavior} from '../contract';
 
 interface OwnProps {
   selections: SelectionRecord;
@@ -22,6 +23,10 @@ type Props = OwnProps & StateProps & DispatchProps;
 
 const SelectionResults: FC<Props> = ({selections, dataset}: Props) => {
   let pointSelectionsCount: number = selections.pointSelections.length;
+
+  const multiBrushBehavior: MultiBrushBehavior = useSelector(
+    (state: AppState) => state.multiBrushBehaviour,
+  );
 
   const {maxBrushCount, brushSelections} = selections;
 
@@ -53,61 +58,24 @@ const SelectionResults: FC<Props> = ({selections, dataset}: Props) => {
         <Header as="h2" textAlign="center" style={{margin: 0}}>
           Selections
         </Header>
-        <svg height="100" width="100%">
-          <rect
-            height="100%"
-            width="100%"
-            fill="#375E97"
-            opacity="0.1"
-            stroke="#375E97"
-            strokeWidth="3px"></rect>
-          <text transform={`translate(10, ${15})`} dominantBaseline="middle">
-            {`Total: ${totalSelections}`}
-          </text>
-
-          <g transform={`translate(100, 50)`}>
-            <circle r="40" stroke="none" fill="#FB6542" opacity="0.5" />
-            <text
-              transform={`translate(0, ${-34})`}
-              style={{
-                dominantBaseline: 'middle',
-                textAnchor: 'middle',
-                fontSize: '1.1em',
-              }}>
-              {`U: ${unionCount}`}
-            </text>
-            <circle r="25" stroke="none" fill="#3F681C" opacity="0.4" />
-            <text
-              style={{
-                dominantBaseline: 'middle',
-                textAnchor: 'middle',
-                fontSize: '1.1em',
-              }}>
-              {`I: ${intersectionCount}`}
-            </text>
-          </g>
-          <g transform={`translate(300, 50)`}>
-            <circle r="40" fill="#FFBB00" opacity="0.5" />
-            <text
-              style={{
-                fontFamily: 'FontAwesome',
-                dominantBaseline: 'middle',
-                textAnchor: 'middle',
-                fontSize: '1.5em',
-              }}>
-              &#xf25a;
-            </text>
-            <text
-              transform={`translate(0, ${30})`}
-              style={{
-                dominantBaseline: 'middle',
-                textAnchor: 'middle',
-                fontSize: '0.95em',
-              }}>
-              {`Clicked: ${pointSelectionsCount}`}
-            </text>
-          </g>
-        </svg>
+        <Statistic.Group size="tiny" widths="four">
+          <Statistic
+            color={
+              multiBrushBehavior === MultiBrushBehavior.UNION
+                ? 'orange'
+                : 'blue'
+            }
+            value={unionCount}
+            label="Union"
+          />
+          <Statistic
+            color={'orange'}
+            value={intersectionCount}
+            label="Intersection"
+          />
+          <Statistic color="red" value={pointSelectionsCount} label="Click" />
+          <Statistic value={totalSelections} label="Total" />
+        </Statistic.Group>
       </Card.Content>
       <Card.Content style={{overflow: 'auto', padding: '1em'}}>
         <List>
