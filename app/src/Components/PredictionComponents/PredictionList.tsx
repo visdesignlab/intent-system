@@ -1,4 +1,4 @@
-import React, {FC, useState, useMemo} from 'react';
+import React, {FC, useState, useMemo, useEffect} from 'react';
 import {Prediction} from '../../contract';
 import {Dataset} from '../../Stores/Types/Dataset';
 import {selectAll, scaleLinear} from 'd3';
@@ -17,6 +17,8 @@ import {useSelector} from 'react-redux';
 import {AppState} from '../../Stores/CombinedStore';
 import {ScaleStorage} from '../Scatterplot';
 import _ from 'lodash';
+import {pure} from 'recompose';
+import {areEqual} from '../../Utils';
 
 interface Props {
   dataset: Dataset;
@@ -27,6 +29,15 @@ interface Props {
 
 export interface TypedPrediction extends Prediction {
   type: PredictionType;
+  hash: string;
+  dimensions: string;
+  intentName: string;
+  intentDetails: string;
+  _info: string;
+  matches: number[];
+  isnp: number[];
+  ipns: number[];
+  probability: number;
 }
 
 const PredictionList: FC<Props> = ({
@@ -41,8 +52,6 @@ const PredictionList: FC<Props> = ({
   ] = useState<Prediction | null>(null);
 
   const plots: Plots = useSelector((state: AppState) => state.plots);
-
-  const [highlightCell, setHighlightCell] = useState('');
 
   const selectedIds: number[] = useMemo(() => {
     const {brushSelections, pointSelections} = selectionRecord;
@@ -161,31 +170,147 @@ const PredictionList: FC<Props> = ({
     }
   }
 
-  const extendedPredictions: TypedPrediction[] = predictions.map(pred => {
-    const exPred: TypedPrediction = {...pred, type: null as any};
+  const predictionString = JSON.stringify(predictions);
 
-    exPred.type = getPredictionType(pred.intent);
-    return exPred;
-  });
+  type SortDirections = 'ascending' | 'descending' | undefined;
+
+  const [sortDirection, setSortDirection] = useState<SortDirections>(undefined);
+
+  type SortOptions =
+    | 'matches'
+    | 'isnp'
+    | 'ipns'
+    | 'similarity'
+    | 'probability'
+    | '';
+
+  const [column, setColumn] = useState<SortOptions>('');
+  const [extendedPredictions, setExtendedPredictions] = useState<
+    TypedPrediction[]
+  >([]);
+
+  useEffect(() => {
+    const memoizedPredictions: Prediction[] = JSON.parse(predictionString);
+
+    const exP = memoizedPredictions.map(pred => {
+      let exPred: TypedPrediction = {
+        ...pred,
+        type: null as any,
+        matches: [],
+        isnp: [],
+        ipns: [],
+      } as any;
+
+      exPred.type = getPredictionType(pred.intent);
+
+      let probability = 0;
+
+      if (pred.info) probability = (pred.info as any).probability || 0;
+
+      const {dataIds = []} = pred;
+
+      const {intent} = pred;
+      const [
+        hash = '',
+        dimensions = '',
+        intentName = '',
+        intentDetails = '',
+        info = '',
+      ] =
+        exPred.type === PredictionType.Range
+          ? ['', '', intent, '', '']
+          : intent.split(':');
+
+      exPred = {
+        ...exPred,
+        hash,
+        dimensions,
+        intentName,
+        intentDetails,
+        _info: info,
+        probability,
+      };
+
+      const matches = _.intersection(dataIds, selectedIds);
+      const ipns = _.difference(dataIds, selectedIds);
+      const isnp = _.difference(selectedIds, dataIds);
+
+      exPred.matches = matches;
+      exPred.ipns = ipns;
+      exPred.isnp = isnp;
+
+      return exPred;
+    });
+    if (!areEqual(extendedPredictions, exP)) setExtendedPredictions(exP);
+  }, [predictionString, selectedIds, extendedPredictions]);
+
+  function handleSort(clickedColumn: SortOptions) {
+    return () => {
+      if (column !== clickedColumn) {
+        setColumn(clickedColumn);
+
+        if (clickedColumn === 'similarity') clickedColumn = 'rank' as any;
+
+        setExtendedPredictions(_.sortBy(extendedPredictions, [clickedColumn]));
+        setSortDirection('ascending');
+      } else {
+        setExtendedPredictions(extendedPredictions.reverse());
+        setSortDirection(
+          sortDirection === 'ascending' ? 'descending' : 'ascending',
+        );
+      }
+    };
+  }
 
   return (
-    <Table compact>
+    <Table sortable compact>
       {extendedPredictions.length > 0 && (
         <>
           <Table.Header>
             <Table.Row>
               <Table.HeaderCell width="two">Dims</Table.HeaderCell>
               <Popup
-                trigger={<Table.HeaderCell width="one">M</Table.HeaderCell>}
+                trigger={
+                  <Table.HeaderCell
+                    width="one"
+                    onClick={handleSort('matches')}
+                    sorted={column === 'matches' ? sortDirection : undefined}>
+                    M
+                  </Table.HeaderCell>
+                }
                 content={'Matches'}></Popup>
               <Popup
-                trigger={<Table.HeaderCell width="one">NP</Table.HeaderCell>}
+                trigger={
+                  <Table.HeaderCell
+                    width="one"
+                    onClick={handleSort('isnp')}
+                    sorted={column === 'isnp' ? sortDirection : undefined}>
+                    NP
+                  </Table.HeaderCell>
+                }
                 content={'In Selection But Not Predicted'}></Popup>
               <Popup
-                trigger={<Table.HeaderCell width="one">NS</Table.HeaderCell>}
+                trigger={
+                  <Table.HeaderCell
+                    width="one"
+                    onClick={handleSort('ipns')}
+                    sorted={column === 'ipns' ? sortDirection : undefined}>
+                    NS
+                  </Table.HeaderCell>
+                }
                 content={'In Prediction But Not Selected'}></Popup>
-              <Table.HeaderCell width="ten">Similarity</Table.HeaderCell>
-              <Table.HeaderCell width="two">Probability</Table.HeaderCell>
+              <Table.HeaderCell
+                width="ten"
+                onClick={handleSort('similarity')}
+                sorted={column === 'similarity' ? sortDirection : undefined}>
+                Similarity
+              </Table.HeaderCell>
+              <Table.HeaderCell
+                width="two"
+                onClick={handleSort('probability')}
+                sorted={column === 'probability' ? sortDirection : undefined}>
+                Probability
+              </Table.HeaderCell>
               <Table.HeaderCell width="one"></Table.HeaderCell>
             </Table.Row>
           </Table.Header>
@@ -195,17 +320,7 @@ const PredictionList: FC<Props> = ({
 
               const countries = dataIds.map(d => dataset.indexHash[d]);
 
-              const {intent, type} = pred;
-              const [
-                hash = '',
-                dimensions = '',
-                intentName = '',
-                intentDetails = '',
-                info = '',
-              ] =
-                type === PredictionType.Range
-                  ? ['', '', intent, '', '']
-                  : intent.split(':');
+              const {intent, dimensions, intentName} = pred;
 
               const dimensionArr = [...dimensions.matchAll(/\w+/g)].flatMap(
                 d => d,
@@ -215,9 +330,7 @@ const PredictionList: FC<Props> = ({
                 d => dataset.columnMaps[d].text,
               );
 
-              const matches = _.intersection(dataIds, selectedIds);
-              const ipns = _.difference(dataIds, selectedIds);
-              const isnp = _.difference(selectedIds, dataIds);
+              const {matches, ipns, isnp} = pred;
 
               const matchCountries = matches.map(m => dataset.indexHash[m]);
               const ipnsCountries = ipns.map(i => dataset.indexHash[i]);
@@ -229,7 +342,7 @@ const PredictionList: FC<Props> = ({
                     (selectedPrediction &&
                       selectedPrediction.intent === pred.intent) as any
                   }
-                  key={`${intent}${hash}${dimensions}${intentName}${intentDetails}${info}`}
+                  key={intent}
                   onClick={() => {
                     console.log(pred);
                     onPredictionClick(pred, countries, dimensionArr);
@@ -249,37 +362,31 @@ const PredictionList: FC<Props> = ({
                     })}
                   </Table.Cell>
                   <Table.Cell
-                    error={highlightCell === `${pred.intent}M`}
                     onMouseEnter={() => {
-                      setHighlightCell(`${pred.intent}M`);
                       onContainmentHover(matchCountries);
                     }}
                     onMouseLeave={() => {
-                      setHighlightCell('');
                       onContainmentHover(matchCountries, false);
-                    }}>
+                    }}
+                    className="containtment_hover_cell">
                     {matches.length}
                   </Table.Cell>
                   <Table.Cell
-                    error={highlightCell === `${pred.intent}NP`}
+                    className="containtment_hover_cell"
                     onMouseEnter={() => {
-                      setHighlightCell(`${pred.intent}NP`);
                       onContainmentHover(isnpCountries);
                     }}
                     onMouseLeave={() => {
-                      setHighlightCell('');
                       onContainmentHover(isnpCountries, false);
                     }}>
                     {isnp.length}
                   </Table.Cell>
                   <Table.Cell
-                    error={highlightCell === `${pred.intent}NS`}
+                    className="containtment_hover_cell"
                     onMouseEnter={() => {
-                      setHighlightCell(`${pred.intent}NS`);
                       onContainmentHover(ipnsCountries);
                     }}
                     onMouseLeave={() => {
-                      setHighlightCell('');
                       onContainmentHover(ipnsCountries, false);
                     }}>
                     {ipns.length}
@@ -331,8 +438,6 @@ const PredictionList: FC<Props> = ({
   );
 };
 
-// const intentTextStyle:CSSProperties = {
-//     textTransform
-// }
+(PredictionList as any).whyDidYouRender = true;
 
-export default PredictionList;
+export default pure(PredictionList);

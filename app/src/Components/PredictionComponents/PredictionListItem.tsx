@@ -1,4 +1,4 @@
-import React, {FC, useRef, CSSProperties} from 'react';
+import React, {FC, useRef, CSSProperties, useState, useEffect} from 'react';
 import {scaleLinear} from 'd3';
 import {PredictionType} from '../../Stores/Predictions/PredictionsState';
 import {TypedPrediction} from './PredictionList';
@@ -18,22 +18,21 @@ export const PredictionListJaccardItem: FC<Props> = ({
   let barColor = '#A8D3EE';
 
   const svgRef = useRef<SVGSVGElement>(null);
-  const maxWidth = svgRef.current ? svgRef.current.clientWidth : 0;
+  const [maxWidth, setMaxWidth] = useState(0);
+
+  useEffect(() => {
+    if (svgRef.current) {
+      if (maxWidth !== svgRef.current.clientWidth)
+        setMaxWidth(svgRef.current.clientWidth);
+    }
+  }, [maxWidth]);
+
   const barScale = scaleLinear()
     .domain([0, 1])
     .range([0, maxWidth]);
 
-  const {intent, type} = prediction;
-  let [
-    hash = '',
-    dimensions = '',
-    intentName = '',
-    intentDetails = '',
-    info = '',
-  ] =
-    type === PredictionType.Range
-      ? ['', '', intent, '', '']
-      : intent.split(':');
+  let {intentName, type, _info} = prediction;
+  const info = _info;
 
   if (type === PredictionType.Category) {
     if (intentName.includes(PredictionType.Category)) {
@@ -48,11 +47,7 @@ export const PredictionListJaccardItem: FC<Props> = ({
   }
 
   return (
-    <svg
-      key={`${hash}${dimensions}${intentName}${intentDetails}${info}`}
-      ref={svgRef}
-      height={barHeight}
-      width="100%">
+    <svg ref={svgRef} height={barHeight} width="100%">
       <rect
         height={barHeight}
         width={maxWidth}
@@ -74,38 +69,27 @@ export const PredictionListNBItem: FC<Props> = ({
   prediction,
   barHeight,
 }: Props) => {
-  const {intent, type} = prediction;
-  let [
-    hash = '',
-    dimensions = '',
-    intentName = '',
-    intentDetails = '',
-    info = '',
-  ] =
-    type === PredictionType.Range
-      ? ['', '', intent, '', '']
-      : intent.split(':');
-
   const svgRef = useRef<SVGSVGElement>(null);
 
   let barColor = '#f8bf84';
 
-  const maxWidth = svgRef.current ? svgRef.current.clientWidth : 0;
+  const [maxWidth, setMaxWidth] = useState(0);
+
+  useEffect(() => {
+    if (svgRef.current) {
+      if (maxWidth !== svgRef.current.clientWidth)
+        setMaxWidth(svgRef.current.clientWidth);
+    }
+  }, [maxWidth]);
 
   const barScale = scaleLinear()
     .domain([0, 1])
     .range([0, maxWidth]);
 
-  let barValue = 0;
-
-  if (prediction.info) barValue = (prediction.info as any).probability || 0;
+  let barValue = prediction.probability;
 
   return (
-    <svg
-      key={`${hash}${dimensions}${intentName}${intentDetails}${info}`}
-      ref={svgRef}
-      height={barHeight}
-      width="100%">
+    <svg ref={svgRef} height={barHeight} width="100%">
       <rect
         height={barHeight}
         width={maxWidth}
