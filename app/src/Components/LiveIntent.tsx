@@ -15,7 +15,7 @@ const LiveIntent: FC<Props> = ({initialText}: Props) => {
       </Card.Content>
       <Card.Content>
         <Form>
-          <Form.TextArea />
+          <Form.TextArea value={initialText} />
         </Form>
       </Card.Content>
     </Card>
