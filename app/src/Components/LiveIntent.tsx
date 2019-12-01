@@ -1,9 +1,11 @@
 import React, {FC, CSSProperties} from 'react';
 import {Card, Header, Form} from 'semantic-ui-react';
 
-interface Props {}
+interface Props {
+  initialText: string;
+}
 
-const LiveIntent: FC<Props> = ({}: Props) => {
+const LiveIntent: FC<Props> = ({initialText}: Props) => {
   return (
     <Card fluid style={intentDivStyle}>
       <Card.Content>
@@ -23,7 +25,5 @@ const LiveIntent: FC<Props> = ({}: Props) => {
 export default LiveIntent;
 
 const intentDivStyle: CSSProperties = {
-  display: 'grid',
-  gridTemplateRows: 'min-content min-content',
   margin: '0',
 };

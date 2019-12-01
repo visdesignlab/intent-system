@@ -160,7 +160,7 @@ const App: FC<Props> = ({
         </div>
       </div>
       <div style={resPred}>
-        <LiveIntent />
+        <LiveIntent initialText="" />
         <Predictions
           isExploreMode={isExploreMode}
           isSubmitted={isSubmitted}
