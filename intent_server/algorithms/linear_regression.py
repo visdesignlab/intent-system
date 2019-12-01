@@ -1,5 +1,5 @@
 from ..intent import Intent
-import sys
+
 from sklearn import preprocessing
 from sklearn.linear_model import LinearRegression as LR
 import pandas as pd
@@ -21,8 +21,6 @@ class LinearRegression(Intent):
 
         X = vs[:, 0:numDims-1]
         y = vs[:, numDims-1].reshape(-1, 1)
-
-        print(y, file=sys.stderr)
 
         X_scaled = self.min_max_scaler_x.fit_transform(X)
         y_scaled = self.min_max_scaler_y.fit_transform(y).flatten()
