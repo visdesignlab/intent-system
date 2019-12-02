@@ -3,6 +3,7 @@ import {scaleLinear} from 'd3';
 import {PredictionType} from '../../Stores/Predictions/PredictionsState';
 import {TypedPrediction} from './PredictionList';
 import {Dataset} from '../../Stores/Types/Dataset';
+import {pure} from 'recompose';
 
 interface Props {
   dataset: Dataset;
@@ -11,7 +12,7 @@ interface Props {
   selectedIds: number[];
 }
 
-export const PredictionListJaccardItem: FC<Props> = ({
+const _PredictionListJaccardItem: FC<Props> = ({
   prediction,
   barHeight,
 }: Props) => {
@@ -79,7 +80,10 @@ export const PredictionListJaccardItem: FC<Props> = ({
   );
 };
 
-export const PredictionListNBItem: FC<Props> = ({
+export const PredictionListJaccardItem = pure(_PredictionListJaccardItem);
+(_PredictionListJaccardItem as any).whyDidYouRender = true;
+
+export const _PredictionListNBItem: FC<Props> = ({
   prediction,
   barHeight,
 }: Props) => {
@@ -120,6 +124,10 @@ export const PredictionListNBItem: FC<Props> = ({
     </svg>
   );
 };
+
+export const PredictionListNBItem = pure(_PredictionListNBItem);
+
+(_PredictionListNBItem as any).whyDidYouRender = true;
 
 const backgroundBarStyle = (color: string): CSSProperties => ({
   fill: color,

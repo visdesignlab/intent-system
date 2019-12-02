@@ -1,72 +1,38 @@
-import React, {FC, CSSProperties, useState, useEffect} from 'react';
+import React, {FC, CSSProperties, useState} from 'react';
 import {Card, Header, Form} from 'semantic-ui-react';
-import {useSelector} from 'react-redux';
-import {AppState} from '../Stores/CombinedStore';
 
 interface Props {
   initialText: string;
 }
 
-type Rule = {
-  dimension: string;
-  exp: string;
-  value: string | number;
-};
+// type Rule = {
+//   dimension: string;
+//   exp: string;
+//   value: string | number;
+// };
 
-type Rules = Rule[];
+// type Rules = Rule[];
 
-function convertStringToRule(ruleString: string): Rule {
-  const [dimension, exp, value] = ruleString.split(' ');
+// function convertStringToRule(ruleString: string): Rule {
+//   const [dimension, exp, value] = ruleString.split(' ');
 
-  return {
-    dimension,
-    value,
-    exp,
-  };
-}
+//   return {
+//     dimension,
+//     value,
+//     exp,
+//   };
+// }
 
-function convertStringArrToRules(strs: string[]): Rules {
-  const rules = strs.map(r => convertStringToRule(r));
-  return rules;
-}
+// function convertStringArrToRules(strs: string[]): Rules {
+//   const rules = strs.map(r => convertStringToRule(r));
+//   return rules;
+// }
 
 const LiveIntent: FC<Props> = ({initialText}: Props) => {
-  const [intentText, setIntentText] = useState(initialText);
+  console.log(initialText);
+  const [intentText, setIntentText] = useState(Math.random().toString());
 
   const [showAdvance, setShowAdvance] = useState(false);
-
-  const predictions = useSelector(
-    (state: AppState) => state.predictionSet.predictions || [],
-  );
-
-  const dataset = useSelector((state: AppState) => state.dataset);
-
-  const columnMapsString = JSON.stringify(dataset.columnMaps);
-
-  const rangePrediction = predictions.find(pred =>
-    pred.intent.includes('Range'),
-  );
-
-  useEffect(() => {
-    const columnMaps = JSON.parse(columnMapsString);
-    let text = '';
-    if (rangePrediction) {
-      const {info} = rangePrediction;
-      if (info) {
-        const {rules} = info as any;
-        const res = convertStringArrToRules(rules.reverse()[0]);
-        text = `Select points where ${res
-          .map(rule => {
-            const {dimension, exp, value} = rule;
-            const fullDimension = columnMaps[dimension].text;
-
-            return `${fullDimension} ${exp} ${value}`;
-          })
-          .join(' and ')}`;
-      }
-    }
-    if (text !== intentText) setIntentText(text);
-  }, [rangePrediction, columnMapsString, intentText]);
 
   return (
     <Card fluid style={intentDivStyle}>
