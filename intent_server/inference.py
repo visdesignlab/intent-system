@@ -8,6 +8,7 @@ from .vendor.interactions import Interaction, InteractionTypeKind, PredictionSet
 from sklearn.naive_bayes import MultinomialNB
 from typing import List, Set
 import pandas as pd
+import numpy as np
 
 
 def is_point_selection(interaction: Interaction) -> bool:
@@ -117,23 +118,23 @@ class Inference:
         relevant_data = self.dataset.subset(dims)
 
         list_of_predictions = []
-        list_of_computed = []
 
         for intent in self.intents:
             # All dimensions
-            pred, comp = intent.to_prediction(sel_array, relevant_data)
+            pred = intent.to_prediction(sel_array, relevant_data)
             list_of_predictions.extend(pred)
-            list_of_computed.append(comp)
 
             for d in tuple_dims:
-                pred, comp = intent.to_prediction(sel_array, self.dataset.subset(d))
+                pred = intent.to_prediction(sel_array, self.dataset.subset(d))
                 list_of_predictions.extend(pred)
-                list_of_computed.append(comp)
 
-        # Add probailities
-        outputs = pd.concat(list_of_computed, axis='columns')
-        train = outputs.T.to_numpy()
-        labels = outputs.columns.values.tolist()
+        # Add probabilities
+        train = np.zeros((len(list_of_predictions), len(relevant_data.index)))
+        for (i, p) in enumerate(list_of_predictions):
+            ids = list(map(int,p.data_ids))
+            train[i][ids] = True
+       
+        labels = list(map(lambda p: p.intent, list_of_predictions));
 
         clf = MultinomialNB(fit_prior=False)
         clf.fit(train, labels)
