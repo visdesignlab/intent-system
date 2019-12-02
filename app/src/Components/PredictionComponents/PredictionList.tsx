@@ -200,6 +200,8 @@ const PredictionList: FC<Props> = ({
     TypedPrediction[]
   >([]);
 
+  const extendedPredictionString = JSON.stringify(extendedPredictions);
+
   useEffect(() => {
     const memoizedPredictions: Prediction[] = JSON.parse(predictionString);
 
@@ -245,10 +247,7 @@ const PredictionList: FC<Props> = ({
           exPred.dimensions = JSON.stringify([...new Set(dims)]);
           dimensions = exPred.dimensions;
         }
-      } else {
-        console.log(dimensions);
       }
-
       exPred = {
         ...exPred,
         hash,
@@ -269,8 +268,10 @@ const PredictionList: FC<Props> = ({
 
       return exPred;
     });
-    if (!areEqual(extendedPredictions, exP)) setExtendedPredictions(exP);
-  }, [predictionString, selectedIds, extendedPredictions]);
+
+    if (!areEqual(JSON.parse(extendedPredictionString), exP))
+      setExtendedPredictions(exP);
+  }, [predictionString, selectedIds, extendedPredictionString]);
 
   function handleSort(clickedColumn: SortOptions) {
     return () => {
