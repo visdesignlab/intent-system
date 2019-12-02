@@ -303,6 +303,8 @@ const PredictionList: FC<Props> = ({
     const {dataIds = []} = prediction;
     if (dataIds.length < 1) return;
 
+    selectAll('.mark').classed('tone_down_others', false);
+
     setShouldGetPreds(false);
     clearAll();
     let plot = plots[0];

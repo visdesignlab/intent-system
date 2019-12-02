@@ -29,7 +29,6 @@ interface Props {
 // }
 
 const LiveIntent: FC<Props> = ({initialText}: Props) => {
-  console.log(initialText);
   const [intentText, setIntentText] = useState(Math.random().toString());
 
   const [showAdvance, setShowAdvance] = useState(false);
