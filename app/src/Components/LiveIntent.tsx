@@ -76,8 +76,10 @@ const LiveIntent: FC<Props> = ({initialText}: Props) => {
         break;
       case PredictionType.Range:
         text = `Selected points based on a range selection`;
+        break;
       default:
         setIntentText('');
+        break;
     }
 
     if (intentText !== text) setIntentText(text);

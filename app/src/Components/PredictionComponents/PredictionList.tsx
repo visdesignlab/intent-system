@@ -202,8 +202,10 @@ const PredictionList: FC<Props> = ({
 
   const extendedPredictionString = JSON.stringify(extendedPredictions);
 
-  if (predictions.length === 0)
+  if (predictions.length === 0) {
     selectAll('.mark').classed('tone_down_others', false);
+    selectAll('.regression_line').html('');
+  }
 
   useEffect(() => {
     const memoizedPredictions: Prediction[] = JSON.parse(predictionString);
@@ -307,7 +309,7 @@ const PredictionList: FC<Props> = ({
     if (dataIds.length < 1) return;
 
     selectAll('.mark').classed('tone_down_others', false);
-
+    selectAll('.regression_line').html('');
     setShouldGetPreds(false);
     clearAll();
     let plot = plots[0];
