@@ -28,6 +28,8 @@ import {
   ADD_INTERACTION,
 } from '../../Stores/Visualization/Setup/InteractionsRedux';
 import {updateAllPlots} from '../../Stores/Visualization/Setup/PlotsRedux';
+import {studyProvenance, logToFirebase} from '../..';
+import Events from '../../Stores/Types/EventEnum';
 
 interface Props {
   dataset: Dataset;
@@ -417,6 +419,28 @@ const PredictionList: FC<Props> = ({
                   key={intent}
                   onClick={() => {
                     console.log(pred);
+                    const t = new Date();
+                    studyProvenance.applyAction({
+                      label: Events.ANNOTATE,
+                      action: () => {
+                        let currentState = studyProvenance.graph().current
+                          .state;
+                        if (currentState) {
+                          currentState = {
+                            ...currentState,
+                            event: Events.SUBMIT_PREDICTION,
+                            startTime: t,
+                            eventTime: t,
+                            selectedPrediction: {
+                              prediction: pred,
+                            },
+                          };
+                        }
+                        return currentState as any;
+                      },
+                      args: [],
+                    });
+                    logToFirebase();
                     onPredictionClick(pred, countries, dimensionArr);
                   }}>
                   <Table.Cell>
@@ -485,6 +509,30 @@ const PredictionList: FC<Props> = ({
                         <Button
                           onClick={e => {
                             e.stopPropagation();
+
+                            const t = new Date();
+                            studyProvenance.applyAction({
+                              label: Events.TURN_INTO_SELECTION,
+                              action: () => {
+                                let currentState = studyProvenance.graph()
+                                  .current.state;
+                                if (currentState) {
+                                  currentState = {
+                                    ...currentState,
+                                    event: Events.TURN_INTO_SELECTION,
+                                    startTime: t,
+                                    eventTime: t,
+                                    selectedPrediction: {
+                                      prediction: pred,
+                                    },
+                                  };
+                                }
+                                return currentState as any;
+                              },
+                              args: [],
+                            });
+                            logToFirebase();
+
                             makePredictionIntoSelection(pred);
                           }}
                           icon

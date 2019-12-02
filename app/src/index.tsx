@@ -55,7 +55,7 @@ if (window.location.href.includes('#')) {
   participant.uniqueId = `${participant.uniqueId}-${uniqueId}`;
 }
 
-const logToFirebase = () => {
+export const logToFirebase = () => {
   const masterList = firestore.collection('master').doc('list');
 
   masterList

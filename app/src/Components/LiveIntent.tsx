@@ -8,6 +8,8 @@ import {
   PredictionType,
 } from '../Stores/Predictions/PredictionsState';
 import {pure} from 'recompose';
+import {studyProvenance, logToFirebase} from '..';
+import Events from '../Stores/Types/EventEnum';
 
 interface Props {
   initialText?: string;
@@ -113,7 +115,31 @@ const LiveIntent: FC<Props> = ({initialText}: Props) => {
               }
               label="Advance View"
             />
-            <Form.Button disabled={intentText.length < 1} positive>
+            <Form.Button
+              onClick={() => {
+                const t = new Date();
+                studyProvenance.applyAction({
+                  label: Events.ANNOTATE,
+                  action: () => {
+                    let currentState = studyProvenance.graph().current.state;
+                    if (currentState) {
+                      currentState = {
+                        ...currentState,
+                        event: Events.ANNOTATE,
+                        startTime: t,
+                        eventTime: t,
+                        annotation: intentText,
+                      };
+                    }
+                    return currentState as any;
+                  },
+                  args: [],
+                });
+                console.log('Logged', intentText);
+                logToFirebase();
+              }}
+              disabled={intentText.length < 1}
+              positive>
               Annotate
             </Form.Button>
           </Form.Group>
