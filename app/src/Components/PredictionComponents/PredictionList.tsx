@@ -218,10 +218,15 @@ const PredictionList: FC<Props> = ({
 
       if (pred.info) probability = (pred.info as any).probability || 0;
 
-      const {dataIds = []} = pred;
+      let {dataIds = []} = pred;
+
+      if (exPred.type === PredictionType.Range) {
+        dataIds = selectedIds;
+        exPred.dataIds = dataIds;
+      }
 
       const {intent} = pred;
-      const [
+      let [
         hash = '',
         dimensions = '',
         intentName = '',
@@ -231,6 +236,18 @@ const PredictionList: FC<Props> = ({
         exPred.type === PredictionType.Range
           ? ['', '', intent, '', '']
           : intent.split(':');
+
+      if (exPred.type === PredictionType.Range) {
+        let {rules} = exPred.info as any;
+        if (rules) {
+          rules = rules[0];
+          const dims = rules.map((r: string) => r.split(' ')[0]);
+          exPred.dimensions = JSON.stringify([...new Set(dims)]);
+          dimensions = exPred.dimensions;
+        }
+      } else {
+        console.log(dimensions);
+      }
 
       exPred = {
         ...exPred,
