@@ -146,13 +146,17 @@ const PredictionList: FC<Props> = ({
 
       coef = coef.length > 0 ? coef[0] : coef;
 
-      const lineGen = lineGenerator(intercept, coef);
+      const lineGen = lineGenerator(intercept[0][0], coef[0]);
 
       const x1 = scales.x.domain[0];
       const x2 = scales.x.domain[1];
 
       const y1 = lineGen(x1);
       const y2 = lineGen(x2);
+
+      console.log(x1,y1,x2,y2);
+      console.log(xScale(x1),yScale(y1),xScale(x2),yScale(y2));
+      console.log(xScale, yScale);
 
       regressionArea
         .selectAll('.regression-line')
