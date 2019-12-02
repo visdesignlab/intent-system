@@ -7,7 +7,7 @@ import uuid
 import hashlib
 
 from scipy.spatial.distance import jaccard
-from typing import Optional, Dict, Any, List, Tuple
+from typing import Optional, Dict, Any, List
 
 
 def rank_jaccard(intent: pd.DataFrame, selection: pd.DataFrame) -> float:

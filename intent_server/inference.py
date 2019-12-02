@@ -3,7 +3,8 @@ from .dimensions import Dimensions
 from .algorithms import LinearRegression, Outlier, Skyline, Range, KMeansCluster
 from .algorithms import Categories, DBSCANCluster, Inverse, QuadraticRegression
 
-from .vendor.interactions import Prediction, Interaction, InteractionTypeKind, PredictionSet, MultiBrushBehavior
+from .vendor.interactions import Prediction, Interaction, InteractionTypeKind
+from .vendor.interactions import PredictionSet, MultiBrushBehavior
 
 from sklearn.naive_bayes import MultinomialNB
 from typing import List, Set
@@ -27,6 +28,7 @@ def same_intent(a: Prediction, b: Prediction) -> bool:
     a_intent = a.intent.split(":")[2]
     b_intent = b.intent.split(":")[2]
     return a_intent == b_intent
+
 
 def same_ids(a: Prediction, b: Prediction) -> bool:
     a_intent = a.data_ids
@@ -128,7 +130,7 @@ class Inference:
         sel_array = self.dataset.selection(ids)
         relevant_data = self.dataset.subset(dims)
 
-        list_of_predictions = []
+        list_of_predictions = [] 
 
         for intent in self.intents:
             # All dimensions
@@ -140,18 +142,19 @@ class Inference:
                 list_of_predictions.extend(pred)
 
         # Remove duplicate intents
-        unique_predictions = []
+        unique_predictions: List[Prediction] = []
         for p in list_of_predictions:
-            if not any(map(lambda x: same_intent(x, p) and same_ids(x, p), unique_predictions)):
+            if not any(map(lambda x: same_intent(x, p) and same_ids(x, p),
+                           unique_predictions)):
                 unique_predictions.append(p)
 
         # Add probabilities
         train = np.zeros((len(unique_predictions), len(relevant_data.index)))
         for (i, p) in enumerate(unique_predictions):
-            ids = list(map(int,p.data_ids))
+            ids = list(map(int, p.data_ids))  # type: ignore
             train[i][ids] = True
-       
-        labels = list(map(lambda p: p.intent, unique_predictions));
+
+        labels = list(map(lambda p: p.intent, unique_predictions))
 
         clf = MultinomialNB(fit_prior=False)
         clf.fit(train, labels)
