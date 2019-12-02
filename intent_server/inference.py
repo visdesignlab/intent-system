@@ -3,11 +3,13 @@ from .dimensions import Dimensions
 from .algorithms import LinearRegression, Outlier, Skyline, Range, KMeansCluster
 from .algorithms import Categories, DBSCANCluster, Inverse, QuadraticRegression
 
-from .vendor.interactions import Interaction, InteractionTypeKind, PredictionSet, MultiBrushBehavior
+from .vendor.interactions import Prediction, Interaction, InteractionTypeKind
+from .vendor.interactions import PredictionSet, MultiBrushBehavior
 
 from sklearn.naive_bayes import MultinomialNB
 from typing import List, Set
 import pandas as pd
+import numpy as np
 
 
 def is_point_selection(interaction: Interaction) -> bool:
@@ -20,6 +22,18 @@ def is_point_deselection(interaction: Interaction) -> bool:
 
 def is_brush_selection(interaction: Interaction) -> bool:
     return interaction.interaction_type.brush_id is not None
+
+
+def same_intent(a: Prediction, b: Prediction) -> bool:
+    a_intent = a.intent.split(":")[2]
+    b_intent = b.intent.split(":")[2]
+    return a_intent == b_intent
+
+
+def same_ids(a: Prediction, b: Prediction) -> bool:
+    a_intent = a.data_ids
+    b_intent = b.data_ids
+    return a_intent == b_intent
 
 
 def relevant_ids(interactions: List[Interaction], op: MultiBrushBehavior) -> Set[int]:
@@ -117,23 +131,30 @@ class Inference:
         relevant_data = self.dataset.subset(dims)
 
         list_of_predictions = []
-        list_of_computed = []
 
         for intent in self.intents:
             # All dimensions
-            pred, comp = intent.to_prediction(sel_array, relevant_data)
+            pred = intent.to_prediction(sel_array, relevant_data)
             list_of_predictions.extend(pred)
-            list_of_computed.append(comp)
 
             for d in tuple_dims:
-                pred, comp = intent.to_prediction(sel_array, self.dataset.subset(d))
+                pred = intent.to_prediction(sel_array, self.dataset.subset(d))
                 list_of_predictions.extend(pred)
-                list_of_computed.append(comp)
 
-        # Add probailities
-        outputs = pd.concat(list_of_computed, axis='columns')
-        train = outputs.T.to_numpy()
-        labels = outputs.columns.values.tolist()
+        # Remove duplicate intents
+        unique_predictions: List[Prediction] = []
+        for p in list_of_predictions:
+            if not any(map(lambda x: same_intent(x, p) and same_ids(x, p),
+                           unique_predictions)):
+                unique_predictions.append(p)
+
+        # Add probabilities
+        train = np.zeros((len(unique_predictions), len(relevant_data.index)))
+        for (i, p) in enumerate(unique_predictions):
+            ids = list(map(int, p.data_ids))  # type: ignore
+            train[i][ids] = True
+
+        labels = list(map(lambda p: p.intent, unique_predictions))
 
         clf = MultinomialNB(fit_prior=False)
         clf.fit(train, labels)
@@ -143,7 +164,7 @@ class Inference:
             clf.classes_.flatten().tolist(),
             clf.predict_proba(sel_array.transpose()).flatten().tolist()))
 
-        for p in list_of_predictions:
+        for p in unique_predictions:
             if p.intent in probs:
                 if p.info is None:
                     p.info = dict()
@@ -153,10 +174,10 @@ class Inference:
         special_predictions = list(map(lambda si: si.to_prediction(
             sel_array, relevant_data), self.special_intents))
         flat_list = [item for sublist in special_predictions for item in sublist]
-        list_of_predictions.extend(flat_list)
+        unique_predictions.extend(flat_list)
 
         return PredictionSet(
-            predictions=list_of_predictions,
+            predictions=unique_predictions,
             dimensions=dims.dims,
             selected_ids=list(map(float, ids)))
 
