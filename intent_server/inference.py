@@ -7,6 +7,7 @@ from .vendor.interactions import Prediction, Interaction, InteractionTypeKind
 from .vendor.interactions import PredictionSet, MultiBrushBehavior
 
 from sklearn.naive_bayes import MultinomialNB
+from more_itertools import unique_everseen
 from typing import List, Set
 import pandas as pd
 import numpy as np
@@ -25,9 +26,9 @@ def is_brush_selection(interaction: Interaction) -> bool:
 
 
 def same_intent(a: Prediction, b: Prediction) -> bool:
-    a_intent = a.intent.split(":")[2]
-    b_intent = b.intent.split(":")[2]
-    return a_intent == b_intent
+    a_split = a.intent.split(":")
+    b_split = b.intent.split(":")
+    return a_split[1] + a_split[2] == b_split[1] + b_split[2]
 
 
 def same_ids(a: Prediction, b: Prediction) -> bool:
@@ -117,7 +118,8 @@ class Inference:
                                 else ["", ""], filtered))  # type: ignore
 
         tuple_dims = set(map(lambda x: Dimensions(x), list_of_dims))
-        dims = Dimensions(list(set([y for x in list_of_dims for y in x])))
+        all_dims = list(unique_everseen([y for x in list_of_dims for y in x]))
+        dims = Dimensions(all_dims)
         tuple_dims.discard(dims)  # Make sure we don't compute twice
         tuple_dims = list(tuple_dims)  # type: ignore
 
