@@ -8,6 +8,7 @@ flake8 = "*"
 mypy = "*"
 pytest = "*"
 typing = "*"
+autopep8 = "*"
 
 [packages]
 pandas = "*"
