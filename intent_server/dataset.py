@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 from .dimensions import Dimensions
 from typing import Dict, Set
-
+import sys
 
 class Dataset:
     def __init__(self,
@@ -31,6 +31,7 @@ class Dataset:
 
     def categorical(self) -> pd.DataFrame:
         cats = list(self.data.select_dtypes(exclude='number').columns)
+        print(cats, file=sys.stderr)
         cats.remove(self.label)
         return self.data[cats]
 
@@ -64,6 +65,142 @@ class Dataset:
             'draft_year',
             'draft_number',
         ]), 'NBA Players')
+
+
+    @staticmethod
+    def load_coculture_control() -> 'Dataset':
+        df = pd.read_csv('data/MDAMB231MacrophageCocultureControl.csv')
+
+        df['cat'] = '1';
+
+        return Dataset('Label', df.astype({"Label":str}), 'MDAMB231 Macrophage Coculture Control', {
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'Mass': {
+                'text': "Mass",
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric'
+            },
+            'GrowthRate': {
+                'text': "Growth Rate",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            "cat": {
+                'text': "cat",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+                }
+            })
+
+
+    @staticmethod
+    def load_coculture_mito() -> 'Dataset':
+        df = pd.read_csv('data/MDAMB231MacrophageCocultureMitoTransfer.csv')
+
+        df['cat'] = '1';
+
+        return Dataset('Label', df.astype({"Label":str}), 'MDAMB231 Macrophage Coculture Mito Transfer', {
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'Mass': {
+                'text': "Mass",
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric'
+            },
+            'GrowthRate': {
+                'text': "Growth Rate",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            "cat": {
+                'text': "cat",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+                }
+            })
+
+
+    @staticmethod
+    def load_macro_control() -> 'Dataset':
+        df = pd.read_csv('data/MDAMB231MacrophageInjectedControl.csv')
+
+        df['cat'] = '1';
+
+        return Dataset('Label', df.astype({"Label":str}), 'MDAMB231 Macrophage Injected Control', {
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'Mass': {
+                'text': "Mass",
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric'
+            },
+            'GrowthRate': {
+                'text': "Growth Rate",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            "cat": {
+                'text': "cat",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+                }
+            })
+
+
+    @staticmethod
+    def load_macro_mito() -> 'Dataset':
+        df = pd.read_csv('data/MDAMB231MacrophageInjectedMitoTransfer.csv')
+
+        df['cat'] = '1';
+
+        return Dataset('Label', df.astype({"Label":str}), 'MDAMB231 Macrophage Injected Mito Transfer', {
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'Mass': {
+                'text': "Mass",
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric'
+            },
+            'GrowthRate': {
+                'text': "Growth Rate",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            "cat": {
+                'text': "cat",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+                }
+            })
 
     @staticmethod
     def load_draft_combine_data() -> 'Dataset':

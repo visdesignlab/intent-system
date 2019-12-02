@@ -20,7 +20,11 @@ datasets = {
     'slc_housing': Dataset.load_housing_data(),
     'gapminder_world': Dataset.load_gapminderworld_data(),
     'cluster': Dataset.load_cluster_data(),
-    'depression_dataset': Dataset.load_depression_data()
+    'depression_dataset': Dataset.load_depression_data(),
+    'MDAMB231MacrophageCocultureControl': Dataset.load_coculture_control(),
+    'MDAMB231MacrophageCocultureMito': Dataset.load_coculture_mito(),
+    'MDAMB231MacrophageMacroControl': Dataset.load_macro_control(),
+    'MDAMB231MacrophageMacroMito': Dataset.load_macro_mito()
 }
 
 views = Blueprint('views', __name__)

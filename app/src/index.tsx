@@ -149,7 +149,7 @@ export function initializeTaskManager() {
 
 export const taskManager = initializeTaskManager();
 
-export let datasetName = 'depression_dataset';
+export let datasetName = 'MDAMB231MacrophageCocultureControl';
 
 export async function loadDatasetByName(ds: string = datasetName) {
   if (datasetName !== ds) datasetName = ds;

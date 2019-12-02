@@ -198,10 +198,13 @@ const PlotControl: FC<Props> = (props: Props) => {
     </Button>
   );
 
+  const categoriesOptions = categoryDropdownOptions;
+
   const HideCategoryToggle = (
     <Radio
       toggle
       checked={showCategories}
+      disabled={categoriesOptions.map(c => c.value).includes('None')}
       label="Show Categories"
       onChange={(_, state) => {
         let {checked} = state;
@@ -223,8 +226,6 @@ const PlotControl: FC<Props> = (props: Props) => {
         changeBrushBehavior(mbb);
       }}></Radio>
   );
-
-  const categoriesOptions = categoryDropdownOptions;
 
   const AddCategoryDropdown = (
     <>
