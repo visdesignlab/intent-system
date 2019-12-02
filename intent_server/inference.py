@@ -26,7 +26,7 @@ def is_brush_selection(interaction: Interaction) -> bool:
 
 
 def same_intent(a: Prediction, b: Prediction) -> bool:
-    a_split = a.intent.split(":") 
+    a_split = a.intent.split(":")
     b_split = b.intent.split(":")
     return a_split[1] + a_split[2] == b_split[1] + b_split[2]
 
@@ -140,8 +140,7 @@ class Inference:
             list_of_predictions.extend(pred)
 
             for d in tuple_dims:
-                subset = self.dataset.subset(d)
-                pred = intent.to_prediction(sel_array, subset)
+                pred = intent.to_prediction(sel_array, self.dataset.subset(d))
                 list_of_predictions.extend(pred)
 
         # Remove duplicate intents
