@@ -1,17 +1,93 @@
 import React, {FC, CSSProperties, useState} from 'react';
 import {Card, Header, Form} from 'semantic-ui-react';
+import {Prediction} from '../contract';
+import {useSelector} from 'react-redux';
+import {AppState} from '../Stores/CombinedStore';
+import {
+  getPredictionType,
+  PredictionType,
+} from '../Stores/Predictions/PredictionsState';
+import {pure} from 'recompose';
 
 interface Props {
-  initialText: string;
+  initialText?: string;
 }
 
 const LiveIntent: FC<Props> = ({initialText}: Props) => {
   const [intentText, setIntentText] = useState(Math.random().toString());
-
   const [showAdvance, setShowAdvance] = useState(false);
+
+  const predictions = useSelector<AppState, Prediction[]>(
+    state => state.predictionSet.predictions || [],
+  );
+
+  let temp: any = '';
+
+  if (predictions.length > 0) {
+    predictions.sort((a, b) => b.rank - a.rank);
+    const topPrediction = predictions[0];
+    const type = getPredictionType(topPrediction.intent);
+    const {intent} = topPrediction;
+
+    let [
+      hash = '',
+      dimensions = '',
+      intentName = '',
+      intentDetails = '',
+      info = '',
+    ] =
+      type === PredictionType.Range
+        ? ['', '', intent, '', '']
+        : intent.split(':');
+
+    temp = JSON.stringify([hash, dimensions, intentName, intentDetails, info]);
+
+    let text = '';
+    switch (type) {
+      case PredictionType.Cluster:
+        text = `Selected Points in a Cluster`;
+        break;
+      case PredictionType.Outlier:
+        text = `Selected outliers`;
+        break;
+      case PredictionType.Skyline:
+        text = `Selected points on a skyline`;
+        break;
+      case PredictionType.Category:
+        const splitNames = intentName.split('|');
+        if (splitNames.length > 0)
+          text = `Selected points belonging to the category:${
+            splitNames.reverse()[0]
+          } `;
+        else text = `Selected points belonging to a category`;
+        break;
+      case PredictionType.NonOutlier:
+        text = `Selected points which are not outliers`;
+        break;
+      case PredictionType.LinearRegression:
+        if (intentDetails.includes('outside'))
+          text = `Selected points which are outside linear regression`;
+        else text = `Selected points which are on linear regression`;
+        break;
+      case PredictionType.QuadraticRegression:
+        if (intentDetails.includes('outside'))
+          text = `Selected points which are outside quadratic regression`;
+        else text = `Selected points which are on quadratic regression`;
+        break;
+      case PredictionType.Range:
+        text = `Selected points based on a range selection`;
+      default:
+        setIntentText('');
+    }
+
+    if (intentText !== text) setIntentText(text);
+  } else {
+    if (intentText !== '') setIntentText('');
+  }
 
   return (
     <Card fluid style={intentDivStyle}>
+      <div style={{visibility: 'hidden', height: 0}}>{temp}</div>
       <Card.Content>
         <Header as="h1" textAlign="center">
           Intent
@@ -45,7 +121,9 @@ const LiveIntent: FC<Props> = ({initialText}: Props) => {
   );
 };
 
-export default LiveIntent;
+export default pure(LiveIntent);
+
+(LiveIntent as any).whyDidYouRender = true;
 
 const intentDivStyle: CSSProperties = {
   margin: '0',

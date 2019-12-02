@@ -161,7 +161,7 @@ const App: FC<Props> = ({
         </div>
       </div>
       <div style={resPred}>
-        <LiveIntent initialText="" />
+        <LiveIntent />
         <Predictions
           isExploreMode={isExploreMode}
           clearAll={clearAll}
