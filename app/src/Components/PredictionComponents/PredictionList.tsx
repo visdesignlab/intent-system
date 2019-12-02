@@ -202,6 +202,9 @@ const PredictionList: FC<Props> = ({
 
   const extendedPredictionString = JSON.stringify(extendedPredictions);
 
+  if (predictions.length === 0)
+    selectAll('.mark').classed('tone_down_others', false);
+
   useEffect(() => {
     const memoizedPredictions: Prediction[] = JSON.parse(predictionString);
 
