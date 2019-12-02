@@ -130,7 +130,7 @@ class Inference:
         sel_array = self.dataset.selection(ids)
         relevant_data = self.dataset.subset(dims)
 
-        list_of_predictions = [] 
+        list_of_predictions = []
 
         for intent in self.intents:
             # All dimensions
