@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 from .dimensions import Dimensions
 from typing import Dict, Set
-import sys
+
 
 class Dataset:
     def __init__(self,
@@ -31,7 +31,6 @@ class Dataset:
 
     def categorical(self) -> pd.DataFrame:
         cats = list(self.data.select_dtypes(exclude='number').columns)
-        print(cats, file=sys.stderr)
         cats.remove(self.label)
         return self.data[cats]
 
@@ -66,14 +65,14 @@ class Dataset:
             'draft_number',
         ]), 'NBA Players')
 
-
     @staticmethod
     def load_coculture_control() -> 'Dataset':
         df = pd.read_csv('data/MDAMB231MacrophageCocultureControl.csv')
 
-        df['cat'] = '1';
+        df['cat'] = '1'
 
-        return Dataset('Label', df.astype({"Label":str}), 'MDAMB231 Macrophage Coculture Control', {
+        return Dataset('Label', df.astype({"Label": str}),
+                       'MDAMB231 Macrophage Coculture Control', {
             'Label': {
                 'text': 'Label',
                 'unit': 'label',
@@ -97,17 +96,17 @@ class Dataset:
                 'unit': '',
                 'short': 'D',
                 'type': 'categorical'
-                }
-            })
-
+            }
+        })
 
     @staticmethod
     def load_coculture_mito() -> 'Dataset':
         df = pd.read_csv('data/MDAMB231MacrophageCocultureMitoTransfer.csv')
 
-        df['cat'] = '1';
+        df['cat'] = '1'
 
-        return Dataset('Label', df.astype({"Label":str}), 'MDAMB231 Macrophage Coculture Mito Transfer', {
+        return Dataset('Label', df.astype({"Label": str}),
+                       'MDAMB231 Macrophage Coculture Mito Transfer', {
             'Label': {
                 'text': 'Label',
                 'unit': 'label',
@@ -131,17 +130,17 @@ class Dataset:
                 'unit': '',
                 'short': 'D',
                 'type': 'categorical'
-                }
-            })
-
+            }
+        })
 
     @staticmethod
     def load_macro_control() -> 'Dataset':
         df = pd.read_csv('data/MDAMB231MacrophageInjectedControl.csv')
 
-        df['cat'] = '1';
+        df['cat'] = '1'
 
-        return Dataset('Label', df.astype({"Label":str}), 'MDAMB231 Macrophage Injected Control', {
+        return Dataset('Label', df.astype({"Label": str}),
+                       'MDAMB231 Macrophage Injected Control', {
             'Label': {
                 'text': 'Label',
                 'unit': 'label',
@@ -165,17 +164,17 @@ class Dataset:
                 'unit': '',
                 'short': 'D',
                 'type': 'categorical'
-                }
-            })
-
+            }
+        })
 
     @staticmethod
     def load_macro_mito() -> 'Dataset':
         df = pd.read_csv('data/MDAMB231MacrophageInjectedMitoTransfer.csv')
 
-        df['cat'] = '1';
+        df['cat'] = '1'
 
-        return Dataset('Label', df.astype({"Label":str}), 'MDAMB231 Macrophage Injected Mito Transfer', {
+        return Dataset('Label', df.astype({"Label": str}),
+                       'MDAMB231 Macrophage Injected Mito Transfer', {
             'Label': {
                 'text': 'Label',
                 'unit': 'label',
@@ -199,8 +198,8 @@ class Dataset:
                 'unit': '',
                 'short': 'D',
                 'type': 'categorical'
-                }
-            })
+            }
+        })
 
     @staticmethod
     def load_draft_combine_data() -> 'Dataset':
@@ -272,18 +271,18 @@ class Dataset:
                 'short': 'G',
                 'type': 'label'
             }
-            })
+        })
 
     @staticmethod
     def load_cluster_data() -> 'Dataset':
         df = pd.read_csv('data/clusters.csv')
         convert_dict = {
-                'Math': 'float',
-                'Physics': 'float',
-                'CS': 'float',
-                'Label': 'category',
-                'Profession': 'category',
-                }
+            'Math': 'float',
+            'Physics': 'float',
+            'CS': 'float',
+            'Label': 'category',
+            'Profession': 'category',
+        }
         df = df.astype(convert_dict)
         df['Label'] = df['Label'].apply(str)
         df['Profession'] = df['Profession'].apply(str)
@@ -294,42 +293,42 @@ class Dataset:
                 'unit': "",
                 'short': 'A',
                 'type': 'numeric'
-                },
+            },
 
             'Physics': {
                 'text': 'Physics',
                 'unit': "",
                 'short': 'B',
                 'type': 'numeric'
-                },
+            },
             'CS': {
                 'text': 'CS',
                 'unit': "",
                 'short': 'C',
                 'type': 'numeric'
-                },
+            },
             'Profession': {
                 'text': 'Profession',
                 'unit': 'Categorical',
                 'short': 'D',
                 'type': 'categorical'
-                },
+            },
             'Label': {
                 'text': 'Label',
                 'unit': 'label',
                 'short': 'E',
                 'type': 'label'
-                },
-            })
+            },
+        })
 
     @staticmethod
     def load_depression_data() -> 'Dataset':
         df = pd.read_csv('data/depression_dataset.csv')
         convert_dict = {
-                    "rsn": 'category',
-                    "age": 'int',
-                    "gender": 'category',
-                    "race": 'category',
+            "rsn": 'category',
+            "age": 'int',
+            "gender": 'category',
+            "race": 'category',
                     "bmi": 'float',
                     "srwcurr": 'float',
                     "srw1yr": 'float',
@@ -341,115 +340,115 @@ class Dataset:
                     "cholestrol": 'float',
                     "sodium": 'float',
                     "depression": 'float'
-                }
+        }
         df = df.astype(convert_dict)
 
         return Dataset('rsn', df, 'Depression Dataset', {
-                "rsn": {
-                    'text': 'Respondent sequence number',
-                    'unit': '',
-                    "short": "A",
-                    "type": ""
+            "rsn": {
+                'text': 'Respondent sequence number',
+                'unit': '',
+                "short": "A",
+                "type": ""
 
-                },
-                "gender": {
-                    'text': 'Gender',
-                    'unit': '',
-                    "short": "C",
-                    "type": "categorical"
+            },
+            "gender": {
+                'text': 'Gender',
+                'unit': '',
+                "short": "C",
+                "type": "categorical"
 
-                },
-                "race": {
-                    'text': 'Race',
-                    'unit': '',
-                    "short": "D",
-                    "type": "categorical"
+            },
+            "race": {
+                'text': 'Race',
+                'unit': '',
+                "short": "D",
+                "type": "categorical"
 
-                },
-                "depression": {
-                    'text': 'Depression',
-                    'unit': '',
-                    "short": "O",
-                    "type": "numeric"
-                },
-                "bmi": {
-                    'text': 'BMI',
-                    'unit': 'kg/m**2',
-                    "short": "E",
-                    "type": "numeric"
+            },
+            "depression": {
+                'text': 'Depression',
+                'unit': '',
+                "short": "O",
+                "type": "numeric"
+            },
+            "bmi": {
+                'text': 'BMI',
+                'unit': 'kg/m**2',
+                "short": "E",
+                "type": "numeric"
 
-                },
-                "srwcurr": {
-                    'text': 'Current Weight (self reported)',
-                    'unit': 'pounds',
-                    "short": "F",
-                    "type": "numeric"
+            },
+            "srwcurr": {
+                'text': 'Current Weight (self reported)',
+                'unit': 'pounds',
+                "short": "F",
+                "type": "numeric"
 
-                },
-                "age": {
-                    'text': 'Age',
-                    'unit': 'Years',
-                    "short": "B",
-                    "type": "numeric"
+            },
+            "age": {
+                'text': 'Age',
+                'unit': 'Years',
+                "short": "B",
+                "type": "numeric"
 
-                },
-                "srw1yr": {
-                    'text': 'Weight 1 year ago (self reported)',
-                    'unit': 'pounds',
-                    "short": "G",
-                    "type": "numeric"
+            },
+            "srw1yr": {
+                'text': 'Weight 1 year ago (self reported)',
+                'unit': 'pounds',
+                "short": "G",
+                "type": "numeric"
 
-                },
-                "vitd": {
-                    'text': 'Vitamin D',
-                    'unit': 'ng/mL',
-                    "short": "H",
-                    "type": "numeric"
+            },
+            "vitd": {
+                'text': 'Vitamin D',
+                'unit': 'ng/mL',
+                "short": "H",
+                "type": "numeric"
 
-                },
-                "glyco": {
-                    'text': 'Glycohemoglobin',
-                    'unit': '%',
-                    "short": "I",
-                    "type": "numeric"
+            },
+            "glyco": {
+                'text': 'Glycohemoglobin',
+                'unit': '%',
+                "short": "I",
+                "type": "numeric"
 
-                },
-                "sys1": {
-                    'text': 'Systolic BP 1st rdg',
-                    'unit': 'mm Hg',
-                    "short": "J",
-                    "type": "numeric"
+            },
+            "sys1": {
+                'text': 'Systolic BP 1st rdg',
+                'unit': 'mm Hg',
+                "short": "J",
+                "type": "numeric"
 
-                },
-                "sys2": {
-                    'text': 'Systolic BP 2nd rdg',
-                    'unit': 'mm Hg',
-                    "short": "K",
-                    "type": "numeric"
+            },
+            "sys2": {
+                'text': 'Systolic BP 2nd rdg',
+                'unit': 'mm Hg',
+                "short": "K",
+                "type": "numeric"
 
-                },
-                "sys3": {
-                    'text': 'Systolic BP 3rd rdg',
-                    'unit': 'mm Hg',
-                    "short": "L",
-                    "type": "numeric"
+            },
+            "sys3": {
+                'text': 'Systolic BP 3rd rdg',
+                'unit': 'mm Hg',
+                "short": "L",
+                "type": "numeric"
 
-                },
-                "cholestrol": {
-                    'text': 'Cholesterol',
-                    'unit': 'mmol/L',
-                    "short": "M",
-                    "type": "numeric"
+            },
+            "cholestrol": {
+                'text': 'Cholesterol',
+                'unit': 'mmol/L',
+                "short": "M",
+                "type": "numeric"
 
-                },
-                "sodium": {
-                    'text': 'Sodium',
-                    'unit': 'mmol/L',
-                    "short": "N",
-                    "type": "numeric"
+            },
+            "sodium": {
+                'text': 'Sodium',
+                'unit': 'mmol/L',
+                "short": "N",
+                "type": "numeric"
 
-                },
-            })
+            },
+        })
 
     @staticmethod
     def load_housing_data() -> 'Dataset':
@@ -483,89 +482,89 @@ class Dataset:
                 'unit': 'label',
                 'short': 'A',
                 'type': 'label'
-                },
+            },
             'Acres': {
                 'text': 'Acres',
                 'unit': '',
                 'short': 'B',
                 'type': 'numeric'
-                },
+            },
             'BsmntFin': {
                 'text': 'Basement Finish',
                 'unit': '',
                 'short': 'C',
                 'type': 'numeric'
-                },
+            },
             'Deck': {
                 'text': 'Deck',
                 'unit': '',
                 'short': 'D',
                 'type': 'numeric'
-                },
+            },
             'Style': {
                 'text': 'Style',
                 'unit': '',
                 'short': 'E',
                 'type': 'categorical'
-                },
+            },
             'EWCoord': {
                 'text': 'Longitude',
                 'unit': '',
                 'short': 'F',
                 'type': 'numeric'
-                },
+            },
             'GaragCap': {
                 'text': 'Garage Capcity',
                 'unit': '',
                 'short': 'G',
                 'type': 'numeric'
-                },
+            },
             'HouseNbr': {
                 'text': 'House Number',
                 'unit': '',
                 'short': 'H',
                 'type': 'numeric'
-                },
+            },
             'LstPrice': {
                 'text': 'List Price',
                 'unit': '$',
                 'short': 'I',
                 'type': 'numeric'
-                },
+            },
             'NSCoord': {
                 'text': 'Latitude',
                 'unit': '',
                 'short': 'J',
                 'type': 'numeric'
-                },
+            },
             'Taxes': {
                 'text': 'Taxes',
                 'unit': '$',
                 'short': 'K',
                 'type': 'numeric'
-                },
+            },
             'TotBed': {
                 'text': 'Total Bedrooms',
                 'unit': '#',
                 'short': 'L',
                 'type': 'numeric'
-                },
+            },
             'TotBth': {
                 'text': 'Total Bathrooms',
                 'unit': '',
                 'short': 'M',
                 'type': 'numeric'
-                },
+            },
             'TotSqf': {
                 'text': 'Total Square Footage',
                 'unit': 'sq. ft.',
                 'short': 'N',
                 'type': 'numeric'
-                },
+            },
             'YearBlt': {
                 'text': 'Year Built',
                 'unit': '',
                 'short': 'O',
                 'type': 'numeric'
-                },
-            })
+            },
+        })

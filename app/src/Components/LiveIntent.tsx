@@ -5,29 +5,6 @@ interface Props {
   initialText: string;
 }
 
-// type Rule = {
-//   dimension: string;
-//   exp: string;
-//   value: string | number;
-// };
-
-// type Rules = Rule[];
-
-// function convertStringToRule(ruleString: string): Rule {
-//   const [dimension, exp, value] = ruleString.split(' ');
-
-//   return {
-//     dimension,
-//     value,
-//     exp,
-//   };
-// }
-
-// function convertStringArrToRules(strs: string[]): Rules {
-//   const rules = strs.map(r => convertStringToRule(r));
-//   return rules;
-// }
-
 const LiveIntent: FC<Props> = ({initialText}: Props) => {
   const [intentText, setIntentText] = useState(Math.random().toString());
 
