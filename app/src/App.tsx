@@ -84,8 +84,8 @@ const App: FC<Props> = ({
     } else {
       const plot: SinglePlot = {
         id: new Date().valueOf().toString(),
-        x: dataset.numericColumns[0],
-        y: dataset.numericColumns[1],
+        x: dataset.numericColumns[1],
+        y: dataset.numericColumns[0],
         color: dataset.categoricalColumns[0],
         brushes: {},
         brushSelections: {},
@@ -161,7 +161,7 @@ const App: FC<Props> = ({
         </div>
       </div>
       <div style={resPred}>
-        <LiveIntent initialText="" />
+        <LiveIntent />
         <Predictions
           isExploreMode={isExploreMode}
           clearAll={clearAll}

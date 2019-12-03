@@ -77,6 +77,22 @@ export function getPredictions(request: PredictionRequest) {
       .then(response => {
         AppStore.dispatch(updatePredictions(response.data));
         AppStore.dispatch(updatePredictionLoading(false));
+
+        studyProvenance.applyAction({
+          label: Events.ADD_INTERACTION,
+          action: () => {
+            let currentState = studyProvenance.graph().current.state;
+            if (currentState) {
+              currentState = {
+                ...currentState,
+                interactions,
+                predictionSet: response.data,
+              };
+            }
+            return currentState as StudyState;
+          },
+          args: [],
+        });
       })
       .catch(err => {
         if (!axios.isCancel(err)) {
@@ -84,18 +100,6 @@ export function getPredictions(request: PredictionRequest) {
           console.log(err);
         }
       });
-
-    studyProvenance.applyAction({
-      label: Events.ADD_INTERACTION,
-      action: () => {
-        let currentState = studyProvenance.graph().current.state;
-        if (currentState) {
-          currentState = {...currentState, interactions};
-        }
-        return currentState as StudyState;
-      },
-      args: [],
-    });
   });
 }
 
