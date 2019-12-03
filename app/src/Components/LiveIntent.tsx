@@ -10,6 +10,7 @@ import {
 import {pure} from 'recompose';
 import {studyProvenance, logToFirebase} from '..';
 import Events from '../Stores/Types/EventEnum';
+import {RefinedPoints} from '../Stores/Visualization/VisualizationStore';
 
 interface Props {
   initialText?: string;
@@ -17,7 +18,11 @@ interface Props {
 
 const LiveIntent: FC<Props> = ({initialText}: Props) => {
   const [intentText, setIntentText] = useState(Math.random().toString());
-  const [showAdvance, setShowAdvance] = useState(false);
+  // const [showAdvance, setShowAdvance] = useState(false);
+
+  const refinedPoints = useSelector<AppState, RefinedPoints>(
+    state => state.refinedPoints,
+  );
 
   const predictions = useSelector<AppState, Prediction[]>(
     state => state.predictionSet.predictions || [],
@@ -110,14 +115,14 @@ const LiveIntent: FC<Props> = ({initialText}: Props) => {
             }}
           />
           <Form.Group widths="equal">
-            <Form.Radio
-              toggle
-              checked={showAdvance}
-              onChange={(_, data) =>
-                setShowAdvance(data.checked || !showAdvance)
-              }
-              label="Advance View"
-            />
+            {/* <Form.Radio */}
+            {/*   toggle */}
+            {/*   checked={showAdvance} */}
+            {/*   onChange={(_, data) => */}
+            {/*     setShowAdvance(data.checked || !showAdvance) */}
+            {/*   } */}
+            {/*   label="Advance View" */}
+            {/* /> */}
             <Form.Button
               onClick={() => {
                 const t = new Date();
@@ -132,6 +137,7 @@ const LiveIntent: FC<Props> = ({initialText}: Props) => {
                         startTime: t,
                         eventTime: t,
                         annotation: intentText,
+                        refinedPoints,
                       };
                     }
                     return currentState as any;
