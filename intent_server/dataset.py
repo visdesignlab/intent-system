@@ -135,18 +135,18 @@ class Dataset:
                 'short': 'G',
                 'type': 'label'
             }
-            })
+        })
 
     @staticmethod
     def load_cluster_data() -> 'Dataset':
         df = pd.read_csv('data/clusters.csv')
         convert_dict = {
-                'Math': 'float',
-                'Physics': 'float',
-                'CS': 'float',
-                'Label': 'category',
-                'Profession': 'category',
-                }
+            'Math': 'float',
+            'Physics': 'float',
+            'CS': 'float',
+            'Label': 'category',
+            'Profession': 'category',
+        }
         df = df.astype(convert_dict)
         df['Label'] = df['Label'].apply(str)
         df['Profession'] = df['Profession'].apply(str)
@@ -157,42 +157,42 @@ class Dataset:
                 'unit': "",
                 'short': 'A',
                 'type': 'numeric'
-                },
+            },
 
             'Physics': {
                 'text': 'Physics',
                 'unit': "",
                 'short': 'B',
                 'type': 'numeric'
-                },
+            },
             'CS': {
                 'text': 'CS',
                 'unit': "",
                 'short': 'C',
                 'type': 'numeric'
-                },
+            },
             'Profession': {
                 'text': 'Profession',
                 'unit': 'Categorical',
                 'short': 'D',
                 'type': 'categorical'
-                },
+            },
             'Label': {
                 'text': 'Label',
                 'unit': 'label',
                 'short': 'E',
                 'type': 'label'
-                },
-            })
+            },
+        })
 
     @staticmethod
     def load_depression_data() -> 'Dataset':
         df = pd.read_csv('data/depression_dataset.csv')
         convert_dict = {
-                    "rsn": 'category',
-                    "age": 'int',
-                    "gender": 'category',
-                    "race": 'category',
+            "rsn": 'category',
+            "age": 'int',
+            "gender": 'category',
+            "race": 'category',
                     "bmi": 'float',
                     "srwcurr": 'float',
                     "srw1yr": 'float',
@@ -204,115 +204,115 @@ class Dataset:
                     "cholestrol": 'float',
                     "sodium": 'float',
                     "depression": 'float'
-                }
+        }
         df = df.astype(convert_dict)
 
         return Dataset('rsn', df, 'Depression Dataset', {
-                "rsn": {
-                    'text': 'Respondent sequence number',
-                    'unit': '',
-                    "short": "A",
-                    "type": ""
+            "rsn": {
+                'text': 'Respondent sequence number',
+                'unit': '',
+                "short": "A",
+                "type": ""
 
-                },
-                "gender": {
-                    'text': 'Gender',
-                    'unit': '',
-                    "short": "C",
-                    "type": "categorical"
+            },
+            "gender": {
+                'text': 'Gender',
+                'unit': '',
+                "short": "C",
+                "type": "categorical"
 
-                },
-                "race": {
-                    'text': 'Race',
-                    'unit': '',
-                    "short": "D",
-                    "type": "categorical"
+            },
+            "race": {
+                'text': 'Race',
+                'unit': '',
+                "short": "D",
+                "type": "categorical"
 
-                },
-                "depression": {
-                    'text': 'Depression',
-                    'unit': '',
-                    "short": "O",
-                    "type": "numeric"
-                },
-                "bmi": {
-                    'text': 'BMI',
-                    'unit': 'kg/m**2',
-                    "short": "E",
-                    "type": "numeric"
+            },
+            "depression": {
+                'text': 'Depression',
+                'unit': '',
+                "short": "O",
+                "type": "numeric"
+            },
+            "bmi": {
+                'text': 'BMI',
+                'unit': 'kg/m**2',
+                "short": "E",
+                "type": "numeric"
 
-                },
-                "srwcurr": {
-                    'text': 'Current Weight (self reported)',
-                    'unit': 'pounds',
-                    "short": "F",
-                    "type": "numeric"
+            },
+            "srwcurr": {
+                'text': 'Current Weight (self reported)',
+                'unit': 'pounds',
+                "short": "F",
+                "type": "numeric"
 
-                },
-                "age": {
-                    'text': 'Age',
-                    'unit': 'Years',
-                    "short": "B",
-                    "type": "numeric"
+            },
+            "age": {
+                'text': 'Age',
+                'unit': 'Years',
+                "short": "B",
+                "type": "numeric"
 
-                },
-                "srw1yr": {
-                    'text': 'Weight 1 year ago (self reported)',
-                    'unit': 'pounds',
-                    "short": "G",
-                    "type": "numeric"
+            },
+            "srw1yr": {
+                'text': 'Weight 1 year ago (self reported)',
+                'unit': 'pounds',
+                "short": "G",
+                "type": "numeric"
 
-                },
-                "vitd": {
-                    'text': 'Vitamin D',
-                    'unit': 'ng/mL',
-                    "short": "H",
-                    "type": "numeric"
+            },
+            "vitd": {
+                'text': 'Vitamin D',
+                'unit': 'ng/mL',
+                "short": "H",
+                "type": "numeric"
 
-                },
-                "glyco": {
-                    'text': 'Glycohemoglobin',
-                    'unit': '%',
-                    "short": "I",
-                    "type": "numeric"
+            },
+            "glyco": {
+                'text': 'Glycohemoglobin',
+                'unit': '%',
+                "short": "I",
+                "type": "numeric"
 
-                },
-                "sys1": {
-                    'text': 'Systolic BP 1st rdg',
-                    'unit': 'mm Hg',
-                    "short": "J",
-                    "type": "numeric"
+            },
+            "sys1": {
+                'text': 'Systolic BP 1st rdg',
+                'unit': 'mm Hg',
+                "short": "J",
+                "type": "numeric"
 
-                },
-                "sys2": {
-                    'text': 'Systolic BP 2nd rdg',
-                    'unit': 'mm Hg',
-                    "short": "K",
-                    "type": "numeric"
+            },
+            "sys2": {
+                'text': 'Systolic BP 2nd rdg',
+                'unit': 'mm Hg',
+                "short": "K",
+                "type": "numeric"
 
-                },
-                "sys3": {
-                    'text': 'Systolic BP 3rd rdg',
-                    'unit': 'mm Hg',
-                    "short": "L",
-                    "type": "numeric"
+            },
+            "sys3": {
+                'text': 'Systolic BP 3rd rdg',
+                'unit': 'mm Hg',
+                "short": "L",
+                "type": "numeric"
 
-                },
-                "cholestrol": {
-                    'text': 'Cholesterol',
-                    'unit': 'mmol/L',
-                    "short": "M",
-                    "type": "numeric"
+            },
+            "cholestrol": {
+                'text': 'Cholesterol',
+                'unit': 'mmol/L',
+                "short": "M",
+                "type": "numeric"
 
-                },
-                "sodium": {
-                    'text': 'Sodium',
-                    'unit': 'mmol/L',
-                    "short": "N",
-                    "type": "numeric"
+            },
+            "sodium": {
+                'text': 'Sodium',
+                'unit': 'mmol/L',
+                "short": "N",
+                "type": "numeric"
 
-                },
-            })
+            },
+        })
 
     @staticmethod
     def load_housing_data() -> 'Dataset':
@@ -346,89 +346,228 @@ class Dataset:
                 'unit': 'label',
                 'short': 'A',
                 'type': 'label'
-                },
+            },
             'Acres': {
                 'text': 'Acres',
                 'unit': '',
                 'short': 'B',
                 'type': 'numeric'
-                },
+            },
             'BsmntFin': {
                 'text': 'Basement Finish',
                 'unit': '',
                 'short': 'C',
                 'type': 'numeric'
-                },
+            },
             'Deck': {
                 'text': 'Deck',
                 'unit': '',
                 'short': 'D',
                 'type': 'numeric'
-                },
+            },
             'Style': {
                 'text': 'Style',
                 'unit': '',
                 'short': 'E',
                 'type': 'categorical'
-                },
+            },
             'EWCoord': {
                 'text': 'Longitude',
                 'unit': '',
                 'short': 'F',
                 'type': 'numeric'
-                },
+            },
             'GaragCap': {
                 'text': 'Garage Capcity',
                 'unit': '',
                 'short': 'G',
                 'type': 'numeric'
-                },
+            },
             'HouseNbr': {
                 'text': 'House Number',
                 'unit': '',
                 'short': 'H',
                 'type': 'numeric'
-                },
+            },
             'LstPrice': {
                 'text': 'List Price',
                 'unit': '$',
                 'short': 'I',
                 'type': 'numeric'
-                },
+            },
             'NSCoord': {
                 'text': 'Latitude',
                 'unit': '',
                 'short': 'J',
                 'type': 'numeric'
-                },
+            },
             'Taxes': {
                 'text': 'Taxes',
                 'unit': '$',
                 'short': 'K',
                 'type': 'numeric'
-                },
+            },
             'TotBed': {
                 'text': 'Total Bedrooms',
                 'unit': '#',
                 'short': 'L',
                 'type': 'numeric'
-                },
+            },
             'TotBth': {
                 'text': 'Total Bathrooms',
                 'unit': '',
                 'short': 'M',
                 'type': 'numeric'
-                },
+            },
             'TotSqf': {
                 'text': 'Total Square Footage',
                 'unit': 'sq. ft.',
                 'short': 'N',
                 'type': 'numeric'
-                },
+            },
             'YearBlt': {
                 'text': 'Year Built',
                 'unit': '',
                 'short': 'O',
                 'type': 'numeric'
-                },
-            })
+            },
+        })
+
+    @staticmethod
+    def load_nba_raptor_data() -> 'Dataset':
+        df = pd.read_csv('data/modern_RAPTOR_by_player.csv')
+        # is_season = df['season'] == 2019
+
+        # df = df[is_season]
+        enough_mp = df['mp'] >= 2500
+        df = df[enough_mp]
+        df.astype({'season': str})
+        df["player_name"] = df["player_name"].map(
+            str) + df["season"].map(lambda x: " (" + str(x) + ")")
+
+        selection = df[[
+            'player_name',
+            'raptor_offense',
+            'raptor_defense',
+            'war_reg_season',
+            'war_playoffs',
+            'season'
+        ]]
+
+        convert_dict = {
+            'player_name': 'category',
+            'raptor_offense': 'float',
+            'raptor_defense': 'float',
+            'war_reg_season': 'float',
+            'war_playoffs': 'float',
+            'season': 'category'
+        }
+
+        return Dataset('player_name', selection.astype(convert_dict),
+                       'NBA Raptor Scores (Top Players)', {
+            'player_name': {
+                'text': 'Name',
+                'unit': '',
+                'short': 'A',
+                'type': 'label'
+            },
+            'raptor_offense': {
+                'text': 'Raptor Offense',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric'
+            },
+            'raptor_defense': {
+                'text': 'Raptor Defense',
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            'war_reg_season': {
+                'text': 'WAR Regular Season',
+                'unit': '',
+                'short': 'D',
+                'type': 'numeric'
+            },
+            'war_playoffs': {
+                'text': 'WAR Playoffs',
+                'unit': '',
+                'short': 'E',
+                'type': 'numeric'
+            },
+            'season': {
+                'text': 'Season',
+                'unit': '',
+                'short': 'F',
+                'type': 'categorical'
+            },
+        })
+
+    @staticmethod
+    def load_sp500_data() -> 'Dataset':
+        df = pd.read_csv('data/sp500/constituents-financials.csv')
+
+        selection = df[[
+            'Name',
+            'Price',
+            'Earnings/Share',
+            'Price/Sales',
+            'Price/Earnings',
+            'Market Cap',
+            'Sector'
+        ]]
+
+        convert_dict = {
+            'Name': 'category',
+                    'Price': 'float',
+                    'Earnings/Share': 'float',
+                    'Price/Sales': 'float',
+                    'Price/Earnings': 'float',
+                    'Market Cap': 'float',
+                    'Sector': 'category'
+        }
+
+        return Dataset('Name', selection.astype(convert_dict), 'S&P 500 Companies', {
+            'Name': {
+                'text': 'Name',
+                'unit': '',
+                'short': 'A',
+                'type': 'label'
+            },
+            'Price': {
+                'text': 'Price',
+                'unit': '$',
+                'short': 'B',
+                'type': 'numeric'
+            },
+            'Earnings/Share': {
+                'text': 'Earnings per Share',
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            'Price/Sales': {
+                'text': 'Price per Sales',
+                'unit': '',
+                'short': 'D',
+                'type': 'numeric'
+            },
+            'Price/Earnings': {
+                'text': 'Price per Earnings',
+                'unit': '',
+                'short': 'E',
+                'type': 'numeric'
+            },
+            'Market Cap': {
+                'text': 'Market Cap',
+                'unit': '$',
+                'short': 'F',
+                'type': 'numeric'
+            },
+            'Sector': {
+                'text': 'Sector',
+                'unit': '',
+                'short': 'G',
+                'type': 'categorical'
+            },
+        })
