@@ -20,7 +20,9 @@ datasets = {
     'slc_housing': Dataset.load_housing_data(),
     'gapminder_world': Dataset.load_gapminderworld_data(),
     'cluster': Dataset.load_cluster_data(),
-    'depression_dataset': Dataset.load_depression_data()
+    'depression_dataset': Dataset.load_depression_data(),
+    'nba_raptor': Dataset.load_nba_raptor_data(),
+    'sp500': Dataset.load_sp500_data()
 }
 
 views = Blueprint('views', __name__)
