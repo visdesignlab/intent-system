@@ -222,7 +222,7 @@ const PredictionList: FC<Props> = ({
 
       let {dataIds = []} = pred;
 
-      if (exPred.type === PredictionType.Range) {
+      if ((exPred.type === PredictionType.Range) || (exPred.type === PredictionType.RangeSimplified)) {
         dataIds = selectedIds;
         exPred.dataIds = dataIds;
       }
@@ -235,11 +235,11 @@ const PredictionList: FC<Props> = ({
         intentDetails = '',
         info = '',
       ] =
-        exPred.type === PredictionType.Range
+        ((exPred.type === PredictionType.Range) || (exPred.type === PredictionType.RangeSimplified))
           ? ['', '', intent, '', '']
           : intent.split(':');
 
-      if (exPred.type === PredictionType.Range) {
+      if ((exPred.type === PredictionType.Range) || (exPred.type === PredictionType.RangeSimplified)) {
         let {rules} = exPred.info as any;
         if (rules) {
           rules = rules[0];

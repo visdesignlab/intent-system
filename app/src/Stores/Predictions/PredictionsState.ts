@@ -15,6 +15,7 @@ export enum PredictionType {
   LinearRegression = 'LinearRegression',
   NonOutlier = 'Non-Outlier',
   Range = 'Range',
+  RangeSimplified = 'RangeSimplified'
 }
 
 export function getPredictionType(intent: string): PredictionType {
