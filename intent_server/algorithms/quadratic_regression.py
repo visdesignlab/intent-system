@@ -47,11 +47,11 @@ class QuadraticRegression(Intent):
         num_points = 10  # will lead to `num_points + 1` samples
         step = (max_value - min_value) / num_points
 
-        xs = map(lambda i: min_value + i * step, range(num_points+1))
+        xs = map(lambda i: min_value + i * step, range(num_points+1))  # type: ignore
         xs = np.concatenate(list(xs), axis=0).reshape(-1, 1)
         xs_scaled = self.min_max_scaler_x.transform(xs)
         ys = self.min_max_scaler_y.inverse_transform(self.reg.predict(xs_scaled).reshape(-1, 1))
 
         return {
             "threshold": self.threshold,
-            "points": {"xs": xs.tolist(), "ys": ys.tolist()}}
+            "points": {"xs": xs.tolist(), "ys": ys.tolist()}}  # type: ignore

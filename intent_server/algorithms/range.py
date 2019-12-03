@@ -93,5 +93,5 @@ class Range:
 
         if suggestion:
             preds.extend(suggestion)
-        
+
         return preds
