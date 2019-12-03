@@ -27,6 +27,7 @@ import _ from 'lodash';
 import {
   ADD_INTERACTION,
   setShouldGetPreds,
+  setRefineMode,
 } from '../Stores/Visualization/Setup/InteractionsRedux';
 
 interface OwnProps {
@@ -247,6 +248,7 @@ const PlotControl: FC<Props> = (props: Props) => {
 
   function clearAllSelections() {
     setShouldGetPreds(false);
+    setRefineMode(false);
     clearAll();
     setShouldGetPreds(true);
     updatePlots(plots);

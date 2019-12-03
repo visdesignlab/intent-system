@@ -26,11 +26,16 @@ import {areEqual} from '../../Utils';
 import {
   setShouldGetPreds,
   ADD_INTERACTION,
+  setRefineMode,
 } from '../../Stores/Visualization/Setup/InteractionsRedux';
 import {updateAllPlots} from '../../Stores/Visualization/Setup/PlotsRedux';
 import * as d3 from 'd3';
 import {studyProvenance, logToFirebase} from '../..';
 import Events from '../../Stores/Types/EventEnum';
+import {
+  updateRefinedSet,
+  PointAction,
+} from '../../Stores/Visualization/VisualizationStore';
 
 interface Props {
   dataset: Dataset;
@@ -419,7 +424,7 @@ const PredictionList: FC<Props> = ({
                 sorted={column === 'probability' ? sortDirection : undefined}>
                 Probability
               </Table.HeaderCell>
-              <Table.HeaderCell colSpan="2">Options</Table.HeaderCell>
+              <Table.HeaderCell colSpan="3">Options</Table.HeaderCell>
             </Table.Row>
           </Table.Header>
           <Table.Body>
@@ -582,22 +587,54 @@ const PredictionList: FC<Props> = ({
                       }
                       content="Turn into selection"></Popup>
                   </Table.Cell>
-                  {/* <Table.Cell> */}
-                  {/*   <Popup */}
-                  {/*     trigger={ */}
-                  {/*       <Button */}
-                  {/*         onClick={e => { */}
-                  {/*           e.stopPropagation(); */}
-                  {/*           console.log('World'); */}
-                  {/*         }} */}
-                  {/*         icon */}
-                  {/*         disabled */}
-                  {/*         primary> */}
-                  {/*         <Icon name="lock"></Icon> */}
-                  {/*       </Button> */}
-                  {/*     } */}
-                  {/*     content="Lock Intent"></Popup> */}
-                  {/* </Table.Cell> */}
+                  <Table.Cell>
+                    <Popup
+                      trigger={
+                        <Button
+                          onClick={e => {
+                            e.stopPropagation();
+
+                            makePredictionIntoSelection(pred);
+                            setShouldGetPreds(false);
+                            setRefineMode(true);
+
+                            dispatch(
+                              updateRefinedSet(
+                                pred.dataIds || [],
+                                PointAction.ORIGINAL,
+                              ),
+                            );
+
+                            const t = new Date();
+                            studyProvenance.applyAction({
+                              label: Events.LOCK_PREDICTION,
+                              action: () => {
+                                let currentState = studyProvenance.graph()
+                                  .current.state;
+                                if (currentState) {
+                                  currentState = {
+                                    ...currentState,
+                                    event: Events.LOCK_PREDICTION,
+                                    startTime: t,
+                                    eventTime: t,
+                                    selectedPrediction: {
+                                      prediction: pred,
+                                    },
+                                  };
+                                }
+                                return currentState as any;
+                              },
+                              args: [],
+                            });
+                            logToFirebase();
+                          }}
+                          icon
+                          primary>
+                          <Icon name="lock"></Icon>
+                        </Button>
+                      }
+                      content="Lock Intent"></Popup>
+                  </Table.Cell>
                   <Table.Cell>
                     <Popup
                       hoverable

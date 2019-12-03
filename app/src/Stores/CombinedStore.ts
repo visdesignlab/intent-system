@@ -11,6 +11,7 @@ import {InteractionsReducer} from './Visualization/Setup/InteractionsRedux';
 import {PredictionsReducer} from './Predictions/Setup/PredictionRedux';
 import {HideZeroPredictionsReducer} from './Predictions/Setup/HideZeroPredictionsReducer';
 import {PredictionLoadingReducer} from './Predictions/Setup/PredictionLoadingRedux';
+import {RefinedPointsReducer} from './Visualization/VisualizationStore';
 
 export type AppState = VisualizationState & PredictionState;
 
@@ -24,6 +25,7 @@ const combinedReducer = combineReducers<AppState>({
   predictionSet: PredictionsReducer,
   hideZeroPredictions: HideZeroPredictionsReducer,
   isLoading: PredictionLoadingReducer,
+  refinedPoints: RefinedPointsReducer,
 });
 
 export function combinedVisPredStore(state?: any) {

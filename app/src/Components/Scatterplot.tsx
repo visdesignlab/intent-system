@@ -1,6 +1,6 @@
 import {axisBottom, axisLeft, scaleLinear, select, ScaleOrdinal} from 'd3';
 import React, {createRef, FC, RefObject, useEffect, useState} from 'react';
-import {connect} from 'react-redux';
+import {connect, useDispatch} from 'react-redux';
 import {Popup, Table} from 'semantic-ui-react';
 import styled from 'styled-components';
 
@@ -23,9 +23,16 @@ import {
   PointSelection,
   PointDeselection,
 } from '../contract';
-import {ADD_INTERACTION} from '../Stores/Visualization/Setup/InteractionsRedux';
+import {
+  ADD_INTERACTION,
+  refineMode,
+} from '../Stores/Visualization/Setup/InteractionsRedux';
 import {min, max} from 'lodash';
 import {AppState} from '../Stores/CombinedStore';
+import {
+  updateRefinedSet,
+  PointAction,
+} from '../Stores/Visualization/VisualizationStore';
 
 interface OwnProps {
   plot: SinglePlot;
@@ -334,10 +341,16 @@ const Scatterplot: FC<Props> = ({
     ...keysArray.filter(k => !currentColumns.includes(k)),
   ];
 
+  const dispatch = useDispatch();
+
   function circularMarks(d: any, i: number) {
     return clickSelectedPoints.includes(i) ? (
       <IntersectionMark
         onClick={() => {
+          if (refineMode) {
+            dispatch(updateRefinedSet([i], PointAction.REMOVE));
+          }
+
           if (
             !otherPointSelection[plot.id] ||
             !otherPointSelection[plot.id].includes(i)
@@ -364,12 +377,22 @@ const Scatterplot: FC<Props> = ({
       selectedIndices[i] === maxIntersection ||
       multiBrushBehavior === MultiBrushBehavior.UNION ? (
         <IntersectionMark
+          onClick={() => {
+            if (refineMode) {
+              dispatch(updateRefinedSet([i], PointAction.REMOVE));
+            }
+          }}
           className={`mark ${dataset.data[i][HASH]}`}
           cx={xScale(d.x)}
           cy={yScale(d.y)}
           r={markSize}></IntersectionMark>
       ) : (
         <UnionMark
+          onClick={() => {
+            if (refineMode) {
+              dispatch(updateRefinedSet([i], PointAction.REMOVE));
+            }
+          }}
           className={`mark ${dataset.data[i][HASH]}`}
           cx={xScale(d.x)}
           cy={yScale(d.y)}
@@ -378,6 +401,9 @@ const Scatterplot: FC<Props> = ({
     ) : (
       <RegularMark
         onClick={() => {
+          if (refineMode) {
+            dispatch(updateRefinedSet([i], PointAction.ADD));
+          }
           let points = plot.selectedPoints;
           if (!points.includes(i)) points.push(i);
           plot.selectedPoints = points;
@@ -547,7 +573,7 @@ const Scatterplot: FC<Props> = ({
     </g>
   );
 
-  const [first, second] = [BrushLayer, MarksLayer];
+  const [first, second] = [refineMode ? <g></g> : BrushLayer, MarksLayer];
 
   return (
     <g className={`plot${plot.id}`}>
