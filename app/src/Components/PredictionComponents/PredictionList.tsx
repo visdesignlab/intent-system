@@ -144,8 +144,8 @@ const PredictionList: FC<Props> = ({
       const y1 = points.y1[0];
       const y2 = points.y2[0];
 
-      console.log(xScale.domain(), xScale.range())
-      console.log(yScale.domain(), yScale.range())
+      console.log(xScale.domain(), xScale.range());
+      console.log(yScale.domain(), yScale.range());
 
       regressionArea
         .selectAll('.regression-line')
@@ -220,7 +220,10 @@ const PredictionList: FC<Props> = ({
 
       let {dataIds = []} = pred;
 
-      if ((exPred.type === PredictionType.Range) || (exPred.type === PredictionType.RangeSimplified)) {
+      if (
+        exPred.type === PredictionType.Range ||
+        exPred.type === PredictionType.RangeSimplified
+      ) {
         dataIds = selectedIds;
         exPred.dataIds = dataIds;
       }
@@ -233,11 +236,15 @@ const PredictionList: FC<Props> = ({
         intentDetails = '',
         info = '',
       ] =
-        ((exPred.type === PredictionType.Range) || (exPred.type === PredictionType.RangeSimplified))
+        exPred.type === PredictionType.Range ||
+        exPred.type === PredictionType.RangeSimplified
           ? ['', '', intent, '', '']
           : intent.split(':');
 
-      if ((exPred.type === PredictionType.Range) || (exPred.type === PredictionType.RangeSimplified)) {
+      if (
+        exPred.type === PredictionType.Range ||
+        exPred.type === PredictionType.RangeSimplified
+      ) {
         let {rules} = exPred.info as any;
         if (rules) {
           rules = rules[0];
@@ -391,8 +398,8 @@ const PredictionList: FC<Props> = ({
                 d => d,
               );
 
-              const fullDimensionName = dimensionArr.map(
-                d => dataset.columnMaps[d].text,
+              const fullDimensionName = dimensionArr.map(d =>
+                dataset.columnMaps[d] ? dataset.columnMaps[d].text : '',
               );
 
               const {matches, ipns, isnp} = pred;
@@ -409,17 +416,17 @@ const PredictionList: FC<Props> = ({
                   }
                   key={intent}
                   onClick={() => {
-                    console.log(pred);
+                    // console.log(pred);
                     const t = new Date();
                     studyProvenance.applyAction({
-                      label: Events.ANNOTATE,
+                      label: Events.CLICK_PREDICTION,
                       action: () => {
                         let currentState = studyProvenance.graph().current
                           .state;
                         if (currentState) {
                           currentState = {
                             ...currentState,
-                            event: Events.SUBMIT_PREDICTION,
+                            event: Events.CLICK_PREDICTION,
                             startTime: t,
                             eventTime: t,
                             selectedPrediction: {
@@ -439,10 +446,16 @@ const PredictionList: FC<Props> = ({
                       return (
                         <Popup
                           key={name}
-                          content={dataset.columnMaps[name].text}
+                          content={
+                            dataset.columnMaps[name]
+                              ? dataset.columnMaps[name].text
+                              : ''
+                          }
                           trigger={
                             <Label circular size="mini">
-                              {dataset.columnMaps[name].short}
+                              {dataset.columnMaps[name]
+                                ? dataset.columnMaps[name].short
+                                : ''}
                             </Label>
                           }></Popup>
                       );

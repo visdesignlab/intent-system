@@ -1,9 +1,11 @@
 import {Dataset, ColumnMap, emptyDataset, HASH} from '../../Types/Dataset';
 import {Action, Reducer} from 'redux';
 import {text} from 'd3';
-import {AppProvenance} from '../../..';
+import {AppProvenance, studyProvenance} from '../../..';
 import {recordableReduxActionCreator} from '@visdesignlab/provenance-lib-core/lib/src';
 import {hashCode} from '../../../Utils';
+import Events from '../../Types/EventEnum';
+import {StudyState} from '../../Study/StudyState';
 
 export const DATASET_UPDATE = 'DATASET_UPDATE';
 export type DATASET_UPDATE = typeof DATASET_UPDATE;
@@ -82,6 +84,21 @@ export const loadDataset = async (url: string) => {
   };
 
   AppProvenance.apply(updateDataset(parsedDataset));
+
+  studyProvenance.applyAction({
+    label: Events.ADD_INTERACTION,
+    action: () => {
+      let currentState = studyProvenance.graph().current.state;
+      if (currentState) {
+        currentState = {
+          ...currentState,
+          dataset: parsedDataset.name,
+        };
+      }
+      return currentState as StudyState;
+    },
+    args: [],
+  });
 
   // console.log(VisualizationProvenance.graph().current.state);
   // console.table(Object.values(VisualizationProvenance.graph().nodes));

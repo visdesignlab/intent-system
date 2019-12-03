@@ -5,6 +5,7 @@ import {Prediction, PredictionSet, InteractionHistory} from '../../contract';
 
 export interface StudyState {
   participant: ParticipantDetails;
+  dataset: string;
   task: TaskDetails;
   event: Events;
   startTime: Date;
@@ -28,6 +29,7 @@ export const defaultStudyState: StudyState = {
     uniqueId: null as any,
     name: null as any,
   },
+  dataset: '',
   task: {
     taskId: -1,
     order: -1,

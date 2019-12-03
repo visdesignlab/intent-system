@@ -25,8 +25,6 @@ const LiveIntent: FC<Props> = ({initialText}: Props) => {
 
   const predText = JSON.stringify(predictions);
 
-  let temp: any = '';
-
   useEffect(() => {
     const predictions: Prediction[] = JSON.parse(predText);
 
@@ -47,13 +45,7 @@ const LiveIntent: FC<Props> = ({initialText}: Props) => {
           ? ['', '', intent, '', '']
           : intent.split(':');
 
-      temp = JSON.stringify([
-        hash,
-        dimensions,
-        intentName,
-        intentDetails,
-        info,
-      ]);
+      JSON.stringify([hash, dimensions, intentName, intentDetails, info]);
 
       let text = '';
       switch (type) {
@@ -95,15 +87,14 @@ const LiveIntent: FC<Props> = ({initialText}: Props) => {
           break;
       }
 
-      if (intentText !== text) setIntentText(text);
+      setIntentText(text);
     } else {
-      if (intentText !== '') setIntentText('');
+      setIntentText('');
     }
   }, [predText]);
 
   return (
     <Card fluid style={intentDivStyle}>
-      <div style={{visibility: 'hidden', height: 0}}>{temp}</div>
       <Card.Content>
         <Header as="h1" textAlign="center">
           Intent
