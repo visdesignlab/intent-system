@@ -385,7 +385,7 @@ const PredictionList: FC<Props> = ({
                 sorted={column === 'probability' ? sortDirection : undefined}>
                 Probability
               </Table.HeaderCell>
-              <Table.HeaderCell colSpan="3">Options</Table.HeaderCell>
+              <Table.HeaderCell colSpan="2">Options</Table.HeaderCell>
             </Table.Row>
           </Table.Header>
           <Table.Body>
@@ -542,22 +542,22 @@ const PredictionList: FC<Props> = ({
                       }
                       content="Turn into selection"></Popup>
                   </Table.Cell>
-                  <Table.Cell>
-                    <Popup
-                      trigger={
-                        <Button
-                          onClick={e => {
-                            e.stopPropagation();
-                            console.log('World');
-                          }}
-                          icon
-                          disabled
-                          primary>
-                          <Icon name="lock"></Icon>
-                        </Button>
-                      }
-                      content="Lock Intent"></Popup>
-                  </Table.Cell>
+                  {/* <Table.Cell> */}
+                  {/*   <Popup */}
+                  {/*     trigger={ */}
+                  {/*       <Button */}
+                  {/*         onClick={e => { */}
+                  {/*           e.stopPropagation(); */}
+                  {/*           console.log('World'); */}
+                  {/*         }} */}
+                  {/*         icon */}
+                  {/*         disabled */}
+                  {/*         primary> */}
+                  {/*         <Icon name="lock"></Icon> */}
+                  {/*       </Button> */}
+                  {/*     } */}
+                  {/*     content="Lock Intent"></Popup> */}
+                  {/* </Table.Cell> */}
                   <Table.Cell>
                     <Popup
                       hoverable

@@ -42,7 +42,7 @@ export const getDatasetUrl = (datasetName: string) => `/dataset/${datasetName}`;
 export const {config, app: firebaseApp, firestore} = setupFirebase();
 
 export let participant: ParticipantDetails = {
-  uniqueId: getRandomUserCode(),
+  uniqueId: `${getRandomUserCode()}`,
 };
 
 console.log(participant.uniqueId);
