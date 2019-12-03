@@ -2,6 +2,7 @@ import ParticipantDetails from '../Types/ParticipantDetails';
 import TaskDetails from '../Types/TaskDetails';
 import Events from '../Types/EventEnum';
 import {Prediction, PredictionSet, InteractionHistory} from '../../contract';
+import {RefinedPoints} from '../Visualization/VisualizationStore';
 
 export interface StudyState {
   participant: ParticipantDetails;
@@ -18,6 +19,7 @@ export interface StudyState {
     prediction: Prediction | null;
     comment?: string;
   };
+  refinedPoints: RefinedPoints;
   answer: {
     submissions: any[];
     comment?: string;
@@ -41,6 +43,7 @@ export const defaultStudyState: StudyState = {
   eventTime: null as any,
   annotation: '',
   interactions: [],
+  refinedPoints: null as any,
   predictionSet: null as any,
   selectedPrediction: {
     prediction: null,
