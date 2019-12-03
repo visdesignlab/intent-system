@@ -109,10 +109,6 @@ const PredictionList: FC<Props> = ({
     }
   }
 
-  function lineGenerator(intercept: number, coeff: number) {
-    return (x: number) => coeff * x + intercept;
-  }
-
   function showRegressionLine(
     isThisSelected: boolean | null,
     pred: TypedPrediction,
@@ -142,19 +138,14 @@ const PredictionList: FC<Props> = ({
         .domain(scales.y.domain)
         .range(scales.y.range);
 
-      let {intercept, coef} = pred.info as any;
+      let {points} = pred.info as any;
+      const x1 = points.x1s[0];
+      const x2 = points.x2s[0];
+      const y1 = points.y1[0];
+      const y2 = points.y2[0];
 
-      if (!intercept || !coef) return;
-
-      coef = coef.length > 0 ? coef[0] : coef;
-
-      const lineGen = lineGenerator(intercept, coef);
-
-      const x1 = scales.x.domain[0];
-      const x2 = scales.x.domain[1];
-
-      const y1 = lineGen(x1);
-      const y2 = lineGen(x2);
+      console.log(xScale.domain(), xScale.range())
+      console.log(yScale.domain(), yScale.range())
 
       regressionArea
         .selectAll('.regression-line')
@@ -229,7 +220,7 @@ const PredictionList: FC<Props> = ({
 
       let {dataIds = []} = pred;
 
-      if (exPred.type === PredictionType.Range) {
+      if ((exPred.type === PredictionType.Range) || (exPred.type === PredictionType.RangeSimplified)) {
         dataIds = selectedIds;
         exPred.dataIds = dataIds;
       }
@@ -242,11 +233,11 @@ const PredictionList: FC<Props> = ({
         intentDetails = '',
         info = '',
       ] =
-        exPred.type === PredictionType.Range
+        ((exPred.type === PredictionType.Range) || (exPred.type === PredictionType.RangeSimplified))
           ? ['', '', intent, '', '']
           : intent.split(':');
 
-      if (exPred.type === PredictionType.Range) {
+      if ((exPred.type === PredictionType.Range) || (exPred.type === PredictionType.RangeSimplified)) {
         let {rules} = exPred.info as any;
         if (rules) {
           rules = rules[0];

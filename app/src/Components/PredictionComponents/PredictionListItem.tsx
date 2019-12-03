@@ -59,7 +59,10 @@ const _PredictionListJaccardItem: FC<Props> = ({
     if (intentDetails.includes('within')) {
       intentName = 'Within Lin. Reg.';
     }
+  } else if (type === PredictionType.RangeSimplified) {
+      intentName = 'Range (Simplified)';
   }
+
 
   return (
     <svg ref={svgRef} height={barHeight} width="100%">

@@ -75,16 +75,18 @@ class Range:
             sugg_model = tree.DecisionTreeClassifier(max_depth=model.get_depth() - 1)
             sugg_model.fit(df, selection)
             sugg_paths = decision_rules(sugg_model, selection, df)
-            suggestion = [Prediction(
-                intent=self.to_string() + ":Suggestion",
+            sugg_pred = Prediction(
+                intent=self.to_string() + "Simplified",
                 data_ids=[],
                 suggestion=None,
-                rank=0.3,
-                info={"rules": list(sugg_paths)})]
+                rank=(1 / (model.get_depth() * model.get_depth()))-0.0001,
+                info={"rules": list(sugg_paths)})
+            suggestion = [sugg_pred]
 
         return [Prediction(
             intent=self.to_string(),
             rank=1 / (model.get_depth() * model.get_depth()),
             data_ids=[],
             info={"rules": list(paths)},
-            suggestion=suggestion)]
+            suggestion=suggestion),
+            sugg_pred]

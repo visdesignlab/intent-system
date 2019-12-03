@@ -24,7 +24,9 @@ datasets = {
     'MDAMB231MacrophageCocultureControl': Dataset.load_coculture_control(),
     'MDAMB231MacrophageCocultureMito': Dataset.load_coculture_mito(),
     'MDAMB231MacrophageMacroControl': Dataset.load_macro_control(),
-    'MDAMB231MacrophageMacroMito': Dataset.load_macro_mito()
+    'MDAMB231MacrophageMacroMito': Dataset.load_macro_mito(),
+    'nba_raptor': Dataset.load_nba_raptor_data(),
+    'sp500': Dataset.load_sp500_data()
 }
 
 views = Blueprint('views', __name__)
@@ -40,9 +42,9 @@ def route_dataset_list():  # type: ignore
     finalDatasets = []
     for key in list(datasets.keys()):
         finalDatasets.append({
-                'key': key,
-                'name': datasets[key].name
-            })
+            'key': key,
+            'name': datasets[key].name
+        })
     return jsonify(finalDatasets)
 
 

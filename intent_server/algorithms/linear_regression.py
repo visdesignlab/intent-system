@@ -39,7 +39,13 @@ class LinearRegression(Intent):
         return "LinearRegression"
 
     def info(self) -> Optional[Dict[str, Any]]:
+        x1 = self.min_max_scaler_x.data_min_
+        x2 = self.min_max_scaler_x.data_max_
+        y1 = self.min_max_scaler_y.inverse_transform(self.reg.predict([[0]]).reshape(1, -1))
+        y2 = self.min_max_scaler_y.inverse_transform(self.reg.predict([[1]]).reshape(1, -1))
         return {
             "threshold": self.threshold,
-            "coef": list(self.reg.coef_),
-            "intercept": self.reg.intercept_}
+            "points": {"x1s": x1.tolist(),
+                       "y1": y1.tolist(),
+                       "x2s": x2.tolist(),
+                       "y2": y2.tolist()}}

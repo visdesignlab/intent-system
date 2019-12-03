@@ -568,3 +568,142 @@ class Dataset:
                 'type': 'numeric'
             },
         })
+
+    @staticmethod
+    def load_nba_raptor_data() -> 'Dataset':
+        df = pd.read_csv('data/modern_RAPTOR_by_player.csv')
+        # is_season = df['season'] == 2019
+
+        # df = df[is_season]
+        enough_mp = df['mp'] >= 2500
+        df = df[enough_mp]
+        df.astype({'season': str})
+        df["player_name"] = df["player_name"].map(
+            str) + df["season"].map(lambda x: " (" + str(x) + ")")
+
+        selection = df[[
+            'player_name',
+            'raptor_offense',
+            'raptor_defense',
+            'war_reg_season',
+            'war_playoffs',
+            'season'
+        ]]
+
+        convert_dict = {
+            'player_name': 'category',
+            'raptor_offense': 'float',
+            'raptor_defense': 'float',
+            'war_reg_season': 'float',
+            'war_playoffs': 'float',
+            'season': 'category'
+        }
+
+        return Dataset('player_name', selection.astype(convert_dict),
+                       'NBA Raptor Scores (Top Players)', {
+            'player_name': {
+                'text': 'Name',
+                'unit': '',
+                'short': 'A',
+                'type': 'label'
+            },
+            'raptor_offense': {
+                'text': 'Raptor Offense',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric'
+            },
+            'raptor_defense': {
+                'text': 'Raptor Defense',
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            'war_reg_season': {
+                'text': 'WAR Regular Season',
+                'unit': '',
+                'short': 'D',
+                'type': 'numeric'
+            },
+            'war_playoffs': {
+                'text': 'WAR Playoffs',
+                'unit': '',
+                'short': 'E',
+                'type': 'numeric'
+            },
+            'season': {
+                'text': 'Season',
+                'unit': '',
+                'short': 'F',
+                'type': 'categorical'
+            },
+        })
+
+    @staticmethod
+    def load_sp500_data() -> 'Dataset':
+        df = pd.read_csv('data/sp500/constituents-financials.csv')
+
+        selection = df[[
+            'Name',
+            'Price',
+            'Earnings/Share',
+            'Price/Sales',
+            'Price/Earnings',
+            'Market Cap',
+            'Sector'
+        ]]
+
+        convert_dict = {
+            'Name': 'category',
+                    'Price': 'float',
+                    'Earnings/Share': 'float',
+                    'Price/Sales': 'float',
+                    'Price/Earnings': 'float',
+                    'Market Cap': 'float',
+                    'Sector': 'category'
+        }
+
+        return Dataset('Name', selection.astype(convert_dict), 'S&P 500 Companies', {
+            'Name': {
+                'text': 'Name',
+                'unit': '',
+                'short': 'A',
+                'type': 'label'
+            },
+            'Price': {
+                'text': 'Price',
+                'unit': '$',
+                'short': 'B',
+                'type': 'numeric'
+            },
+            'Earnings/Share': {
+                'text': 'Earnings per Share',
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            'Price/Sales': {
+                'text': 'Price per Sales',
+                'unit': '',
+                'short': 'D',
+                'type': 'numeric'
+            },
+            'Price/Earnings': {
+                'text': 'Price per Earnings',
+                'unit': '',
+                'short': 'E',
+                'type': 'numeric'
+            },
+            'Market Cap': {
+                'text': 'Market Cap',
+                'unit': '$',
+                'short': 'F',
+                'type': 'numeric'
+            },
+            'Sector': {
+                'text': 'Sector',
+                'unit': '',
+                'short': 'G',
+                'type': 'categorical'
+            },
+        })
