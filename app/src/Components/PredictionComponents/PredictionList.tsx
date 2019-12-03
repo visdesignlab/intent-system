@@ -29,6 +29,7 @@ import {
   setRefineMode,
 } from '../../Stores/Visualization/Setup/InteractionsRedux';
 import {updateAllPlots} from '../../Stores/Visualization/Setup/PlotsRedux';
+import * as d3 from 'd3';
 import {studyProvenance, logToFirebase} from '../..';
 import Events from '../../Stores/Types/EventEnum';
 import {
@@ -149,9 +150,6 @@ const PredictionList: FC<Props> = ({
       const y1 = points.y1[0];
       const y2 = points.y2[0];
 
-      console.log(xScale.domain(), xScale.range());
-      console.log(yScale.domain(), yScale.range());
-
       regressionArea
         .selectAll('.regression-line')
         .data([1])
@@ -170,6 +168,44 @@ const PredictionList: FC<Props> = ({
               .attr('x2', xScale(x2))
               .attr('y1', yScale(y1))
               .attr('y2', yScale(y2)),
+          exit => exit.remove(),
+        );
+      setSelectedPrediction(pred);
+    } else if(!isThisSelected && pred.type === PredictionType.QuadraticRegression) {
+      const scales: ScaleStorage = JSON.parse(
+        regressionArea.attr('data-scale'),
+      );
+  
+      const xScale = scaleLinear()
+        .domain(scales.x.domain)
+        .range(scales.x.range);
+      const yScale = scaleLinear()
+        .domain(scales.y.domain)
+        .range(scales.y.range);
+  
+      let {points} = pred.info as any;
+      const xs : Array<number> = points.xs.flat();
+      const ys : Array<number> = points.ys.flat();
+
+      const zipper = d3.zip(xs,ys);
+      const lineGen = d3.line()
+        .curve(d3.curveNatural)
+        .x(d => xScale(d[0]))
+        .y(d => yScale(d[1]));
+      const pathStr = lineGen(zipper as [number, number][]);
+
+      regressionArea
+        .selectAll('.regression-line')
+        .data([1])
+        .join(
+          enter =>
+            enter
+              .append('path')
+              .attr('d', d => pathStr)
+              .classed('regression-line', true),
+          update =>
+            update
+            .attr('d', d => pathStr),
           exit => exit.remove(),
         );
       setSelectedPrediction(pred);

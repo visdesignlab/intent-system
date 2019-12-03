@@ -32,6 +32,7 @@ code {
   stroke: red;
   color: red;
   stroke-width: 2px;
+  fill: none;
 }
 
 .containment_highlight {
