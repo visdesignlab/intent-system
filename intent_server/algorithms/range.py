@@ -92,6 +92,6 @@ class Range:
         ]
 
         if suggestion:
-            return preds.extend(suggestion)
-        else:
-            return preds
+            preds.extend(suggestion)
+        
+        return preds
