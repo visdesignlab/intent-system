@@ -28,6 +28,8 @@ import {
   ADD_INTERACTION,
 } from '../../Stores/Visualization/Setup/InteractionsRedux';
 import {updateAllPlots} from '../../Stores/Visualization/Setup/PlotsRedux';
+import {studyProvenance, logToFirebase} from '../..';
+import Events from '../../Stores/Types/EventEnum';
 
 interface Props {
   dataset: Dataset;
@@ -142,8 +144,8 @@ const PredictionList: FC<Props> = ({
       const y1 = points.y1[0];
       const y2 = points.y2[0];
 
-      console.log(xScale.domain(), xScale.range())
-      console.log(yScale.domain(), yScale.range())
+      console.log(xScale.domain(), xScale.range());
+      console.log(yScale.domain(), yScale.range());
 
       regressionArea
         .selectAll('.regression-line')
@@ -193,6 +195,11 @@ const PredictionList: FC<Props> = ({
 
   const extendedPredictionString = JSON.stringify(extendedPredictions);
 
+  if (predictions.length === 0) {
+    selectAll('.mark').classed('tone_down_others', false);
+    selectAll('.regression_line').html('');
+  }
+
   useEffect(() => {
     const memoizedPredictions: Prediction[] = JSON.parse(predictionString);
 
@@ -213,7 +220,10 @@ const PredictionList: FC<Props> = ({
 
       let {dataIds = []} = pred;
 
-      if ((exPred.type === PredictionType.Range) || (exPred.type === PredictionType.RangeSimplified)) {
+      if (
+        exPred.type === PredictionType.Range ||
+        exPred.type === PredictionType.RangeSimplified
+      ) {
         dataIds = selectedIds;
         exPred.dataIds = dataIds;
       }
@@ -226,11 +236,15 @@ const PredictionList: FC<Props> = ({
         intentDetails = '',
         info = '',
       ] =
-        ((exPred.type === PredictionType.Range) || (exPred.type === PredictionType.RangeSimplified))
+        exPred.type === PredictionType.Range ||
+        exPred.type === PredictionType.RangeSimplified
           ? ['', '', intent, '', '']
           : intent.split(':');
 
-      if ((exPred.type === PredictionType.Range) || (exPred.type === PredictionType.RangeSimplified)) {
+      if (
+        exPred.type === PredictionType.Range ||
+        exPred.type === PredictionType.RangeSimplified
+      ) {
         let {rules} = exPred.info as any;
         if (rules) {
           rules = rules[0];
@@ -294,6 +308,8 @@ const PredictionList: FC<Props> = ({
     const {dataIds = []} = prediction;
     if (dataIds.length < 1) return;
 
+    selectAll('.mark').classed('tone_down_others', false);
+    selectAll('.regression_line').html('');
     setShouldGetPreds(false);
     clearAll();
     let plot = plots[0];
@@ -367,7 +383,7 @@ const PredictionList: FC<Props> = ({
                 sorted={column === 'probability' ? sortDirection : undefined}>
                 Probability
               </Table.HeaderCell>
-              <Table.HeaderCell colSpan="3">Options</Table.HeaderCell>
+              <Table.HeaderCell colSpan="2">Options</Table.HeaderCell>
             </Table.Row>
           </Table.Header>
           <Table.Body>
@@ -382,8 +398,8 @@ const PredictionList: FC<Props> = ({
                 d => d,
               );
 
-              const fullDimensionName = dimensionArr.map(
-                d => dataset.columnMaps[d].text,
+              const fullDimensionName = dimensionArr.map(d =>
+                dataset.columnMaps[d] ? dataset.columnMaps[d].text : '',
               );
 
               const {matches, ipns, isnp} = pred;
@@ -400,7 +416,29 @@ const PredictionList: FC<Props> = ({
                   }
                   key={intent}
                   onClick={() => {
-                    console.log(pred);
+                    // console.log(pred);
+                    const t = new Date();
+                    studyProvenance.applyAction({
+                      label: Events.CLICK_PREDICTION,
+                      action: () => {
+                        let currentState = studyProvenance.graph().current
+                          .state;
+                        if (currentState) {
+                          currentState = {
+                            ...currentState,
+                            event: Events.CLICK_PREDICTION,
+                            startTime: t,
+                            eventTime: t,
+                            selectedPrediction: {
+                              prediction: pred,
+                            },
+                          };
+                        }
+                        return currentState as any;
+                      },
+                      args: [],
+                    });
+                    logToFirebase();
                     onPredictionClick(pred, countries, dimensionArr);
                   }}>
                   <Table.Cell>
@@ -408,10 +446,16 @@ const PredictionList: FC<Props> = ({
                       return (
                         <Popup
                           key={name}
-                          content={dataset.columnMaps[name].text}
+                          content={
+                            dataset.columnMaps[name]
+                              ? dataset.columnMaps[name].text
+                              : ''
+                          }
                           trigger={
                             <Label circular size="mini">
-                              {dataset.columnMaps[name].short}
+                              {dataset.columnMaps[name]
+                                ? dataset.columnMaps[name].short
+                                : ''}
                             </Label>
                           }></Popup>
                       );
@@ -469,6 +513,30 @@ const PredictionList: FC<Props> = ({
                         <Button
                           onClick={e => {
                             e.stopPropagation();
+
+                            const t = new Date();
+                            studyProvenance.applyAction({
+                              label: Events.TURN_INTO_SELECTION,
+                              action: () => {
+                                let currentState = studyProvenance.graph()
+                                  .current.state;
+                                if (currentState) {
+                                  currentState = {
+                                    ...currentState,
+                                    event: Events.TURN_INTO_SELECTION,
+                                    startTime: t,
+                                    eventTime: t,
+                                    selectedPrediction: {
+                                      prediction: pred,
+                                    },
+                                  };
+                                }
+                                return currentState as any;
+                              },
+                              args: [],
+                            });
+                            logToFirebase();
+
                             makePredictionIntoSelection(pred);
                           }}
                           icon
@@ -478,22 +546,22 @@ const PredictionList: FC<Props> = ({
                       }
                       content="Turn into selection"></Popup>
                   </Table.Cell>
-                  <Table.Cell>
-                    <Popup
-                      trigger={
-                        <Button
-                          onClick={e => {
-                            e.stopPropagation();
-                            console.log('World');
-                          }}
-                          icon
-                          disabled
-                          primary>
-                          <Icon name="lock"></Icon>
-                        </Button>
-                      }
-                      content="Lock Intent"></Popup>
-                  </Table.Cell>
+                  {/* <Table.Cell> */}
+                  {/*   <Popup */}
+                  {/*     trigger={ */}
+                  {/*       <Button */}
+                  {/*         onClick={e => { */}
+                  {/*           e.stopPropagation(); */}
+                  {/*           console.log('World'); */}
+                  {/*         }} */}
+                  {/*         icon */}
+                  {/*         disabled */}
+                  {/*         primary> */}
+                  {/*         <Icon name="lock"></Icon> */}
+                  {/*       </Button> */}
+                  {/*     } */}
+                  {/*     content="Lock Intent"></Popup> */}
+                  {/* </Table.Cell> */}
                   <Table.Cell>
                     <Popup
                       hoverable

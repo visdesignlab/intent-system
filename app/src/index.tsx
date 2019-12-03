@@ -42,7 +42,7 @@ export const getDatasetUrl = (datasetName: string) => `/dataset/${datasetName}`;
 export const {config, app: firebaseApp, firestore} = setupFirebase();
 
 export let participant: ParticipantDetails = {
-  uniqueId: getRandomUserCode(),
+  uniqueId: `${getRandomUserCode()}`,
 };
 
 console.log(participant.uniqueId);
@@ -55,7 +55,7 @@ if (window.location.href.includes('#')) {
   participant.uniqueId = `${participant.uniqueId}-${uniqueId}`;
 }
 
-const logToFirebase = () => {
+export const logToFirebase = () => {
   const masterList = firestore.collection('master').doc('list');
 
   masterList
@@ -149,7 +149,7 @@ export function initializeTaskManager() {
 
 export const taskManager = initializeTaskManager();
 
-export let datasetName = 'depression_dataset';
+export let datasetName = 'cluster';
 
 export async function loadDatasetByName(ds: string = datasetName) {
   if (datasetName !== ds) datasetName = ds;

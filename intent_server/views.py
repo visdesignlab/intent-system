@@ -21,6 +21,10 @@ datasets = {
     'gapminder_world': Dataset.load_gapminderworld_data(),
     'cluster': Dataset.load_cluster_data(),
     'depression_dataset': Dataset.load_depression_data(),
+    'MDAMB231MacrophageCocultureControl': Dataset.load_coculture_control(),
+    'MDAMB231MacrophageCocultureMito': Dataset.load_coculture_mito(),
+    'MDAMB231MacrophageMacroControl': Dataset.load_macro_control(),
+    'MDAMB231MacrophageMacroMito': Dataset.load_macro_mito(),
     'nba_raptor': Dataset.load_nba_raptor_data(),
     'sp500': Dataset.load_sp500_data()
 }
@@ -38,9 +42,9 @@ def route_dataset_list():  # type: ignore
     finalDatasets = []
     for key in list(datasets.keys()):
         finalDatasets.append({
-                'key': key,
-                'name': datasets[key].name
-            })
+            'key': key,
+            'name': datasets[key].name
+        })
     return jsonify(finalDatasets)
 
 
