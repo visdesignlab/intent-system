@@ -76,7 +76,7 @@ class Range:
             sugg_model.fit(df, selection)
             sugg_paths = decision_rules(sugg_model, selection, df)
             sugg_pred = Prediction(
-                intent=self.to_string() + " (Simplified)",
+                intent=self.to_string() + "Simplified",
                 data_ids=[],
                 suggestion=None,
                 rank=(1 / (model.get_depth() * model.get_depth()))-0.0001,
