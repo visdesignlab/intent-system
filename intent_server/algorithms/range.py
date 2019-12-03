@@ -83,10 +83,15 @@ class Range:
                 info={"rules": list(sugg_paths)})
             suggestion = [sugg_pred]
 
-        return [Prediction(
+        preds = [Prediction(
             intent=self.to_string(),
             rank=1 / (model.get_depth() * model.get_depth()),
             data_ids=[],
             info={"rules": list(paths)},
             suggestion=suggestion),
-            sugg_pred]
+            ]
+  
+        if suggestion:
+            return preds.extend(suggestion)
+        else:
+            return preds 

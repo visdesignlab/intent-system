@@ -182,6 +182,7 @@ const PredictionList: FC<Props> = ({
 
       const zipper = d3.zip(xs,ys);
       const lineGen = d3.line()
+        .curve(d3.curveNatural)
         .x(d => xScale(d[0]))
         .y(d => yScale(d[1]));
       const pathStr = lineGen(zipper as [number, number][]);
