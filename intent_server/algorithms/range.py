@@ -89,9 +89,9 @@ class Range:
             data_ids=[],
             info={"rules": list(paths)},
             suggestion=suggestion),
-            ]
-  
+        ]
+
         if suggestion:
             return preds.extend(suggestion)
         else:
-            return preds 
+            return preds
