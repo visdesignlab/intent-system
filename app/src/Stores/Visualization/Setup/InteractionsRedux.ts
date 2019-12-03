@@ -55,6 +55,12 @@ export function getPredictionAfterBrushSwitch(
 
 let shouldGetPreds: boolean = true;
 
+export let refineMode: boolean = false;
+
+export function setRefineMode(val: boolean) {
+  refineMode = val;
+}
+
 export function setShouldGetPreds(val: boolean) {
   shouldGetPreds = val;
 }
