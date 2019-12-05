@@ -36,7 +36,7 @@ class Skyline(Intent):
     def compute(self, df: pd.DataFrame) -> pd.DataFrame:
         data = df.select_dtypes(include=['number'])
 
-        permutations = []
+        permutations = []  # type: ignore
 
         if len(df.columns) > 2:
             permutations = [list(itertools.repeat(-1, len(data.columns))),
