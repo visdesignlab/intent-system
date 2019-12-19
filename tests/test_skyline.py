@@ -47,7 +47,7 @@ def test_skyline():
     data = np.array([a, b, c, d, e, f])
     df = pd.DataFrame(data=data)
     skyline = Skyline().compute(df).iloc[:, 3].transpose().values
-    assert np.array_equal(skyline, np.array([1, 1, 0, 1, 0, 0]))
+    assert np.array_equal(skyline, np.array([1, 0, 1, 0, 1, 1]))
 
 
 def test_skyline_unordered():
@@ -60,7 +60,7 @@ def test_skyline_unordered():
     data = np.array([f, e, b, d, a, c])
     df = pd.DataFrame(data=data)
     skyline = Skyline().compute(df).iloc[:, 3].transpose().values
-    assert np.array_equal(skyline, np.array([0, 0, 1, 1, 1, 0]))
+    assert np.array_equal(skyline, np.array([1, 1, 0, 0, 1, 1]))
 
 
 def test_skyline_nan():
@@ -75,4 +75,4 @@ def test_skyline_nan():
     data = np.array([a, b, c, d, e, f, g, h])
     df = pd.DataFrame(data=data)
     skyline = Skyline().compute(df).iloc[:, 3].transpose().values
-    assert np.array_equal(skyline, np.array([1, 1, 0, 1, 0, 0, 0, 0]))
+    assert np.array_equal(skyline, np.array([1,0,1,0,1,1,1,1]))
