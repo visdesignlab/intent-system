@@ -60,9 +60,8 @@ const _PredictionListJaccardItem: FC<Props> = ({
       intentName = 'Within Lin. Reg.';
     }
   } else if (type === PredictionType.RangeSimplified) {
-      intentName = 'Range (Simplified)';
+    intentName = 'Range (Simplified)';
   }
-
 
   return (
     <svg ref={svgRef} height={barHeight} width="100%">
