@@ -6,6 +6,7 @@ import itertools
 
 from typing import Optional, Dict, Any
 
+
 ##################################################################################
 # From: https://maxhalford.github.io/blog/skyline-queries-in-python/
 def count_diffs(a, b, to_min, to_max):
