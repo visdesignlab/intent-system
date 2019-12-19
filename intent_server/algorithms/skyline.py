@@ -3,13 +3,14 @@ from ..intent import Intent
 import pandas as pd
 import numpy as np
 import itertools
+import typing
 
 from typing import Optional, Dict, Any
 
 
 ##################################################################################
 # From: https://maxhalford.github.io/blog/skyline-queries-in-python/
-def count_diffs(a, b, to_min, to_max):
+def count_diffs(a:typing.Any, b:typing.Any, to_min:typing.Any, to_max:typing.Any) -> typing.Any:
     n_better = 0
     n_worse = 0
 
@@ -24,7 +25,7 @@ def count_diffs(a, b, to_min, to_max):
     return n_better, n_worse
 
 
-def find_skyline_bnl(df, to_min, to_max):
+def find_skyline_bnl(df:typing.Any, to_min:typing.Any, to_max:typing.Any)->typing.Any:
     """Finds the skyline using a block-nested loop."""
 
     rows = df.to_dict(orient='index')
