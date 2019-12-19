@@ -75,4 +75,4 @@ def test_skyline_nan():
     data = np.array([a, b, c, d, e, f, g, h])
     df = pd.DataFrame(data=data)
     skyline = Skyline().compute(df).iloc[:, 3].transpose().values
-    assert np.array_equal(skyline, np.array([1,0,1,0,1,1,1,1]))
+    assert np.array_equal(skyline, np.array([1, 0, 1, 0, 1, 1, 1, 1]))
