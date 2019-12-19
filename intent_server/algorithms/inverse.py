@@ -7,6 +7,7 @@ from typing import Optional, Dict, Any
 # TODO: Only works for binary intents!
 class Inverse(Intent):
     def __init__(self, intent: Intent, prefix: str = "Non-") -> None:
+        super().__init__()
         self.intent = intent
         self.prefix = prefix
 

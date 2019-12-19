@@ -98,7 +98,6 @@ class Inference:
         ]
 
     def predict(self, interactions: List[Interaction], op: MultiBrushBehavior) -> PredictionSet:
-
         ids = relevant_ids(interactions, op)
 
         # Filters removed plots

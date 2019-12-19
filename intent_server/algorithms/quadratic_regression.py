@@ -12,6 +12,7 @@ from typing import Optional, Dict, Any
 
 class QuadraticRegression(Intent):
     def __init__(self, threshold: float) -> None:
+        super().__init__()
         self.threshold = threshold
         self.reg = Pipeline([('quad', PolynomialFeatures(degree=2)),
                              ('linear', LR(fit_intercept=False))])
