@@ -171,24 +171,28 @@ const PredictionList: FC<Props> = ({
           exit => exit.remove(),
         );
       setSelectedPrediction(pred);
-    } else if(!isThisSelected && pred.type === PredictionType.QuadraticRegression) {
+    } else if (
+      !isThisSelected &&
+      pred.type === PredictionType.QuadraticRegression
+    ) {
       const scales: ScaleStorage = JSON.parse(
         regressionArea.attr('data-scale'),
       );
-  
+
       const xScale = scaleLinear()
         .domain(scales.x.domain)
         .range(scales.x.range);
       const yScale = scaleLinear()
         .domain(scales.y.domain)
         .range(scales.y.range);
-  
-      let {points} = pred.info as any;
-      const xs : Array<number> = points.xs.flat();
-      const ys : Array<number> = points.ys.flat();
 
-      const zipper = d3.zip(xs,ys);
-      const lineGen = d3.line()
+      let {points} = pred.info as any;
+      const xs: Array<number> = points.xs.flat();
+      const ys: Array<number> = points.ys.flat();
+
+      const zipper = d3.zip(xs, ys);
+      const lineGen = d3
+        .line()
         .curve(d3.curveNatural)
         .x(d => xScale(d[0]))
         .y(d => yScale(d[1]));
@@ -203,9 +207,7 @@ const PredictionList: FC<Props> = ({
               .append('path')
               .attr('d', d => pathStr)
               .classed('regression-line', true),
-          update =>
-            update
-            .attr('d', d => pathStr),
+          update => update.attr('d', d => pathStr),
           exit => exit.remove(),
         );
       setSelectedPrediction(pred);
@@ -451,6 +453,7 @@ const PredictionList: FC<Props> = ({
 
               return (
                 <Table.Row
+                  style={{cursor: 'pointer'}}
                   active={
                     (selectedPrediction &&
                       selectedPrediction.intent === pred.intent) as any
