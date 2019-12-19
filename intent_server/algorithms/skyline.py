@@ -105,10 +105,11 @@ class Skyline(Intent):
         return None
 
     def skyline_for_permutation(self, signs: np.ndarray, data: pd.DataFrame) -> pd.DataFrame:
-        vs = data.values.dot(np.diag(signs))
         if (len(data.columns) == 2):
-            skyline = find_skyline_bnl(data, to_min=[], to_max=data.columns)
+            vs = data.dot(np.diag(signs))
+            skyline = find_skyline_bnl(vs, to_min=[], to_max=vs.columns)
         else:
+            vs = data.values.dot(np.diag(signs))
             skyline = np.apply_along_axis(lambda x: belongs_to_skyline(vs, x), 1, vs)
         return pd.DataFrame(
             index=data.index,
