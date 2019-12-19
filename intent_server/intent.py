@@ -15,11 +15,22 @@ def rank_jaccard(intent: pd.DataFrame, selection: pd.DataFrame) -> float:
 
 
 class Intent(ABC):
+    def __init__(self) -> None:
+        self.hasher = hashlib.md5((str(uuid.uuid1())).encode('utf-8')).hexdigest()[:10]
+        self.cache = dict()
+
     def to_prediction(self, selection: np.ndarray, df: pd.DataFrame) -> List[Prediction]:  # noqa: E501
-        computed = self.compute(df)
-        hasher = hashlib.md5((str(uuid.uuid1())).encode('utf-8')).hexdigest()[:10]
-        axes = str(list(df.columns))
-        computed.columns = [hasher + ":" + axes + ":" + str(col) for col in computed.columns]
+        # hashing columns should be enough
+        cache_hash = str(list(df.columns))
+        if(cache_hash in self.cache):
+            computed = self.cache[cache_hash]
+            print("Cache hit")
+        else:
+            computed = self.compute(df)
+            self.cache[cache_hash] = computed
+
+        axes = cache_hash
+        computed.columns = [self.hasher + ":" + axes + ":" + str(col) for col in computed.columns]
 
         predictions = []
         for column in computed:

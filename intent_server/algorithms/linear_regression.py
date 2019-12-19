@@ -10,6 +10,7 @@ from typing import Optional, Dict, Any
 
 class LinearRegression(Intent):
     def __init__(self, threshold: float) -> None:
+        super().__init__()
         self.threshold = threshold
         self.reg = LR()
         self.min_max_scaler_x = preprocessing.MinMaxScaler()

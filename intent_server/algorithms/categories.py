@@ -17,6 +17,7 @@ def expand_column(col: pd.DataFrame, description: str) -> pd.DataFrame:
 
 class Categories(Intent):
     def __init__(self, data: Dataset) -> None:
+        super().__init__()
         baseName = 'Category'
         self.baseName = baseName
         cats = data.categorical()
