@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import uuid
 import hashlib
+import typing
 
 from scipy.spatial.distance import jaccard
 from typing import Optional, Dict, Any, List
@@ -17,7 +18,7 @@ def rank_jaccard(intent: pd.DataFrame, selection: pd.DataFrame) -> float:
 class Intent(ABC):
     def __init__(self) -> None:
         self.hasher = hashlib.md5((str(uuid.uuid1())).encode('utf-8')).hexdigest()[:10]
-        self.cache = dict()
+        self.cache: Dict[ typing.Any, typing.Any] = dict()
 
     def to_prediction(self, selection: np.ndarray, df: pd.DataFrame) -> List[Prediction]:  # noqa: E501
         # hashing columns should be enough
