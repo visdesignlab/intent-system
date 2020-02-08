@@ -1,4 +1,4 @@
-import React, {FC, useState, CSSProperties, useMemo} from 'react';
+import React, {FC, useState, CSSProperties, useMemo, useEffect} from 'react';
 
 import Task from './Components/Task';
 import Visualization from './Components/Visualization';
@@ -22,6 +22,9 @@ import TaskDetails from './Stores/Types/TaskDetails';
 import {areEqual} from './Utils';
 import {AppState} from './Stores/CombinedStore';
 import LiveIntent from './Components/LiveIntent';
+import ProvVis from './Components/ProvenanceVis/components/ProvVis';
+import {ProvenanceGraph} from '@visdesignlab/provenance-lib-core/lib/src/provenance-core/ProvenanceGraph';
+import {AppProvenance} from '.';
 
 interface OwnProps {
   task: TaskDetails;
@@ -57,6 +60,19 @@ const App: FC<Props> = ({
 
   const [showCategories, setShowCategories] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const [graph, setGraph] = useState<ProvenanceGraph<AppState>>(
+    AppProvenance.graph(),
+  );
+
+  useEffect(() => {
+    const prov = JSON.stringify(AppProvenance.graph());
+    const graphString = JSON.stringify(graph);
+
+    if (prov !== graphString) {
+      setGraph(JSON.parse(prov));
+    }
+  });
 
   const categoricalColumnsString = JSON.stringify(dataset.categoricalColumns);
   const columnMapsString = JSON.stringify(dataset.columnMaps);
@@ -150,12 +166,22 @@ const App: FC<Props> = ({
             }}
             selectionRecord={totalSelections}
           />
-          <div style={visResDiv(isExploreMode)}>
+          <div style={visResDiv(false)}>
             <Visualization
               clearAllHandlerSetup={clearAllHandlerSetup}
               isSubmitted={isSubmitted}
               showCategories={showCategories}
               selectedCategory={selectedCategory.value}
+            />
+            <ProvVis
+              graph={graph}
+              root={graph.root.id}
+              current={graph.current.id}
+              height={600}
+              width={250}
+              sideOffset={200}
+              nodeMap={graph.nodes}
+              changeCurrent={() => {}}
             />
           </div>
         </div>
@@ -230,7 +256,7 @@ const visDiv: CSSProperties = {
 
 const visResDiv = (isExploreMode: boolean = false): CSSProperties => ({
   display: 'grid',
-  gridTemplateColumns: isExploreMode ? '1fr' : '4fr 1fr',
+  gridTemplateColumns: isExploreMode ? '1fr' : 'auto min-content',
   width: '100%',
   height: '100%',
 });

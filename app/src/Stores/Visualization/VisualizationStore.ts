@@ -99,9 +99,10 @@ export const VisualizationReducer = combineReducers<VisualizationState>({
 });
 
 function VisualizationStoreCreator(state?: Partial<VisualizationState>) {
+  const temp: any = state;
   return createStore<VisualizationState, any, any, any>(
     VisualizationReducer,
-    state,
+    temp,
     applyMiddleware(thunk),
   );
 }

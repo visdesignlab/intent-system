@@ -41,6 +41,8 @@ export const getDatasetUrl = (datasetName: string) => `/dataset/${datasetName}`;
 
 export const {config, app: firebaseApp, firestore} = setupFirebase();
 
+(window as any).printProv = () => console.log(AppProvenance.graph());
+
 export let participant: ParticipantDetails = {
   uniqueId: `${getRandomUserCode()}`,
 };
