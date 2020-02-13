@@ -1,4 +1,4 @@
-import React, {FC, useRef, useState} from 'react';
+import React, {FC, useRef, useState, useEffect} from 'react';
 
 import {Brush, BrushAffectType, BrushCollection} from '../Types/Brush';
 import {BrushableRegion} from '../Types/BrushableRegion';
@@ -15,6 +15,7 @@ interface Props {
     affectType: BrushAffectType,
   ) => void;
   clearAllBrushSetup?: (handler: () => void) => void;
+  initialBrushes?: BrushCollection;
 }
 
 const BrushComponent: FC<Props> = ({
@@ -23,6 +24,7 @@ const BrushComponent: FC<Props> = ({
   clearAllBrushSetup,
   onBrushUpdate,
   extentPadding,
+  initialBrushes,
 }: Props) => {
   if (!extentPadding) extentPadding = 0;
 
@@ -42,6 +44,15 @@ const BrushComponent: FC<Props> = ({
     null as any,
   );
   const brushGroupRef = useRef<SVGGElement>(null);
+
+  const initialBrushString = JSON.stringify(initialBrushes);
+
+  useEffect(() => {
+    const initialBrushes = JSON.parse(initialBrushString);
+    if (initialBrushes) {
+      setBrushes(initialBrushes);
+    }
+  }, [initialBrushString]);
 
   const handleMouseDownWhenCreating = <T extends SVGElement>(
     event: React.MouseEvent<T, MouseEvent>,

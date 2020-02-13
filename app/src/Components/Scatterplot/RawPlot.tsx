@@ -116,12 +116,16 @@ const RawPlot: FC<Props> = ({
 
   const brushPointCount = _.countBy(brushSelectedPoints);
 
+  const initialBrushes = JSON.parse(JSON.stringify(brushes));
+  const initBrushCounts = Object.keys(initialBrushes).length;
+
   const brushComponent = (
     <BrushComponent
       key={brushKey}
       extents={{left: 0, top: 0, right: width, bottom: height}}
       extentPadding={10}
       onBrushUpdate={brushHandler}
+      initialBrushes={initBrushCounts === 0 ? null : initialBrushes}
     />
   );
 
