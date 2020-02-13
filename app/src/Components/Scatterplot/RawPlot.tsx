@@ -150,6 +150,8 @@ const RawPlot: FC<Props> = ({
           type = brushPointCount[idx] === brushCount ? 'Union' : 'Intersection';
         }
       }
+    } else {
+      type = 'Union';
     }
 
     return (

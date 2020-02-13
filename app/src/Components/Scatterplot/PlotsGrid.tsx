@@ -14,15 +14,29 @@ const PlotsGrid: FC<Props> = ({store, height, width}: Props) => {
   const {plots} = store!;
   const count = plots.length > 1 ? 2 : 1;
 
-  const dimension =
-    height / count > width / count ? width / count : height / count;
+  const plotCount = plots.length;
+  const breakCount = 2;
+
+  let rowCount = Math.floor(plotCount / breakCount);
+  if (rowCount === 0) {
+    rowCount += 1;
+  } else if (plotCount > breakCount && plotCount % breakCount !== 0) {
+    rowCount += 1;
+  }
+
+  const columnCount = plotCount >= breakCount ? breakCount : plotCount;
+
+  const dividedHeight = height / rowCount;
+  const dividedWidth = width / columnCount;
+
+  const dimension = dividedWidth < dividedHeight ? dividedWidth : dividedHeight;
 
   return (
     <div className={flexStyle}>
       {plots.map(plot => (
         <Scatterplot
+          key={`${plot.id}${dimension}`}
           plot={plot}
-          key={plot.id}
           height={dimension}
           width={dimension}
         />

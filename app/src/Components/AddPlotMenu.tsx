@@ -1,6 +1,6 @@
 import React, {FC, useState, useContext} from 'react';
 import IntentStore from '../Store/IntentStore';
-import {Menu, Button, Dropdown, Header} from 'semantic-ui-react';
+import {Menu, Button, Dropdown} from 'semantic-ui-react';
 import {DataContext, ActionContext} from '../App';
 import {Plot} from '../Store/IntentState';
 
@@ -9,7 +9,7 @@ export interface Props {
   closeMenu: (addingPlot: boolean) => void;
 }
 
-const AddPlotMenu: FC<Props> = ({store, closeMenu}: Props) => {
+const AddPlotMenu: FC<Props> = ({closeMenu}: Props) => {
   const data = useContext(DataContext);
   const actions = useContext(ActionContext);
 

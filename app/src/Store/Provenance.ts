@@ -9,6 +9,7 @@ import {
   MultiBrushBehaviour,
   Plot,
   ExtendedBrushCollection,
+  Plots,
 } from './IntentState';
 import IntentStore from './IntentStore';
 import {Dataset} from '../Utils/Dataset';
@@ -209,6 +210,27 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
     );
   }
 
+  function removePlot(plot: Plot) {
+    provenance.applyAction(
+      `Remove plot for ${plot.x} - ${plot.y}`,
+      (state: IntentState) => {
+        const plots: Plots = [];
+
+        for (let i = 0; i < state.plots.length; ++i) {
+          const plt = state.plots[i];
+          if (plt.id !== plot.id) {
+            plots.push(plt);
+          }
+        }
+        state.plots = plots;
+
+        return state;
+      },
+      undefined,
+      {type: 'Add Plot'},
+    );
+  }
+
   return {
     provenance,
     actions: {
@@ -224,6 +246,7 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
       changeBrush,
       removeBrush,
       clearSelections,
+      removePlot,
     },
   };
 }
@@ -240,6 +263,7 @@ export interface ProvenanceActions {
   toggleMultiBrushBehaviour: (brushBehaviour: MultiBrushBehaviour) => void;
   goToNode: (id: NodeID) => void;
   addPlot: (plot: Plot) => void;
+  removePlot: (plot: Plot) => void;
   addPointSelection: (plot: Plot, points: number[]) => void;
   removePointSelection: (plot: Plot, points: number[]) => void;
   addBrush: (plot: Plot, brushCollection: ExtendedBrushCollection) => void;

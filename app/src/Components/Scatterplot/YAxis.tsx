@@ -1,7 +1,7 @@
 import React, {FC, useEffect, useRef} from 'react';
 import IntentStore from '../../Store/IntentStore';
 import {inject, observer} from 'mobx-react';
-import {ScaleLinear, select, axisBottom, axisLeft} from 'd3';
+import {ScaleLinear, select, axisLeft} from 'd3';
 import translate from '../../Utils/Translate';
 import {ColumnDef} from '../../Utils/Dataset';
 
@@ -12,7 +12,7 @@ interface Props {
   dimension: ColumnDef;
 }
 
-const YAxis: FC<Props> = ({store, height, scale, dimension}: Props) => {
+const YAxis: FC<Props> = ({height, scale, dimension}: Props) => {
   const axisRef = useRef<SVGGElement>(null);
 
   useEffect(() => {

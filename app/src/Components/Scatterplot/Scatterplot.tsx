@@ -2,11 +2,12 @@ import React, {FC, useRef, useState, useEffect, useContext} from 'react';
 import {inject, observer} from 'mobx-react';
 import IntentStore from '../../Store/IntentStore';
 import {style} from 'typestyle';
-import {DataContext} from '../../App';
+import {DataContext, ActionContext} from '../../App';
 import {Plot} from '../../Store/IntentState';
 import {scaleLinear} from 'd3';
 import translate from '../../Utils/Translate';
 import RawPlot from './RawPlot';
+import {Button} from 'semantic-ui-react';
 
 export interface Props {
   store?: IntentStore;
@@ -18,7 +19,9 @@ export interface Props {
 const Scatterplot: FC<Props> = ({width, height, plot, store}: Props) => {
   const svgRef = useRef<SVGSVGElement>(null);
   const data = useContext(DataContext);
-  const {categoryColumn} = store!;
+  const actions = useContext(ActionContext);
+
+  const {categoryColumn, plots} = store!;
 
   const [dim, setDim] = useState({height: 0, width: 0});
 
@@ -65,6 +68,16 @@ const Scatterplot: FC<Props> = ({width, height, plot, store}: Props) => {
 
   return (
     <div className={surroundDiv} style={{height, width}}>
+      {plots.length > 1 && (
+        <Button
+          icon="close"
+          onClick={() => actions.removePlot(plot)}
+          size="mini"
+          negative
+          compact
+          className={buttonStyle}
+        />
+      )}
       <svg className={svgStyle} ref={svgRef}>
         <rect height={dim.height} width={dim.width} fill="#ccc" opacity="0.1" />
         <RawPlot
@@ -86,9 +99,24 @@ export default inject('store')(observer(Scatterplot));
 
 const surroundDiv = style({
   padding: '1em',
+  position: 'relative',
 });
 
 const svgStyle = style({
   height: '100%',
   width: '100%',
+});
+
+const buttonStyle = style({
+  position: 'absolute',
+  right: 0,
+  top: 0,
+  opacity: 0.4,
+  transition: 'opacity 0.5s',
+  $nest: {
+    '&:hover': {
+      opacity: 1,
+      transition: 'opacity 0.5s',
+    },
+  },
 });
