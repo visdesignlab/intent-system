@@ -18,6 +18,7 @@ export interface Props {
 const Scatterplot: FC<Props> = ({width, height, plot, store}: Props) => {
   const svgRef = useRef<SVGSVGElement>(null);
   const data = useContext(DataContext);
+  const {categoryColumn} = store!;
 
   const [dim, setDim] = useState({height: 0, width: 0});
 
@@ -37,7 +38,11 @@ const Scatterplot: FC<Props> = ({width, height, plot, store}: Props) => {
 
   const {x, y} = plot;
 
-  const xyData = data.values.map(d => ({x: d[x], y: d[y]}));
+  const xyData = data.values.map(d => ({
+    x: d[x],
+    y: d[y],
+    category: categoryColumn ? d[categoryColumn] : null,
+  }));
 
   const [xMin, xMax] = [
     Math.min(...xyData.map(d => d.x)),

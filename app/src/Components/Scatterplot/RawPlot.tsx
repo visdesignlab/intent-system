@@ -2,22 +2,19 @@ import React, {FC, useContext, useState, useEffect} from 'react';
 import IntentStore from '../../Store/IntentStore';
 import translate from '../../Utils/Translate';
 import {ScaleLinear, select, axisBottom, axisLeft} from 'd3';
-import {
-  REGULAR_MARK_STYLE,
-  UNION_MARK_STYLE,
-  INTERSECTION_MARK_STYLE,
-} from '../Styles';
 import {ActionContext} from '../../App';
 import {Plot, ExtendedBrush} from '../../Store/IntentState';
 import BrushComponent from '../Brush/Components/BrushComponent';
 import {BrushCollection, Brush, BrushAffectType} from '../Brush/Types/Brush';
 import {inject, observer} from 'mobx-react';
 import _ from 'lodash';
+import MarkType from './MarkType';
+import Mark from './Mark';
 
 export interface Props {
   store?: IntentStore;
   plot: Plot;
-  data: {x: number; y: number}[];
+  data: {x: number; y: number; category?: string}[];
   transform: string;
   height: number;
   width: number;
@@ -129,44 +126,48 @@ const RawPlot: FC<Props> = ({
     />
   );
 
+  function drawMark(
+    data: {x: number; y: number; category?: string},
+    idx: number,
+  ) {
+    let type: MarkType = 'Regular';
+    const isClickSelected = clickSelectedPoints.includes(idx);
+    if (!isClickSelected) {
+      const isUnion = multiBrushBehaviour === 'Union';
+      if (brushPointCount[idx]) {
+        if (isUnion) {
+          type = 'Union';
+        } else {
+          type = brushPointCount[idx] === brushCount ? 'Union' : 'Intersection';
+        }
+      }
+    }
+
+    return (
+      <g
+        key={idx}
+        onClick={() => {
+          if (!selectedPoints.includes(idx)) {
+            actions.addPointSelection(plot, [idx]);
+          } else {
+            actions.removePointSelection(plot, [idx]);
+          }
+        }}>
+        <Mark
+          type={type}
+          x={xScale(data.x)}
+          y={yScale(data.y)}
+          category={data.category || ''}
+        />
+      </g>
+    );
+  }
+
   const plotComponent = (
     <g style={{pointerEvents: mouseDown ? 'none' : 'all'}}>
       <g transform={translate(0, height)} className="x-axis" />
       <g className="y-axis" />
-      {data.map((data, idx) => {
-        let className = REGULAR_MARK_STYLE;
-        const isClickSelected = clickSelectedPoints.includes(idx);
-        if (!isClickSelected) {
-          const isUnion = multiBrushBehaviour === 'Union';
-          if (brushPointCount[idx]) {
-            if (isUnion) {
-              className = UNION_MARK_STYLE;
-            } else {
-              className =
-                brushPointCount[idx] === brushCount
-                  ? UNION_MARK_STYLE
-                  : INTERSECTION_MARK_STYLE;
-            }
-          }
-        }
-
-        return (
-          <circle
-            key={idx}
-            cx={xScale(data.x)}
-            cy={yScale(data.y)}
-            r="0.35em"
-            className={className}
-            onClick={() => {
-              if (!selectedPoints.includes(idx)) {
-                actions.addPointSelection(plot, [idx]);
-              } else {
-                actions.removePointSelection(plot, [idx]);
-              }
-            }}
-          />
-        );
-      })}
+      {data.map(drawMark)}
     </g>
   );
 
