@@ -2,7 +2,7 @@ import React, {FC, useContext, useState, useEffect} from 'react';
 import IntentStore from '../../Store/IntentStore';
 import translate from '../../Utils/Translate';
 import {ScaleLinear, select, axisBottom, axisLeft} from 'd3';
-import {ActionContext} from '../../App';
+import {ActionContext, DataContext} from '../../App';
 import {Plot, ExtendedBrush} from '../../Store/IntentState';
 import BrushComponent from '../Brush/Components/BrushComponent';
 import {BrushCollection, Brush, BrushAffectType} from '../Brush/Types/Brush';
@@ -10,6 +10,8 @@ import {inject, observer} from 'mobx-react';
 import _ from 'lodash';
 import MarkType from './MarkType';
 import Mark from './Mark';
+import XAxis from './XAxis';
+import YAxis from './YAxis';
 
 export interface Props {
   store?: IntentStore;
@@ -116,6 +118,13 @@ const RawPlot: FC<Props> = ({
   const initialBrushes = JSON.parse(JSON.stringify(brushes));
   const initBrushCounts = Object.keys(initialBrushes).length;
 
+  useEffect(() => {
+    const xAxis = axisBottom(xScale);
+    const yAxis = axisLeft(yScale);
+    select('.x-axis').call(xAxis as any);
+    select('.y-axis').call(yAxis as any);
+  }, [xScale, yScale]);
+
   const brushComponent = (
     <BrushComponent
       key={brushKey}
@@ -163,20 +172,19 @@ const RawPlot: FC<Props> = ({
     );
   }
 
+  const {columnMap} = useContext(DataContext);
+
   const plotComponent = (
     <g style={{pointerEvents: mouseDown ? 'none' : 'all'}}>
-      <g transform={translate(0, height)} className="x-axis" />
-      <g className="y-axis" />
+      <g transform={translate(0, height)}>
+        <XAxis width={width} scale={xScale} dimension={columnMap[plot.x]} />
+      </g>
+      <g>
+        <YAxis height={height} scale={yScale} dimension={columnMap[plot.y]} />
+      </g>
       {data.map(drawMark)}
     </g>
   );
-
-  useEffect(() => {
-    const xAxis = axisBottom(xScale);
-    const yAxis = axisLeft(yScale);
-    select('.x-axis').call(xAxis as any);
-    select('.y-axis').call(yAxis as any);
-  }, [xScale, yScale]);
 
   return (
     <g transform={transform}>

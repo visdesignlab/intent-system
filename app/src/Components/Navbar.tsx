@@ -31,7 +31,7 @@ function Navbar({store, data, datasets, setDataset}: NavbarProps) {
 
   const actions = useContext(ActionContext);
 
-  const [addingPlot, setAddingPlot] = useState(true);
+  const [addingPlot, setAddingPlot] = useState(false);
 
   const {categoricalColumns} = data;
 
