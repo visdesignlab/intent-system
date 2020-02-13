@@ -1,14 +1,18 @@
-import React, {useState, useEffect, useMemo} from 'react';
+import React, {useState, useEffect, useMemo, createContext} from 'react';
 import {Provider} from 'mobx-react';
-import {setupProvenance} from './Store/Provenance';
+import {setupProvenance, ProvenanceActions} from './Store/Provenance';
 import IntentStore from './Store/IntentStore';
 import Navbar from './Components/Navbar';
 import axios from 'axios';
 import {style} from 'typestyle';
 import {Datasets, Dataset, loadData, Data} from './Utils/Dataset';
 import ProvenanceVisualization from './Components/ProvenanceVisualization';
+import Visualization from './Components/Scatterplot/Visualization';
 
 const store = new IntentStore();
+
+export const DataContext = createContext<Data>(null as any);
+export const ActionContext = createContext<ProvenanceActions>(null as any);
 
 const App = () => {
   const [datasets, setDatasets] = useState<Datasets>([]);
@@ -36,18 +40,27 @@ const App = () => {
     if (selectedDataset.key.length > 0) {
       axios.get(`/dataset/${selectedDataset.key}`).then(d => {
         const data = loadData(d.data);
+        if (data.numericColumns.length >= 2) {
+          actions.addPlot({
+            id: Math.random().toString(),
+            x: data.numericColumns[0],
+            y: data.numericColumns[1],
+            selectedPoints: [],
+            brushes: {},
+          });
+        }
         setData(data);
       });
     }
-  }, [selectedDataset]);
+  }, [selectedDataset, actions]);
 
   useEffect(() => {
     axios.get('./dataset').then(response => {
       const datasets = response.data;
       if (datasetString !== JSON.stringify(datasets)) {
         setDatasets(datasets);
-        setSelectedDataset(datasets[0]);
-        actions.setDataset(datasets[0]);
+        setSelectedDataset(datasets[2]);
+        actions.setDataset(datasets[2]);
       }
     });
   }, [datasetString, actions]);
@@ -59,20 +72,23 @@ const App = () => {
 
   return datasets.length > 0 && data ? (
     <Provider store={store}>
-      <div className={layoutStyle}>
-        <div className={visStyle}>
-          <Navbar
-            data={data}
-            actions={actions}
-            datasets={datasets}
-            setDataset={setSelectedDataset}
-          />
-          <div className={plotStyle}>Visualization</div>
-          <div className={legendStyle}>Yay</div>
-        </div>
-        <div className={predStyle}>Predictions</div>
-        <ProvenanceVisualization />
-      </div>
+      <DataContext.Provider value={data}>
+        <ActionContext.Provider value={actions}>
+          <div className={layoutStyle}>
+            <div className={visStyle}>
+              <Navbar
+                data={data}
+                datasets={datasets}
+                setDataset={setSelectedDataset}
+              />
+              <Visualization actions={actions} />
+              <div className={legendStyle}>Legend</div>
+            </div>
+            <div className={predStyle}>Predictions</div>
+            <ProvenanceVisualization actions={actions} />
+          </div>
+        </ActionContext.Provider>
+      </DataContext.Provider>
     </Provider>
   ) : null;
 };
@@ -101,8 +117,6 @@ const visStyle = style({
   "plot"
   `,
 });
-
-const plotStyle = style({gridArea: 'plot'});
 
 const predStyle = style({gridArea: 'pred'});
 

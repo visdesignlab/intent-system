@@ -1,5 +1,15 @@
-import {initProvenance, Provenance} from '@visdesignlab/provenance-lib-core';
-import {defaultState, IntentState, MultiBrushBehaviour} from './IntentState';
+import {
+  initProvenance,
+  Provenance,
+  NodeID,
+} from '@visdesignlab/provenance-lib-core';
+import {
+  defaultState,
+  IntentState,
+  MultiBrushBehaviour,
+  Plot,
+  ExtendedBrushCollection,
+} from './IntentState';
 import IntentStore from './IntentStore';
 import {Dataset} from '../Utils/Dataset';
 
@@ -7,7 +17,14 @@ export type IntentEvents =
   | 'Load Dataset'
   | 'MultiBrush'
   | 'Switch Category Visibility'
-  | 'Change Category';
+  | 'Change Category'
+  | 'Add Plot'
+  | 'Point Selection'
+  | 'Point Deselection'
+  | 'Add Brush'
+  | 'Change Brush'
+  | 'Remove Brush'
+  | 'Clear All';
 
 export function setupProvenance(store: IntentStore): ProvenanceControl {
   const provenance = initProvenance<IntentState, IntentEvents>(
@@ -71,6 +88,127 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
     );
   }
 
+  function goToNode(id: NodeID) {
+    provenance.goToNode(id);
+  }
+
+  function addPlot(plot: Plot) {
+    provenance.applyAction(
+      `Add plot for ${plot.x} - ${plot.y}`,
+      (state: IntentState) => {
+        state.plots.push(plot);
+        return state;
+      },
+      undefined,
+      {type: 'Add Plot'},
+    );
+  }
+
+  function addPointSelection(plot: Plot, points: number[]) {
+    provenance.applyAction(
+      `Add Point Selection`,
+      (state: IntentState) => {
+        for (let i = 0; i < state.plots.length; ++i) {
+          if (plot.id === state.plots[i].id) {
+            const pts = state.plots[i].selectedPoints;
+            state.plots[i].selectedPoints = [...pts, ...points];
+            break;
+          }
+        }
+        return state;
+      },
+      undefined,
+      {type: 'Point Selection'},
+    );
+  }
+
+  function removePointSelection(plot: Plot, points: number[]) {
+    provenance.applyAction(
+      `Remove Point Selection`,
+      (state: IntentState) => {
+        for (let i = 0; i < state.plots.length; ++i) {
+          if (plot.id === state.plots[i].id) {
+            const pts = state.plots[i].selectedPoints.filter(
+              p => !points.includes(p),
+            );
+            state.plots[i].selectedPoints = [...pts];
+            break;
+          }
+        }
+        return state;
+      },
+      undefined,
+      {type: 'Point Deselection'},
+    );
+  }
+
+  function addBrush(plot: Plot, brushCollection: ExtendedBrushCollection) {
+    provenance.applyAction(
+      `Add brush to plot`,
+      (state: IntentState) => {
+        for (let i = 0; i < state.plots.length; ++i) {
+          if (plot.id === state.plots[i].id) {
+            state.plots[i].brushes = {...brushCollection};
+            break;
+          }
+        }
+        return state;
+      },
+      undefined,
+      {type: 'Add Brush'},
+    );
+  }
+
+  function changeBrush(plot: Plot, brushCollection: ExtendedBrushCollection) {
+    provenance.applyAction(
+      `Change Brush`,
+      (state: IntentState) => {
+        let i = 0;
+        for (i = 0; i < state.plots.length; ++i) {
+          if (plot.id === state.plots[i].id) {
+            state.plots[i].brushes = {...brushCollection};
+            break;
+          }
+        }
+        return state;
+      },
+      undefined,
+      {type: 'Change Brush'},
+    );
+  }
+
+  function removeBrush(plot: Plot, brushCollection: ExtendedBrushCollection) {
+    provenance.applyAction(
+      `Remove Brush`,
+      (state: IntentState) => {
+        for (let i = 0; i < state.plots.length; ++i) {
+          if (plot.id === state.plots[i].id) {
+            state.plots[i].brushes = {...brushCollection};
+            break;
+          }
+        }
+        return state;
+      },
+      undefined,
+      {type: 'Remove Brush'},
+    );
+  }
+
+  function clearSelections() {
+    provenance.applyAction(
+      `Clear all selections`,
+      (state: IntentState) => {
+        for (let i = 0; i < state.plots.length; ++i) {
+          state.plots[i].selectedPoints = [];
+          state.plots[i].brushes = {};
+        }
+        return state;
+      },
+      undefined,
+      {type: 'Clear All'},
+    );
+  }
+
   return {
     provenance,
     actions: {
@@ -78,6 +216,14 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
       toggleCategories,
       changeCategory,
       toggleMultiBrushBehaviour,
+      goToNode,
+      addPlot,
+      addPointSelection,
+      removePointSelection,
+      addBrush,
+      changeBrush,
+      removeBrush,
+      clearSelections,
     },
   };
 }
@@ -92,6 +238,14 @@ export interface ProvenanceActions {
   toggleCategories: (show: boolean, categories?: string[]) => void;
   changeCategory: (category: string) => void;
   toggleMultiBrushBehaviour: (brushBehaviour: MultiBrushBehaviour) => void;
+  goToNode: (id: NodeID) => void;
+  addPlot: (plot: Plot) => void;
+  addPointSelection: (plot: Plot, points: number[]) => void;
+  removePointSelection: (plot: Plot, points: number[]) => void;
+  addBrush: (plot: Plot, brushCollection: ExtendedBrushCollection) => void;
+  changeBrush: (plot: Plot, brushCollection: ExtendedBrushCollection) => void;
+  removeBrush: (plot: Plot, brushCollection: ExtendedBrushCollection) => void;
+  clearSelections: () => void;
 }
 
 function setupObservers(
@@ -109,6 +263,7 @@ function setupObservers(
     'multiBrushBehaviour',
     'showCategories',
     'categoryColumn',
+    'plots',
   ];
 
   arrs.forEach(key => {

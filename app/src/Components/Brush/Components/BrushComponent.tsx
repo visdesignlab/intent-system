@@ -14,7 +14,7 @@ interface Props {
     affectedBrush: Brush,
     affectType: BrushAffectType,
   ) => void;
-  clearAllBrushSetup: (handler: () => void) => void;
+  clearAllBrushSetup?: (handler: () => void) => void;
 }
 
 const BrushComponent: FC<Props> = ({
@@ -100,7 +100,7 @@ const BrushComponent: FC<Props> = ({
       curr.extents = {x1, x2, y1, y2};
       brushes[curr.id] = curr;
 
-      onBrushUpdate({...brushes}, curr, BrushAffectType.ADD);
+      onBrushUpdate({...brushes}, curr, 'Add');
     }
 
     setCurrentBrush(null as any);
@@ -160,21 +160,25 @@ const BrushComponent: FC<Props> = ({
     setMouseDown(false);
     setMovingBrush(false);
     setCurrentBrush(null as any);
-    onBrushUpdate({...brushes}, curr, BrushAffectType.CHANGE);
+    onBrushUpdate({...brushes}, curr, 'Change');
   };
 
   const removeAllBrushes = () => {
     const brs = JSON.parse(JSON.stringify(brushes));
     setBrushes({});
-    onBrushUpdate({...brushes}, brs, BrushAffectType.REMOVE_ALL);
+    onBrushUpdate({...brushes}, brs, 'Clear');
   };
+
+  if (!clearAllBrushSetup) {
+    clearAllBrushSetup = (_: any) => {};
+  }
 
   clearAllBrushSetup(removeAllBrushes);
 
   const removeBrush = (brush: Brush) => {
     delete brushes[brush.id];
     setBrushes({...brushes});
-    onBrushUpdate({...brushes}, brush, BrushAffectType.REMOVE);
+    onBrushUpdate({...brushes}, brush, 'Remove');
   };
 
   const handleOnResizeStart = <T extends SVGGElement>(
@@ -237,7 +241,7 @@ const BrushComponent: FC<Props> = ({
 
     setCurrentBrush(null as any);
     setResizeDirection(null as any);
-    onBrushUpdate({...brushes}, curr, BrushAffectType.CHANGE);
+    onBrushUpdate({...brushes}, curr, 'Change');
   };
 
   const brushOverlay = (

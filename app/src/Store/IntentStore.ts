@@ -1,4 +1,4 @@
-import {observable, action} from 'mobx';
+import {observable, action, computed} from 'mobx';
 import {defaultState, IntentState, MultiBrushBehaviour} from './IntentState';
 import {ProvenanceGraph} from '@visdesignlab/provenance-lib-core';
 import {IntentEvents} from './Provenance';
@@ -24,5 +24,14 @@ export default class IntentStore implements IntentState {
   }
   @action printStore() {
     console.log(JSON.parse(JSON.stringify(this)));
+  }
+  @computed get isAnythingSelected() {
+    for (let i = 0; i < this.plots.length; ++i) {
+      const plot = this.plots[i];
+      if (plot.selectedPoints.length > 0) return true;
+      if (Object.keys(plot.brushes).length > 0) return true;
+    }
+
+    return false;
   }
 }

@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useContext} from 'react';
 import {inject, observer} from 'mobx-react';
 import {
   Button,
@@ -9,19 +9,26 @@ import {
   Container,
 } from 'semantic-ui-react';
 import {Dataset, Data} from '../Utils/Dataset';
-import {ProvenanceActions} from '../Store/Provenance';
 import {style} from 'typestyle';
+import {ActionContext} from '../App';
 
 interface NavbarProps {
   store?: any;
   datasets: any[];
-  actions: ProvenanceActions;
   setDataset: (d: Dataset) => void;
   data: Data;
 }
 
-function Navbar({store, actions, data, datasets, setDataset}: NavbarProps) {
-  const {dataset, showCategories, multiBrushBehaviour, categoryColumn} = store!;
+function Navbar({store, data, datasets, setDataset}: NavbarProps) {
+  const {
+    dataset,
+    showCategories,
+    multiBrushBehaviour,
+    categoryColumn,
+    isAnythingSelected,
+  } = store!;
+
+  const actions = useContext(ActionContext);
 
   const {categoricalColumns} = data;
 
@@ -37,7 +44,12 @@ function Navbar({store, actions, data, datasets, setDataset}: NavbarProps) {
 
   const datasetDropdown = (
     <Menu.Item>
-      <Dropdown icon="table" className="icon" labeled text={dataset.name}>
+      <Dropdown
+        icon="table"
+        className="icon"
+        labeled
+        button
+        text={dataset.name}>
         <Dropdown.Menu>
           {datasets.map(d => (
             <Dropdown.Item
@@ -123,7 +135,12 @@ function Navbar({store, actions, data, datasets, setDataset}: NavbarProps) {
             <Button primary>Invert Selection</Button>
           </Menu.Item>
           <Menu.Item>
-            <Button primary>Clear Selection</Button>
+            <Button
+              disabled={!isAnythingSelected}
+              primary
+              onClick={() => actions.clearSelections()}>
+              Clear Selection
+            </Button>
           </Menu.Item>
         </Menu>
       </Container>

@@ -40,7 +40,7 @@ export function loadData(dataset: any): Data {
     name,
     labelColumn,
     columnMap,
-    values,
+    values: Object.values(values),
     columns,
     categoricalColumns,
     numericColumns,
