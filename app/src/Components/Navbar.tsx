@@ -1,4 +1,4 @@
-import React, {useEffect, useContext} from 'react';
+import React, {useEffect, useContext, useState} from 'react';
 import {inject, observer} from 'mobx-react';
 import {
   Button,
@@ -11,6 +11,7 @@ import {
 import {Dataset, Data} from '../Utils/Dataset';
 import {style} from 'typestyle';
 import {ActionContext} from '../App';
+import AddPlotMenu from './AddPlotMenu';
 
 interface NavbarProps {
   store?: any;
@@ -29,6 +30,8 @@ function Navbar({store, data, datasets, setDataset}: NavbarProps) {
   } = store!;
 
   const actions = useContext(ActionContext);
+
+  const [addingPlot, setAddingPlot] = useState(true);
 
   const {categoricalColumns} = data;
 
@@ -68,7 +71,7 @@ function Navbar({store, data, datasets, setDataset}: NavbarProps) {
 
   const addPlot = (
     <Menu.Item>
-      <Button primary>
+      <Button primary onClick={() => setAddingPlot(true)}>
         <Icon name="add" />
         Add Plot
       </Button>
@@ -122,26 +125,40 @@ function Navbar({store, data, datasets, setDataset}: NavbarProps) {
     </Menu.Item>
   );
 
+  const invertSelectionButton = (
+    <Menu.Item>
+      <Button primary>Invert Selection</Button>
+    </Menu.Item>
+  );
+
+  const clearSelectionButton = (
+    <Menu.Item>
+      <Button
+        disabled={!isAnythingSelected}
+        primary
+        onClick={() => actions.clearSelections()}>
+        Clear Selection
+      </Button>
+    </Menu.Item>
+  );
+
   return (
     <div className={`${menuStyle} ${navStyle}`}>
       <Container fluid textAlign="center">
         <Menu compact>
-          {datasetDropdown}
-          {addPlot}
-          {categoricalColumns.length > 0 && showCategoriesToggle}
-          {showCategories && showCategoriesDropdown}
-          {brushToggle}
-          <Menu.Item>
-            <Button primary>Invert Selection</Button>
-          </Menu.Item>
-          <Menu.Item>
-            <Button
-              disabled={!isAnythingSelected}
-              primary
-              onClick={() => actions.clearSelections()}>
-              Clear Selection
-            </Button>
-          </Menu.Item>
+          {addingPlot ? (
+            <AddPlotMenu closeMenu={setAddingPlot} />
+          ) : (
+            <>
+              {datasetDropdown}
+              {addPlot}
+              {categoricalColumns.length > 0 && showCategoriesToggle}
+              {showCategories && showCategoriesDropdown}
+              {brushToggle}
+              {invertSelectionButton}
+              {clearSelectionButton}
+            </>
+          )}
         </Menu>
       </Container>
     </div>

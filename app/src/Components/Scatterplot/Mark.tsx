@@ -19,7 +19,7 @@ interface Props {
 }
 
 const Mark: FC<Props> = ({store, x, y, category, type}: Props) => {
-  const {showCategories, categoryColumn} = store!;
+  const {showCategories} = store!;
 
   const symbolMap = useContext(SymbolContext);
   let className = REGULAR_MARK_STYLE;

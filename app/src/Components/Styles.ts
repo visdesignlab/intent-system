@@ -8,12 +8,12 @@ export const REGULAR_MARK_STYLE = style({
 
 export const UNION_MARK_STYLE = style({
   fill: 'rgb(244, 106, 15)',
-  opacity: 0.4,
+  opacity: 0.9,
   cursor: 'pointer',
 });
 
 export const INTERSECTION_MARK_STYLE = style({
   fill: 'rgb(44, 127, 184)',
-  opacity: 0.4,
+  opacity: 0.9,
   cursor: 'pointer',
 });
