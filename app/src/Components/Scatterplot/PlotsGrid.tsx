@@ -28,7 +28,8 @@ const PlotsGrid: FC<Props> = ({store, height, width}: Props) => {
   const dividedHeight = height / rowCount;
   const dividedWidth = width / columnCount;
 
-  const dimension = dividedWidth < dividedHeight ? dividedWidth : dividedHeight;
+  let dimension = dividedWidth < dividedHeight ? dividedWidth : dividedHeight;
+  dimension -= 8;
 
   return (
     <div className={flexStyle}>

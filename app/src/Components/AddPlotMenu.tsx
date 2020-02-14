@@ -28,8 +28,6 @@ const AddPlotMenu: FC<Props> = ({closeMenu}: Props) => {
     brushes: {},
   });
 
-  console.log(plot);
-
   return (
     <>
       <Menu.Item>
