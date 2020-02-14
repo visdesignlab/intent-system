@@ -8,6 +8,7 @@ import {style} from 'typestyle';
 import {Datasets, Dataset, loadData, Data} from './Utils/Dataset';
 import ProvenanceVisualization from './Components/ProvenanceVisualization';
 import Visualization from './Components/Scatterplot/Visualization';
+import getPlotId from './Utils/PlotIDGen';
 
 const store = new IntentStore();
 
@@ -42,7 +43,7 @@ const App = () => {
         const data = loadData(d.data);
         if (data.numericColumns.length >= 2) {
           actions.addPlot({
-            id: Math.random().toString(),
+            id: getPlotId(),
             x: data.numericColumns[0],
             y: data.numericColumns[1],
             selectedPoints: [],

@@ -3,6 +3,7 @@ import IntentStore from '../Store/IntentStore';
 import {Menu, Button, Dropdown} from 'semantic-ui-react';
 import {DataContext, ActionContext} from '../App';
 import {Plot} from '../Store/IntentState';
+import getPlotId from '../Utils/PlotIDGen';
 
 export interface Props {
   store?: IntentStore;
@@ -54,7 +55,7 @@ const AddPlotMenu: FC<Props> = ({closeMenu}: Props) => {
           disabled={plot.x === '' || plot.y === ''}
           icon="check"
           onClick={() => {
-            actions.addPlot({...plot, id: Math.random().toString()});
+            actions.addPlot({...plot, id: getPlotId()});
             closeMenu(false);
           }}
           color="green"
