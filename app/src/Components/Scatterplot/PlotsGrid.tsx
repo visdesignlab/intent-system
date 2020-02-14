@@ -12,9 +12,8 @@ interface Props {
 
 const PlotsGrid: FC<Props> = ({store, height, width}: Props) => {
   const {plots} = store!;
-  const count = plots.length > 1 ? 2 : 1;
 
-  const plotCount = plots.length;
+  const plotCount = plots.length < 5 ? plots.length : 4;
   const breakCount = 2;
 
   let rowCount = Math.floor(plotCount / breakCount);

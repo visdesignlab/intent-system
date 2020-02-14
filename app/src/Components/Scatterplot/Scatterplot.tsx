@@ -34,8 +34,13 @@ const Scatterplot: FC<Props> = ({width, height, plot, store}: Props) => {
     }
   }, [dim]);
 
-  const adjustedWidth = dim.width * 0.9;
-  const adjustedHeight = dim.height * 0.9;
+  let reducePercentage = 0.9;
+
+  if (plots.length > 1) reducePercentage = 0.85;
+  if (plots.length > 2) reducePercentage = 0.75;
+
+  const adjustedWidth = dim.width * reducePercentage;
+  const adjustedHeight = dim.height * reducePercentage;
   const xPadding = (dim.width - adjustedWidth) / 2;
   const yPadding = (dim.height - adjustedHeight) / 2;
 
