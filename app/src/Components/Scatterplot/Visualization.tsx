@@ -14,6 +14,7 @@ import PlotsGrid from './PlotsGrid';
 import {DataContext} from '../../App';
 import {symbols, symbol} from 'd3';
 import _ from 'lodash';
+import Legend from './Legend';
 
 export interface Props {
   store?: IntentStore;
@@ -68,9 +69,14 @@ const Visualization: FC<Props> = ({store, actions}: Props) => {
   const adjustedWidth = width * 1;
 
   return (
-    <div ref={ref} className={plotStyle}>
+    <div ref={ref} className={visStyle}>
       <SymbolContext.Provider value={categorySymbolMap}>
-        <PlotsGrid height={adjustedHeight} width={adjustedWidth} />
+        <div className={legendStyle}>
+          <Legend />
+        </div>
+        <div className={plotStyle}>
+          <PlotsGrid height={adjustedHeight} width={adjustedWidth} />
+        </div>
       </SymbolContext.Provider>
     </div>
   );
@@ -79,6 +85,16 @@ const Visualization: FC<Props> = ({store, actions}: Props) => {
 (Visualization as any).whyDidYouRender = true;
 export default inject('store')(observer(Visualization));
 
-const plotStyle = style({
-  gridArea: 'plot',
+const visStyle = style({
+  gridArea: 'vis',
+  display: 'grid',
+  overflow: 'hidden',
+  gridTemplateRows: 'min-content auto',
+  gridTemplateAreas: `
+    "legend"
+    "plot"
+    `,
 });
+
+const legendStyle = style({gridArea: 'legend'});
+const plotStyle = style({gridArea: 'plot', overflow: 'scroll'});

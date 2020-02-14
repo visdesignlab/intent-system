@@ -9,6 +9,8 @@ import {Datasets, Dataset, loadData, Data} from './Utils/Dataset';
 import ProvenanceVisualization from './Components/ProvenanceVisualization';
 import Visualization from './Components/Scatterplot/Visualization';
 import getPlotId from './Utils/PlotIDGen';
+import Legend from './Components/Scatterplot/Legend';
+import _ from 'lodash';
 
 const store = new IntentStore();
 
@@ -83,7 +85,6 @@ const App = () => {
                 setDataset={setSelectedDataset}
               />
               <Visualization actions={actions} />
-              <div className={legendStyle}>Legend</div>
             </div>
             <div className={predStyle}>Predictions</div>
             <ProvenanceVisualization actions={actions} />
@@ -111,14 +112,12 @@ const layoutStyle = style({
 const visStyle = style({
   gridArea: 'vis',
   display: 'grid',
-  gridTemplateRows: 'min-content min-content auto',
+  gridTemplateRows: 'min-content auto',
+  overflow: 'hidden',
   gridTemplateAreas: `
   "nav"
-  "legend"
-  "plot"
+  "vis"
   `,
 });
 
 const predStyle = style({gridArea: 'pred'});
-
-const legendStyle = style({gridArea: 'legend'});

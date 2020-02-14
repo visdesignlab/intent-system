@@ -30,8 +30,6 @@ const PlotsGrid: FC<Props> = ({store, height, width}: Props) => {
 
   const dimension = dividedWidth < dividedHeight ? dividedWidth : dividedHeight;
 
-  console.table(JSON.parse(JSON.stringify(plots)));
-
   return (
     <div className={flexStyle}>
       {plots.map(plot => (
