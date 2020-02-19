@@ -9,8 +9,7 @@ import {Datasets, Dataset, loadData, Data} from './Utils/Dataset';
 import ProvenanceVisualization from './Components/ProvenanceVisualization';
 import Visualization from './Components/Scatterplot/Visualization';
 import getPlotId from './Utils/PlotIDGen';
-import Legend from './Components/Scatterplot/Legend';
-import _ from 'lodash';
+import Predictions from './Components/Predictions/Predictions';
 
 const store = new IntentStore();
 
@@ -86,7 +85,7 @@ const App = () => {
               />
               <Visualization actions={actions} />
             </div>
-            <div className={predStyle}>Predictions</div>
+            <Predictions />
             <ProvenanceVisualization actions={actions} />
           </div>
         </ActionContext.Provider>
@@ -103,7 +102,7 @@ const layoutStyle = style({
   display: 'grid',
   height: '100vh',
   width: '100vw',
-  gridTemplateColumns: '5fr 1fr 1fr',
+  gridTemplateColumns: '5fr 1.5fr 1fr',
   gridTemplateAreas: `
   "vis pred prov"
   `,
@@ -119,5 +118,3 @@ const visStyle = style({
   "vis"
   `,
 });
-
-const predStyle = style({gridArea: 'pred'});

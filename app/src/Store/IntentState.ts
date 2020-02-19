@@ -1,5 +1,6 @@
 import {Dataset} from '../Utils/Dataset';
 import {Brush} from '../Components/Brush/Types/Brush';
+import {InteractionHistory} from '../contract';
 
 export type MultiBrushBehaviour = 'Union' | 'Intersection';
 
@@ -25,6 +26,7 @@ export interface IntentState {
   categoryColumn: string;
   multiBrushBehaviour: MultiBrushBehaviour;
   plots: Plots;
+  interactionHistory: InteractionHistory;
 }
 
 export const defaultState: IntentState = {
@@ -33,4 +35,5 @@ export const defaultState: IntentState = {
   showCategories: false,
   categoryColumn: '',
   plots: [],
+  interactionHistory: [],
 };

@@ -2,6 +2,9 @@ import {
   initProvenance,
   Provenance,
   NodeID,
+  Extra,
+  isStateNode,
+  StateNode,
 } from '@visdesignlab/provenance-lib-core';
 import {
   defaultState,
@@ -10,9 +13,17 @@ import {
   Plot,
   ExtendedBrushCollection,
   Plots,
+  ExtendedBrush,
 } from './IntentState';
 import IntentStore from './IntentStore';
 import {Dataset} from '../Utils/Dataset';
+import {
+  PredictionSet,
+  MultiBrushBehavior,
+  VisualizationType,
+  PredictionRequest,
+} from '../contract';
+import axios from 'axios';
 
 export type IntentEvents =
   | 'Load Dataset'
@@ -27,13 +38,22 @@ export type IntentEvents =
   | 'Remove Brush'
   | 'Clear All';
 
+export type Annotation = {
+  annotation: string;
+  predictionSet: PredictionSet;
+};
+
 export function setupProvenance(store: IntentStore): ProvenanceControl {
-  const provenance = initProvenance<IntentState, IntentEvents>(
+  const provenance = initProvenance<IntentState, IntentEvents, Annotation>(
     defaultState,
     true,
   );
 
   store.graph = provenance.graph();
+
+  function current() {
+    return provenance.current();
+  }
 
   setupObservers(provenance, store);
 
@@ -98,6 +118,19 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
       `Add plot for ${plot.x} - ${plot.y}`,
       (state: IntentState) => {
         state.plots.push(plot);
+
+        state.interactionHistory.push({
+          visualizationType: VisualizationType.Scatterplot,
+          interactionType: {
+            kind: 'ADD',
+            plot: {
+              id: plot.id,
+              x: plot.x,
+              y: plot.y,
+              color: state.categoryColumn,
+            },
+          },
+        });
         return state;
       },
       undefined,
@@ -116,6 +149,20 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
             break;
           }
         }
+        state.interactionHistory.push({
+          visualizationType: VisualizationType.Scatterplot,
+          interactionType: {
+            kind: 'selection',
+            plot: {
+              id: plot.id,
+              x: plot.x,
+              y: plot.y,
+              color: state.categoryColumn,
+            },
+            dimensions: [plot.x, plot.y],
+            dataIds: points,
+          },
+        });
         return state;
       },
       undefined,
@@ -133,6 +180,20 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
               p => !points.includes(p),
             );
             state.plots[i].selectedPoints = [...pts];
+            state.interactionHistory.push({
+              visualizationType: VisualizationType.Scatterplot,
+              interactionType: {
+                kind: 'deselection',
+                plot: {
+                  id: plot.id,
+                  x: plot.x,
+                  y: plot.y,
+                  color: state.categoryColumn,
+                },
+                dimensions: [plot.x, plot.y],
+                dataIds: points,
+              },
+            });
             break;
           }
         }
@@ -143,7 +204,11 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
     );
   }
 
-  function addBrush(plot: Plot, brushCollection: ExtendedBrushCollection) {
+  function addBrush(
+    plot: Plot,
+    brushCollection: ExtendedBrushCollection,
+    affectedBrush: ExtendedBrush,
+  ) {
     provenance.applyAction(
       `Add brush to plot`,
       (state: IntentState) => {
@@ -153,12 +218,45 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
             break;
           }
         }
+
+        state.interactionHistory.push({
+          visualizationType: VisualizationType.Scatterplot,
+          interactionType: {
+            brushId: affectedBrush.id,
+            left: affectedBrush.extents.x1,
+            right: affectedBrush.extents.x2,
+            top: affectedBrush.extents.y1,
+            bottom: affectedBrush.extents.y2,
+            dimensions: [plot.x, plot.y],
+            dataIds: affectedBrush.points,
+            plot: {
+              id: plot.id,
+              x: plot.x,
+              y: plot.y,
+              color: state.categoryColumn,
+            },
+          },
+        });
+
         return state;
       },
       undefined,
       {type: 'Add Brush'},
     );
   }
+
+  // function getPredictions() {
+
+  //   axios
+  //     .post(`/dataset/${store.dataset.key}/predict`, {
+  //       multiBrushBehavior: MultiBrushBehavior.INTERSECTION,
+  //       interactionHistory,
+  //     })
+  //     .then(response => {
+  //       console.log(response.data);
+  //     })
+  //     .catch(err => console.error(err));
+  // }
 
   function changeBrush(plot: Plot, brushCollection: ExtendedBrushCollection) {
     provenance.applyAction(
@@ -231,6 +329,13 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
     );
   }
 
+  function annotateNode(annotate: string) {
+    provenance.addExtraToNodeArtifact(current().id, {
+      annotation: annotate,
+      predictionSet: JSON.parse(JSON.stringify(store.predictionSet)),
+    });
+  }
+
   return {
     provenance,
     actions: {
@@ -247,12 +352,13 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
       removeBrush,
       clearSelections,
       removePlot,
+      annotateNode,
     },
   };
 }
 
 export interface ProvenanceControl {
-  provenance: Provenance<IntentState, IntentEvents>;
+  provenance: Provenance<IntentState, IntentEvents, Annotation>;
   actions: ProvenanceActions;
 }
 
@@ -266,20 +372,85 @@ export interface ProvenanceActions {
   removePlot: (plot: Plot) => void;
   addPointSelection: (plot: Plot, points: number[]) => void;
   removePointSelection: (plot: Plot, points: number[]) => void;
-  addBrush: (plot: Plot, brushCollection: ExtendedBrushCollection) => void;
+  addBrush: (
+    plot: Plot,
+    brushCollection: ExtendedBrushCollection,
+    affectedBrush: ExtendedBrush,
+  ) => void;
   changeBrush: (plot: Plot, brushCollection: ExtendedBrushCollection) => void;
   removeBrush: (plot: Plot, brushCollection: ExtendedBrushCollection) => void;
   clearSelections: () => void;
+  annotateNode: (annotation: string) => void;
+}
+
+function getExtra(
+  provenance: Provenance<IntentState, IntentEvents, Annotation>,
+  node: StateNode<IntentState, IntentEvents, Annotation>,
+): Extra<Annotation>[] {
+  return provenance.getExtraFromArtifact(node.id);
 }
 
 function setupObservers(
-  provenance: Provenance<IntentState, IntentEvents>,
+  provenance: Provenance<IntentState, IntentEvents, Annotation>,
   store: IntentStore,
 ) {
   provenance.addGlobalObserver(() => {
     store.isAtRoot = provenance.current().id === provenance.root().id;
     store.isAtLatest = provenance.current().children.length === 0;
     store.graph = provenance.graph();
+  });
+
+  provenance.addArtifactObserver((extra: Extra<Annotation>[]) => {
+    if (extra.length > 0) {
+      const latest = extra[extra.length - 1];
+      store.predictionSet = latest.e.predictionSet;
+      store.annotation = latest.e.annotation;
+    } else {
+      store.resetPredAndAnnotation();
+    }
+  });
+
+  provenance.addObserver(['interactionHistory'], (state?: IntentState) => {
+    if (state) {
+      const current = provenance.current();
+
+      const multiBrushBehavior =
+        state.multiBrushBehaviour === 'Union'
+          ? MultiBrushBehavior.UNION
+          : MultiBrushBehavior.INTERSECTION;
+      const {interactionHistory} = state;
+
+      const request: PredictionRequest = {
+        multiBrushBehavior,
+        interactionHistory,
+      };
+
+      if (isStateNode(current)) {
+        const extraList = getExtra(provenance, current);
+
+        if (extraList.length === 0 && !store.isLoadingPredictions) {
+          store.isLoadingPredictions = true;
+          axios
+            .post(`/dataset/${store.dataset.key}/predict`, request)
+            .then(response => {
+              if (isStateNode(current)) {
+                const predictionSet: PredictionSet = response.data;
+
+                const annotate: Annotation = {
+                  annotation: '',
+                  predictionSet: predictionSet,
+                };
+
+                provenance.addExtraToNodeArtifact(current.id, annotate);
+              }
+            })
+            .catch(err => console.error(err))
+            .finally(() => {
+              store.isLoadingPredictions = false;
+            });
+        }
+      }
+    }
   });
 
   const arrs = [
@@ -301,4 +472,32 @@ function observerFunction(state: any, store: any, key: string) {
   if (state && state[key] !== store[key]) {
     store[key] = state[key];
   }
+}
+
+export function getPathTo(nodes: any, from: string, to: string): string[] {
+  const path: string[] = [];
+
+  search(nodes, from, to, path);
+
+  return [from, ...path.reverse()];
+}
+
+function search(nodes: any, node: string, final: string, path: string[]) {
+  if (!nodes[node]) return false;
+
+  if (node === final) {
+    path.push(node);
+    return true;
+  }
+
+  const children = nodes[node].children || [];
+
+  for (let child of children) {
+    if (search(nodes, child.id!, final, path)) {
+      path.push(child.id!);
+      return true;
+    }
+  }
+
+  return false;
 }

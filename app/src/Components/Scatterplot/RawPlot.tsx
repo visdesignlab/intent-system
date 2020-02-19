@@ -66,7 +66,7 @@ const RawPlot: FC<Props> = ({
         const addBr: ExtendedBrush = {...affectedBrush, points};
 
         brushCollection[addBr.id] = addBr;
-        actions.addBrush(plot, brushCollection);
+        actions.addBrush(plot, brushCollection, addBr);
         break;
       case 'Change':
         for (let i = 0; i < data.length; ++i) {

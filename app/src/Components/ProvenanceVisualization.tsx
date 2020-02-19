@@ -56,7 +56,17 @@ export default inject('store')(observer(ProvenanceVisualization));
 
 const provStyle = style({
   gridArea: 'prov',
+  paddingLeft: '1em',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
+  $nest: {
+    svg: {
+      $nest: {
+        rect: {
+          opacity: 0.2,
+        },
+      },
+    },
+  },
 });
