@@ -2,11 +2,11 @@ import React, {FC} from 'react';
 import {inject, observer} from 'mobx-react';
 import IntentStore from '../../Store/IntentStore';
 import {Table} from 'semantic-ui-react';
-import {Prediction} from '../../contract';
+import {PredictionRowType} from './PredictionRowType';
 
 type Props = {
   store?: IntentStore;
-  predictions: Prediction[];
+  predictions: PredictionRowType[];
 };
 
 const PredictionTable: FC<Props> = ({store, predictions}: Props) => {
@@ -23,7 +23,10 @@ const PredictionTable: FC<Props> = ({store, predictions}: Props) => {
         {predictions.map(pred => {
           return (
             <Table.Row key={pred.intent}>
-              <Table.Cell>{pred.intent}</Table.Cell>
+              <Table.Cell>
+                {pred.type} | {pred.similarity.toFixed(2)} |
+                {pred.probability.toFixed(2)}
+              </Table.Cell>
             </Table.Row>
           );
         })}

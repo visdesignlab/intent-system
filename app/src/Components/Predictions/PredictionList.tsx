@@ -22,13 +22,16 @@ const PredictionList: FC<Props> = ({store}: Props) => {
 
   const selections = getAllSelections(plots, multiBrushBehaviour === 'Union');
 
-  const preds = predictions.map(pred => extendPrediction(pred, selections));
+  const preds = predictions
+    .map(pred => extendPrediction(pred, selections))
+    .sort((a, b) => b.similarity - a.similarity);
+
   if (preds.length > 0) {
     console.clear();
-    console.table(preds.sort((a, b) => b.similarity - a.similarity));
+    console.table(preds);
   }
 
-  const predictionTable = <PredictionTable predictions={predictions} />;
+  const predictionTable = <PredictionTable predictions={preds} />;
 
   const loadingComponent = (
     <Segment placeholder basic>
