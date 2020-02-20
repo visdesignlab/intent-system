@@ -10,14 +10,12 @@ interface Props {
 }
 
 const Predictions: FC<Props> = ({store}: Props) => {
-  const {annotation, predictionSet} = store!;
-
-  const {predictions} = predictionSet;
+  const {annotation} = store!;
 
   return (
     <div className={predictionColumnStyle}>
       <AnnotationBox annotation={annotation} />
-      <PredictionList annotation={annotation} predictions={predictions} />
+      <PredictionList />
     </div>
   );
 };

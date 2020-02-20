@@ -1,37 +1,34 @@
-import React, {FC, Fragment} from 'react';
+import React, {FC} from 'react';
 import IntentStore from '../../Store/IntentStore';
-import {Table, Loader, Segment, Dimmer, Card, Header} from 'semantic-ui-react';
+import {Loader, Segment, Dimmer, Header} from 'semantic-ui-react';
 import {inject, observer} from 'mobx-react';
 import {style} from 'typestyle';
-import {Prediction} from '../../contract';
+import PredictionTable from './PredictionTable';
+import {extendPrediction, getAllSelections} from './PredictionRowType';
 
 export interface Props {
   store?: IntentStore;
-  predictions: Prediction[];
-  annotation: string;
 }
 
-const PredictionList: FC<Props> = ({store, predictions, annotation}: Props) => {
-  const {isLoadingPredictions} = store!;
+const PredictionList: FC<Props> = ({store}: Props) => {
+  const {
+    isLoadingPredictions,
+    predictionSet,
+    plots,
+    multiBrushBehaviour,
+  } = store!;
 
-  const predictionTable = (
-    <Table celled sortable textAlign="center">
-      <Table.Header>
-        <Table.Row>
-          <Table.HeaderCell>Prediction: {annotation}</Table.HeaderCell>
-        </Table.Row>
-      </Table.Header>
-      <Table.Body>
-        {predictions.map(pred => {
-          return (
-            <Table.Row key={pred.intent}>
-              <Table.Cell>{pred.intent}</Table.Cell>
-            </Table.Row>
-          );
-        })}
-      </Table.Body>
-    </Table>
-  );
+  const {predictions} = predictionSet;
+
+  const selections = getAllSelections(plots, multiBrushBehaviour === 'Union');
+
+  const preds = predictions.map(pred => extendPrediction(pred, selections));
+  if (preds.length > 0) {
+    console.clear();
+    console.table(preds.sort((a, b) => b.similarity - a.similarity));
+  }
+
+  const predictionTable = <PredictionTable predictions={predictions} />;
 
   const loadingComponent = (
     <Segment placeholder basic>

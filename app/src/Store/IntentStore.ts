@@ -63,22 +63,3 @@ export default class IntentStore implements IntentState {
     return false;
   }
 }
-
-// const extraDataList = provenance.getExtraFromArtifact(
-//   provenance.current().id,
-// );
-// if (
-//   (extraDataList.length === 0 ||
-//     extraDataList[extraDataList.length - 1].e.predicationSet
-//       .predictions.length > 0) &&
-//   predictionSet.predictions.length > 0
-// ) {
-//   console.log(
-//     'Called when brushed',
-//     provenance.getExtraFromArtifact(provenance.current().id),
-//   );
-//   provenance.addExtraToNodeArtifact(provenance.current().id, {
-//     annotation: store.annotation,
-//     predicationSet: predictionSet,
-//   });
-// }
