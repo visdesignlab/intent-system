@@ -97,4 +97,4 @@ const visStyle = style({
 });
 
 const legendStyle = style({gridArea: 'legend'});
-const plotStyle = style({gridArea: 'plot', overflow: 'scroll'});
+const plotStyle = style({gridArea: 'plot', overflow: 'auto'});

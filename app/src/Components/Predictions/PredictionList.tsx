@@ -1,16 +1,18 @@
-import React, {FC} from 'react';
+import React, {FC, useContext} from 'react';
 import IntentStore from '../../Store/IntentStore';
 import {Loader, Segment, Dimmer, Header} from 'semantic-ui-react';
 import {inject, observer} from 'mobx-react';
 import {style} from 'typestyle';
 import PredictionTable from './PredictionTable';
 import {extendPrediction, getAllSelections} from './PredictionRowType';
+import {DataContext} from '../../App';
 
 export interface Props {
   store?: IntentStore;
+  selections: number[];
 }
 
-const PredictionList: FC<Props> = ({store}: Props) => {
+const PredictionList: FC<Props> = ({store, selections}: Props) => {
   const {
     isLoadingPredictions,
     predictionSet,
@@ -18,17 +20,17 @@ const PredictionList: FC<Props> = ({store}: Props) => {
     multiBrushBehaviour,
   } = store!;
 
+  const {columnMap} = useContext(DataContext);
+
   const {predictions} = predictionSet;
 
-  const selections = getAllSelections(plots, multiBrushBehaviour === 'Union');
-
   const preds = predictions
-    .map(pred => extendPrediction(pred, selections))
+    .map(pred => extendPrediction(pred, selections, columnMap))
     .sort((a, b) => b.similarity - a.similarity);
 
   if (preds.length > 0) {
-    console.clear();
-    console.table(preds);
+    // console.clear();
+    // console.table(preds);
   }
 
   const predictionTable = <PredictionTable predictions={preds} />;
@@ -62,5 +64,5 @@ export default inject('store')(observer(PredictionList));
 
 const listStyle = style({
   gridArea: 'predictions',
-  overflow: 'scroll',
+  overflow: 'auto',
 });

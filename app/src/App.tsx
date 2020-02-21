@@ -102,7 +102,7 @@ const layoutStyle = style({
   display: 'grid',
   height: '100vh',
   width: '100vw',
-  gridTemplateColumns: '5fr 1.5fr 1fr',
+  gridTemplateColumns: '5fr 2fr 1fr',
   gridTemplateAreas: `
   "vis pred prov"
   `,

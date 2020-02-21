@@ -1,6 +1,8 @@
 import {Prediction} from '../../contract';
 import {Plots} from '../../Store/IntentState';
 import _ from 'lodash';
+import {ColumnMap} from '../../Utils/Dataset';
+import {Selection} from './Predictions';
 
 export type PredictionType =
   | 'Outlier'
@@ -22,11 +24,13 @@ export type PredictionRowType = Prediction & {
   matches: number[];
   ipns: number[];
   isnp: number[];
+  dims: string[];
 };
 
 export function extendPrediction(
   pred: Prediction,
   selections: number[],
+  columnMap: ColumnMap,
 ): PredictionRowType {
   const type: PredictionType = getPredictionType(pred.intent);
   const {probability = 0} = pred.info! as any;
@@ -37,6 +41,9 @@ export function extendPrediction(
   const matches = _.intersection(dataIds, selections);
   const ipns = _.difference(dataIds, selections);
   const isnp = _.difference(selections, dataIds);
+  const dims = getDimensions(pred.intent)
+    .map(dim => columnMap[dim].short)
+    .sort();
 
   return {
     ...pred,
@@ -46,7 +53,17 @@ export function extendPrediction(
     matches,
     ipns,
     isnp,
+    dims,
   };
+}
+
+function getDimensions(intent: string) {
+  if (!intent.includes('[')) return [];
+  const dims = intent
+    .split(':')[1]
+    .replace(/\[|\]|'|\s/g, '')
+    .split(',');
+  return dims;
 }
 
 function getPredictionType(intent: string): PredictionType {
@@ -75,18 +92,41 @@ function getPredictionType(intent: string): PredictionType {
   return 'Outlier';
 }
 
-export function getAllSelections(plots: Plots, isUnion: boolean): number[] {
+export function getAllSelections(plots: Plots, isUnion: boolean): Selection {
   const selections: number[] = [];
+  const individualSelection: number[] = [];
+  const brushSelections: number[] = [];
+  let brushCount: number = 0;
 
   for (let i = 0; i < plots.length; ++i) {
     const plot = plots[i];
     selections.push(...plot.selectedPoints);
+    individualSelection.push(...plot.selectedPoints);
     const brushes = Object.values(plot.brushes);
     for (let y = 0; y < brushes.length; ++y) {
+      brushCount += 1;
       const brush = brushes[y];
       selections.push(...brush.points);
+      brushSelections.push(...brush.points);
     }
   }
 
-  return [...new Set(selections)];
+  const values = [...new Set(selections)];
+
+  const brushSelectionCount = _.countBy(brushSelections);
+
+  const union = Object.keys(brushSelectionCount).length;
+  const intersection = isUnion
+    ? union
+    : Object.keys(brushSelectionCount).filter(
+        d => brushSelectionCount[d] === brushCount,
+      ).length;
+
+  return {
+    values,
+    union,
+    intersection,
+    total: values.length,
+    individual: [...new Set(individualSelection)].length,
+  };
 }
