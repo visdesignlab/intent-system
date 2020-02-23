@@ -1,7 +1,6 @@
 import React, {FC, useRef, useState, useEffect} from 'react';
 import IntentStore from '../../Store/IntentStore';
 import {inject, observer} from 'mobx-react';
-import {style} from 'typestyle';
 import {scaleLinear} from 'd3';
 import {JACCARD_BAR_FOREGROUND, JACCARD_BAR_BACKGROUND} from '../Styles';
 import translate from '../../Utils/Translate';

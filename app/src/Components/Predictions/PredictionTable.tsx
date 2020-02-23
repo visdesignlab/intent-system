@@ -12,8 +12,6 @@ type Props = {
 };
 
 const PredictionTable: FC<Props> = ({store, predictions}: Props) => {
-  const {annotation} = store!;
-
   const barHeight = 30;
 
   return (

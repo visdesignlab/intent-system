@@ -5,6 +5,7 @@ import {DataContext} from '../../App';
 import IntentStore from '../../Store/IntentStore';
 import {inject, observer} from 'mobx-react';
 import {Selection} from './Predictions';
+import {select} from 'd3';
 
 export interface Props {
   store?: IntentStore;
@@ -21,7 +22,7 @@ const Selections: FC<Props> = ({store, selections}: Props) => {
         <Header textAlign="center" as="h1">
           Selections
         </Header>
-        <Statistic.Group widths="4">
+        <Statistic.Group widths="4" size="small">
           <Statistic color="orange">
             <Statistic.Value>{selections.union}</Statistic.Value>
             <Statistic.Label>Union</Statistic.Label>
@@ -44,7 +45,13 @@ const Selections: FC<Props> = ({store, selections}: Props) => {
       </div>
       <div className={selectionList}>
         {selections.values.map(idx => (
-          <div key={idx}>{data.values[idx][data.labelColumn]}</div>
+          <div
+            key={idx}
+            onMouseOver={() => {
+              select(`#mark-${idx}`).style('fill', 'red');
+            }}>
+            {data.values[idx][data.labelColumn]}
+          </div>
         ))}
       </div>
     </div>

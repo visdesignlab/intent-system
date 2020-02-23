@@ -12,6 +12,7 @@ import MarkType from './MarkType';
 import Mark from './Mark';
 import XAxis from './XAxis';
 import YAxis from './YAxis';
+import {Popup, Header, Table} from 'semantic-ui-react';
 
 export interface Props {
   store?: IntentStore;
@@ -38,6 +39,8 @@ const RawPlot: FC<Props> = ({
   const [mouseDown, setMouseDown] = useState(false);
   const {plots, multiBrushBehaviour} = store!;
   const {selectedPoints, brushes} = plot;
+
+  const rawData = useContext(DataContext);
 
   function brushHandler(
     _: BrushCollection,
@@ -154,9 +157,9 @@ const RawPlot: FC<Props> = ({
       type = 'Union';
     }
 
-    return (
+    const mark = (
       <g
-        key={idx}
+        id={`mark-${idx}`}
         onClick={() => {
           if (!selectedPoints.includes(idx)) {
             actions.addPointSelection(plot, [idx]);
@@ -172,6 +175,51 @@ const RawPlot: FC<Props> = ({
         />
       </g>
     );
+
+    const currColumn = [plot.x, plot.y];
+
+    const columns = [
+      ...currColumn,
+      ...rawData.columns.filter(a => !currColumn.includes(a)),
+    ];
+
+    const popupContent = (
+      <div>
+        <Header>{rawData.values[idx][rawData.labelColumn]}</Header>
+        <Table compact>
+          <Table.Header>
+            <Table.Row>
+              <Table.HeaderCell>Property</Table.HeaderCell>
+              <Table.HeaderCell>Value</Table.HeaderCell>
+            </Table.Row>
+          </Table.Header>
+          <Table.Body>
+            {columns.map(col => {
+              return (
+                <Table.Row key={col}>
+                  <Table.Cell>
+                    {plot.x === col || plot.y === col ? (
+                      <Header>{rawData.columnMap[col].text}</Header>
+                    ) : (
+                      rawData.columnMap[col].text
+                    )}
+                  </Table.Cell>
+                  <Table.Cell>
+                    {plot.x === col || plot.y === col ? (
+                      <Header>{rawData.values[idx][col]}</Header>
+                    ) : (
+                      rawData.values[idx][col]
+                    )}
+                  </Table.Cell>
+                </Table.Row>
+              );
+            })}
+          </Table.Body>
+        </Table>
+      </div>
+    );
+
+    return <Popup key={idx} content={popupContent} trigger={mark} />;
   }
 
   const {columnMap} = useContext(DataContext);

@@ -4,7 +4,7 @@ import {Loader, Segment, Dimmer, Header} from 'semantic-ui-react';
 import {inject, observer} from 'mobx-react';
 import {style} from 'typestyle';
 import PredictionTable from './PredictionTable';
-import {extendPrediction, getAllSelections} from './PredictionRowType';
+import {extendPrediction} from './PredictionRowType';
 import {DataContext} from '../../App';
 
 export interface Props {
@@ -13,12 +13,7 @@ export interface Props {
 }
 
 const PredictionList: FC<Props> = ({store, selections}: Props) => {
-  const {
-    isLoadingPredictions,
-    predictionSet,
-    plots,
-    multiBrushBehaviour,
-  } = store!;
+  const {isLoadingPredictions, predictionSet} = store!;
 
   const {columnMap} = useContext(DataContext);
 
