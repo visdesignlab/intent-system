@@ -8,15 +8,23 @@ import {scaleLinear} from 'd3';
 import translate from '../../Utils/Translate';
 import RawPlot from './RawPlot';
 import {Button} from 'semantic-ui-react';
+import {UserSelections} from '../Predictions/PredictionRowType';
 
 export interface Props {
   store?: IntentStore;
   height: number;
   width: number;
   plot: Plot;
+  selections: UserSelections;
 }
 
-const Scatterplot: FC<Props> = ({width, height, plot, store}: Props) => {
+const Scatterplot: FC<Props> = ({
+  width,
+  height,
+  plot,
+  store,
+  selections,
+}: Props) => {
   const svgRef = useRef<SVGSVGElement>(null);
   const data = useContext(DataContext);
   const actions = useContext(ActionContext);
@@ -93,6 +101,7 @@ const Scatterplot: FC<Props> = ({width, height, plot, store}: Props) => {
           transform={translate(xPadding, yPadding)}
           xScale={xScale}
           yScale={yScale}
+          selections={selections}
         />
       </svg>
     </div>

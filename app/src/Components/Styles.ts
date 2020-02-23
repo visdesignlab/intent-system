@@ -69,3 +69,13 @@ export const PROB_BAR_BACKGROUND = style(prob_bar_fill, {
 export const PROB_BAR_FOREGROUND = style(prob_bar_fill, {
   opacity: 0.9,
 });
+
+// Selection Style
+
+export const FADE_IN = style({
+  opacity: 1,
+});
+
+export const FADE_OUT = style({
+  opacity: 0.1,
+});

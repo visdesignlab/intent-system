@@ -13,6 +13,7 @@ import Mark from './Mark';
 import XAxis from './XAxis';
 import YAxis from './YAxis';
 import {Popup, Header, Table} from 'semantic-ui-react';
+import {UserSelections} from '../Predictions/PredictionRowType';
 
 export interface Props {
   store?: IntentStore;
@@ -23,6 +24,7 @@ export interface Props {
   width: number;
   xScale: ScaleLinear<number, number>;
   yScale: ScaleLinear<number, number>;
+  selections: UserSelections;
 }
 
 const RawPlot: FC<Props> = ({
@@ -34,6 +36,7 @@ const RawPlot: FC<Props> = ({
   width,
   xScale,
   yScale,
+  selections,
 }: Props) => {
   const actions = useContext(ActionContext);
   const [mouseDown, setMouseDown] = useState(false);
@@ -157,6 +160,17 @@ const RawPlot: FC<Props> = ({
       type = 'Union';
     }
 
+    let markClass = 'regular-mark';
+    if (type === 'Union') {
+      markClass = 'union-mark';
+    }
+    if (selections.individualArr.includes(idx)) {
+      markClass = 'click-mark';
+    }
+    if (type === 'Intersection') {
+      markClass = 'intersection-mark';
+    }
+
     const mark = (
       <g
         id={`mark-${idx}`}
@@ -168,6 +182,7 @@ const RawPlot: FC<Props> = ({
           }
         }}>
         <Mark
+          extraClass={markClass}
           type={type}
           x={xScale(data.x)}
           y={yScale(data.y)}

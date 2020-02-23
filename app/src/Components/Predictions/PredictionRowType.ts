@@ -2,7 +2,6 @@ import {Prediction} from '../../contract';
 import {Plots} from '../../Store/IntentState';
 import _ from 'lodash';
 import {ColumnMap} from '../../Utils/Dataset';
-import {Selection} from './Predictions';
 
 export type PredictionType =
   | 'Outlier'
@@ -25,6 +24,17 @@ export type PredictionRowType = Prediction & {
   ipns: number[];
   isnp: number[];
   dims: string[];
+};
+
+export type UserSelections = {
+  values: number[];
+  unionArr: number[];
+  intersectionArr: number[];
+  individualArr: number[];
+  union: number;
+  intersection: number;
+  individual: number;
+  total: number;
 };
 
 export function extendPrediction(
@@ -92,16 +102,19 @@ function getPredictionType(intent: string): PredictionType {
   return 'Outlier';
 }
 
-export function getAllSelections(plots: Plots, isUnion: boolean): Selection {
+export function getAllSelections(
+  plots: Plots,
+  isUnion: boolean,
+): UserSelections {
   const selections: number[] = [];
-  const individualSelection: number[] = [];
+  const individualArr: number[] = [];
   const brushSelections: number[] = [];
   let brushCount: number = 0;
 
   for (let i = 0; i < plots.length; ++i) {
     const plot = plots[i];
     selections.push(...plot.selectedPoints);
-    individualSelection.push(...plot.selectedPoints);
+    individualArr.push(...plot.selectedPoints);
     const brushes = Object.values(plot.brushes);
     for (let y = 0; y < brushes.length; ++y) {
       brushCount += 1;
@@ -115,18 +128,23 @@ export function getAllSelections(plots: Plots, isUnion: boolean): Selection {
 
   const brushSelectionCount = _.countBy(brushSelections);
 
-  const union = Object.keys(brushSelectionCount).length;
-  const intersection = isUnion
-    ? union
-    : Object.keys(brushSelectionCount).filter(
-        d => brushSelectionCount[d] === brushCount,
-      ).length;
+  const unionArr = Object.keys(brushSelectionCount).map(parseInt);
+  const union = unionArr.length;
+  const intersectionArr = isUnion
+    ? unionArr
+    : Object.keys(brushSelectionCount)
+        .filter(d => brushSelectionCount[d] === brushCount)
+        .map(parseInt);
+  const intersection = intersectionArr.length;
 
   return {
     values,
+    unionArr,
+    intersectionArr,
+    individualArr,
     union,
     intersection,
     total: values.length,
-    individual: [...new Set(individualSelection)].length,
+    individual: [...new Set(individualArr)].length,
   };
 }

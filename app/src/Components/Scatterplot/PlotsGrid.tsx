@@ -3,6 +3,7 @@ import IntentStore from '../../Store/IntentStore';
 import {inject, observer} from 'mobx-react';
 import {style} from 'typestyle';
 import Scatterplot from './Scatterplot';
+import {getAllSelections} from '../Predictions/PredictionRowType';
 
 interface Props {
   store?: IntentStore;
@@ -11,10 +12,12 @@ interface Props {
 }
 
 const PlotsGrid: FC<Props> = ({store, height, width}: Props) => {
-  const {plots} = store!;
+  const {plots, multiBrushBehaviour} = store!;
 
   const plotCount = plots.length < 5 ? plots.length : 4;
   const breakCount = 2;
+
+  const selections = getAllSelections(plots, multiBrushBehaviour === 'Union');
 
   let rowCount = Math.floor(plotCount / breakCount);
   if (rowCount === 0) {
@@ -39,6 +42,7 @@ const PlotsGrid: FC<Props> = ({store, height, width}: Props) => {
           plot={plot}
           height={dimension}
           width={dimension}
+          selections={selections}
         />
       ))}
     </div>

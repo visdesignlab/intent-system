@@ -16,9 +16,10 @@ interface Props {
   x: number;
   y: number;
   category: string;
+  extraClass: string;
 }
 
-const Mark: FC<Props> = ({store, x, y, category, type}: Props) => {
+const Mark: FC<Props> = ({store, x, y, category, type, extraClass}: Props) => {
   const {showCategories} = store!;
 
   const symbolMap = useContext(SymbolContext);
@@ -37,7 +38,9 @@ const Mark: FC<Props> = ({store, x, y, category, type}: Props) => {
       break;
   }
 
-  let mark = <circle cx={x} cy={y} r="0.35em" className={className} />;
+  let mark = (
+    <circle cx={x} cy={y} r="0.35em" className={`${className} ${extraClass}`} />
+  );
 
   if (showCategories) {
     const path = symbolMap[category];
@@ -45,7 +48,7 @@ const Mark: FC<Props> = ({store, x, y, category, type}: Props) => {
       <path
         transform={translate(x, y)}
         d={path.size(80)()}
-        className={className}
+        className={`${className} ${extraClass}`}
       />
     );
   }

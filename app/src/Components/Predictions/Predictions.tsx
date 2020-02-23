@@ -5,24 +5,16 @@ import AnnotationBox from './AnnotationBox';
 import {style} from 'typestyle';
 import PredictionList from './PredictionList';
 import Selections from './Selections';
-import {getAllSelections} from './PredictionRowType';
+import {getAllSelections, UserSelections} from './PredictionRowType';
 
 interface Props {
   store?: IntentStore;
 }
 
-export type Selection = {
-  values: number[];
-  union: number;
-  intersection: number;
-  individual: number;
-  total: number;
-};
-
 const Predictions: FC<Props> = ({store}: Props) => {
   const {annotation, plots, multiBrushBehaviour} = store!;
 
-  const selections: Selection = getAllSelections(
+  const selections: UserSelections = getAllSelections(
     plots,
     multiBrushBehaviour === 'Union',
   );

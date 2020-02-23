@@ -4,17 +4,22 @@ import {style} from 'typestyle';
 import {DataContext} from '../../App';
 import IntentStore from '../../Store/IntentStore';
 import {inject, observer} from 'mobx-react';
-import {Selection} from './Predictions';
-import {select} from 'd3';
+import {UserSelections} from './PredictionRowType';
+import {FADE_OUT, FADE_IN} from '../Styles';
+import hoverable from '../UtilComponent/hoverable';
 
 export interface Props {
   store?: IntentStore;
-  selections: Selection;
+  selections: UserSelections;
 }
 
 const Selections: FC<Props> = ({store, selections}: Props) => {
   const {multiBrushBehaviour} = store!;
   const data = useContext(DataContext);
+
+  const HoverableStatistic = hoverable(Statistic);
+
+  console.log(selections);
 
   return (
     <div className={selectionStyle}>
@@ -23,35 +28,77 @@ const Selections: FC<Props> = ({store, selections}: Props) => {
           Selections
         </Header>
         <Statistic.Group widths="4" size="small">
-          <Statistic color="orange">
+          <HoverableStatistic
+            configs={[
+              {
+                selector: '.regular-mark,.intersection-mark,.click-mark',
+                classToApply: FADE_OUT,
+              },
+              {
+                selector: '.union-mark',
+                classToApply: FADE_IN,
+              },
+            ]}
+            color="orange">
             <Statistic.Value>{selections.union}</Statistic.Value>
             <Statistic.Label>Union</Statistic.Label>
-          </Statistic>
-          <Statistic
+          </HoverableStatistic>
+          <HoverableStatistic
+            configs={[
+              {
+                selector:
+                  multiBrushBehaviour === 'Union'
+                    ? '.regular-mark,.intersection-mark,.click-mark'
+                    : '.regular-mark,.union-mark,.click-mark',
+                classToApply: FADE_OUT,
+              },
+              {
+                selector:
+                  multiBrushBehaviour === 'Union'
+                    ? '.union-mark'
+                    : '.intersection-mark',
+                classToApply: FADE_IN,
+              },
+            ]}
             color={multiBrushBehaviour === 'Union' ? 'orange' : 'blue'}>
             <Statistic.Value>{selections.intersection}</Statistic.Value>
             <Statistic.Label>Intersection</Statistic.Label>
-          </Statistic>
-          <Statistic color="red">
+          </HoverableStatistic>
+          <HoverableStatistic
+            configs={[
+              {
+                selector: '.click-mark',
+                classToApply: FADE_IN,
+              },
+              {
+                selector: '.regular-mark,.intersection-mark,.union-mark',
+                classToApply: FADE_OUT,
+              },
+            ]}
+            color="red">
             <Statistic.Value>{selections.individual}</Statistic.Value>
             <Statistic.Label>Individual</Statistic.Label>
-          </Statistic>
-          <Statistic>
+          </HoverableStatistic>
+          <HoverableStatistic
+            configs={[
+              {
+                selector: '.click-mark,.intersection-mark,.union-mark',
+                classToApply: FADE_IN,
+              },
+              {
+                selector: '.regular-mark',
+                classToApply: FADE_OUT,
+              },
+            ]}>
             <Statistic.Value>{selections.total}</Statistic.Value>
             <Statistic.Label>Total</Statistic.Label>
-          </Statistic>
+          </HoverableStatistic>
         </Statistic.Group>
         <Divider />
       </div>
       <div className={selectionList}>
         {selections.values.map(idx => (
-          <div
-            key={idx}
-            onMouseOver={() => {
-              select(`#mark-${idx}`).style('fill', 'red');
-            }}>
-            {data.values[idx][data.labelColumn]}
-          </div>
+          <div key={idx}>{data.values[idx][data.labelColumn]}</div>
         ))}
       </div>
     </div>
