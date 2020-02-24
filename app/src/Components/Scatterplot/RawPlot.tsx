@@ -172,23 +172,21 @@ const RawPlot: FC<Props> = ({
     }
 
     const mark = (
-      <g
+      <Mark
         id={`mark-${idx}`}
+        extraClass={markClass}
+        type={type}
+        x={xScale(data.x)}
+        y={yScale(data.y)}
+        category={data.category || ''}
         onClick={() => {
           if (!selectedPoints.includes(idx)) {
             actions.addPointSelection(plot, [idx]);
           } else {
             actions.removePointSelection(plot, [idx]);
           }
-        }}>
-        <Mark
-          extraClass={markClass}
-          type={type}
-          x={xScale(data.x)}
-          y={yScale(data.y)}
-          category={data.category || ''}
-        />
-      </g>
+        }}
+      />
     );
 
     const currColumn = [plot.x, plot.y];

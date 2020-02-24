@@ -5,8 +5,8 @@ import {DataContext} from '../../App';
 import IntentStore from '../../Store/IntentStore';
 import {inject, observer} from 'mobx-react';
 import {UserSelections} from './PredictionRowType';
-import {FADE_OUT, FADE_IN} from '../Styles';
 import hoverable from '../UtilComponent/hoverable';
+import {FADE_OUT, FADE_IN} from '../Styles/MarkStyle';
 
 export interface Props {
   store?: IntentStore;

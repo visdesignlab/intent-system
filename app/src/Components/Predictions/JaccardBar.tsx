@@ -2,8 +2,11 @@ import React, {FC, useRef, useState, useEffect} from 'react';
 import IntentStore from '../../Store/IntentStore';
 import {inject, observer} from 'mobx-react';
 import {scaleLinear} from 'd3';
-import {JACCARD_BAR_FOREGROUND, JACCARD_BAR_BACKGROUND} from '../Styles';
 import translate from '../../Utils/Translate';
+import {
+  JACCARD_BAR_BACKGROUND,
+  JACCARD_BAR_FOREGROUND,
+} from '../Styles/PredictionBarStyle';
 
 export interface Props {
   store?: IntentStore;
