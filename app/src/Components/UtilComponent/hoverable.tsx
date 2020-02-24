@@ -17,8 +17,6 @@ function hoverable<P>(BaseComponent: React.ComponentType<P>) {
     const addClasses: any[] = [];
     const removeClasses: any[] = [];
 
-    console.log(configs);
-
     configs.forEach(config => {
       const {selector, classToApply} = config;
 
@@ -34,11 +32,13 @@ function hoverable<P>(BaseComponent: React.ComponentType<P>) {
     const addClass = () => addClasses.forEach(f => f());
     const removeClass = () => removeClasses.forEach(f => f());
     return (
-      <BaseComponent
-        onMouseEnter={addClass}
-        onMouseLeave={removeClass}
-        {...props}
-      />
+      <>
+        <BaseComponent
+          onMouseEnter={addClass}
+          onMouseLeave={removeClass}
+          {...props}
+        />
+      </>
     );
   };
 }

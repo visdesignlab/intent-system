@@ -29,6 +29,7 @@ const Selections: FC<Props> = ({store, selections}: Props) => {
         </Header>
         <Statistic.Group widths="4" size="small">
           <HoverableStatistic
+            className={backgroundHover}
             configs={[
               {
                 selector: '.regular-mark,.intersection-mark,.click-mark',
@@ -44,6 +45,7 @@ const Selections: FC<Props> = ({store, selections}: Props) => {
             <Statistic.Label>Union</Statistic.Label>
           </HoverableStatistic>
           <HoverableStatistic
+            className={backgroundHover}
             configs={[
               {
                 selector:
@@ -65,6 +67,7 @@ const Selections: FC<Props> = ({store, selections}: Props) => {
             <Statistic.Label>Intersection</Statistic.Label>
           </HoverableStatistic>
           <HoverableStatistic
+            className={backgroundHover}
             configs={[
               {
                 selector: '.click-mark',
@@ -80,6 +83,7 @@ const Selections: FC<Props> = ({store, selections}: Props) => {
             <Statistic.Label>Individual</Statistic.Label>
           </HoverableStatistic>
           <HoverableStatistic
+            className={backgroundHover}
             configs={[
               {
                 selector: '.click-mark,.intersection-mark,.union-mark',
@@ -116,4 +120,15 @@ const selectionStyle = style({
 
 const selectionList = style({
   overflow: 'auto',
+});
+
+const backgroundHover = style({
+  background: 'rgba(0,0,0,0)',
+  transition: 'background 0.25s linear',
+  $nest: {
+    '&:hover': {
+      background: 'rgba(0,0,0,0.05)',
+      transition: 'background 0.25s linear',
+    },
+  },
 });
