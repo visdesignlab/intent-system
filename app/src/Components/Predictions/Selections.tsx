@@ -19,8 +19,6 @@ const Selections: FC<Props> = ({store, selections}: Props) => {
 
   const HoverableStatistic = hoverable(Statistic);
 
-  console.log(selections);
-
   return (
     <div className={selectionStyle}>
       <div>

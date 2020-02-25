@@ -1,4 +1,4 @@
-import React, {FC} from 'react';
+import React from 'react';
 import {selectAll} from 'd3';
 
 export type HoverConfig = {
@@ -31,6 +31,7 @@ function hoverable<P>(BaseComponent: React.ComponentType<P>) {
 
     const addClass = () => addClasses.forEach(f => f());
     const removeClass = () => removeClasses.forEach(f => f());
+
     return (
       <>
         <BaseComponent

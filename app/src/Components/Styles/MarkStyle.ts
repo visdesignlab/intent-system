@@ -45,9 +45,16 @@ export const INTERSECTION_MARK_STYLE = style(
 // Selection Style
 
 export const FADE_IN = style({
-  opacity: 1,
+  opacity: '1',
 });
 
 export const FADE_OUT = style({
   opacity: 0.1,
+});
+
+// Pred-Sel comparision
+
+export const FADE_COMP_IN = style({
+  fill: '#84dd63',
+  opacity: '1',
 });
