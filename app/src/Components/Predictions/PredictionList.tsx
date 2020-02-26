@@ -55,6 +55,7 @@ const PredictionList: FC<Props> = ({store, selections}: Props) => {
   );
 };
 
+(PredictionList as any).whyDidYouRender = true;
 export default inject('store')(observer(PredictionList));
 
 const listStyle = style({

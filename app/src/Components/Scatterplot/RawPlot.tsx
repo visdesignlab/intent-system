@@ -85,11 +85,12 @@ const RawPlot: FC<Props> = ({
         const changeBr: ExtendedBrush = {...affectedBrush, points};
 
         brushCollection[changeBr.id] = changeBr;
-        actions.changeBrush(plot, brushCollection);
+        actions.changeBrush(plot, brushCollection, changeBr);
         break;
       case 'Remove':
         delete brushCollection[affectedBrush.id];
-        actions.removeBrush(plot, brushCollection);
+        const removeBr: ExtendedBrush = {...affectedBrush, points: []};
+        actions.removeBrush(plot, brushCollection, removeBr);
         break;
       case 'Clear':
         break;
@@ -213,22 +214,24 @@ const RawPlot: FC<Props> = ({
           <Table.Body>
             {columns.map(col => {
               return (
-                <Table.Row key={col}>
-                  <Table.Cell>
-                    {plot.x === col || plot.y === col ? (
-                      <Header>{rawData.columnMap[col].text}</Header>
-                    ) : (
-                      rawData.columnMap[col].text
-                    )}
-                  </Table.Cell>
-                  <Table.Cell>
-                    {plot.x === col || plot.y === col ? (
-                      <Header>{rawData.values[idx][col]}</Header>
-                    ) : (
-                      rawData.values[idx][col]
-                    )}
-                  </Table.Cell>
-                </Table.Row>
+                rawData.columnMap[col] && (
+                  <Table.Row key={col}>
+                    <Table.Cell>
+                      {plot.x === col || plot.y === col ? (
+                        <Header>{rawData.columnMap[col].text}</Header>
+                      ) : (
+                        rawData.columnMap[col].text
+                      )}
+                    </Table.Cell>
+                    <Table.Cell>
+                      {plot.x === col || plot.y === col ? (
+                        <Header>{rawData.values[idx][col]}</Header>
+                      ) : (
+                        rawData.values[idx][col]
+                      )}
+                    </Table.Cell>
+                  </Table.Row>
+                )
               );
             })}
           </Table.Body>

@@ -1,13 +1,15 @@
 import {style} from 'typestyle';
 
+const goldenBorder = {
+  stroke: 'gold',
+  opacity: 1,
+  strokeWidth: '4px',
+  strokeOpacity: 1,
+};
+
 const hoverEffect = {
   $nest: {
-    '&:hover': {
-      stroke: 'gold',
-      opacity: 1,
-      strokeWidth: '4px',
-      strokeOpacity: 1,
-    },
+    '&:hover': goldenBorder,
   },
 };
 
@@ -57,4 +59,10 @@ export const FADE_OUT = style({
 export const FADE_COMP_IN = style({
   fill: '#84dd63',
   opacity: '1',
+});
+
+export const FADE_SELECTION_IN = style({
+  opacity: 1,
+  ...goldenBorder,
+  fill: 'black',
 });

@@ -114,16 +114,5 @@ const PredictionTable: FC<Props> = ({store, predictions}: Props) => {
   );
 };
 
+(PredictionTable as any).whyDidYouRender = true;
 export default inject('store')(observer(PredictionTable));
-
-type ValueDivProps = {
-  val: number;
-};
-
-const ValueDiv: FC<ValueDivProps> = (props: ValueDivProps) => {
-  return (
-    <div {...props} style={{height: '100%', width: '100%'}}>
-      {props.val}
-    </div>
-  );
-};

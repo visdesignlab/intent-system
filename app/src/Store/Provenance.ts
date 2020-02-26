@@ -24,6 +24,15 @@ import {
   PredictionRequest,
 } from '../contract';
 import axios from 'axios';
+import {
+  addDummyInteraction,
+  addPlotInteraction,
+  addPointSelectionInteraction,
+  removePointSelectionInteraction,
+  brushInteraction,
+  removeBrushInteraction,
+  removePlotInteraction,
+} from './ProvenanceHelpers';
 
 export type IntentEvents =
   | 'Load Dataset'
@@ -78,6 +87,8 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
         if (categories.length > 0 && state.categoryColumn === '') {
           state.categoryColumn = categories[0];
         }
+
+        addDummyInteraction(state);
         return state;
       },
       undefined,
@@ -90,6 +101,7 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
       `Switch category encoding: ${category}`,
       (state: IntentState) => {
         state.categoryColumn = category;
+        addDummyInteraction(state);
         return state;
       },
       undefined,
@@ -102,6 +114,7 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
       `Set brush behaviour: ${brushBehaviour}`,
       (state: IntentState) => {
         state.multiBrushBehaviour = brushBehaviour;
+        addDummyInteraction(state);
         return state;
       },
       undefined,
@@ -119,18 +132,30 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
       (state: IntentState) => {
         state.plots.push(plot);
 
-        state.interactionHistory.push({
-          visualizationType: VisualizationType.Scatterplot,
-          interactionType: {
-            kind: 'ADD',
-            plot: {
-              id: plot.id,
-              x: plot.x,
-              y: plot.y,
-              color: state.categoryColumn,
-            },
-          },
-        });
+        addPlotInteraction(state, plot);
+        return state;
+      },
+      undefined,
+      {type: 'Add Plot'},
+    );
+  }
+
+  function removePlot(plot: Plot) {
+    provenance.applyAction(
+      `Remove plot for ${plot.x} - ${plot.y}`,
+      (state: IntentState) => {
+        const plots: Plots = [];
+
+        for (let i = 0; i < state.plots.length; ++i) {
+          const plt = state.plots[i];
+          if (plt.id !== plot.id) {
+            plots.push(plt);
+          }
+        }
+        state.plots = plots;
+
+        removePlotInteraction(state, plot);
+
         return state;
       },
       undefined,
@@ -149,20 +174,7 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
             break;
           }
         }
-        state.interactionHistory.push({
-          visualizationType: VisualizationType.Scatterplot,
-          interactionType: {
-            kind: 'selection',
-            plot: {
-              id: plot.id,
-              x: plot.x,
-              y: plot.y,
-              color: state.categoryColumn,
-            },
-            dimensions: [plot.x, plot.y],
-            dataIds: points,
-          },
-        });
+        addPointSelectionInteraction(state, plot, points);
         return state;
       },
       undefined,
@@ -180,20 +192,7 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
               p => !points.includes(p),
             );
             state.plots[i].selectedPoints = [...pts];
-            state.interactionHistory.push({
-              visualizationType: VisualizationType.Scatterplot,
-              interactionType: {
-                kind: 'deselection',
-                plot: {
-                  id: plot.id,
-                  x: plot.x,
-                  y: plot.y,
-                  color: state.categoryColumn,
-                },
-                dimensions: [plot.x, plot.y],
-                dataIds: points,
-              },
-            });
+            removePointSelectionInteraction(state, plot, points);
             break;
           }
         }
@@ -219,25 +218,7 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
           }
         }
 
-        state.interactionHistory.push({
-          visualizationType: VisualizationType.Scatterplot,
-          interactionType: {
-            brushId: affectedBrush.id,
-            left: affectedBrush.extents.x1,
-            right: affectedBrush.extents.x2,
-            top: affectedBrush.extents.y1,
-            bottom: affectedBrush.extents.y2,
-            dimensions: [plot.x, plot.y],
-            dataIds: affectedBrush.points,
-            plot: {
-              id: plot.id,
-              x: plot.x,
-              y: plot.y,
-              color: state.categoryColumn,
-            },
-          },
-        });
-
+        brushInteraction(state, plot, affectedBrush);
         return state;
       },
       undefined,
@@ -245,20 +226,11 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
     );
   }
 
-  // function getPredictions() {
-
-  //   axios
-  //     .post(`/dataset/${store.dataset.key}/predict`, {
-  //       multiBrushBehavior: MultiBrushBehavior.INTERSECTION,
-  //       interactionHistory,
-  //     })
-  //     .then(response => {
-  //       console.log(response.data);
-  //     })
-  //     .catch(err => console.error(err));
-  // }
-
-  function changeBrush(plot: Plot, brushCollection: ExtendedBrushCollection) {
+  function changeBrush(
+    plot: Plot,
+    brushCollection: ExtendedBrushCollection,
+    affectedBrush: ExtendedBrush,
+  ) {
     provenance.applyAction(
       `Change Brush`,
       (state: IntentState) => {
@@ -269,6 +241,9 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
             break;
           }
         }
+
+        brushInteraction(state, plot, affectedBrush);
+
         return state;
       },
       undefined,
@@ -276,7 +251,11 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
     );
   }
 
-  function removeBrush(plot: Plot, brushCollection: ExtendedBrushCollection) {
+  function removeBrush(
+    plot: Plot,
+    brushCollection: ExtendedBrushCollection,
+    affectedBrush: ExtendedBrush,
+  ) {
     provenance.applyAction(
       `Remove Brush`,
       (state: IntentState) => {
@@ -286,6 +265,9 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
             break;
           }
         }
+
+        removeBrushInteraction(state, plot, affectedBrush);
+
         return state;
       },
       undefined,
@@ -305,27 +287,6 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
       },
       undefined,
       {type: 'Clear All'},
-    );
-  }
-
-  function removePlot(plot: Plot) {
-    provenance.applyAction(
-      `Remove plot for ${plot.x} - ${plot.y}`,
-      (state: IntentState) => {
-        const plots: Plots = [];
-
-        for (let i = 0; i < state.plots.length; ++i) {
-          const plt = state.plots[i];
-          if (plt.id !== plot.id) {
-            plots.push(plt);
-          }
-        }
-        state.plots = plots;
-
-        return state;
-      },
-      undefined,
-      {type: 'Add Plot'},
     );
   }
 
@@ -377,8 +338,16 @@ export interface ProvenanceActions {
     brushCollection: ExtendedBrushCollection,
     affectedBrush: ExtendedBrush,
   ) => void;
-  changeBrush: (plot: Plot, brushCollection: ExtendedBrushCollection) => void;
-  removeBrush: (plot: Plot, brushCollection: ExtendedBrushCollection) => void;
+  changeBrush: (
+    plot: Plot,
+    brushCollection: ExtendedBrushCollection,
+    affectedBrush: ExtendedBrush,
+  ) => void;
+  removeBrush: (
+    plot: Plot,
+    brushCollection: ExtendedBrushCollection,
+    affectedBrush: ExtendedBrush,
+  ) => void;
   clearSelections: () => void;
   annotateNode: (annotation: string) => void;
 }
@@ -418,7 +387,9 @@ function setupObservers(
         state.multiBrushBehaviour === 'Union'
           ? MultiBrushBehavior.UNION
           : MultiBrushBehavior.INTERSECTION;
-      const {interactionHistory} = state;
+      const interactionHistory = state.interactionHistory.filter(d => d);
+
+      console.log(interactionHistory);
 
       const request: PredictionRequest = {
         multiBrushBehavior,

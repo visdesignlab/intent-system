@@ -1,12 +1,12 @@
 import React, {FC, useContext} from 'react';
-import {Divider, Header, Statistic} from 'semantic-ui-react';
+import {Divider, Header, Statistic, Label} from 'semantic-ui-react';
 import {style} from 'typestyle';
 import {DataContext} from '../../App';
 import IntentStore from '../../Store/IntentStore';
 import {inject, observer} from 'mobx-react';
 import {UserSelections} from './PredictionRowType';
 import hoverable from '../UtilComponent/hoverable';
-import {FADE_OUT, FADE_IN} from '../Styles/MarkStyle';
+import {FADE_OUT, FADE_IN, FADE_SELECTION_IN} from '../Styles/MarkStyle';
 
 export interface Props {
   store?: IntentStore;
@@ -18,6 +18,7 @@ const Selections: FC<Props> = ({store, selections}: Props) => {
   const data = useContext(DataContext);
 
   const HoverableStatistic = hoverable(Statistic);
+  const SelectionLabel = hoverable(Label);
 
   return (
     <div className={selectionStyle}>
@@ -100,13 +101,23 @@ const Selections: FC<Props> = ({store, selections}: Props) => {
       </div>
       <div className={selectionList}>
         {selections.values.map(idx => (
-          <div key={idx}>{data.values[idx][data.labelColumn]}</div>
+          <SelectionLabel
+            configs={[
+              {
+                selector: `#mark-${idx}`,
+                classToApply: FADE_SELECTION_IN,
+              },
+            ]}
+            key={idx}>
+            {data.values[idx][data.labelColumn]}
+          </SelectionLabel>
         ))}
       </div>
     </div>
   );
 };
 
+(Selections as any).whyDidYouRender = true;
 export default inject('store')(observer(Selections));
 
 const selectionStyle = style({
