@@ -1,5 +1,5 @@
 from ..intent import Intent
-
+import sys
 from sklearn import preprocessing
 from sklearn.linear_model import LinearRegression as LR
 import pandas as pd
@@ -15,6 +15,7 @@ class LinearRegression(Intent):
         self.reg = LR()
         self.min_max_scaler_x = preprocessing.MinMaxScaler()
         self.min_max_scaler_y = preprocessing.MinMaxScaler()
+        self.dimCount = 0
 
     def compute(self, df: pd.DataFrame) -> pd.DataFrame:
         vs = df.values
@@ -27,6 +28,8 @@ class LinearRegression(Intent):
         y_scaled = self.min_max_scaler_y.fit_transform(y).flatten()
 
         self.reg.fit(X_scaled, y_scaled)
+
+        self.dimCount = X_scaled.shape[1]
 
         ts = self.reg.predict(X_scaled)
         sqdist = pd.DataFrame(data=np.square(ts - y_scaled), index=df.index)
@@ -42,8 +45,16 @@ class LinearRegression(Intent):
     def info(self) -> Optional[Dict[str, Any]]:
         x1 = self.min_max_scaler_x.data_min_
         x2 = self.min_max_scaler_x.data_max_
-        y1 = self.min_max_scaler_y.inverse_transform(self.reg.predict([[0]]).reshape(1, -1))
-        y2 = self.min_max_scaler_y.inverse_transform(self.reg.predict([[1]]).reshape(1, -1))
+
+        temp0 = [0]* self.dimCount
+        zeroArr = [temp0]
+        temp1 = [1]*self.dimCount
+        oneArr = [temp1]
+
+
+
+        y1 = self.min_max_scaler_y.inverse_transform(self.reg.predict(zeroArr).reshape(-1,1))
+        y2 = self.min_max_scaler_y.inverse_transform(self.reg.predict(oneArr).reshape(-1,1))
         return {
             "threshold": self.threshold,
             "points": {"x1s": x1.tolist(),

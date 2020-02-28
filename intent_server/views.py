@@ -67,7 +67,6 @@ def route_dataset_info(dataset_name):  # type: ignore
 
 @views.route('/dataset/<dataset_name>/predict', methods=['POST'])
 def route_dataset_predict(dataset_name):  # type: ignore
-    print(request.json, file=sys.stderr)
     prediction_request = prediction_request_from_dict(request.json)
     interaction_hist = prediction_request.interaction_history
     ds = datasets[dataset_name]

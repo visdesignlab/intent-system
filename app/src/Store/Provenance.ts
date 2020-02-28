@@ -401,6 +401,7 @@ function setupObservers(
 
         if (extraList.length === 0 && !store.isLoadingPredictions) {
           store.isLoadingPredictions = true;
+          console.log({request});
           axios
             .post(`/dataset/${store.dataset.key}/predict`, request)
             .then(response => {

@@ -1,5 +1,5 @@
 from ..intent import Intent
-
+import sys
 from sklearn import preprocessing
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.linear_model import LinearRegression as LR
@@ -18,11 +18,12 @@ class QuadraticRegression(Intent):
                              ('linear', LR(fit_intercept=False))])
         self.min_max_scaler_x = preprocessing.MinMaxScaler()
         self.min_max_scaler_y = preprocessing.MinMaxScaler()
+        self.dimCount = 0
 
     def compute(self, df: pd.DataFrame) -> pd.DataFrame:
         vs = df.values
         numDims = np.size(vs, 1)
-
+        self.dimCount = numDims
         X = vs[:, 0:numDims-1]
         y = vs[:, numDims-1].reshape(-1, 1)
 
@@ -43,15 +44,23 @@ class QuadraticRegression(Intent):
         return "QuadraticRegression"
 
     def info(self) -> Optional[Dict[str, Any]]:
-        min_value = self.min_max_scaler_x.data_min_
-        max_value = self.min_max_scaler_x.data_max_
-        num_points = 10  # will lead to `num_points + 1` samples
-        step = (max_value - min_value) / num_points
+        try:
+            min_value = self.min_max_scaler_x.data_min_
+            max_value = self.min_max_scaler_x.data_max_
+            num_points = 10  # will lead to `num_points + 1` samples
+            step = (max_value - min_value) / num_points
 
-        xs = map(lambda i: min_value + i * step, range(num_points+1))  # type: ignore
-        xs = np.concatenate(list(xs), axis=0).reshape(-1, 1)
-        xs_scaled = self.min_max_scaler_x.transform(xs)
-        ys = self.min_max_scaler_y.inverse_transform(self.reg.predict(xs_scaled).reshape(-1, 1))
+            xs = map(lambda i: min_value + i * step, range(num_points+1))  # type: ignore
+            if (self.dimCount == 1):
+                xs = np.concatenate(list(xs), axis=0).reshape(-1, 1)
+            else:
+                xs = np.concatenate(list(xs), axis=0)
+            xs_scaled = self.min_max_scaler_x.transform(xs)
+            ys = self.min_max_scaler_y.inverse_transform(self.reg.predict(xs_scaled).reshape(-1, 1))
+        except:
+            return {
+            "threshold": self.threshold,
+            "points": {"xs": [], "ys": []}}
 
         return {
             "threshold": self.threshold,
