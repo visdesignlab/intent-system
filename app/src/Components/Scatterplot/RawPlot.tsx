@@ -14,6 +14,7 @@ import XAxis from './XAxis';
 import YAxis from './YAxis';
 import {Popup, Header, Table} from 'semantic-ui-react';
 import {UserSelections} from '../Predictions/PredictionRowType';
+import {FADE_OUT_PRED_SELECTION} from '../Styles/MarkStyle';
 
 export interface Props {
   store?: IntentStore;
@@ -40,7 +41,12 @@ const RawPlot: FC<Props> = ({
 }: Props) => {
   const actions = useContext(ActionContext);
   const [mouseDown, setMouseDown] = useState(false);
-  const {plots, multiBrushBehaviour} = store!;
+  const {
+    plots,
+    multiBrushBehaviour,
+    predictionSet,
+    selectedPrediction,
+  } = store!;
   const {selectedPoints, brushes} = plot;
 
   const rawData = useContext(DataContext);
@@ -142,10 +148,20 @@ const RawPlot: FC<Props> = ({
     />
   );
 
+  const {predictions} = predictionSet;
+  const selectedPred = predictions.find(p => p.intent === selectedPrediction);
+
   function drawMark(
     data: {x: number; y: number; category?: string},
     idx: number,
   ) {
+    let dataIds: number[] = [];
+    if (selectedPred) {
+      dataIds = selectedPred.dataIds || [];
+    }
+
+    const isInSelectedPred = dataIds.includes(idx);
+
     let type: MarkType = 'Regular';
     const isClickSelected = clickSelectedPoints.includes(idx);
     if (!isClickSelected) {
@@ -173,6 +189,12 @@ const RawPlot: FC<Props> = ({
     }
 
     markClass = `${markClass} base-mark`;
+
+    if (selectedPred) {
+      markClass = `${markClass} ${
+        isInSelectedPred ? '' : FADE_OUT_PRED_SELECTION
+      }`;
+    }
 
     const mark = (
       <g

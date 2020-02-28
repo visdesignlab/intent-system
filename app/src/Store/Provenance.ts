@@ -20,7 +20,6 @@ import {Dataset} from '../Utils/Dataset';
 import {
   PredictionSet,
   MultiBrushBehavior,
-  VisualizationType,
   PredictionRequest,
 } from '../contract';
 import axios from 'axios';
@@ -45,7 +44,8 @@ export type IntentEvents =
   | 'Add Brush'
   | 'Change Brush'
   | 'Remove Brush'
-  | 'Clear All';
+  | 'Clear All'
+  | 'Select Prediction';
 
 export type Annotation = {
   annotation: string;
@@ -297,6 +297,10 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
     });
   }
 
+  function selectPrediction(pred: string) {
+    store.selectedPrediction = pred;
+  }
+
   return {
     provenance,
     actions: {
@@ -314,6 +318,7 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
       clearSelections,
       removePlot,
       annotateNode,
+      selectPrediction,
     },
   };
 }
@@ -350,6 +355,7 @@ export interface ProvenanceActions {
   ) => void;
   clearSelections: () => void;
   annotateNode: (annotation: string) => void;
+  selectPrediction: (pred: string) => void;
 }
 
 function getExtra(
@@ -389,8 +395,6 @@ function setupObservers(
           : MultiBrushBehavior.INTERSECTION;
       const interactionHistory = state.interactionHistory.filter(d => d);
 
-      console.log(interactionHistory);
-
       const request: PredictionRequest = {
         multiBrushBehavior,
         interactionHistory,
@@ -401,7 +405,6 @@ function setupObservers(
 
         if (extraList.length === 0 && !store.isLoadingPredictions) {
           store.isLoadingPredictions = true;
-          console.log({request});
           axios
             .post(`/dataset/${store.dataset.key}/predict`, request)
             .then(response => {

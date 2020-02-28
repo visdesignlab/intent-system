@@ -28,7 +28,8 @@ export default class IntentStore implements IntentState {
   @observable multiBrushBehaviour: MultiBrushBehaviour =
     defaultState.multiBrushBehaviour;
   @observable plots = defaultState.plots;
-  interactionHistory: InteractionHistory = [];
+  @observable interactionHistory: InteractionHistory = [];
+  @observable selectedPrediction: string = '';
 
   // Artifact Properties
   @observable predictionSet = predSet;

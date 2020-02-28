@@ -1,12 +1,13 @@
-import React, {FC} from 'react';
+import React, {FC, useContext} from 'react';
 import {inject, observer} from 'mobx-react';
 import IntentStore from '../../Store/IntentStore';
-import {Table, Label} from 'semantic-ui-react';
+import {Table, Label, Popup} from 'semantic-ui-react';
 import {PredictionRowType} from './PredictionRowType';
 import JaccardBar from './JaccardBar';
 import ProbabilityBar from './ProbabilityBar';
 import hoverable from '../UtilComponent/hoverable';
 import {FADE_OUT, FADE_COMP_IN} from '../Styles/MarkStyle';
+import {ActionContext} from '../../App';
 
 type Props = {
   store?: IntentStore;
@@ -14,7 +15,9 @@ type Props = {
 };
 
 const PredictionTable: FC<Props> = ({store, predictions}: Props) => {
+  const {selectedPrediction} = store!;
   const barHeight = 30;
+  const actions = useContext(ActionContext);
 
   const HoverTableCell = hoverable(Table.Cell);
 
@@ -22,7 +25,18 @@ const PredictionTable: FC<Props> = ({store, predictions}: Props) => {
     const {matches, isnp, ipns, similarity, type, probability} = pred;
 
     return (
-      <Table.Row key={pred.intent}>
+      <Table.Row
+        key={pred.intent}
+        onClick={() => {
+          if (pred.intent === selectedPrediction) {
+            console.log('Deselecting');
+            actions.selectPrediction('none');
+          } else {
+            console.log('Selecting');
+            actions.selectPrediction(pred.intent);
+          }
+        }}
+        active={pred.intent === selectedPrediction}>
         <Table.Cell>
           {pred.dims.map(dim => (
             <Label size="mini" circular key={dim}>
@@ -101,9 +115,18 @@ const PredictionTable: FC<Props> = ({store, predictions}: Props) => {
       <Table.Header>
         <Table.Row>
           <Table.HeaderCell>Dims</Table.HeaderCell>
-          <Table.HeaderCell>M</Table.HeaderCell>
-          <Table.HeaderCell>NP</Table.HeaderCell>
-          <Table.HeaderCell>NS</Table.HeaderCell>
+          <Popup
+            trigger={<Table.HeaderCell>M</Table.HeaderCell>}
+            content={'Matches'}
+          />
+          <Popup
+            trigger={<Table.HeaderCell>NP</Table.HeaderCell>}
+            content={'In selection, not predicted'}
+          />
+          <Popup
+            trigger={<Table.HeaderCell>NS</Table.HeaderCell>}
+            content={'In prediction, not selected'}
+          />
           <Table.HeaderCell>Similarity</Table.HeaderCell>
           <Table.HeaderCell>Probability</Table.HeaderCell>
           <Table.HeaderCell>Misc</Table.HeaderCell>

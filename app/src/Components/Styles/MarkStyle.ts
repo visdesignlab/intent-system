@@ -66,3 +66,7 @@ export const FADE_SELECTION_IN = style({
   ...goldenBorder,
   fill: 'black',
 });
+
+export const FADE_OUT_PRED_SELECTION = style({
+  opacity: 0.1,
+});
