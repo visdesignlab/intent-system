@@ -1,7 +1,14 @@
-import React, {FC, useContext, useState, useEffect} from 'react';
+import React, {FC, useContext, useState, useEffect, useMemo} from 'react';
 import IntentStore from '../../Store/IntentStore';
 import translate from '../../Utils/Translate';
-import {ScaleLinear, select, axisBottom, axisLeft} from 'd3';
+import {
+  ScaleLinear,
+  select,
+  axisBottom,
+  axisLeft,
+  quadtree,
+  selectAll,
+} from 'd3';
 import {ActionContext, DataContext} from '../../App';
 import {Plot, ExtendedBrush} from '../../Store/IntentState';
 import BrushComponent from '../Brush/Components/BrushComponent';
@@ -14,7 +21,8 @@ import XAxis from './XAxis';
 import YAxis from './YAxis';
 import {Popup, Header, Table} from 'semantic-ui-react';
 import {UserSelections} from '../Predictions/PredictionRowType';
-import {FADE_OUT_PRED_SELECTION} from '../Styles/MarkStyle';
+import {FADE_OUT_PRED_SELECTION, COLOR} from '../Styles/MarkStyle';
+import FreeFormBrush from './Freeform/FreeFormBrush';
 
 export interface Props {
   store?: IntentStore;
@@ -46,10 +54,35 @@ const RawPlot: FC<Props> = ({
     multiBrushBehaviour,
     predictionSet,
     selectedPrediction,
+    brushType,
   } = store!;
   const {selectedPoints, brushes} = plot;
 
+  const [freeformPoints, setFreeFormPoints] = useState<number[]>([]);
+
   const rawData = useContext(DataContext);
+
+  const scaledData = data.map(d => ({...d, x: xScale(d.x), y: yScale(d.y)}));
+  const scaledDataString = JSON.stringify(scaledData);
+
+  const mappedData = useMemo(() => {
+    const scaledData: {x: number; y: number; category?: string}[] = JSON.parse(
+      scaledDataString,
+    );
+    const mapped: {[key: string]: number} = {};
+    for (let i = 0; i < scaledData.length; ++i) {
+      const d = scaledData[i];
+      mapped[`${d.x}-${d.y}`] = i;
+    }
+    return mapped;
+  }, [scaledDataString]);
+
+  const quad = useMemo(() => {
+    return quadtree<{x: number; y: number; category?: string}>()
+      .x(d => d.x)
+      .y(d => d.y)
+      .addAll(JSON.parse(scaledDataString));
+  }, [scaledDataString]);
 
   function brushHandler(
     _: BrushCollection,
@@ -268,14 +301,37 @@ const RawPlot: FC<Props> = ({
 
   const plotComponent = (
     <g style={{pointerEvents: mouseDown ? 'none' : 'all'}}>
-      <g transform={translate(0, height)}>
+      <g transform={translate(0, height)} style={{pointerEvents: 'none'}}>
         <XAxis width={width} scale={xScale} dimension={columnMap[plot.x]} />
       </g>
-      <g>
+      <g style={{pointerEvents: 'none'}}>
         <YAxis height={height} scale={yScale} dimension={columnMap[plot.y]} />
       </g>
       {data.map(drawMark)}
     </g>
+  );
+
+  const freeFormBrushComponent = (
+    <FreeFormBrush
+      extents={{left: 0, top: 0, right: width, bottom: height}}
+      extentPadding={10}
+      onBrushStart={() => {
+        setFreeFormPoints([]);
+      }}
+      onBrush={(x: number, y: number, radius) => {
+        const node = quad.find(x, y, radius);
+        if (node) {
+          const idx = mappedData[`${node.x}-${node.y}`];
+          if (idx) {
+            const circ = selectAll(`#mark-${idx}`);
+            circ.classed(COLOR, true);
+          }
+        }
+      }}
+      onBrushEnd={() => {
+        setFreeFormPoints([]);
+      }}
+    />
   );
 
   return (
@@ -285,6 +341,7 @@ const RawPlot: FC<Props> = ({
         onMouseUp={() => setMouseDown(false)}
         onMouseLeave={() => setMouseDown(false)}>
         {brushComponent}
+        {brushType === 'Freeform' && freeFormBrushComponent}
       </g>
       {plotComponent}
     </g>

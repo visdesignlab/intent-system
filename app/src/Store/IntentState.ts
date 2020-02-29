@@ -10,6 +10,8 @@ export interface ExtendedBrush extends Brush {
 
 export type ExtendedBrushCollection = {[key: string]: ExtendedBrush};
 
+export type BrushType = 'Rectangular' | 'Freeform';
+
 export interface Plot {
   id: string;
   x: string;
@@ -27,6 +29,7 @@ export interface IntentState {
   multiBrushBehaviour: MultiBrushBehaviour;
   plots: Plots;
   interactionHistory: InteractionHistory;
+  brushType: BrushType;
 }
 
 export const defaultState: IntentState = {
@@ -36,4 +39,5 @@ export const defaultState: IntentState = {
   categoryColumn: '',
   plots: [],
   interactionHistory: [],
+  brushType: 'Freeform',
 };

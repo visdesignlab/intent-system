@@ -29,7 +29,7 @@ const Scatterplot: FC<Props> = ({
   const data = useContext(DataContext);
   const actions = useContext(ActionContext);
 
-  const {categoryColumn, plots} = store!;
+  const {categoryColumn, plots, brushType} = store!;
 
   const [dim, setDim] = useState({height: 0, width: 0});
 
@@ -81,6 +81,21 @@ const Scatterplot: FC<Props> = ({
 
   return (
     <div className={surroundDiv} style={{height, width}}>
+      <Button.Group className={brushButtonStyle} size="mini">
+        <Button
+          icon="square outline"
+          content="Rectangular"
+          disabled={brushType === 'Rectangular'}
+          onClick={() => actions.changeBrushType('Rectangular')}
+        />
+        <Button.Or />
+        <Button
+          icon="magic"
+          content="Freeform"
+          disabled={brushType === 'Freeform'}
+          onClick={() => actions.changeBrushType('Freeform')}
+        />
+      </Button.Group>
       {plots.length > 1 && (
         <Button
           icon="close"
@@ -88,7 +103,7 @@ const Scatterplot: FC<Props> = ({
           size="mini"
           negative
           compact
-          className={buttonStyle}
+          className={closeButtonStyle}
         />
       )}
       <svg className={svgStyle} ref={svgRef}>
@@ -121,7 +136,7 @@ const svgStyle = style({
   width: '100%',
 });
 
-const buttonStyle = style({
+const closeButtonStyle = style({
   position: 'absolute',
   right: 0,
   top: 0,
@@ -133,4 +148,10 @@ const buttonStyle = style({
       transition: 'opacity 0.5s',
     },
   },
+});
+
+const brushButtonStyle = style({
+  position: 'absolute',
+  left: 0,
+  top: 0,
 });

@@ -47,26 +47,40 @@ export const INTERSECTION_MARK_STYLE = style(
 // Selection Style
 
 export const FADE_IN = style({
+  $unique: true,
   opacity: '1',
+  $debugName: 'fadein',
 });
 
 export const FADE_OUT = style({
+  $unique: true,
   opacity: 0.1,
+  $debugName: 'fadeout',
 });
 
 // Pred-Sel comparision
 
 export const FADE_COMP_IN = style({
+  $unique: true,
   fill: '#84dd63',
-  opacity: '1',
+  opacity: '1 !important',
+  $debugName: 'fadecompin',
 });
 
 export const FADE_SELECTION_IN = style({
+  $unique: true,
   opacity: 1,
   ...goldenBorder,
   fill: 'black',
+  $debugName: 'fadeselin',
 });
 
 export const FADE_OUT_PRED_SELECTION = style({
-  opacity: 0.1,
+  $unique: true,
+  opacity: '0.1',
+  $debugName: 'fadeoutpred',
+});
+
+export const COLOR = style({
+  fill: 'red !important',
 });

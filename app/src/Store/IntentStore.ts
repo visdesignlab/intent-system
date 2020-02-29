@@ -1,5 +1,10 @@
 import {observable, action, computed} from 'mobx';
-import {defaultState, IntentState, MultiBrushBehaviour} from './IntentState';
+import {
+  defaultState,
+  IntentState,
+  MultiBrushBehaviour,
+  BrushType,
+} from './IntentState';
 import {ProvenanceGraph} from '@visdesignlab/provenance-lib-core';
 import {IntentEvents, Annotation} from './Provenance';
 import {Dataset} from '../Utils/Dataset';
@@ -19,6 +24,7 @@ export default class IntentStore implements IntentState {
     Annotation
   > = null as any;
   @observable isAtRoot: boolean = false;
+  @observable selectedPrediction: string = '';
   @observable isAtLatest: boolean = false;
 
   // State Properties
@@ -29,7 +35,7 @@ export default class IntentStore implements IntentState {
     defaultState.multiBrushBehaviour;
   @observable plots = defaultState.plots;
   @observable interactionHistory: InteractionHistory = [];
-  @observable selectedPrediction: string = '';
+  @observable brushType: BrushType = defaultState.brushType;
 
   // Artifact Properties
   @observable predictionSet = predSet;

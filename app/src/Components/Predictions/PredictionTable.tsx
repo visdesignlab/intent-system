@@ -29,10 +29,8 @@ const PredictionTable: FC<Props> = ({store, predictions}: Props) => {
         key={pred.intent}
         onClick={() => {
           if (pred.intent === selectedPrediction) {
-            console.log('Deselecting');
             actions.selectPrediction('none');
           } else {
-            console.log('Selecting');
             actions.selectPrediction(pred.intent);
           }
         }}

@@ -14,6 +14,7 @@ import {
   ExtendedBrushCollection,
   Plots,
   ExtendedBrush,
+  BrushType,
 } from './IntentState';
 import IntentStore from './IntentStore';
 import {Dataset} from '../Utils/Dataset';
@@ -45,7 +46,7 @@ export type IntentEvents =
   | 'Change Brush'
   | 'Remove Brush'
   | 'Clear All'
-  | 'Select Prediction';
+  | 'Change Brush Type';
 
 export type Annotation = {
   annotation: string;
@@ -301,6 +302,18 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
     store.selectedPrediction = pred;
   }
 
+  function changeBrushType(brushType: BrushType) {
+    provenance.applyAction(
+      `Change brush to ${brushType}`,
+      (state: IntentState) => {
+        state.brushType = brushType;
+        return state;
+      },
+      undefined,
+      {type: 'Change Brush Type'},
+    );
+  }
+
   return {
     provenance,
     actions: {
@@ -319,6 +332,7 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
       removePlot,
       annotateNode,
       selectPrediction,
+      changeBrushType,
     },
   };
 }
@@ -356,6 +370,7 @@ export interface ProvenanceActions {
   clearSelections: () => void;
   annotateNode: (annotation: string) => void;
   selectPrediction: (pred: string) => void;
+  changeBrushType: (brushType: BrushType) => void;
 }
 
 function getExtra(
@@ -434,6 +449,7 @@ function setupObservers(
     'showCategories',
     'categoryColumn',
     'plots',
+    'brushType',
   ];
 
   arrs.forEach(key => {
