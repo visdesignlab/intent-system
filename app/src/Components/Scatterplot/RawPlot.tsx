@@ -21,7 +21,11 @@ import XAxis from './XAxis';
 import YAxis from './YAxis';
 import {Popup, Header, Table} from 'semantic-ui-react';
 import {UserSelections} from '../Predictions/PredictionRowType';
-import {FADE_OUT_PRED_SELECTION, COLOR} from '../Styles/MarkStyle';
+import {
+  FADE_OUT_PRED_SELECTION,
+  COLOR,
+  REGULAR_MARK_STYLE,
+} from '../Styles/MarkStyle';
 import FreeFormBrush from './Freeform/FreeFormBrush';
 
 export interface Props {
@@ -58,7 +62,7 @@ const RawPlot: FC<Props> = ({
   } = store!;
   const {selectedPoints, brushes} = plot;
 
-  const [freeformPoints, setFreeFormPoints] = useState<number[]>([]);
+  let freeFormPoints: number[] = [];
 
   const rawData = useContext(DataContext);
 
@@ -311,25 +315,54 @@ const RawPlot: FC<Props> = ({
     </g>
   );
 
+  function radius(x: number, y: number, x1: number, y1: number) {
+    return Math.pow(Math.pow(x - x1, 2) + Math.pow(y - y1, 2), 0.5);
+  }
+
+  function parentFunc(x: number, y: number, r: number) {
+    return function(node: any, x1: number, y1: number, x2: number, y2: number) {
+      const ctnx = x - r <= x1 && x + r >= x2;
+      const ctny = y - r <= y1 && y + r >= y2;
+      const interx1 = r + x < x2 && r + x > x1;
+      const interx2 = x - r > x1 && x - r < x2;
+      const intery1 = y - r > y1 && y - r < y2;
+      const intery2 = y + r < y2 && y + r > y1;
+
+      if (!((interx1 || interx2) && (intery1 || intery2)) && !(ctnx || ctny))
+        return;
+      const {data} = node!;
+      if (data) {
+        const {x: x1, y: y1} = data;
+        const ptr = radius(x, y, x1, y1);
+        if (ptr <= r) {
+          const idx = mappedData[`${x1}-${y1}`];
+          if (idx >= 0) {
+            const marks = selectAll(`#mark-${idx}`);
+            if (!marks.classed(REGULAR_MARK_STYLE)) return;
+
+            marks.classed(COLOR, true);
+            if (!freeFormPoints.includes(idx)) freeFormPoints.push(idx);
+          }
+        }
+      }
+    };
+  }
+
   const freeFormBrushComponent = (
     <FreeFormBrush
       extents={{left: 0, top: 0, right: width, bottom: height}}
       extentPadding={10}
       onBrushStart={() => {
-        setFreeFormPoints([]);
+        freeFormPoints = [];
       }}
       onBrush={(x: number, y: number, radius) => {
-        const node = quad.find(x, y, radius);
-        if (node) {
-          const idx = mappedData[`${node.x}-${node.y}`];
-          if (idx) {
-            const circ = selectAll(`#mark-${idx}`);
-            circ.classed(COLOR, true);
-          }
-        }
+        const func = parentFunc(x, y, radius);
+        quad.visit(func);
       }}
       onBrushEnd={() => {
-        setFreeFormPoints([]);
+        if (freeFormPoints.length === 0) return;
+        actions.addPointSelection(plot, freeFormPoints);
+        freeFormPoints = [];
       }}
     />
   );

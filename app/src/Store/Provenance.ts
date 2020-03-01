@@ -307,6 +307,7 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
       `Change brush to ${brushType}`,
       (state: IntentState) => {
         state.brushType = brushType;
+        addDummyInteraction(state);
         return state;
       },
       undefined,
