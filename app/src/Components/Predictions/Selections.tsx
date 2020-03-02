@@ -1,4 +1,4 @@
-import React, {FC, useContext} from 'react';
+import React, {FC, useContext, memo} from 'react';
 import {Divider, Header, Statistic, Label} from 'semantic-ui-react';
 import {style} from 'typestyle';
 import {DataContext} from '../../App';
@@ -118,7 +118,7 @@ const Selections: FC<Props> = ({store, selections}: Props) => {
 };
 
 (Selections as any).whyDidYouRender = true;
-export default inject('store')(observer(Selections));
+export default memo(inject('store')(observer(Selections)));
 
 const selectionStyle = style({
   gridArea: 'selections',

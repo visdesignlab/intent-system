@@ -148,3 +148,14 @@ export function getAllSelections(
     individual: [...new Set(individualArr)].length,
   };
 }
+
+export const defaultSelections = {
+  values: [],
+  unionArr: [],
+  intersectionArr: [],
+  individualArr: [],
+  union: 0,
+  intersection: 0,
+  total: 0,
+  individual: 0,
+};

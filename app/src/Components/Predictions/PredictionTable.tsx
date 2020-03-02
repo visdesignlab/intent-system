@@ -1,4 +1,4 @@
-import React, {FC, useContext} from 'react';
+import React, {FC, useContext, memo} from 'react';
 import {inject, observer} from 'mobx-react';
 import IntentStore from '../../Store/IntentStore';
 import {Table, Label, Popup} from 'semantic-ui-react';
@@ -136,4 +136,4 @@ const PredictionTable: FC<Props> = ({store, predictions}: Props) => {
 };
 
 (PredictionTable as any).whyDidYouRender = true;
-export default inject('store')(observer(PredictionTable));
+export default memo(inject('store')(observer(PredictionTable)));

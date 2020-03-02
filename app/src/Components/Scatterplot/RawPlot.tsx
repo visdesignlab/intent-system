@@ -1,4 +1,4 @@
-import React, {FC, useContext, useState, useEffect, useMemo} from 'react';
+import React, {FC, useContext, useState, useEffect, useMemo, memo} from 'react';
 import IntentStore from '../../Store/IntentStore';
 import translate from '../../Utils/Translate';
 import {
@@ -66,13 +66,18 @@ const RawPlot: FC<Props> = ({
 
   const rawData = useContext(DataContext);
 
-  const scaledData = data.map(d => ({...d, x: xScale(d.x), y: yScale(d.y)}));
+  const scaledData = data.map(d => ({
+    x: xScale(d.x),
+    y: yScale(d.y),
+  }));
+
   const scaledDataString = JSON.stringify(scaledData);
 
   const mappedData = useMemo(() => {
     const scaledData: {x: number; y: number; category?: string}[] = JSON.parse(
       scaledDataString,
     );
+
     const mapped: {[key: string]: number} = {};
     for (let i = 0; i < scaledData.length; ++i) {
       const d = scaledData[i];
@@ -382,4 +387,4 @@ const RawPlot: FC<Props> = ({
 };
 
 (RawPlot as any).whyDidYouRender = true;
-export default inject('store')(observer(RawPlot));
+export default memo(inject('store')(observer(RawPlot)));

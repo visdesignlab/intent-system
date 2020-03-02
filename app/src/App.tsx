@@ -94,8 +94,6 @@ const App = () => {
   ) : null;
 };
 
-(App as any).whyDidYouRender = true;
-
 export default App;
 
 const layoutStyle = style({

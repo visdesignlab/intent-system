@@ -1,9 +1,13 @@
-import React, {FC} from 'react';
+import React, {FC, memo, useState} from 'react';
 import IntentStore from '../../Store/IntentStore';
 import {inject, observer} from 'mobx-react';
 import {style} from 'typestyle';
 import Scatterplot from './Scatterplot';
-import {getAllSelections} from '../Predictions/PredictionRowType';
+import {
+  getAllSelections,
+  UserSelections,
+  defaultSelections,
+} from '../Predictions/PredictionRowType';
 
 interface Props {
   store?: IntentStore;
@@ -17,7 +21,18 @@ const PlotsGrid: FC<Props> = ({store, height, width}: Props) => {
   const plotCount = plots.length < 5 ? plots.length : 4;
   const breakCount = 2;
 
-  const selections = getAllSelections(plots, multiBrushBehaviour === 'Union');
+  const [selections, setSelections] = useState<UserSelections>(
+    defaultSelections,
+  );
+
+  const computedSelections = getAllSelections(
+    plots,
+    multiBrushBehaviour === 'Union',
+  );
+
+  if (JSON.stringify(computedSelections) !== JSON.stringify(selections)) {
+    setSelections(computedSelections);
+  }
 
   let rowCount = Math.floor(plotCount / breakCount);
   if (rowCount === 0) {
@@ -50,7 +65,7 @@ const PlotsGrid: FC<Props> = ({store, height, width}: Props) => {
 };
 
 (PlotsGrid as any).whyDidYouRender = true;
-export default inject('store')(observer(PlotsGrid));
+export default memo(inject('store')(observer(PlotsGrid)));
 
 const flexStyle = style({
   height: '100%',

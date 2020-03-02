@@ -1,9 +1,10 @@
-import React, {FC, createRef, useReducer} from 'react';
+import React, {FC, createRef, useReducer, useContext} from 'react';
 import IntentStore from '../../../Store/IntentStore';
 import {inject, observer} from 'mobx-react';
 import {BrushableRegion} from '../../Brush/Types/BrushableRegion';
 import translate from '../../../Utils/Translate';
 import {select} from 'd3';
+import {FreeFromRadiusContext} from '../Scatterplot';
 
 type BrushStartHandler = () => void;
 type BrushMoveHandler = (x: number, y: number, radius: number) => void;
@@ -59,7 +60,7 @@ const FreeFormBrush: FC<Props> = ({
   const brushRef = createRef<SVGCircleElement>();
   const {left = 0, right = 0, top = 0, bottom = 0} = extents;
 
-  const radius = 20;
+  const radius = useContext(FreeFromRadiusContext);
 
   const [{mouseDown, mousePosition}, dispatch] = useReducer(
     reducer,

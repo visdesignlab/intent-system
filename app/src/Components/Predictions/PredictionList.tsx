@@ -1,10 +1,10 @@
-import React, {FC, useContext} from 'react';
+import React, {FC, useContext, memo, useState} from 'react';
 import IntentStore from '../../Store/IntentStore';
 import {Loader, Segment, Dimmer, Header} from 'semantic-ui-react';
 import {inject, observer} from 'mobx-react';
 import {style} from 'typestyle';
 import PredictionTable from './PredictionTable';
-import {extendPrediction} from './PredictionRowType';
+import {extendPrediction, PredictionRowType} from './PredictionRowType';
 import {DataContext} from '../../App';
 
 export interface Props {
@@ -19,9 +19,15 @@ const PredictionList: FC<Props> = ({store, selections}: Props) => {
 
   const {predictions} = predictionSet;
 
-  const preds = predictions
+  const [preds, setPreds] = useState<PredictionRowType[]>([]);
+
+  const computedPreds = predictions
     .map(pred => extendPrediction(pred, selections, columnMap))
     .sort((a, b) => b.similarity - a.similarity);
+
+  if (JSON.stringify(computedPreds) !== JSON.stringify(preds)) {
+    setPreds(computedPreds);
+  }
 
   if (preds.length > 0) {
     // console.clear();
@@ -56,7 +62,7 @@ const PredictionList: FC<Props> = ({store, selections}: Props) => {
 };
 
 (PredictionList as any).whyDidYouRender = true;
-export default inject('store')(observer(PredictionList));
+export default memo(inject('store')(observer(PredictionList)));
 
 const listStyle = style({
   gridArea: 'predictions',

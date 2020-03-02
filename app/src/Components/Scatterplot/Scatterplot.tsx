@@ -1,4 +1,13 @@
-import React, {FC, useRef, useState, useEffect, useContext} from 'react';
+import React, {
+  FC,
+  useRef,
+  useState,
+  useEffect,
+  useContext,
+  createContext,
+  useMemo,
+  memo,
+} from 'react';
 import {inject, observer} from 'mobx-react';
 import IntentStore from '../../Store/IntentStore';
 import {style} from 'typestyle';
@@ -7,8 +16,9 @@ import {Plot} from '../../Store/IntentState';
 import {scaleLinear} from 'd3';
 import translate from '../../Utils/Translate';
 import RawPlot from './RawPlot';
-import {Button} from 'semantic-ui-react';
+import {Button, Input, Menu, Header} from 'semantic-ui-react';
 import {UserSelections} from '../Predictions/PredictionRowType';
+import {Data} from '../../Utils/Dataset';
 
 export interface Props {
   store?: IntentStore;
@@ -17,6 +27,8 @@ export interface Props {
   plot: Plot;
   selections: UserSelections;
 }
+
+export const FreeFromRadiusContext = createContext<number>(20);
 
 const Scatterplot: FC<Props> = ({
   width,
@@ -28,6 +40,11 @@ const Scatterplot: FC<Props> = ({
   const svgRef = useRef<SVGSVGElement>(null);
   const data = useContext(DataContext);
   const actions = useContext(ActionContext);
+
+  const minBrushRange = 20;
+  const maxBrushRange = 100;
+
+  const [freeFormBrushRadius, setFreeFormBrushRadius] = useState(20);
 
   const {categoryColumn, plots, brushType} = store!;
 
@@ -54,11 +71,17 @@ const Scatterplot: FC<Props> = ({
 
   const {x, y} = plot;
 
-  const xyData = data.values.map(d => ({
-    x: d[x],
-    y: d[y],
-    category: categoryColumn ? d[categoryColumn] : null,
-  }));
+  const dataString = JSON.stringify(data);
+
+  const xyData = useMemo(() => {
+    const data: Data = JSON.parse(dataString);
+
+    return data.values.map(d => ({
+      x: d[x],
+      y: d[y],
+      category: categoryColumn ? d[categoryColumn] : null,
+    }));
+  }, [dataString, categoryColumn, x, y]);
 
   const [xMin, xMax] = [
     Math.min(...xyData.map(d => d.x)),
@@ -70,61 +93,94 @@ const Scatterplot: FC<Props> = ({
     Math.max(...xyData.map(d => d.y)),
   ];
 
-  const xScale = scaleLinear()
-    .domain([xMin, xMax])
-    .range([0, adjustedWidth])
-    .nice();
-  const yScale = scaleLinear()
-    .domain([yMax, yMin])
-    .range([0, adjustedHeight])
-    .nice();
+  const xScale = useMemo(() => {
+    return scaleLinear()
+      .domain([xMin, xMax])
+      .range([0, adjustedWidth])
+      .nice();
+  }, [adjustedWidth, xMax, xMin]);
+
+  const yScale = useMemo(() => {
+    return scaleLinear()
+      .domain([yMax, yMin])
+      .range([0, adjustedHeight])
+      .nice();
+  }, [adjustedHeight, yMax, yMin]);
 
   return (
     <div className={surroundDiv} style={{height, width}}>
-      <Button.Group className={brushButtonStyle} size="mini">
-        <Button
-          icon="square outline"
-          content="Rectangular"
-          disabled={brushType === 'Rectangular'}
-          onClick={() => actions.changeBrushType('Rectangular')}
-        />
-        <Button.Or />
-        <Button
-          icon="magic"
-          content="Freeform"
-          disabled={brushType === 'Freeform'}
-          onClick={() => actions.changeBrushType('Freeform')}
-        />
-      </Button.Group>
-      {plots.length > 1 && (
-        <Button
-          icon="close"
-          onClick={() => actions.removePlot(plot)}
-          size="mini"
-          negative
-          compact
-          className={closeButtonStyle}
-        />
-      )}
+      <Menu className={brushButtonStyle} borderless fluid secondary size="mini">
+        <Menu.Item className={itemStyle}>
+          <Button.Group size="mini">
+            <Button
+              icon="square outline"
+              content="Rectangular"
+              disabled={brushType === 'Rectangular'}
+              onClick={() => actions.changeBrushType('Rectangular')}
+            />
+            <Button.Or />
+            <Button
+              icon="magic"
+              content="Freeform"
+              disabled={brushType === 'Freeform'}
+              onClick={() => actions.changeBrushType('Freeform')}
+            />
+          </Button.Group>
+        </Menu.Item>
+        {brushType === 'Freeform' && (
+          <>
+            <Menu.Item className={itemStyle}>
+              <Input
+                type="range"
+                min={minBrushRange}
+                max={maxBrushRange}
+                step={1}
+                value={freeFormBrushRadius}
+                onChange={(_, data) => {
+                  setFreeFormBrushRadius(parseInt(data.value) || 0);
+                }}
+              />
+            </Menu.Item>
+            <Menu.Item className={itemStyle}>
+              <Header>Brush Size: </Header> {freeFormBrushRadius}
+            </Menu.Item>
+          </>
+        )}
+        {plots.length > 1 && (
+          <Menu.Menu position="right">
+            <Menu.Item className={itemStyle}>
+              <Button
+                icon="close"
+                onClick={() => actions.removePlot(plot)}
+                size="mini"
+                negative
+                compact
+                className={closeButtonStyle}
+              />
+            </Menu.Item>
+          </Menu.Menu>
+        )}
+      </Menu>
       <svg className={svgStyle} ref={svgRef}>
         <rect height={dim.height} width={dim.width} fill="#ccc" opacity="0.1" />
-        <RawPlot
-          plot={plot}
-          height={adjustedHeight}
-          width={adjustedWidth}
-          data={xyData}
-          transform={translate(xPadding, yPadding)}
-          xScale={xScale}
-          yScale={yScale}
-          selections={selections}
-        />
+        <FreeFromRadiusContext.Provider value={freeFormBrushRadius}>
+          <RawPlot
+            plot={plot}
+            height={adjustedHeight}
+            width={adjustedWidth}
+            data={xyData}
+            transform={translate(xPadding, yPadding)}
+            xScale={xScale}
+            yScale={yScale}
+            selections={selections}
+          />
+        </FreeFromRadiusContext.Provider>
       </svg>
     </div>
   );
 };
 
-(Scatterplot as any).whyDidYouRender = true;
-export default inject('store')(observer(Scatterplot));
+export default memo(inject('store')(observer(Scatterplot)));
 
 const surroundDiv = style({
   padding: '1em',
@@ -137,9 +193,6 @@ const svgStyle = style({
 });
 
 const closeButtonStyle = style({
-  position: 'absolute',
-  right: 0,
-  top: 0,
   opacity: 0.4,
   transition: 'opacity 0.5s',
   $nest: {
@@ -154,4 +207,9 @@ const brushButtonStyle = style({
   position: 'absolute',
   left: 0,
   top: 0,
+});
+
+const itemStyle = style({
+  paddingTop: '0 !important',
+  paddingBottom: '0 !important',
 });
