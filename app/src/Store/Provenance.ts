@@ -409,6 +409,10 @@ function setupObservers(
         state.multiBrushBehaviour === 'Union'
           ? MultiBrushBehavior.UNION
           : MultiBrushBehavior.INTERSECTION;
+
+      const lastInteractionIsNull =
+        state.interactionHistory[state.interactionHistory.length - 1] === null;
+
       const interactionHistory = state.interactionHistory.filter(d => d);
 
       const request: PredictionRequest = {
@@ -417,28 +421,41 @@ function setupObservers(
       };
 
       if (isStateNode(current)) {
-        const extraList = getExtra(provenance, current);
+        if (!lastInteractionIsNull) {
+          const extraList = getExtra(provenance, current);
 
-        if (extraList.length === 0 && !store.isLoadingPredictions) {
-          store.isLoadingPredictions = true;
-          axios
-            .post(`/dataset/${store.dataset.key}/predict`, request)
-            .then(response => {
-              if (isStateNode(current)) {
-                const predictionSet: PredictionSet = response.data;
+          if (extraList.length === 0 && !store.isLoadingPredictions) {
+            store.isLoadingPredictions = true;
+            axios
+              .post(`/dataset/${store.dataset.key}/predict`, request)
+              .then(response => {
+                if (isStateNode(current)) {
+                  const predictionSet: PredictionSet = response.data;
 
-                const annotate: Annotation = {
-                  annotation: '',
-                  predictionSet: predictionSet,
-                };
+                  const annotate: Annotation = {
+                    annotation: '',
+                    predictionSet: predictionSet,
+                  };
 
-                provenance.addExtraToNodeArtifact(current.id, annotate);
-              }
-            })
-            .catch(err => console.error(err))
-            .finally(() => {
-              store.isLoadingPredictions = false;
-            });
+                  provenance.addExtraToNodeArtifact(current.id, annotate);
+                }
+              })
+              .catch(err => console.error(err))
+              .finally(() => {
+                store.isLoadingPredictions = false;
+              });
+          }
+        } else {
+          const currentNode = provenance.current();
+          if (isStateNode(currentNode)) {
+            const parentNode = provenance.graph().nodes[currentNode.parent];
+            if (isStateNode(parentNode)) {
+              const extraList = provenance.getExtraFromArtifact(parentNode.id);
+              if (extraList.length === 0) return;
+              const extra = extraList[extraList.length - 1].e;
+              provenance.addExtraToNodeArtifact(currentNode.id, extra);
+            }
+          }
         }
       }
     }

@@ -1,17 +1,21 @@
-import React, {FC, useState, createRef, useEffect, useReducer} from 'react';
+import React, {FC, createRef, useReducer} from 'react';
 import IntentStore from '../../../Store/IntentStore';
 import {inject, observer} from 'mobx-react';
 import {BrushableRegion} from '../../Brush/Types/BrushableRegion';
 import translate from '../../../Utils/Translate';
-import {drag, select, event} from 'd3';
+import {select} from 'd3';
+
+type BrushStartHandler = () => void;
+type BrushMoveHandler = (x: number, y: number, radius: number) => void;
+type BrushEndHandler = () => void;
 
 type Props = {
   store?: IntentStore;
   extents: BrushableRegion;
   extentPadding?: number;
-  onBrushStart?: () => void;
-  onBrush?: (x: number, y: number, radius: number) => void;
-  onBrushEnd?: () => void;
+  onBrushStart?: BrushStartHandler;
+  onBrush?: BrushMoveHandler;
+  onBrushEnd?: BrushEndHandler;
 };
 
 type LocalState = typeof initialState;
