@@ -1,8 +1,8 @@
 import React, {FC, useContext, memo} from 'react';
 import {inject, observer} from 'mobx-react';
 import IntentStore from '../../Store/IntentStore';
-import {Table, Label, Popup} from 'semantic-ui-react';
-import {PredictionRowType} from './PredictionRowType';
+import {Table, Label, Popup, Button} from 'semantic-ui-react';
+import {PredictionRowType, getAllSelections} from './PredictionRowType';
 import JaccardBar from './JaccardBar';
 import ProbabilityBar from './ProbabilityBar';
 import hoverable from '../UtilComponent/hoverable';
@@ -15,7 +15,7 @@ type Props = {
 };
 
 const PredictionTable: FC<Props> = ({store, predictions}: Props) => {
-  const {selectedPrediction} = store!;
+  const {selectedPrediction, plots, multiBrushBehaviour} = store!;
   const barHeight = 30;
   const actions = useContext(ActionContext);
 
@@ -24,17 +24,16 @@ const PredictionTable: FC<Props> = ({store, predictions}: Props) => {
   function predRowRender(pred: PredictionRowType) {
     const {matches, isnp, ipns, similarity, type, probability} = pred;
 
+    function rowClick() {
+      if (pred.intent === selectedPrediction) {
+        actions.selectPrediction('none');
+      } else {
+        actions.selectPrediction(pred.intent);
+      }
+    }
+
     return (
-      <Table.Row
-        key={pred.intent}
-        onClick={() => {
-          if (pred.intent === selectedPrediction) {
-            actions.selectPrediction('none');
-          } else {
-            actions.selectPrediction(pred.intent);
-          }
-        }}
-        active={pred.intent === selectedPrediction}>
+      <Table.Row key={pred.intent} active={pred.intent === selectedPrediction}>
         <Table.Cell>
           {pred.dims.map(dim => (
             <Label size="mini" circular key={dim}>
@@ -93,17 +92,38 @@ const PredictionTable: FC<Props> = ({store, predictions}: Props) => {
           }>
           {ipns.length}
         </HoverTableCell>
-        <Table.Cell>
+        <Table.Cell onClick={rowClick}>
           <JaccardBar height={barHeight} score={similarity} label={type} />
         </Table.Cell>
-        <Table.Cell>
+        <Table.Cell onClick={rowClick}>
           <ProbabilityBar
             height={barHeight}
             score={probability}
             label={probability.toFixed(2)}
           />
         </Table.Cell>
-        <Table.Cell>Extra</Table.Cell>
+        <Table.Cell>
+          <Button
+            icon="check"
+            positive
+            onClick={() => {
+              actions.lockPrediction(pred);
+            }}
+          />
+        </Table.Cell>
+        <Table.Cell>
+          <Button
+            icon="hand pointer"
+            primary
+            onClick={() => {
+              const curr = getAllSelections(
+                plots,
+                multiBrushBehaviour === 'Union',
+              ).values;
+              actions.turnPredictionInSelection(pred, curr);
+            }}
+          />
+        </Table.Cell>
       </Table.Row>
     );
   }
@@ -127,7 +147,7 @@ const PredictionTable: FC<Props> = ({store, predictions}: Props) => {
           />
           <Table.HeaderCell>Similarity</Table.HeaderCell>
           <Table.HeaderCell>Probability</Table.HeaderCell>
-          <Table.HeaderCell>Misc</Table.HeaderCell>
+          <Table.HeaderCell colSpan={2}>Misc</Table.HeaderCell>
         </Table.Row>
       </Table.Header>
       <Table.Body>{predictions.map(predRowRender)}</Table.Body>

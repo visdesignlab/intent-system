@@ -2,9 +2,10 @@ import React, {FC, useRef, useState, useEffect, memo, useContext} from 'react';
 import {inject, observer} from 'mobx-react';
 import IntentStore from '../Store/IntentStore';
 import {style} from 'typestyle';
-import {ProvVis} from '@visdesignlab/provvis';
 import {NodeID} from '@visdesignlab/provenance-lib-core';
 import {ActionContext} from '../App';
+import ProvVis from '../ProvVis/components/ProvVis';
+import translate from '../ProvVis/Utils/translate';
 
 interface Props {
   store?: IntentStore;
@@ -33,6 +34,20 @@ const ProvenanceVisualization: FC<Props> = ({store}: Props) => {
     d.label.includes('Load Dataset'),
   );
 
+  const annotationNode = (node: any) => {
+    const {extra} = node.data.artifacts;
+    let annotation = '';
+    if (extra.length > 0) {
+      annotation = extra[extra.length - 1].e.annotation;
+    }
+
+    return (
+      <g transform={translate(0, 20)}>
+        <text>{annotation}</text>
+      </g>
+    );
+  };
+
   return (
     <div ref={ref} className={provStyle}>
       {dimensions.width && dimensions.height && (
@@ -46,6 +61,8 @@ const ProvenanceVisualization: FC<Props> = ({store}: Props) => {
           verticalSpace={20}
           textSize={12}
           changeCurrent={(id: NodeID) => actions.goToNode(id)}
+          annotationHeight={50}
+          annotationContent={annotationNode}
         />
       )}
     </div>

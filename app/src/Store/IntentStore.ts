@@ -8,7 +8,7 @@ import {
 import {ProvenanceGraph} from '@visdesignlab/provenance-lib-core';
 import {IntentEvents, Annotation} from './Provenance';
 import {Dataset} from '../Utils/Dataset';
-import {PredictionSet, InteractionHistory} from '../contract';
+import {PredictionSet, InteractionHistory, Prediction} from '../contract';
 
 export const predSet: PredictionSet = {
   dimensions: [],
@@ -36,6 +36,7 @@ export default class IntentStore implements IntentState {
   @observable plots = defaultState.plots;
   @observable interactionHistory: InteractionHistory = [];
   @observable brushType: BrushType = defaultState.brushType;
+  @observable lockedPrediction: Prediction = defaultState.lockedPrediction;
 
   // Artifact Properties
   @observable predictionSet = predSet;

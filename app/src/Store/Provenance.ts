@@ -22,6 +22,7 @@ import {
   PredictionSet,
   MultiBrushBehavior,
   PredictionRequest,
+  Prediction,
 } from '../contract';
 import axios from 'axios';
 import {
@@ -43,6 +44,8 @@ export type IntentEvents =
   | 'Point Selection'
   | 'Point Deselection'
   | 'Add Brush'
+  | 'Lock Prediction'
+  | 'Turn Prediction'
   | 'Invert'
   | 'Change Brush'
   | 'Remove Brush'
@@ -335,6 +338,41 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
     );
   }
 
+  function turnPredictionInSelection(
+    pred: Prediction,
+    currentSelections: number[],
+  ) {
+    provenance.applyAction(
+      `Turn prediction in selection`,
+      (state: IntentState) => {
+        const basePlot = state.plots[0];
+
+        const newSelection = pred.dataIds || [];
+        for (let i = 0; i < state.plots.length; ++i) {
+          state.plots[i].selectedPoints = newSelection;
+          state.plots[i].brushes = {};
+        }
+
+        removePointSelectionInteraction(state, basePlot, currentSelections);
+        addPointSelectionInteraction(state, basePlot, newSelection);
+        return state;
+      },
+    );
+  }
+
+  function lockPrediction(pred: Prediction) {
+    provenance.applyAction(
+      'Lock prediction',
+      (state: IntentState) => {
+        state.lockedPrediction = pred;
+        addDummyInteraction(state);
+        return state;
+      },
+      undefined,
+      {type: 'Lock Prediction'},
+    );
+  }
+
   return {
     provenance,
     actions: {
@@ -343,6 +381,7 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
       changeCategory,
       toggleMultiBrushBehaviour,
       goToNode,
+      turnPredictionInSelection,
       addPlot,
       addPointSelection,
       removePointSelection,
@@ -354,6 +393,7 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
       annotateNode,
       selectPrediction,
       changeBrushType,
+      lockPrediction,
       invertSelection,
     },
   };
@@ -394,6 +434,11 @@ export interface ProvenanceActions {
   selectPrediction: (pred: string) => void;
   changeBrushType: (brushType: BrushType) => void;
   invertSelection: (currentSelected: number[], all: number[]) => void;
+  lockPrediction: (pred: Prediction) => void;
+  turnPredictionInSelection: (
+    pred: Prediction,
+    currentSelection: number[],
+  ) => void;
 }
 
 function getExtra(
@@ -475,7 +520,10 @@ function setupObservers(
               const extraList = provenance.getExtraFromArtifact(parentNode.id);
               if (extraList.length === 0) return;
               const extra = extraList[extraList.length - 1].e;
-              provenance.addExtraToNodeArtifact(currentNode.id, extra);
+              provenance.addExtraToNodeArtifact(currentNode.id, {
+                annotation: '',
+                predictionSet: extra.predictionSet,
+              });
             }
           }
         }

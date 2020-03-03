@@ -1,6 +1,6 @@
 import {Dataset} from '../Utils/Dataset';
 import {Brush} from '../Components/Brush/Types/Brush';
-import {InteractionHistory} from '../contract';
+import {InteractionHistory, Prediction} from '../contract';
 
 export type MultiBrushBehaviour = 'Union' | 'Intersection';
 
@@ -30,6 +30,7 @@ export interface IntentState {
   plots: Plots;
   interactionHistory: InteractionHistory;
   brushType: BrushType;
+  lockedPrediction: Prediction;
 }
 
 export const defaultState: IntentState = {
@@ -39,5 +40,6 @@ export const defaultState: IntentState = {
   categoryColumn: '',
   plots: [],
   interactionHistory: [],
-  brushType: 'Freeform',
+  brushType: 'Rectangular',
+  lockedPrediction: null as any,
 };
