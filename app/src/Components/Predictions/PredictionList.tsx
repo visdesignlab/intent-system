@@ -29,11 +29,6 @@ const PredictionList: FC<Props> = ({store, selections}: Props) => {
     setPreds(computedPreds);
   }
 
-  if (preds.length > 0) {
-    // console.clear();
-    // console.table(preds);
-  }
-
   const predictionTable = <PredictionTable predictions={preds} />;
 
   const loadingComponent = (

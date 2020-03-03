@@ -5,11 +5,11 @@ import React, {
   useEffect,
   useContext,
   createContext,
+  memo,
 } from 'react';
 import IntentStore from '../../Store/IntentStore';
 import {style} from 'typestyle';
 import {inject, observer} from 'mobx-react';
-import {ProvenanceActions} from '../../Store/Provenance';
 import PlotsGrid from './PlotsGrid';
 import {DataContext} from '../../App';
 import {symbols, symbol} from 'd3';
@@ -18,14 +18,13 @@ import Legend from './Legend';
 
 export interface Props {
   store?: IntentStore;
-  actions: ProvenanceActions;
 }
 
 export type SymbolMap = {[key: string]: any};
 
 export const SymbolContext = createContext<SymbolMap>({});
 
-const Visualization: FC<Props> = ({store, actions}: Props) => {
+const Visualization: FC<Props> = ({store}: Props) => {
   const ref = useRef<HTMLDivElement>(null);
   const [dims, setDims] = useState({height: 0, width: 0});
 
@@ -83,7 +82,7 @@ const Visualization: FC<Props> = ({store, actions}: Props) => {
 };
 
 (Visualization as any).whyDidYouRender = true;
-export default inject('store')(observer(Visualization));
+export default memo(inject('store')(observer(Visualization)));
 
 const visStyle = style({
   gridArea: 'vis',

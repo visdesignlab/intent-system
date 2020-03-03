@@ -5,6 +5,7 @@ import {BrushableRegion} from '../../Brush/Types/BrushableRegion';
 import translate from '../../../Utils/Translate';
 import {select} from 'd3';
 import {FreeFromRadiusContext} from '../Scatterplot';
+import {style} from 'typestyle';
 
 type BrushStartHandler = () => void;
 type BrushMoveHandler = (x: number, y: number, radius: number) => void;
@@ -131,6 +132,7 @@ const FreeFormBrush: FC<Props> = ({
       <rect fill="none" pointerEvents="all" width={width} height={height} />
       {mouseDown && (
         <circle
+          className={brushStyle}
           pointerEvents={mouseDown ? 'all' : 'initial'}
           ref={brushRef}
           opacity="0.3"
@@ -145,3 +147,7 @@ const FreeFormBrush: FC<Props> = ({
 };
 
 export default inject('store')(observer(FreeFormBrush));
+
+const brushStyle = style({
+  cursor: 'grabbing',
+});

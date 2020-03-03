@@ -83,10 +83,10 @@ const App = () => {
                 datasets={datasets}
                 setDataset={setSelectedDataset}
               />
-              <Visualization actions={actions} />
+              <Visualization />
             </div>
             <Predictions />
-            <ProvenanceVisualization actions={actions} />
+            <ProvenanceVisualization />
           </div>
         </ActionContext.Provider>
       </DataContext.Provider>

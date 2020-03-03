@@ -1,4 +1,4 @@
-import React, {useEffect, useContext, useState} from 'react';
+import React, {useEffect, useContext, useState, memo} from 'react';
 import {inject, observer} from 'mobx-react';
 import {
   Button,
@@ -12,6 +12,7 @@ import {Dataset, Data} from '../Utils/Dataset';
 import {style} from 'typestyle';
 import {ActionContext} from '../App';
 import AddPlotMenu from './AddPlotMenu';
+import {getAllSelections} from './Predictions/PredictionRowType';
 
 interface NavbarProps {
   store?: any;
@@ -27,7 +28,11 @@ function Navbar({store, data, datasets, setDataset}: NavbarProps) {
     multiBrushBehaviour,
     categoryColumn,
     isAnythingSelected,
+    plots,
   } = store!;
+
+  const selections = getAllSelections(plots, multiBrushBehaviour === 'Union')
+    .values;
 
   const actions = useContext(ActionContext);
 
@@ -82,6 +87,7 @@ function Navbar({store, data, datasets, setDataset}: NavbarProps) {
     <Menu.Item>
       <Radio
         toggle
+        disabled={categoricalColumns.length === 0}
         label="Show Categories"
         checked={showCategories}
         onChange={() =>
@@ -94,7 +100,10 @@ function Navbar({store, data, datasets, setDataset}: NavbarProps) {
   const showCategoriesDropdown = (
     <Menu.Item>
       {
-        <Dropdown labeled text={categoryColumn}>
+        <Dropdown
+          labeled
+          text={categoryColumn}
+          disabled={categoricalColumns.length === 1}>
           <Dropdown.Menu>
             {categoricalColumns.map(cat => (
               <Dropdown.Item
@@ -127,7 +136,16 @@ function Navbar({store, data, datasets, setDataset}: NavbarProps) {
 
   const invertSelectionButton = (
     <Menu.Item>
-      <Button primary>Invert Selection</Button>
+      <Button
+        primary
+        disabled={selections.length === 0}
+        onClick={() => {
+          const dataIds = data.values.map((_, i) => i);
+
+          actions.invertSelection(selections, dataIds);
+        }}>
+        Invert Selection
+      </Button>
     </Menu.Item>
   );
 
@@ -166,7 +184,7 @@ function Navbar({store, data, datasets, setDataset}: NavbarProps) {
 }
 
 (Navbar as any).whyDidYouRender = true;
-export default inject('store')(observer(Navbar));
+export default memo(inject('store')(observer(Navbar)));
 
 const menuStyle = style({
   margin: '1em',

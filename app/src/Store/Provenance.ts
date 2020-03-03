@@ -43,6 +43,7 @@ export type IntentEvents =
   | 'Point Selection'
   | 'Point Deselection'
   | 'Add Brush'
+  | 'Invert'
   | 'Change Brush'
   | 'Remove Brush'
   | 'Clear All'
@@ -172,7 +173,6 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
           if (plot.id === state.plots[i].id) {
             const pts = state.plots[i].selectedPoints;
             state.plots[i].selectedPoints = [...pts, ...points];
-            break;
           }
         }
         addPointSelectionInteraction(state, plot, points);
@@ -193,10 +193,9 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
               p => !points.includes(p),
             );
             state.plots[i].selectedPoints = [...pts];
-            removePointSelectionInteraction(state, plot, points);
-            break;
           }
         }
+        removePointSelectionInteraction(state, plot, points);
         return state;
       },
       undefined,
@@ -315,6 +314,27 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
     );
   }
 
+  function invertSelection(currentSelected: number[], all: number[]) {
+    provenance.applyAction(
+      `Invert current selection`,
+      (state: IntentState) => {
+        const basePlot = state.plots[0];
+
+        const newSelection = all.filter(a => !currentSelected.includes(a));
+        for (let i = 0; i < state.plots.length; ++i) {
+          state.plots[i].selectedPoints = newSelection;
+          state.plots[i].brushes = {};
+        }
+
+        removePointSelectionInteraction(state, basePlot, currentSelected);
+        addPointSelectionInteraction(state, basePlot, newSelection);
+        return state;
+      },
+      undefined,
+      {type: 'Invert'},
+    );
+  }
+
   return {
     provenance,
     actions: {
@@ -334,6 +354,7 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
       annotateNode,
       selectPrediction,
       changeBrushType,
+      invertSelection,
     },
   };
 }
@@ -372,6 +393,7 @@ export interface ProvenanceActions {
   annotateNode: (annotation: string) => void;
   selectPrediction: (pred: string) => void;
   changeBrushType: (brushType: BrushType) => void;
+  invertSelection: (currentSelected: number[], all: number[]) => void;
 }
 
 function getExtra(

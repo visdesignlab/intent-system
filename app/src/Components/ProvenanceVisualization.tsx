@@ -1,20 +1,21 @@
-import React, {FC, useRef, useState, useEffect} from 'react';
+import React, {FC, useRef, useState, useEffect, memo, useContext} from 'react';
 import {inject, observer} from 'mobx-react';
 import IntentStore from '../Store/IntentStore';
 import {style} from 'typestyle';
 import {ProvVis} from '@visdesignlab/provvis';
-import {ProvenanceActions} from '../Store/Provenance';
 import {NodeID} from '@visdesignlab/provenance-lib-core';
+import {ActionContext} from '../App';
 
 interface Props {
   store?: IntentStore;
-  actions: ProvenanceActions;
 }
 
-const ProvenanceVisualization: FC<Props> = ({store, actions}: Props) => {
+const ProvenanceVisualization: FC<Props> = ({store}: Props) => {
   const {graph} = store!;
   const ref = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({height: 0, width: 0});
+
+  const actions = useContext(ActionContext);
 
   useEffect(() => {
     const current = ref.current;
@@ -52,7 +53,7 @@ const ProvenanceVisualization: FC<Props> = ({store, actions}: Props) => {
 };
 
 (ProvenanceVisualization as any).whyDidYouRender = true;
-export default inject('store')(observer(ProvenanceVisualization));
+export default memo(inject('store')(observer(ProvenanceVisualization)));
 
 const provStyle = style({
   gridArea: 'prov',

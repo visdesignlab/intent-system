@@ -11,14 +11,14 @@ import React, {
 import {inject, observer} from 'mobx-react';
 import IntentStore from '../../Store/IntentStore';
 import {style} from 'typestyle';
-import {DataContext, ActionContext} from '../../App';
+import {DataContext} from '../../App';
 import {Plot} from '../../Store/IntentState';
 import {scaleLinear} from 'd3';
 import translate from '../../Utils/Translate';
 import RawPlot from './RawPlot';
-import {Button, Input, Menu, Header} from 'semantic-ui-react';
 import {UserSelections} from '../Predictions/PredictionRowType';
 import {Data} from '../../Utils/Dataset';
+import ScatterplotControls from './ScatterplotControls';
 
 export interface Props {
   store?: IntentStore;
@@ -39,14 +39,10 @@ const Scatterplot: FC<Props> = ({
 }: Props) => {
   const svgRef = useRef<SVGSVGElement>(null);
   const data = useContext(DataContext);
-  const actions = useContext(ActionContext);
-
-  const minBrushRange = 20;
-  const maxBrushRange = 100;
 
   const [freeFormBrushRadius, setFreeFormBrushRadius] = useState(20);
 
-  const {categoryColumn, plots, brushType} = store!;
+  const {categoryColumn, plots} = store!;
 
   const [dim, setDim] = useState({height: 0, width: 0});
 
@@ -59,7 +55,7 @@ const Scatterplot: FC<Props> = ({
     }
   }, [dim]);
 
-  let reducePercentage = 0.9;
+  let reducePercentage = 0.85;
 
   if (plots.length > 1) reducePercentage = 0.85;
   if (plots.length > 2) reducePercentage = 0.75;
@@ -109,61 +105,19 @@ const Scatterplot: FC<Props> = ({
 
   return (
     <div className={surroundDiv} style={{height, width}}>
-      <Menu className={brushButtonStyle} borderless fluid secondary size="mini">
-        <Menu.Item className={itemStyle}>
-          <Button.Group size="mini">
-            <Button
-              icon="square outline"
-              content="Rectangular"
-              disabled={brushType === 'Rectangular'}
-              onClick={() => actions.changeBrushType('Rectangular')}
-            />
-            <Button.Or />
-            <Button
-              icon="magic"
-              content="Freeform"
-              disabled={brushType === 'Freeform'}
-              onClick={() => actions.changeBrushType('Freeform')}
-            />
-          </Button.Group>
-        </Menu.Item>
-        {brushType === 'Freeform' && (
-          <>
-            <Menu.Item className={itemStyle}>
-              <Input
-                type="range"
-                min={minBrushRange}
-                max={maxBrushRange}
-                step={1}
-                value={freeFormBrushRadius}
-                onChange={(_, data) => {
-                  setFreeFormBrushRadius(parseInt(data.value) || 0);
-                }}
-              />
-            </Menu.Item>
-            <Menu.Item className={itemStyle}>
-              <Header>Brush Size: </Header> {freeFormBrushRadius}
-            </Menu.Item>
-          </>
-        )}
-        {plots.length > 1 && (
-          <Menu.Menu position="right">
-            <Menu.Item className={itemStyle}>
-              <Button
-                icon="close"
-                onClick={() => actions.removePlot(plot)}
-                size="mini"
-                negative
-                compact
-                className={closeButtonStyle}
-              />
-            </Menu.Item>
-          </Menu.Menu>
-        )}
-      </Menu>
-      <svg className={svgStyle} ref={svgRef}>
-        <rect height={dim.height} width={dim.width} fill="#ccc" opacity="0.1" />
-        <FreeFromRadiusContext.Provider value={freeFormBrushRadius}>
+      <FreeFromRadiusContext.Provider value={freeFormBrushRadius}>
+        <ScatterplotControls
+          setFreeFormBrushRadius={setFreeFormBrushRadius}
+          plotID={plot.id}
+        />
+        <svg className={svgStyle} ref={svgRef}>
+          <rect
+            height={dim.height}
+            width={dim.width}
+            fill="#ccc"
+            opacity="0.1"
+          />
+
           <RawPlot
             plot={plot}
             height={adjustedHeight}
@@ -174,8 +128,8 @@ const Scatterplot: FC<Props> = ({
             yScale={yScale}
             selections={selections}
           />
-        </FreeFromRadiusContext.Provider>
-      </svg>
+        </svg>
+      </FreeFromRadiusContext.Provider>
     </div>
   );
 };
@@ -183,33 +137,11 @@ const Scatterplot: FC<Props> = ({
 export default memo(inject('store')(observer(Scatterplot)));
 
 const surroundDiv = style({
-  padding: '1em',
+  padding: '0.5em',
   position: 'relative',
 });
 
 const svgStyle = style({
   height: '100%',
   width: '100%',
-});
-
-const closeButtonStyle = style({
-  opacity: 0.4,
-  transition: 'opacity 0.5s',
-  $nest: {
-    '&:hover': {
-      opacity: 1,
-      transition: 'opacity 0.5s',
-    },
-  },
-});
-
-const brushButtonStyle = style({
-  position: 'absolute',
-  left: 0,
-  top: 0,
-});
-
-const itemStyle = style({
-  paddingTop: '0 !important',
-  paddingBottom: '0 !important',
 });
