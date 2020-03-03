@@ -47,7 +47,7 @@ def relevant_ids(interactions: List[Interaction], op: MultiBrushBehavior) -> Set
         elif is_point_deselection(ix):
             # should actually be only one point :)
             for id in ix.interaction_type.data_ids:  # type: ignore
-                points.remove(int(id))
+                points.discard(int(id))
         elif is_brush_selection(ix):
             rects.update({ix.interaction_type.brush_id: ix})
 

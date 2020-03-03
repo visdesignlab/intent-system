@@ -325,7 +325,10 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
 
         const newSelection = all.filter(a => !currentSelected.includes(a));
         for (let i = 0; i < state.plots.length; ++i) {
-          state.plots[i].selectedPoints = newSelection;
+          state.plots[i].selectedPoints = [];
+          if (i === 0) {
+            state.plots[i].selectedPoints = newSelection;
+          }
           state.plots[i].brushes = {};
         }
 
