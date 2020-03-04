@@ -51,7 +51,7 @@ const Mark: FC<Props> = ({
       id={id}
       cx={x}
       cy={y}
-      r="0.35em"
+      r="5"
       className={`${className} ${extraClass}`}
     />
   );

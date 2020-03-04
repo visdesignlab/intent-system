@@ -112,14 +112,20 @@ const RawPlot: FC<Props> = ({
         do {
           let {x, y} = node.data;
 
-          const isSelected = x >= left && x <= right && y >= top && y <= bottom;
+          const isSelected =
+            x + 2.5 >= left &&
+            x + 2.5 <= right &&
+            y + 2.5 >= top &&
+            y + 2.5 <= bottom;
           const idx = mappedData[`${x}-${y}`];
           if (isSelected && idx) {
             points.push(idx);
           }
         } while ((node = node.next));
       }
-      return x1 >= right || y1 >= bottom || x2 <= left || y2 <= top;
+      return (
+        x1 + 5 >= right || y1 + 5 >= bottom || x2 + 5 <= left || y2 + 5 <= top
+      );
     });
     return points;
   }
