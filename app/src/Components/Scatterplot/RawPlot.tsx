@@ -93,45 +93,57 @@ const RawPlot: FC<Props> = ({
       .addAll(JSON.parse(scaledDataString));
   }, [scaledDataString]);
 
+  function brushSearch(
+    quad: any,
+    left: number,
+    top: number,
+    right: number,
+    bottom: number,
+  ) {
+    const points: number[] = [];
+    quad.visit(function(
+      node: any,
+      x1: number,
+      y1: number,
+      x2: number,
+      y2: number,
+    ) {
+      if (!node.length) {
+        do {
+          let {x, y} = node.data;
+
+          const isSelected = x >= left && x <= right && y >= top && y <= bottom;
+          const idx = mappedData[`${x}-${y}`];
+          if (isSelected && idx) {
+            points.push(idx);
+          }
+        } while ((node = node.next));
+      }
+      return x1 >= right || y1 >= bottom || x2 <= left || y2 <= top;
+    });
+    return points;
+  }
+
   function brushHandler(
     _: BrushCollection,
     affectedBrush: Brush,
     affectType: BrushAffectType,
   ) {
     let {x1, x2, y1, y2} = affectedBrush.extents;
-    [x1, x2, y1, y2] = [
-      xScale.invert(x1 * width),
-      xScale.invert(x2 * width),
-      yScale.invert(y1 * height),
-      yScale.invert(y2 * height),
-    ];
+    [x1, x2, y1, y2] = [x1 * width, x2 * width, y1 * height, y2 * height];
 
     let brushCollection = JSON.parse(JSON.stringify(brushes));
     const points = [];
     switch (affectType) {
       case 'Add':
-        for (let i = 0; i < data.length; ++i) {
-          const {x, y} = data[i];
-          if (x >= x1 && x <= x2 && y <= y1 && y >= y2) {
-            points.push(i);
-          }
-        }
-
+        points.push(...brushSearch(quad, x1, y1, x2, y2));
         const addBr: ExtendedBrush = {...affectedBrush, points};
-
         brushCollection[addBr.id] = addBr;
         actions.addBrush(plot, brushCollection, addBr);
         break;
       case 'Change':
-        for (let i = 0; i < data.length; ++i) {
-          const {x, y} = data[i];
-          if (x1 <= x && x2 >= x && y1 >= y && y2 <= y) {
-            points.push(i);
-          }
-        }
-
+        points.push(...brushSearch(quad, x1, y1, x2, y2));
         const changeBr: ExtendedBrush = {...affectedBrush, points};
-
         brushCollection[changeBr.id] = changeBr;
         actions.changeBrush(plot, brushCollection, changeBr);
         break;

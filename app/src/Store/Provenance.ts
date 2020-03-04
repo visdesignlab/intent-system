@@ -176,6 +176,7 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
           if (plot.id === state.plots[i].id) {
             const pts = state.plots[i].selectedPoints;
             state.plots[i].selectedPoints = [...pts, ...points];
+            break;
           }
         }
         addPointSelectionInteraction(state, plot, points);
@@ -196,6 +197,7 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
               p => !points.includes(p),
             );
             state.plots[i].selectedPoints = [...pts];
+            break;
           }
         }
         removePointSelectionInteraction(state, plot, points);
@@ -352,7 +354,8 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
 
         const newSelection = pred.dataIds || [];
         for (let i = 0; i < state.plots.length; ++i) {
-          state.plots[i].selectedPoints = newSelection;
+          if (i === 0) state.plots[i].selectedPoints = newSelection;
+          else state.plots[i].selectedPoints = [];
           state.plots[i].brushes = {};
         }
 
