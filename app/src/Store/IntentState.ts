@@ -10,7 +10,7 @@ export interface ExtendedBrush extends Brush {
 
 export type ExtendedBrushCollection = {[key: string]: ExtendedBrush};
 
-export type BrushType = 'Rectangular' | 'Freeform';
+export type BrushType = 'Rectangular' | 'Freeform' | 'None';
 
 export interface Plot {
   id: string;

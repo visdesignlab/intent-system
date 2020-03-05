@@ -307,8 +307,19 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
   }
 
   function changeBrushType(brushType: BrushType) {
+    let message: string = '';
+    switch (brushType) {
+      case 'Rectangular':
+      case 'Freeform':
+        message = `Switch to ${brushType} brush`;
+        break;
+      case 'None':
+      default:
+        message = 'Brushing disabled';
+    }
+
     provenance.applyAction(
-      `Change brush to ${brushType}`,
+      message,
       (state: IntentState) => {
         state.brushType = brushType;
         addDummyInteraction(state);

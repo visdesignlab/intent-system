@@ -35,15 +35,21 @@ const ScatterplotControls: FC<Props> = ({
           <Button
             icon="square outline"
             content="Rectangular"
-            disabled={brushType === 'Rectangular'}
-            onClick={() => actions.changeBrushType('Rectangular')}
+            active={brushType === 'Rectangular'}
+            onClick={() => {
+              if (brushType === 'Rectangular') actions.changeBrushType('None');
+              else actions.changeBrushType('Rectangular');
+            }}
           />
           <Button.Or />
           <Button
             icon="magic"
             content="Freeform"
-            disabled={brushType === 'Freeform'}
-            onClick={() => actions.changeBrushType('Freeform')}
+            active={brushType === 'Freeform'}
+            onClick={() => {
+              if (brushType === 'Freeform') actions.changeBrushType('None');
+              else actions.changeBrushType('Freeform');
+            }}
           />
         </Button.Group>
       </Menu.Item>

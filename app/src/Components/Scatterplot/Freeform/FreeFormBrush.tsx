@@ -73,19 +73,10 @@ const FreeFormBrush: FC<Props> = ({
     Math.abs(left - extentPadding - (right + extentPadding)),
   ];
 
-  function handleMouseDown(
-    event: React.MouseEvent<SVGCircleElement, MouseEvent>,
-  ) {
-    const target = event.currentTarget.getBoundingClientRect();
-    const [x, y] = [event.clientX - target.left, event.clientY - target.top];
-
+  function handleMouseDown() {
     dispatch({
-      type: 'all',
+      type: 'mousedown',
       mouseDown: true,
-      mousePosition: {
-        x,
-        y,
-      },
     });
 
     if (onBrushStart) {
@@ -95,12 +86,8 @@ const FreeFormBrush: FC<Props> = ({
 
   function handleMouseUpAndLeave() {
     dispatch({
-      type: 'all',
+      type: 'mousedown',
       mouseDown: false,
-      mousePosition: {
-        x: -1,
-        y: -1,
-      },
     });
 
     if (onBrushEnd) {
@@ -113,10 +100,17 @@ const FreeFormBrush: FC<Props> = ({
     if (node) {
       const target = event.currentTarget.getBoundingClientRect();
       const [x, y] = [event.clientX - target.left, event.clientY - target.top];
-      select(node)
-        .attr('cx', x)
-        .attr('cy', y);
-      if (onBrush) {
+
+      const nodeSelection = select(node);
+
+      const edgeX = x + radius >= width + 10 || x - radius <= -10;
+      const edgeY = y + radius >= height + 10 || y - radius <= -10;
+      console.log(y - radius, height);
+
+      if (!edgeX) nodeSelection.attr('cx', x);
+
+      if (!edgeY) nodeSelection.attr('cy', y);
+      if (onBrush && mouseDown) {
         onBrush(x, y, radius);
       }
     }
@@ -129,19 +123,21 @@ const FreeFormBrush: FC<Props> = ({
       onMouseLeave={handleMouseUpAndLeave}
       onMouseMove={handleMove}
       transform={translate(-extentPadding, -extentPadding)}>
-      <rect fill="none" pointerEvents="all" width={width} height={height} />
-      {mouseDown && (
-        <circle
-          className={brushStyle}
-          pointerEvents={mouseDown ? 'all' : 'initial'}
-          ref={brushRef}
-          opacity="0.3"
-          fill="blue"
-          r={radius}
-          cx={mousePosition.x}
-          cy={mousePosition.y}
-        />
-      )}
+      <rect
+        fill="red"
+        opacity="0.1"
+        pointerEvents="all"
+        width={width}
+        height={height}
+      />
+      <circle
+        className={brushStyle}
+        pointerEvents={mouseDown ? 'all' : 'initial'}
+        ref={brushRef}
+        opacity="0.3"
+        fill="blue"
+        r={radius}
+      />
     </g>
   );
 };

@@ -1,4 +1,4 @@
-import { ReactChild } from 'react';
+import {ReactChild} from 'react';
 
 export type Config = {
   regularGlyph: ReactChild;
@@ -7,4 +7,6 @@ export type Config = {
   bundleGlyph: ReactChild;
 };
 
-export type EventConfig<E extends string> = { [key in E]: Config };
+export type EventConfig<E extends string> = {
+  [key: string]: Partial<Config>;
+};

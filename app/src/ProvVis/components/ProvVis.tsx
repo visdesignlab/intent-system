@@ -134,7 +134,12 @@ function ProvVis<T, S extends string, A>({
   function regularGlyph(node: ProvenanceNode<T, S, A>) {
     if (eventConfig) {
       const eventType = node.metadata.type;
-      if (eventType && eventType in eventConfig && eventType !== 'Root') {
+      if (
+        eventType &&
+        eventType in eventConfig &&
+        eventType !== 'Root' &&
+        eventConfig[eventType].regularGlyph
+      ) {
         return eventConfig[eventType].regularGlyph;
       }
     }

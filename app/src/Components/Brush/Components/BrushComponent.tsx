@@ -16,6 +16,7 @@ interface Props {
   ) => void;
   clearAllBrushSetup?: (handler: () => void) => void;
   initialBrushes?: BrushCollection;
+  switchOff?: boolean;
 }
 
 const BrushComponent: FC<Props> = ({
@@ -25,6 +26,7 @@ const BrushComponent: FC<Props> = ({
   onBrushUpdate,
   extentPadding,
   initialBrushes,
+  switchOff = true,
 }: Props) => {
   if (!extentPadding) extentPadding = 0;
 
@@ -262,7 +264,7 @@ const BrushComponent: FC<Props> = ({
       fill="none"
       cursor="crosshair"
       stroke={showBrushBorder ? 'black' : 'none'}
-      pointerEvents="all"
+      pointerEvents={switchOff ? 'none' : 'all'}
       onMouseDown={handleMouseDownWhenCreating}
       onMouseMove={event => {
         if (isCreatingNewBrush) {

@@ -118,7 +118,9 @@ const RawPlot: FC<Props> = ({
             y + 2.5 >= top &&
             y + 2.5 <= bottom;
           const idx = mappedData[`${x}-${y}`];
-          if (isSelected && idx) {
+          if (idx === 159)
+            console.log(idx, isSelected, {x, y, left, right, top, bottom});
+          if (isSelected && idx >= 0) {
             points.push(idx);
           }
         } while ((node = node.next));
@@ -202,9 +204,10 @@ const RawPlot: FC<Props> = ({
     <BrushComponent
       key={brushKey}
       extents={{left: 0, top: 0, right: width, bottom: height}}
-      extentPadding={10}
+      extentPadding={20}
       onBrushUpdate={brushHandler}
       initialBrushes={initBrushCounts === 0 ? null : initialBrushes}
+      switchOff={brushType !== 'Rectangular'}
     />
   );
 

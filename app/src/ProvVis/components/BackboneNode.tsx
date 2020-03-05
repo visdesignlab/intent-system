@@ -1,13 +1,16 @@
-import React, { FC, ReactChild} from 'react';
+import React, {FC, ReactChild} from 'react';
 import translate from '../Utils/translate';
-import { ProvenanceNode, StateNode } from '@visdesignlab/provenance-lib-core';
-import { treeColor } from './Styles';
-import { Animate } from 'react-move';
-import { EventConfig } from '../Utils/EventConfig';
-import { BundleMap } from '../Utils/BundleMap';
-import  findBackboneBundleNodes  from '../Utils/findBackboneBundleNodes';
-import { Popup } from 'semantic-ui-react'
-
+import {
+  ProvenanceNode,
+  StateNode,
+  isStateNode,
+} from '@visdesignlab/provenance-lib-core';
+import {treeColor} from './Styles';
+import {Animate} from 'react-move';
+import {EventConfig} from '../Utils/EventConfig';
+import {BundleMap} from '../Utils/BundleMap';
+import findBackboneBundleNodes from '../Utils/findBackboneBundleNodes';
+import {Popup} from 'semantic-ui-react';
 
 interface BackboneNodeProps<T, S extends string, A> {
   first: boolean;
@@ -17,14 +20,14 @@ interface BackboneNodeProps<T, S extends string, A> {
   radius: number;
   strokeWidth: number;
   textSize: number;
-  nodeMap:any;
-  annotationOpen:number;
-  setAnnotationOpen:any;
-  bundleMap?:BundleMap;
-  clusterLabels:boolean;
+  nodeMap: any;
+  annotationOpen: number;
+  setAnnotationOpen: any;
+  bundleMap?: BundleMap;
+  clusterLabels: boolean;
   eventConfig?: EventConfig<S>;
-  popupContent?: (nodeId:StateNode<T, S, A>) => ReactChild;
-  annotationContent?:(nodeId:StateNode<T, S, A>) => ReactChild;
+  popupContent?: (nodeId: StateNode<T, S, A>) => ReactChild;
+  annotationContent?: (nodeId: StateNode<T, S, A>) => ReactChild;
 }
 
 function BackboneNode<T, S extends string, A>({
@@ -42,61 +45,72 @@ function BackboneNode<T, S extends string, A>({
   clusterLabels,
   eventConfig,
   popupContent,
-  annotationContent
+  annotationContent,
 }: BackboneNodeProps<T, S, A>) {
   const padding = 15;
 
-// console.log(JSON.parse(JSON.stringify(node)));
-  let glyph = <circle onClick={() => nodeClicked(node)} className={treeColor(current)} r={radius} strokeWidth={strokeWidth} />;
+  // console.log(JSON.parse(JSON.stringify(node)));
+  let glyph = (
+    <circle
+      onClick={() => nodeClicked(node)}
+      className={treeColor(current)}
+      r={radius}
+      strokeWidth={strokeWidth}
+    />
+  );
 
-  let backboneBundleNodes = findBackboneBundleNodes(nodeMap, bundleMap)
+  let backboneBundleNodes = findBackboneBundleNodes(nodeMap, bundleMap);
 
   if (eventConfig) {
     const eventType = node.metadata.type;
     if (eventType && eventType in eventConfig && eventType !== 'Root') {
-      const { bundleGlyph, currentGlyph, backboneGlyph } = eventConfig[eventType];
-      if(backboneBundleNodes.includes(node.id))
-      {
-        glyph = <g onClick={() => nodeClicked(node)} fontWeight={'none'}>{bundleGlyph}</g>
-      }
-      else if(current)
-      {
-        glyph = <g onClick={() => nodeClicked(node)} fontWeight={'bold'}>{currentGlyph}</g>
-      }
-      else{
-        glyph = <g onClick={() => nodeClicked(node)} fontWeight={'none'}>{backboneGlyph}</g>
+      const {bundleGlyph, currentGlyph, backboneGlyph} = eventConfig[eventType];
+      if (backboneBundleNodes.includes(node.id)) {
+        glyph = (
+          <g onClick={() => nodeClicked(node)} fontWeight={'none'}>
+            {bundleGlyph || glyph}
+          </g>
+        );
+      } else if (current) {
+        glyph = (
+          <g onClick={() => nodeClicked(node)} fontWeight={'bold'}>
+            {currentGlyph || glyph}
+          </g>
+        );
+      } else {
+        glyph = (
+          <g onClick={() => nodeClicked(node)} fontWeight={'none'}>
+            {backboneGlyph || glyph}
+          </g>
+        );
       }
     }
   }
 
   let label = '';
 
-  if(bundleMap && Object.keys(bundleMap).includes(node.id) && clusterLabels)
-  {
+  if (bundleMap && Object.keys(bundleMap).includes(node.id) && clusterLabels) {
     label = bundleMap[node.id].bundleLabel;
-  }
-  else if(!backboneBundleNodes.includes(node.id) || !clusterLabels)
-  {
+  } else if (!backboneBundleNodes.includes(node.id) || !clusterLabels) {
     label = node.label;
   }
 
   return (
     <Animate
-      start={{ opacity: 0 }}
-      enter={{ opacity: [1], timing: { duration: 100, delay: first ? 0 : duration } }}
-    >
+      start={{opacity: 0}}
+      enter={{
+        opacity: [1],
+        timing: {duration: 100, delay: first ? 0 : duration},
+      }}>
       {state => (
         <>
-          {
-            (popupContent !== undefined && nodeMap[node.id].depth > 0)?
-              (
-                <Popup content={popupContent(node)} trigger={glyph}/>
-              ) : (
-                glyph
-              )
-          }
+          {popupContent !== undefined && nodeMap[node.id].depth > 0 ? (
+            <Popup content={popupContent(node)} trigger={glyph} />
+          ) : (
+            glyph
+          )}
           {/* {glyph} */}
-          <g style={{ opacity: state.opacity }} transform={translate(padding, 0)}>
+          <g style={{opacity: state.opacity}} transform={translate(padding, 0)}>
             <Label
               label={label}
               dominantBaseline="middle"
@@ -105,10 +119,10 @@ function BackboneNode<T, S extends string, A>({
               fontWeight={current ? 'bold' : 'regular'}
               onClick={() => labelClicked(node)}
             />
-            {(annotationOpen !== -1 && nodeMap[node.id].depth === annotationOpen && annotationContent) ? (
-              <g>
-                {annotationContent(nodeMap[node.id])}
-              </g>
+            {annotationOpen !== -1 &&
+            nodeMap[node.id].depth === annotationOpen &&
+            annotationContent ? (
+              <g>{annotationContent(nodeMap[node.id])}</g>
             ) : (
               <g></g>
             )}
@@ -118,35 +132,29 @@ function BackboneNode<T, S extends string, A>({
     </Animate>
   );
 
-  function labelClicked(node:ProvenanceNode<T, S, A>)
-  {
-    if(!annotationContent)
-    {
+  function labelClicked(node: ProvenanceNode<T, S, A>) {
+    if (!annotationContent) {
       return;
-    }
-    else if(annotationOpen === nodeMap[node.id].depth)
-    {
+    } else if (annotationOpen === nodeMap[node.id].depth) {
       setAnnotationOpen(-1);
-    }
-    else{
+    } else {
       setAnnotationOpen(nodeMap[node.id].depth);
     }
   }
 
-  function nodeClicked(node:ProvenanceNode<T, S, A>)
-  {
-    if(annotationOpen !== -1 && (nodeMap[node.id].width > 0 || nodeMap[node.id].depth !== annotationOpen))
-    {
+  function nodeClicked(node: ProvenanceNode<T, S, A>) {
+    if (
+      annotationOpen !== -1 &&
+      (nodeMap[node.id].width > 0 || nodeMap[node.id].depth !== annotationOpen)
+    ) {
       setAnnotationOpen(-1);
     }
   }
 }
 
-
-
 export default BackboneNode;
 
-const Label: FC<{ label: string } & React.SVGProps<SVGTextElement>> = (props: {
+const Label: FC<{label: string} & React.SVGProps<SVGTextElement>> = (props: {
   label: string;
 }) => {
   return <text {...props}>{props.label}</text>;

@@ -1,8 +1,0 @@
-.rotate_text {
-}
-
-.rotate_text text {
-  transform: rotate(45deg);
-  dominant-baseline: middle;
-  text-anchor: start;
-}
