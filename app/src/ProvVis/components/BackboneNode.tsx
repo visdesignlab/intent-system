@@ -80,6 +80,13 @@ function BackboneNode<T, S extends string, A>({
     label = node.label;
   }
 
+  //This is not a good long term fix. I believe the problem causing this is actually in the vis
+  //side and not a part of this library, but it fixes the issue for now.
+  if(!nodeMap[node.id])
+  {
+    return null;
+  }
+
   return (
     <Animate
       start={{ opacity: 0 }}
