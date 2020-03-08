@@ -63,10 +63,7 @@ const FreeFormBrush: FC<Props> = ({
 
   const radius = useContext(FreeFromRadiusContext);
 
-  const [{mouseDown, mousePosition}, dispatch] = useReducer(
-    reducer,
-    initialState,
-  );
+  const [{mouseDown}, dispatch] = useReducer(reducer, initialState);
 
   const [height, width] = [
     Math.abs(bottom + extentPadding - (top - extentPadding)),

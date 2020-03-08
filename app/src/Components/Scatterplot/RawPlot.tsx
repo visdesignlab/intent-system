@@ -1,37 +1,44 @@
-import React, {FC, useContext, useState, useEffect, useMemo, memo} from 'react';
-import IntentStore from '../../Store/IntentStore';
-import translate from '../../Utils/Translate';
+import React, {
+  FC,
+  useContext,
+  useState,
+  useEffect,
+  useMemo,
+  memo
+} from "react";
+import IntentStore from "../../Store/IntentStore";
+import translate from "../../Utils/Translate";
 import {
   ScaleLinear,
   select,
   axisBottom,
   axisLeft,
   quadtree,
-  selectAll,
-} from 'd3';
-import {ActionContext, DataContext} from '../../App';
-import {Plot, ExtendedBrush} from '../../Store/IntentState';
-import BrushComponent from '../Brush/Components/BrushComponent';
-import {BrushCollection, Brush, BrushAffectType} from '../Brush/Types/Brush';
-import {inject, observer} from 'mobx-react';
-import _ from 'lodash';
-import MarkType from './MarkType';
-import Mark from './Mark';
-import XAxis from './XAxis';
-import YAxis from './YAxis';
-import {Popup, Header, Table} from 'semantic-ui-react';
-import {UserSelections} from '../Predictions/PredictionRowType';
+  selectAll
+} from "d3";
+import { Plot, ExtendedBrush } from "../../Store/IntentState";
+import BrushComponent from "../Brush/Components/BrushComponent";
+import { BrushCollection, Brush, BrushAffectType } from "../Brush/Types/Brush";
+import { inject, observer } from "mobx-react";
+import _ from "lodash";
+import MarkType from "./MarkType";
+import Mark from "./Mark";
+import XAxis from "./XAxis";
+import YAxis from "./YAxis";
+import { Popup, Header, Table } from "semantic-ui-react";
+import { UserSelections } from "../Predictions/PredictionRowType";
 import {
   FADE_OUT_PRED_SELECTION,
   COLOR,
-  REGULAR_MARK_STYLE,
-} from '../Styles/MarkStyle';
-import FreeFormBrush from './Freeform/FreeFormBrush';
+  REGULAR_MARK_STYLE
+} from "../Styles/MarkStyle";
+import FreeFormBrush from "./Freeform/FreeFormBrush";
+import { ActionContext, DataContext } from "../../Contexts";
 
 export interface Props {
   store?: IntentStore;
   plot: Plot;
-  data: {x: number; y: number; category?: string}[];
+  data: { x: number; y: number; category?: string }[];
   transform: string;
   height: number;
   width: number;
@@ -49,7 +56,7 @@ const RawPlot: FC<Props> = ({
   width,
   xScale,
   yScale,
-  selections,
+  selections
 }: Props) => {
   const actions = useContext(ActionContext);
   const [mouseDown, setMouseDown] = useState(false);
@@ -58,9 +65,9 @@ const RawPlot: FC<Props> = ({
     multiBrushBehaviour,
     predictionSet,
     selectedPrediction,
-    brushType,
+    brushType
   } = store!;
-  const {selectedPoints, brushes} = plot;
+  const { selectedPoints, brushes } = plot;
 
   let freeFormPoints: number[] = [];
 
@@ -68,17 +75,19 @@ const RawPlot: FC<Props> = ({
 
   const scaledData = data.map(d => ({
     x: xScale(d.x),
-    y: yScale(d.y),
+    y: yScale(d.y)
   }));
 
   const scaledDataString = JSON.stringify(scaledData);
 
   const mappedData = useMemo(() => {
-    const scaledData: {x: number; y: number; category?: string}[] = JSON.parse(
-      scaledDataString,
-    );
+    const scaledData: {
+      x: number;
+      y: number;
+      category?: string;
+    }[] = JSON.parse(scaledDataString);
 
-    const mapped: {[key: string]: number} = {};
+    const mapped: { [key: string]: number } = {};
     for (let i = 0; i < scaledData.length; ++i) {
       const d = scaledData[i];
       mapped[`${d.x}-${d.y}`] = i;
@@ -87,7 +96,7 @@ const RawPlot: FC<Props> = ({
   }, [scaledDataString]);
 
   const quad = useMemo(() => {
-    return quadtree<{x: number; y: number; category?: string}>()
+    return quadtree<{ x: number; y: number; category?: string }>()
       .x(d => d.x)
       .y(d => d.y)
       .addAll(JSON.parse(scaledDataString));
@@ -98,7 +107,7 @@ const RawPlot: FC<Props> = ({
     left: number,
     top: number,
     right: number,
-    bottom: number,
+    bottom: number
   ) {
     const points: number[] = [];
     quad.visit(function(
@@ -106,11 +115,11 @@ const RawPlot: FC<Props> = ({
       x1: number,
       y1: number,
       x2: number,
-      y2: number,
+      y2: number
     ) {
       if (!node.length) {
         do {
-          let {x, y} = node.data;
+          let { x, y } = node.data;
 
           const isSelected =
             x + 2.5 >= left &&
@@ -119,7 +128,7 @@ const RawPlot: FC<Props> = ({
             y + 2.5 <= bottom;
           const idx = mappedData[`${x}-${y}`];
           if (idx === 159)
-            console.log(idx, isSelected, {x, y, left, right, top, bottom});
+            console.log(idx, isSelected, { x, y, left, right, top, bottom });
           if (isSelected && idx >= 0) {
             points.push(idx);
           }
@@ -135,32 +144,32 @@ const RawPlot: FC<Props> = ({
   function brushHandler(
     _: BrushCollection,
     affectedBrush: Brush,
-    affectType: BrushAffectType,
+    affectType: BrushAffectType
   ) {
-    let {x1, x2, y1, y2} = affectedBrush.extents;
+    let { x1, x2, y1, y2 } = affectedBrush.extents;
     [x1, x2, y1, y2] = [x1 * width, x2 * width, y1 * height, y2 * height];
 
     let brushCollection = JSON.parse(JSON.stringify(brushes));
     const points = [];
     switch (affectType) {
-      case 'Add':
+      case "Add":
         points.push(...brushSearch(quad, x1, y1, x2, y2));
-        const addBr: ExtendedBrush = {...affectedBrush, points};
+        const addBr: ExtendedBrush = { ...affectedBrush, points };
         brushCollection[addBr.id] = addBr;
         actions.addBrush(plot, brushCollection, addBr);
         break;
-      case 'Change':
+      case "Change":
         points.push(...brushSearch(quad, x1, y1, x2, y2));
-        const changeBr: ExtendedBrush = {...affectedBrush, points};
+        const changeBr: ExtendedBrush = { ...affectedBrush, points };
         brushCollection[changeBr.id] = changeBr;
         actions.changeBrush(plot, brushCollection, changeBr);
         break;
-      case 'Remove':
+      case "Remove":
         delete brushCollection[affectedBrush.id];
-        const removeBr: ExtendedBrush = {...affectedBrush, points: []};
+        const removeBr: ExtendedBrush = { ...affectedBrush, points: [] };
         actions.removeBrush(plot, brushCollection, removeBr);
         break;
-      case 'Clear':
+      case "Clear":
         break;
       default:
         break;
@@ -196,27 +205,27 @@ const RawPlot: FC<Props> = ({
   useEffect(() => {
     const xAxis = axisBottom(xScale);
     const yAxis = axisLeft(yScale);
-    select('.x-axis').call(xAxis as any);
-    select('.y-axis').call(yAxis as any);
+    select(".x-axis").call(xAxis as any);
+    select(".y-axis").call(yAxis as any);
   }, [xScale, yScale]);
 
   const brushComponent = (
     <BrushComponent
       key={brushKey}
-      extents={{left: 0, top: 0, right: width, bottom: height}}
+      extents={{ left: 0, top: 0, right: width, bottom: height }}
       extentPadding={20}
       onBrushUpdate={brushHandler}
       initialBrushes={initBrushCounts === 0 ? null : initialBrushes}
-      switchOff={brushType !== 'Rectangular'}
+      switchOff={brushType !== "Rectangular"}
     />
   );
 
-  const {predictions} = predictionSet;
+  const { predictions } = predictionSet;
   const selectedPred = predictions.find(p => p.intent === selectedPrediction);
 
   function drawMark(
-    data: {x: number; y: number; category?: string},
-    idx: number,
+    data: { x: number; y: number; category?: string },
+    idx: number
   ) {
     let dataIds: number[] = [];
     if (selectedPred) {
@@ -225,37 +234,37 @@ const RawPlot: FC<Props> = ({
 
     const isInSelectedPred = dataIds.includes(idx);
 
-    let type: MarkType = 'Regular';
+    let type: MarkType = "Regular";
     const isClickSelected = clickSelectedPoints.includes(idx);
     if (!isClickSelected) {
-      const isUnion = multiBrushBehaviour === 'Union';
+      const isUnion = multiBrushBehaviour === "Union";
       if (brushPointCount[idx]) {
         if (isUnion) {
-          type = 'Union';
+          type = "Union";
         } else {
-          type = brushPointCount[idx] === brushCount ? 'Union' : 'Intersection';
+          type = brushPointCount[idx] === brushCount ? "Union" : "Intersection";
         }
       }
     } else {
-      type = 'Union';
+      type = "Union";
     }
 
-    let markClass = 'regular-mark';
-    if (type === 'Union') {
-      markClass = 'union-mark';
+    let markClass = "regular-mark";
+    if (type === "Union") {
+      markClass = "union-mark";
     }
     if (selections.individualArr.includes(idx)) {
-      markClass = 'click-mark';
+      markClass = "click-mark";
     }
-    if (type === 'Intersection') {
-      markClass = 'intersection-mark';
+    if (type === "Intersection") {
+      markClass = "intersection-mark";
     }
 
     markClass = `${markClass} base-mark`;
 
     if (selectedPred) {
       markClass = `${markClass} ${
-        isInSelectedPred ? '' : FADE_OUT_PRED_SELECTION
+        isInSelectedPred ? "" : FADE_OUT_PRED_SELECTION
       }`;
     }
 
@@ -267,14 +276,15 @@ const RawPlot: FC<Props> = ({
           } else {
             actions.removePointSelection(plot, [idx]);
           }
-        }}>
+        }}
+      >
         <Mark
           id={`mark-${idx}`}
           extraClass={markClass}
           type={type}
           x={xScale(data.x)}
           y={yScale(data.y)}
-          category={data.category || ''}
+          category={data.category || ""}
         />
       </g>
     );
@@ -283,7 +293,7 @@ const RawPlot: FC<Props> = ({
 
     const columns = [
       ...currColumn,
-      ...rawData.columns.filter(a => !currColumn.includes(a)),
+      ...rawData.columns.filter(a => !currColumn.includes(a))
     ];
 
     const popupContent = (
@@ -327,14 +337,14 @@ const RawPlot: FC<Props> = ({
     return <Popup key={idx} content={popupContent} trigger={mark} />;
   }
 
-  const {columnMap} = useContext(DataContext);
+  const { columnMap } = useContext(DataContext);
 
   const plotComponent = (
-    <g style={{pointerEvents: mouseDown ? 'none' : 'all'}}>
-      <g transform={translate(0, height)} style={{pointerEvents: 'none'}}>
+    <g style={{ pointerEvents: mouseDown ? "none" : "all" }}>
+      <g transform={translate(0, height)} style={{ pointerEvents: "none" }}>
         <XAxis width={width} scale={xScale} dimension={columnMap[plot.x]} />
       </g>
-      <g style={{pointerEvents: 'none'}}>
+      <g style={{ pointerEvents: "none" }}>
         <YAxis height={height} scale={yScale} dimension={columnMap[plot.y]} />
       </g>
       {data.map(drawMark)}
@@ -356,9 +366,9 @@ const RawPlot: FC<Props> = ({
 
       if (!((interx1 || interx2) && (intery1 || intery2)) && !(ctnx || ctny))
         return;
-      const {data} = node!;
+      const { data } = node!;
       if (data) {
-        const {x: x1, y: y1} = data;
+        const { x: x1, y: y1 } = data;
         const ptr = radius(x, y, x1, y1);
         if (ptr <= r) {
           const idx = mappedData[`${x1}-${y1}`];
@@ -376,7 +386,7 @@ const RawPlot: FC<Props> = ({
 
   const freeFormBrushComponent = (
     <FreeFormBrush
-      extents={{left: 0, top: 0, right: width, bottom: height}}
+      extents={{ left: 0, top: 0, right: width, bottom: height }}
       extentPadding={10}
       onBrushStart={() => {
         freeFormPoints = [];
@@ -398,9 +408,10 @@ const RawPlot: FC<Props> = ({
       <g
         onMouseDown={() => setMouseDown(true)}
         onMouseUp={() => setMouseDown(false)}
-        onMouseLeave={() => setMouseDown(false)}>
+        onMouseLeave={() => setMouseDown(false)}
+      >
         {brushComponent}
-        {brushType === 'Freeform' && freeFormBrushComponent}
+        {brushType === "Freeform" && freeFormBrushComponent}
       </g>
       {plotComponent}
     </g>
@@ -408,4 +419,4 @@ const RawPlot: FC<Props> = ({
 };
 
 (RawPlot as any).whyDidYouRender = true;
-export default memo(inject('store')(observer(RawPlot)));
+export default memo(inject("store")(observer(RawPlot)));

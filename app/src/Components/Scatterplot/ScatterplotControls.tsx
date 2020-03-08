@@ -1,11 +1,11 @@
-import React, {FC, useContext, memo} from 'react';
-import IntentStore from '../../Store/IntentStore';
-import {style} from 'typestyle';
-import {Menu, Button, Input, Header} from 'semantic-ui-react';
-import {ActionContext} from '../../App';
-import {inject, observer} from 'mobx-react';
-import {FreeFromRadiusContext} from './Scatterplot';
-import {Plot} from '../../Store/IntentState';
+import React, { FC, useContext, memo } from "react";
+import IntentStore from "../../Store/IntentStore";
+import { style } from "typestyle";
+import { Menu, Button, Input, Header } from "semantic-ui-react";
+import { inject, observer } from "mobx-react";
+import { FreeFromRadiusContext } from "./Scatterplot";
+import { Plot } from "../../Store/IntentState";
+import { ActionContext } from "../../Contexts";
 
 type Props = {
   store?: IntentStore;
@@ -16,9 +16,9 @@ type Props = {
 const ScatterplotControls: FC<Props> = ({
   store,
   setFreeFormBrushRadius,
-  plotID,
+  plotID
 }: Props) => {
-  const {brushType, plots} = store!;
+  const { brushType, plots } = store!;
 
   const plot = plots.find(f => f.id === plotID) as Plot;
 
@@ -35,25 +35,25 @@ const ScatterplotControls: FC<Props> = ({
           <Button
             icon="square outline"
             content="Rectangular"
-            active={brushType === 'Rectangular'}
+            active={brushType === "Rectangular"}
             onClick={() => {
-              if (brushType === 'Rectangular') actions.changeBrushType('None');
-              else actions.changeBrushType('Rectangular');
+              if (brushType === "Rectangular") actions.changeBrushType("None");
+              else actions.changeBrushType("Rectangular");
             }}
           />
           <Button.Or />
           <Button
             icon="magic"
             content="Freeform"
-            active={brushType === 'Freeform'}
+            active={brushType === "Freeform"}
             onClick={() => {
-              if (brushType === 'Freeform') actions.changeBrushType('None');
-              else actions.changeBrushType('Freeform');
+              if (brushType === "Freeform") actions.changeBrushType("None");
+              else actions.changeBrushType("Freeform");
             }}
           />
         </Button.Group>
       </Menu.Item>
-      {brushType === 'Freeform' && (
+      {brushType === "Freeform" && (
         <>
           <Menu.Item className={itemStyle}>
             <Input
@@ -91,27 +91,27 @@ const ScatterplotControls: FC<Props> = ({
 };
 
 (ScatterplotControls as any).whyDidYouRender = true;
-export default memo(inject('store')(observer(ScatterplotControls)));
+export default memo(inject("store")(observer(ScatterplotControls)));
 
 const closeButtonStyle = style({
   opacity: 0.4,
-  transition: 'opacity 0.5s',
+  transition: "opacity 0.5s",
   $nest: {
-    '&:hover': {
+    "&:hover": {
       opacity: 1,
-      transition: 'opacity 0.5s',
-    },
-  },
+      transition: "opacity 0.5s"
+    }
+  }
 });
 
 const brushButtonStyle = style({
-  position: 'absolute',
+  position: "absolute",
   left: 0,
   top: 0,
-  margin: '0 !important',
+  margin: "0 !important"
 });
 
 const itemStyle = style({
-  paddingTop: '0 !important',
-  paddingBottom: '0 !important',
+  paddingTop: "0 !important",
+  paddingBottom: "0 !important"
 });

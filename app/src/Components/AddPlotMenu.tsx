@@ -1,23 +1,23 @@
-import React, {FC, useState, useContext} from 'react';
+import React, { FC, useState, useContext } from 'react';
 import IntentStore from '../Store/IntentStore';
-import {Menu, Button, Dropdown} from 'semantic-ui-react';
-import {DataContext, ActionContext} from '../App';
-import {Plot} from '../Store/IntentState';
+import { Menu, Button, Dropdown } from 'semantic-ui-react';
+import { Plot } from '../Store/IntentState';
 import getPlotId from '../Utils/PlotIDGen';
+import { DataContext, ActionContext } from '../Contexts';
 
 export interface Props {
   store?: IntentStore;
   closeMenu: (addingPlot: boolean) => void;
 }
 
-const AddPlotMenu: FC<Props> = ({closeMenu}: Props) => {
+const AddPlotMenu: FC<Props> = ({ closeMenu }: Props) => {
   const data = useContext(DataContext);
   const actions = useContext(ActionContext);
 
   const datasetOptions = data.numericColumns.map(col => ({
     key: col,
     value: col,
-    text: `${data.columnMap[col].short} | ${data.columnMap[col].text}`,
+    text: `${data.columnMap[col].short} | ${data.columnMap[col].text}`
   }));
 
   const [plot, setPlot] = useState<Plot>({
@@ -25,7 +25,7 @@ const AddPlotMenu: FC<Props> = ({closeMenu}: Props) => {
     x: '',
     y: '',
     selectedPoints: [],
-    brushes: {},
+    brushes: {}
   });
 
   return (
@@ -36,7 +36,7 @@ const AddPlotMenu: FC<Props> = ({closeMenu}: Props) => {
           options={datasetOptions}
           defaultValue={plot.x}
           placeholder="X Axis"
-          onChange={(_, data) => setPlot({...plot, x: data.value as any})}
+          onChange={(_, data) => setPlot({ ...plot, x: data.value as any })}
         />
       </Menu.Item>
       <Menu.Item>
@@ -45,7 +45,7 @@ const AddPlotMenu: FC<Props> = ({closeMenu}: Props) => {
           options={datasetOptions}
           defaultValue={plot.y}
           placeholder="Y Axis"
-          onChange={(_, data) => setPlot({...plot, y: data.value as any})}
+          onChange={(_, data) => setPlot({ ...plot, y: data.value as any })}
         />
       </Menu.Item>
       <Menu.Item>
@@ -53,7 +53,7 @@ const AddPlotMenu: FC<Props> = ({closeMenu}: Props) => {
           disabled={plot.x === '' || plot.y === ''}
           icon="check"
           onClick={() => {
-            actions.addPlot({...plot, id: getPlotId()});
+            actions.addPlot({ ...plot, id: getPlotId() });
             closeMenu(false);
           }}
           color="green"

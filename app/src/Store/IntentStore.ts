@@ -44,8 +44,8 @@ export default class IntentStore implements IntentState {
   @observable isLoadingPredictions: boolean = false;
 
   // Restore state action
-  @action resetStore() {
-    Object.assign(this, defaultState);
+  @action resetStore(state?: IntentState) {
+    Object.assign(this, {...defaultState, ...state});
     this.resetPredAndAnnotation();
   }
   @action resetPrediction() {

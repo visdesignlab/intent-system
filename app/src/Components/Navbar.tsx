@@ -1,18 +1,18 @@
-import React, {useEffect, useContext, useState, memo} from 'react';
-import {inject, observer} from 'mobx-react';
+import React, { useEffect, useContext, useState, memo } from 'react';
+import { inject, observer } from 'mobx-react';
 import {
   Button,
   Dropdown,
   Menu,
   Radio,
   Icon,
-  Container,
+  Container
 } from 'semantic-ui-react';
-import {Dataset, Data} from '../Utils/Dataset';
-import {style} from 'typestyle';
-import {ActionContext} from '../App';
+import { Dataset, Data } from '../Utils/Dataset';
+import { style } from 'typestyle';
 import AddPlotMenu from './AddPlotMenu';
-import {getAllSelections} from './Predictions/PredictionRowType';
+import { getAllSelections } from './Predictions/PredictionRowType';
+import { ActionContext } from '../Contexts';
 
 interface NavbarProps {
   store?: any;
@@ -21,14 +21,14 @@ interface NavbarProps {
   data: Data;
 }
 
-function Navbar({store, data, datasets, setDataset}: NavbarProps) {
+function Navbar({ store, data, datasets, setDataset }: NavbarProps) {
   const {
     dataset,
     showCategories,
     multiBrushBehaviour,
     categoryColumn,
     isAnythingSelected,
-    plots,
+    plots
   } = store!;
 
   const selections = getAllSelections(plots, multiBrushBehaviour === 'Union')
@@ -38,7 +38,7 @@ function Navbar({store, data, datasets, setDataset}: NavbarProps) {
 
   const [addingPlot, setAddingPlot] = useState(false);
 
-  const {categoricalColumns} = data;
+  const { categoricalColumns } = data;
 
   useEffect(() => {
     if (
@@ -57,7 +57,8 @@ function Navbar({store, data, datasets, setDataset}: NavbarProps) {
         className="icon"
         labeled
         button
-        text={dataset.name}>
+        text={dataset.name}
+      >
         <Dropdown.Menu>
           {datasets.map(d => (
             <Dropdown.Item
@@ -65,7 +66,8 @@ function Navbar({store, data, datasets, setDataset}: NavbarProps) {
               active={d.key === dataset}
               onClick={() => {
                 setDataset(d);
-              }}>
+              }}
+            >
               {d.name}
             </Dropdown.Item>
           ))}
@@ -103,13 +105,15 @@ function Navbar({store, data, datasets, setDataset}: NavbarProps) {
         <Dropdown
           labeled
           text={categoryColumn}
-          disabled={categoricalColumns.length === 1}>
+          disabled={categoricalColumns.length === 1}
+        >
           <Dropdown.Menu>
             {categoricalColumns.map(cat => (
               <Dropdown.Item
                 active={categoryColumn === cat}
                 key={cat}
-                onClick={() => actions.changeCategory(cat)}>
+                onClick={() => actions.changeCategory(cat)}
+              >
                 {cat}
               </Dropdown.Item>
             ))}
@@ -127,7 +131,7 @@ function Navbar({store, data, datasets, setDataset}: NavbarProps) {
         checked={multiBrushBehaviour === 'Union'}
         onChange={() => {
           actions.toggleMultiBrushBehaviour(
-            multiBrushBehaviour === 'Union' ? 'Intersection' : 'Union',
+            multiBrushBehaviour === 'Union' ? 'Intersection' : 'Union'
           );
         }}
       />
@@ -143,7 +147,8 @@ function Navbar({store, data, datasets, setDataset}: NavbarProps) {
           const dataIds = data.values.map((_, i) => i);
 
           actions.invertSelection(selections, dataIds);
-        }}>
+        }}
+      >
         Invert Selection
       </Button>
     </Menu.Item>
@@ -154,7 +159,8 @@ function Navbar({store, data, datasets, setDataset}: NavbarProps) {
       <Button
         disabled={!isAnythingSelected}
         primary
-        onClick={() => actions.clearSelections()}>
+        onClick={() => actions.clearSelections()}
+      >
         Clear Selection
       </Button>
     </Menu.Item>
@@ -187,9 +193,9 @@ function Navbar({store, data, datasets, setDataset}: NavbarProps) {
 export default memo(inject('store')(observer(Navbar)));
 
 const menuStyle = style({
-  margin: '1em',
+  margin: '1em'
 });
 
 const navStyle = style({
-  gridArea: 'nav',
+  gridArea: 'nav'
 });

@@ -1,16 +1,16 @@
-import React, {FC, useState, useContext} from 'react';
-import {inject, observer} from 'mobx-react';
+import React, { FC, useState, useContext } from 'react';
+import { inject, observer } from 'mobx-react';
 import IntentStore from '../../Store/IntentStore';
-import {Form, TextArea, Button, Card} from 'semantic-ui-react';
-import {ActionContext} from '../../App';
-import {style} from 'typestyle';
+import { Form, TextArea, Button, Card } from 'semantic-ui-react';
+import { style } from 'typestyle';
+import { ActionContext } from '../../Contexts';
 
 interface Props {
   store?: IntentStore;
   annotation: string;
 }
 
-const AnnotationBox: FC<Props> = ({store, annotation}: Props) => {
+const AnnotationBox: FC<Props> = ({ store, annotation }: Props) => {
   const [annotationText, setAnnotationText] = useState(annotation);
 
   const actions = useContext(ActionContext);
@@ -23,14 +23,15 @@ const AnnotationBox: FC<Props> = ({store, annotation}: Props) => {
             <TextArea
               placeholder="Annotate with your thoughts..."
               value={annotationText}
-              onChange={(_, {value}) => setAnnotationText(value as string)}
+              onChange={(_, { value }) => setAnnotationText(value as string)}
             />
           </Form.Field>
           <Form.Field className={centerButton}>
             <Button
               basic
               color="green"
-              onClick={() => actions.annotateNode(annotationText)}>
+              onClick={() => actions.annotateNode(annotationText)}
+            >
               Annotate
             </Button>
           </Form.Field>
@@ -44,5 +45,5 @@ export default inject('store')(observer(AnnotationBox));
 
 const centerButton = style({
   display: 'flex',
-  justifyContent: 'center',
+  justifyContent: 'center'
 });

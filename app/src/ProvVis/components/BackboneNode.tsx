@@ -1,10 +1,6 @@
 import React, {FC, ReactChild} from 'react';
 import translate from '../Utils/translate';
-import {
-  ProvenanceNode,
-  StateNode,
-  isStateNode,
-} from '@visdesignlab/provenance-lib-core';
+import {ProvenanceNode, StateNode} from '@visdesignlab/provenance-lib-core';
 import {treeColor} from './Styles';
 import {Animate} from 'react-move';
 import {EventConfig} from '../Utils/EventConfig';

@@ -1,28 +1,28 @@
-import React, {FC, useContext, memo} from 'react';
-import {inject, observer} from 'mobx-react';
+import React, { FC, useContext, memo } from 'react';
+import { inject, observer } from 'mobx-react';
 import IntentStore from '../../Store/IntentStore';
-import {Table, Label, Popup, Button} from 'semantic-ui-react';
-import {PredictionRowType, getAllSelections} from './PredictionRowType';
+import { Table, Label, Popup, Button } from 'semantic-ui-react';
+import { PredictionRowType, getAllSelections } from './PredictionRowType';
 import JaccardBar from './JaccardBar';
 import ProbabilityBar from './ProbabilityBar';
 import hoverable from '../UtilComponent/hoverable';
-import {FADE_OUT, FADE_COMP_IN} from '../Styles/MarkStyle';
-import {ActionContext} from '../../App';
+import { FADE_OUT, FADE_COMP_IN } from '../Styles/MarkStyle';
+import { ActionContext } from '../../Contexts';
 
 type Props = {
   store?: IntentStore;
   predictions: PredictionRowType[];
 };
 
-const PredictionTable: FC<Props> = ({store, predictions}: Props) => {
-  const {selectedPrediction, plots, multiBrushBehaviour} = store!;
+const PredictionTable: FC<Props> = ({ store, predictions }: Props) => {
+  const { selectedPrediction, plots, multiBrushBehaviour } = store!;
   const barHeight = 30;
   const actions = useContext(ActionContext);
 
   const HoverTableCell = hoverable(Table.Cell);
 
   function predRowRender(pred: PredictionRowType) {
-    const {matches, isnp, ipns, similarity, type, probability} = pred;
+    const { matches, isnp, ipns, similarity, type, probability } = pred;
 
     function rowClick() {
       if (pred.intent === selectedPrediction) {
@@ -48,14 +48,15 @@ const PredictionTable: FC<Props> = ({store, predictions}: Props) => {
               : [
                   {
                     selector: '.base-mark',
-                    classToApply: FADE_OUT,
+                    classToApply: FADE_OUT
                   },
                   {
                     selector: matches.map(m => `#mark-${m}`).join(','),
-                    classToApply: FADE_COMP_IN,
-                  },
+                    classToApply: FADE_COMP_IN
+                  }
                 ]
-          }>
+          }
+        >
           {matches.length}
         </HoverTableCell>
         <HoverTableCell
@@ -65,14 +66,15 @@ const PredictionTable: FC<Props> = ({store, predictions}: Props) => {
               : [
                   {
                     selector: '.base-mark',
-                    classToApply: FADE_OUT,
+                    classToApply: FADE_OUT
                   },
                   {
                     selector: isnp.map(m => `#mark-${m}`).join(','),
-                    classToApply: FADE_COMP_IN,
-                  },
+                    classToApply: FADE_COMP_IN
+                  }
                 ]
-          }>
+          }
+        >
           {isnp.length}
         </HoverTableCell>
         <HoverTableCell
@@ -82,14 +84,15 @@ const PredictionTable: FC<Props> = ({store, predictions}: Props) => {
               : [
                   {
                     selector: '.base-mark',
-                    classToApply: FADE_OUT,
+                    classToApply: FADE_OUT
                   },
                   {
                     selector: ipns.map(m => `#mark-${m}`).join(','),
-                    classToApply: FADE_COMP_IN,
-                  },
+                    classToApply: FADE_COMP_IN
+                  }
                 ]
-          }>
+          }
+        >
           {ipns.length}
         </HoverTableCell>
         <Table.Cell onClick={rowClick}>
@@ -118,7 +121,7 @@ const PredictionTable: FC<Props> = ({store, predictions}: Props) => {
             onClick={() => {
               const curr = getAllSelections(
                 plots,
-                multiBrushBehaviour === 'Union',
+                multiBrushBehaviour === 'Union'
               ).values;
               actions.turnPredictionInSelection(pred, curr);
             }}

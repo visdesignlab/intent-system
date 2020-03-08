@@ -1,22 +1,22 @@
-import React, {useState, useEffect, useMemo, createContext} from 'react';
-import {Provider} from 'mobx-react';
-import {setupProvenance, ProvenanceActions} from './Store/Provenance';
+import React, { useState, useEffect, useMemo, FC } from 'react';
+import { Provider } from 'mobx-react';
+import { setupProvenance } from './Store/Provenance';
 import IntentStore from './Store/IntentStore';
 import Navbar from './Components/Navbar';
 import axios from 'axios';
-import {style} from 'typestyle';
-import {Datasets, Dataset, loadData, Data} from './Utils/Dataset';
+import { style } from 'typestyle';
+import { Datasets, Dataset, loadData, Data } from './Utils/Dataset';
 import ProvenanceVisualization from './Components/ProvenanceVisualization';
 import Visualization from './Components/Scatterplot/Visualization';
 import getPlotId from './Utils/PlotIDGen';
 import Predictions from './Components/Predictions/Predictions';
+import { ActionContext, DataContext } from './Contexts';
+
+type Props = {};
 
 const store = new IntentStore();
 
-export const DataContext = createContext<Data>(null as any);
-export const ActionContext = createContext<ProvenanceActions>(null as any);
-
-const App = () => {
+const App: FC<Props> = (_: Props) => {
   const [datasets, setDatasets] = useState<Datasets>([]);
   const [selectedDataset, setSelectedDataset] = useState<Dataset>({
     key: '',
@@ -29,13 +29,13 @@ const App = () => {
 
   const datasetString = JSON.stringify(datasets);
 
-  const {provenance, actions} = useMemo(() => {
-    const {provenance, actions} = setupProvenance(store);
+  const { provenance, actions } = useMemo(() => {
+    const { provenance, actions } = setupProvenance(store);
     const ds: Dataset = JSON.parse(selectedDatasetString);
     if (ds.key.length > 0) {
       actions.setDataset(ds);
     }
-    return {provenance, actions};
+    return { provenance, actions };
   }, [selectedDatasetString]);
 
   useEffect(() => {
@@ -58,11 +58,12 @@ const App = () => {
 
   useEffect(() => {
     axios.get('./dataset').then(response => {
-      const datasets = response.data;
+      const datasets: any[] = response.data;
       if (datasetString !== JSON.stringify(datasets)) {
         setDatasets(datasets);
-        setSelectedDataset(datasets[2]);
-        actions.setDataset(datasets[2]);
+        let datasetIdx = 2;
+        setSelectedDataset(datasets[datasetIdx]);
+        actions.setDataset(datasets[datasetIdx]);
       }
     });
   }, [datasetString, actions]);

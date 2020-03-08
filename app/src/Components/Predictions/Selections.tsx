@@ -1,20 +1,20 @@
-import React, {FC, useContext, memo} from 'react';
-import {Divider, Header, Statistic, Label} from 'semantic-ui-react';
-import {style} from 'typestyle';
-import {DataContext} from '../../App';
+import React, { FC, useContext, memo } from 'react';
+import { Divider, Header, Statistic, Label } from 'semantic-ui-react';
+import { style } from 'typestyle';
 import IntentStore from '../../Store/IntentStore';
-import {inject, observer} from 'mobx-react';
-import {UserSelections} from './PredictionRowType';
+import { inject, observer } from 'mobx-react';
+import { UserSelections } from './PredictionRowType';
 import hoverable from '../UtilComponent/hoverable';
-import {FADE_OUT, FADE_IN, FADE_SELECTION_IN} from '../Styles/MarkStyle';
+import { FADE_OUT, FADE_IN, FADE_SELECTION_IN } from '../Styles/MarkStyle';
+import { DataContext } from '../../Contexts';
 
 export interface Props {
   store?: IntentStore;
   selections: UserSelections;
 }
 
-const Selections: FC<Props> = ({store, selections}: Props) => {
-  const {multiBrushBehaviour} = store!;
+const Selections: FC<Props> = ({ store, selections }: Props) => {
+  const { multiBrushBehaviour } = store!;
   const data = useContext(DataContext);
 
   const HoverableStatistic = hoverable(Statistic);
@@ -32,14 +32,15 @@ const Selections: FC<Props> = ({store, selections}: Props) => {
             configs={[
               {
                 selector: '.regular-mark,.intersection-mark,.click-mark',
-                classToApply: FADE_OUT,
+                classToApply: FADE_OUT
               },
               {
                 selector: '.union-mark',
-                classToApply: FADE_IN,
-              },
+                classToApply: FADE_IN
+              }
             ]}
-            color="orange">
+            color="orange"
+          >
             <Statistic.Value>{selections.union}</Statistic.Value>
             <Statistic.Label>Union</Statistic.Label>
           </HoverableStatistic>
@@ -51,17 +52,18 @@ const Selections: FC<Props> = ({store, selections}: Props) => {
                   multiBrushBehaviour === 'Union'
                     ? '.regular-mark,.intersection-mark,.click-mark'
                     : '.regular-mark,.union-mark,.click-mark',
-                classToApply: FADE_OUT,
+                classToApply: FADE_OUT
               },
               {
                 selector:
                   multiBrushBehaviour === 'Union'
                     ? '.union-mark'
                     : '.intersection-mark',
-                classToApply: FADE_IN,
-              },
+                classToApply: FADE_IN
+              }
             ]}
-            color={multiBrushBehaviour === 'Union' ? 'orange' : 'blue'}>
+            color={multiBrushBehaviour === 'Union' ? 'orange' : 'blue'}
+          >
             <Statistic.Value>{selections.intersection}</Statistic.Value>
             <Statistic.Label>Intersection</Statistic.Label>
           </HoverableStatistic>
@@ -70,14 +72,15 @@ const Selections: FC<Props> = ({store, selections}: Props) => {
             configs={[
               {
                 selector: '.click-mark',
-                classToApply: FADE_IN,
+                classToApply: FADE_IN
               },
               {
                 selector: '.regular-mark,.intersection-mark,.union-mark',
-                classToApply: FADE_OUT,
-              },
+                classToApply: FADE_OUT
+              }
             ]}
-            color="red">
+            color="red"
+          >
             <Statistic.Value>{selections.individual}</Statistic.Value>
             <Statistic.Label>Individual</Statistic.Label>
           </HoverableStatistic>
@@ -86,13 +89,14 @@ const Selections: FC<Props> = ({store, selections}: Props) => {
             configs={[
               {
                 selector: '.click-mark,.intersection-mark,.union-mark',
-                classToApply: FADE_IN,
+                classToApply: FADE_IN
               },
               {
                 selector: '.regular-mark',
-                classToApply: FADE_OUT,
-              },
-            ]}>
+                classToApply: FADE_OUT
+              }
+            ]}
+          >
             <Statistic.Value>{selections.total}</Statistic.Value>
             <Statistic.Label>Total</Statistic.Label>
           </HoverableStatistic>
@@ -105,10 +109,11 @@ const Selections: FC<Props> = ({store, selections}: Props) => {
             configs={[
               {
                 selector: `#mark-${idx}`,
-                classToApply: FADE_SELECTION_IN,
-              },
+                classToApply: FADE_SELECTION_IN
+              }
             ]}
-            key={idx}>
+            key={idx}
+          >
             {data.values[idx][data.labelColumn]}
           </SelectionLabel>
         ))}
@@ -124,11 +129,11 @@ const selectionStyle = style({
   gridArea: 'selections',
   overflow: 'hidden',
   display: 'grid',
-  gridTemplateRows: 'min-content auto',
+  gridTemplateRows: 'min-content auto'
 });
 
 const selectionList = style({
-  overflow: 'auto',
+  overflow: 'auto'
 });
 
 const backgroundHover = style({
@@ -137,7 +142,7 @@ const backgroundHover = style({
   $nest: {
     '&:hover': {
       background: 'rgba(0,0,0,0.05)',
-      transition: 'background 0.25s linear',
-    },
-  },
+      transition: 'background 0.25s linear'
+    }
+  }
 });

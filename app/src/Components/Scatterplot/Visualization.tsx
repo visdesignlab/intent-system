@@ -5,30 +5,30 @@ import React, {
   useEffect,
   useContext,
   createContext,
-  memo,
-} from 'react';
-import IntentStore from '../../Store/IntentStore';
-import {style} from 'typestyle';
-import {inject, observer} from 'mobx-react';
-import PlotsGrid from './PlotsGrid';
-import {DataContext} from '../../App';
-import {symbols, symbol} from 'd3';
-import _ from 'lodash';
-import Legend from './Legend';
+  memo
+} from "react";
+import IntentStore from "../../Store/IntentStore";
+import { style } from "typestyle";
+import { inject, observer } from "mobx-react";
+import PlotsGrid from "./PlotsGrid";
+import { symbols, symbol } from "d3";
+import _ from "lodash";
+import Legend from "./Legend";
+import { DataContext } from "../../Contexts";
 
 export interface Props {
   store?: IntentStore;
 }
 
-export type SymbolMap = {[key: string]: any};
+export type SymbolMap = { [key: string]: any };
 
 export const SymbolContext = createContext<SymbolMap>({});
 
-const Visualization: FC<Props> = ({store}: Props) => {
+const Visualization: FC<Props> = ({ store }: Props) => {
   const ref = useRef<HTMLDivElement>(null);
-  const [dims, setDims] = useState({height: 0, width: 0});
+  const [dims, setDims] = useState({ height: 0, width: 0 });
 
-  const {showCategories, categoryColumn} = store!;
+  const { showCategories, categoryColumn } = store!;
 
   const data = useContext(DataContext);
 
@@ -51,19 +51,19 @@ const Visualization: FC<Props> = ({store}: Props) => {
   }
 
   useEffect(() => {
-    const {height, width} = dims;
+    const { height, width } = dims;
     const current = ref.current;
     if (current && height === 0 && width === 0) {
       if (current) {
         setDims({
           height: current.clientHeight,
-          width: current.clientWidth,
+          width: current.clientWidth
         });
       }
     }
   }, [dims]);
 
-  const {height, width} = dims;
+  const { height, width } = dims;
   const adjustedHeight = height * 1;
   const adjustedWidth = width * 1;
 
@@ -82,18 +82,18 @@ const Visualization: FC<Props> = ({store}: Props) => {
 };
 
 (Visualization as any).whyDidYouRender = true;
-export default memo(inject('store')(observer(Visualization)));
+export default memo(inject("store")(observer(Visualization)));
 
 const visStyle = style({
-  gridArea: 'vis',
-  display: 'grid',
-  overflow: 'hidden',
-  gridTemplateRows: 'min-content auto',
+  gridArea: "vis",
+  display: "grid",
+  overflow: "hidden",
+  gridTemplateRows: "min-content auto",
   gridTemplateAreas: `
     "legend"
     "plot"
-    `,
+    `
 });
 
-const legendStyle = style({gridArea: 'legend'});
-const plotStyle = style({gridArea: 'plot', overflow: 'auto'});
+const legendStyle = style({ gridArea: "legend" });
+const plotStyle = style({ gridArea: "plot", overflow: "auto" });

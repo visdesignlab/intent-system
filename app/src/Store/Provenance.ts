@@ -72,7 +72,7 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
   setupObservers(provenance, store);
 
   function setDataset(dataset: Dataset) {
-    store.resetStore();
+    store.resetStore(defaultState);
     provenance.applyAction(
       `Load Dataset: ${dataset.name}`,
       (state: IntentState) => {
