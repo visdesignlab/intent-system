@@ -14,7 +14,8 @@ import {
   ExtendedBrushCollection,
   Plots,
   ExtendedBrush,
-  BrushType
+  BrushType,
+  BrushSize
 } from "./IntentState";
 import IntentStore from "./IntentStore";
 import { Dataset } from "../Utils/Dataset";
@@ -50,7 +51,8 @@ export type IntentEvents =
   | "Change Brush"
   | "Remove Brush"
   | "Clear All"
-  | "Change Brush Type";
+  | "Change Brush Type"
+  | "Change Brush Size";
 
 export type Annotation = {
   annotation: string;
@@ -322,6 +324,12 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
       message,
       (state: IntentState) => {
         state.brushType = brushType;
+        if (brushType === "Freeform" && state.brushSize === "None") {
+          state.brushSize = "20";
+        }
+        if (brushType === "Rectangular") {
+          state.brushSize = "None";
+        }
         addDummyInteraction(state);
         return state;
       },
@@ -390,6 +398,26 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
     );
   }
 
+  function changeBrushSize(size: BrushSize) {
+    let message = `Change brush size to ${size}`;
+
+    if (store.brushType === "Rectangular") {
+      message = "Switch to freeform brush";
+    }
+
+    provenance.applyAction(
+      message,
+      (state: IntentState) => {
+        state.brushType = "Freeform";
+        state.brushSize = size;
+        addDummyInteraction(state);
+        return state;
+      },
+      undefined,
+      { type: "Change Brush Size" }
+    );
+  }
+
   return {
     provenance,
     actions: {
@@ -410,6 +438,7 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
       annotateNode,
       selectPrediction,
       changeBrushType,
+      changeBrushSize,
       lockPrediction,
       invertSelection
     }
@@ -450,6 +479,7 @@ export interface ProvenanceActions {
   annotateNode: (annotation: string) => void;
   selectPrediction: (pred: string) => void;
   changeBrushType: (brushType: BrushType) => void;
+  changeBrushSize: (size: BrushSize) => void;
   invertSelection: (currentSelected: number[], all: number[]) => void;
   lockPrediction: (pred: Prediction) => void;
   turnPredictionInSelection: (
@@ -554,7 +584,8 @@ function setupObservers(
     "showCategories",
     "categoryColumn",
     "plots",
-    "brushType"
+    "brushType",
+    "brushSize"
   ];
 
   arrs.forEach(key => {

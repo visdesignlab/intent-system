@@ -3,34 +3,24 @@ import IntentStore from "../../Store/IntentStore";
 import { style } from "typestyle";
 import { Menu, Button, Input, Header } from "semantic-ui-react";
 import { inject, observer } from "mobx-react";
-import { FreeFromRadiusContext } from "./Scatterplot";
 import { Plot } from "../../Store/IntentState";
 import { ActionContext } from "../../Contexts";
 
 type Props = {
   store?: IntentStore;
-  setFreeFormBrushRadius: any;
   plotID: string;
 };
 
-const ScatterplotControls: FC<Props> = ({
-  store,
-  setFreeFormBrushRadius,
-  plotID
-}: Props) => {
+const ScatterplotControls: FC<Props> = ({ store, plotID }: Props) => {
   const { brushType, plots } = store!;
 
   const plot = plots.find(f => f.id === plotID) as Plot;
 
   const actions = useContext(ActionContext);
-  const freeFormBrushRadius = useContext(FreeFromRadiusContext);
-
-  const minBrushRange = 20;
-  const maxBrushRange = 100;
 
   return (
     <Menu className={brushButtonStyle} borderless fluid secondary size="mini">
-      <Menu.Item className={itemStyle}>
+      {/* <Menu.Item className={itemStyle}>
         <Button.Group size="mini">
           <Button
             icon="square outline"
@@ -71,7 +61,7 @@ const ScatterplotControls: FC<Props> = ({
             <Header>Brush Size: </Header> {freeFormBrushRadius}
           </Menu.Item>
         </>
-      )}
+      )} */}
       {plots.length > 1 && (
         <Menu.Menu position="right">
           <Menu.Item className={itemStyle}>

@@ -28,7 +28,9 @@ function Navbar({ store, data, datasets, setDataset }: NavbarProps) {
     multiBrushBehaviour,
     categoryColumn,
     isAnythingSelected,
-    plots
+    plots,
+    brushType,
+    brushSize
   } = store!;
 
   const selections = getAllSelections(plots, multiBrushBehaviour === "Union")
@@ -127,7 +129,7 @@ function Navbar({ store, data, datasets, setDataset }: NavbarProps) {
   );
 
   const brushToggle = (
-    <Menu.Item>
+    <Menu.Item size="mini">
       <Radio
         toggle
         label="Union"
@@ -152,7 +154,7 @@ function Navbar({ store, data, datasets, setDataset }: NavbarProps) {
           actions.invertSelection(selections, dataIds);
         }}
       >
-        Invert Selection
+        Invert
       </Button>
     </Menu.Item>
   );
@@ -164,15 +166,57 @@ function Navbar({ store, data, datasets, setDataset }: NavbarProps) {
         primary
         onClick={() => actions.clearSelections()}
       >
-        Clear Selection
+        Clear
       </Button>
+    </Menu.Item>
+  );
+
+  console.log(brushSize);
+
+  const brushSelection = (
+    <Menu.Item>
+      <Button.Group positive size="mini">
+        <Button
+          icon="square outline"
+          content="Rect"
+          active={brushType === "Rectangular"}
+          onClick={() => {
+            if (brushType === "Rectangular") return;
+            actions.changeBrushType("Rectangular");
+          }}
+        />
+        <Button
+          icon="magic"
+          content="20"
+          active={brushSize === "20"}
+          onClick={() => {
+            actions.changeBrushSize("20");
+          }}
+        />
+        <Button
+          icon="magic"
+          content="35"
+          active={brushSize === "35"}
+          onClick={() => {
+            actions.changeBrushSize("35");
+          }}
+        />
+        <Button
+          icon="magic"
+          content="50"
+          active={brushSize === "50"}
+          onClick={() => {
+            actions.changeBrushSize("50");
+          }}
+        />
+      </Button.Group>
     </Menu.Item>
   );
 
   return (
     <div className={`${menuStyle} ${navStyle}`}>
       <Container fluid textAlign="center">
-        <Menu compact>
+        <Menu compact size="mini">
           {addingPlot ? (
             <AddPlotMenu closeMenu={setAddingPlot} />
           ) : (
@@ -182,6 +226,7 @@ function Navbar({ store, data, datasets, setDataset }: NavbarProps) {
               {categoricalColumns.length > 0 && showCategoriesToggle}
               {showCategories && showCategoriesDropdown}
               {brushToggle}
+              {brushSelection}
               {invertSelectionButton}
               {clearSelectionButton}
             </>

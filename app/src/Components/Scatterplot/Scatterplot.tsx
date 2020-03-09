@@ -28,8 +28,6 @@ export interface Props {
   selections: UserSelections;
 }
 
-export const FreeFromRadiusContext = createContext<number>(20);
-
 const Scatterplot: FC<Props> = ({
   width,
   height,
@@ -39,8 +37,6 @@ const Scatterplot: FC<Props> = ({
 }: Props) => {
   const svgRef = useRef<SVGSVGElement>(null);
   const data = useContext(DataContext);
-
-  const [freeFormBrushRadius, setFreeFormBrushRadius] = useState(20);
 
   const { categoryColumn, plots } = store!;
 
@@ -105,31 +101,21 @@ const Scatterplot: FC<Props> = ({
 
   return (
     <div className={surroundDiv} style={{ height, width }}>
-      <FreeFromRadiusContext.Provider value={freeFormBrushRadius}>
-        <ScatterplotControls
-          setFreeFormBrushRadius={setFreeFormBrushRadius}
-          plotID={plot.id}
-        />
-        <svg className={svgStyle} ref={svgRef}>
-          <rect
-            height={dim.height}
-            width={dim.width}
-            fill="#ccc"
-            opacity="0.1"
-          />
+      <ScatterplotControls plotID={plot.id} />
+      <svg className={svgStyle} ref={svgRef}>
+        <rect height={dim.height} width={dim.width} fill="#ccc" opacity="0.1" />
 
-          <RawPlot
-            plot={plot}
-            height={adjustedHeight}
-            width={adjustedWidth}
-            data={xyData}
-            transform={translate(xPadding, yPadding)}
-            xScale={xScale}
-            yScale={yScale}
-            selections={selections}
-          />
-        </svg>
-      </FreeFromRadiusContext.Provider>
+        <RawPlot
+          plot={plot}
+          height={adjustedHeight}
+          width={adjustedWidth}
+          data={xyData}
+          transform={translate(xPadding, yPadding)}
+          xScale={xScale}
+          yScale={yScale}
+          selections={selections}
+        />
+      </svg>
     </div>
   );
 };

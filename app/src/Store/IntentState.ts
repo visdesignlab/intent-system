@@ -1,16 +1,18 @@
-import {Dataset} from '../Utils/Dataset';
-import {Brush} from '../Components/Brush/Types/Brush';
-import {InteractionHistory, Prediction} from '../contract';
+import { Dataset } from "../Utils/Dataset";
+import { Brush } from "../Components/Brush/Types/Brush";
+import { InteractionHistory, Prediction } from "../contract";
 
-export type MultiBrushBehaviour = 'Union' | 'Intersection';
+export type MultiBrushBehaviour = "Union" | "Intersection";
 
 export interface ExtendedBrush extends Brush {
   points: number[];
 }
 
-export type ExtendedBrushCollection = {[key: string]: ExtendedBrush};
+export type ExtendedBrushCollection = { [key: string]: ExtendedBrush };
 
-export type BrushType = 'Rectangular' | 'Freeform' | 'None';
+export type BrushType = "Rectangular" | "Freeform" | "None";
+
+export type BrushSize = "20" | "35" | "50" | "None";
 
 export interface Plot {
   id: string;
@@ -30,16 +32,18 @@ export interface IntentState {
   plots: Plots;
   interactionHistory: InteractionHistory;
   brushType: BrushType;
+  brushSize: BrushSize;
   lockedPrediction: Prediction;
 }
 
 export const defaultState: IntentState = {
-  dataset: {key: '', name: ''},
-  multiBrushBehaviour: 'Union',
+  dataset: { key: "", name: "" },
+  multiBrushBehaviour: "Union",
   showCategories: false,
-  categoryColumn: '',
+  categoryColumn: "",
   plots: [],
   interactionHistory: [],
-  brushType: 'Rectangular',
+  brushType: "Rectangular",
   lockedPrediction: null as any,
+  brushSize: "None"
 };

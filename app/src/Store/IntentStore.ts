@@ -3,7 +3,8 @@ import {
   defaultState,
   IntentState,
   MultiBrushBehaviour,
-  BrushType
+  BrushType,
+  BrushSize
 } from "./IntentState";
 import { ProvenanceGraph } from "@visdesignlab/provenance-lib-core";
 import { IntentEvents, Annotation } from "./Provenance";
@@ -36,6 +37,7 @@ export default class IntentStore implements IntentState {
   @observable plots = defaultState.plots;
   @observable interactionHistory: InteractionHistory = [];
   @observable brushType: BrushType = defaultState.brushType;
+  @observable brushSize: BrushSize = defaultState.brushSize;
   @observable lockedPrediction: Prediction = defaultState.lockedPrediction;
 
   // Artifact Properties
