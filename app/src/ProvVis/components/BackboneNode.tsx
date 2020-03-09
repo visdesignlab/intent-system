@@ -5,7 +5,6 @@ import { treeColor } from './Styles';
 import { Animate } from 'react-move';
 import { EventConfig } from '../Utils/EventConfig';
 import { BundleMap } from '../Utils/BundleMap';
-import  findBackboneBundleNodes  from '../Utils/findBackboneBundleNodes';
 import { Popup } from 'semantic-ui-react'
 
 
@@ -20,6 +19,8 @@ interface BackboneNodeProps<T, S extends string, A> {
   nodeMap:any;
   annotationOpen:number;
   setAnnotationOpen:any;
+  exemptList:string[];
+  setExemptList:any;
   bundleMap?:BundleMap;
   clusterLabels:boolean;
   eventConfig?: EventConfig<S>;
@@ -38,24 +39,27 @@ function BackboneNode<T, S extends string, A>({
   nodeMap,
   annotationOpen,
   setAnnotationOpen,
+  exemptList,
+  setExemptList,
   bundleMap,
   clusterLabels,
   eventConfig,
   popupContent,
   annotationContent
 }: BackboneNodeProps<T, S, A>) {
+
   const padding = 15;
 
 // console.log(JSON.parse(JSON.stringify(node)));
   let glyph = <circle onClick={() => nodeClicked(node)} className={treeColor(current)} r={radius} strokeWidth={strokeWidth} />;
 
-  let backboneBundleNodes = findBackboneBundleNodes(nodeMap, bundleMap)
+  // let backboneBundleNodes = findBackboneBundleNodes(nodeMap, bundleMap)
 
   if (eventConfig) {
     const eventType = node.metadata.type;
     if (eventType && eventType in eventConfig && eventType !== 'Root') {
       const { bundleGlyph, currentGlyph, backboneGlyph } = eventConfig[eventType];
-      if(backboneBundleNodes.includes(node.id))
+      if(bundleMap && (Object.keys(bundleMap).includes(node.id)))
       {
         glyph = <g onClick={() => nodeClicked(node)} fontWeight={'none'}>{bundleGlyph}</g>
       }
@@ -75,13 +79,14 @@ function BackboneNode<T, S extends string, A>({
   {
     label = bundleMap[node.id].bundleLabel;
   }
-  else if(!backboneBundleNodes.includes(node.id) || !clusterLabels)
-  {
+  else{
     label = node.label;
   }
-
-  //This is not a good long term fix. I believe the problem causing this is actually in the vis
-  //side and not a part of this library, but it fixes the issue for now.
+  // else if(!backboneBundleNodes.includes(node.id) || !clusterLabels)
+  // {
+  //   label = node.label;
+  // }
+  //
   if(!nodeMap[node.id])
   {
     return null;
@@ -142,6 +147,15 @@ function BackboneNode<T, S extends string, A>({
 
   function nodeClicked(node:ProvenanceNode<T, S, A>)
   {
+    if(bundleMap && Object.keys(bundleMap).includes(node.id))
+    {
+      let exemptCopy: string[] = Array.from(exemptList);
+
+      exemptCopy.includes(node.id) ? exemptCopy.splice(exemptCopy.findIndex(d => d === node.id), 1) : exemptCopy.push(node.id)
+
+      setExemptList(exemptCopy)
+    }
+
     if(annotationOpen !== -1 && (nodeMap[node.id].width > 0 || nodeMap[node.id].depth !== annotationOpen))
     {
       setAnnotationOpen(-1);

@@ -1,5 +1,4 @@
 import { BundleMap } from '../Utils/BundleMap';
-import findBackboneBundleNodes from '../Utils/findBackboneBundleNodes';
 
 export default function linkTransitions(
   xOffset: number,
@@ -20,21 +19,21 @@ export default function linkTransitions(
   };
 
   const enter = (data: any) => {
-    let backboneBundleNodes = findBackboneBundleNodes(nodeMap, bundleMap);
+    // let backboneBundleNodes = findBackboneBundleNodes(nodeMap, bundleMap);
 
     let clusteredNodesInFront = 0;
 
-    for (let i = 0; i < nodeList.length; i++) {
-      if (
-        data.source.width === 0 &&
-        data.target.width === 0 &&
-        nodeList[i].width === 0 &&
-        nodeList[i].depth <= data.target.depth &&
-        backboneBundleNodes.includes(nodeList[i].id)
-      ) {
-        clusteredNodesInFront++;
-      }
-    }
+    // for (let i = 0; i < nodeList.length; i++) {
+    //   if (
+    //     data.source.width === 0 &&
+    //     data.target.width === 0 &&
+    //     nodeList[i].width === 0 &&
+    //     nodeList[i].depth <= data.target.depth &&
+    //     backboneBundleNodes.includes(nodeList[i].id)
+    //   ) {
+    //     clusteredNodesInFront++;
+    //   }
+    // }
 
     clusteredNodesInFront =
       clusteredNodesInFront === 0 ? clusteredNodesInFront : clusteredNodesInFront - 1;
@@ -58,21 +57,21 @@ export default function linkTransitions(
   };
 
   const update = (data: any) => {
-    let backboneBundleNodes = findBackboneBundleNodes(nodeMap, bundleMap);
+    // let backboneBundleNodes = findBackboneBundleNodes(nodeMap, bundleMap);
 
     let clusteredNodesInFront = 0;
 
-    for (let i = 0; i < nodeList.length; i++) {
-      if (
-        data.source.width === 0 &&
-        data.target.width === 0 &&
-        nodeList[i].width === 0 &&
-        nodeList[i].depth <= data.target.depth &&
-        backboneBundleNodes.includes(nodeList[i].id)
-      ) {
-        clusteredNodesInFront++;
-      }
-    }
+    // for (let i = 0; i < nodeList.length; i++) {
+    //   if (
+    //     data.source.width === 0 &&
+    //     data.target.width === 0 &&
+    //     nodeList[i].width === 0 &&
+    //     nodeList[i].depth <= data.target.depth &&
+    //     backboneBundleNodes.includes(nodeList[i].id)
+    //   ) {
+    //     clusteredNodesInFront++;
+    //   }
+    // }
 
     clusteredNodesInFront =
       clusteredNodesInFront === 0 ? clusteredNodesInFront : clusteredNodesInFront - 1;
