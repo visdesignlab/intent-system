@@ -130,21 +130,14 @@ const FreeFormBrush: FC<Props> = ({
       onMouseMove={handleMove}
       transform={translate(-extentPadding, -extentPadding)}
     >
-      <rect
-        fill="none"
-        pointerEvents="all"
-        stroke={strokeColor}
-        strokeWidth="3"
-        strokeOpacity="0.5"
-        width={width}
-        height={height}
-      />
+      <rect fill="none" pointerEvents="all" width={width} height={height} />
       <circle
         className={brushStyle}
         pointerEvents={mouseDown ? "all" : "initial"}
         ref={brushRef}
-        opacity="0.3"
-        fill="blue"
+        fill="none"
+        stroke={strokeColor}
+        strokeWidth="2"
         r={radius}
       />
     </g>
