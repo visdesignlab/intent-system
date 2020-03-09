@@ -120,6 +120,7 @@ const Selections: FC<Props> = ({ store, selections }: Props) => {
       <div className={selectionList}>
         {selections.values.map(idx => (
           <SelectionLabel
+            className={selectionLabelMargin}
             configs={[
               {
                 selector: `#mark-${idx}`,
@@ -171,4 +172,8 @@ const backgroundHover = style({
       transition: "background 0.25s linear"
     }
   }
+});
+
+const selectionLabelMargin = style({
+  margin: "0.3em !important"
 });
