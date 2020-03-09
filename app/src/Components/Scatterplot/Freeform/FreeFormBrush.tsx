@@ -5,6 +5,7 @@ import { BrushableRegion } from "../../Brush/Types/BrushableRegion";
 import translate from "../../../Utils/Translate";
 import { select } from "d3";
 import { style } from "typestyle";
+import { union_color } from "../../Styles/MarkStyle";
 
 type BrushStartHandler = () => void;
 type BrushMoveHandler = (x: number, y: number, radius: number) => void;
@@ -119,6 +120,8 @@ const FreeFormBrush: FC<Props> = ({
     }
   }
 
+  const strokeColor = mouseDown ? union_color : "gray";
+
   return (
     <g
       onMouseDown={handleMouseDown}
@@ -128,9 +131,11 @@ const FreeFormBrush: FC<Props> = ({
       transform={translate(-extentPadding, -extentPadding)}
     >
       <rect
-        fill="red"
-        opacity="0.1"
+        fill="none"
         pointerEvents="all"
+        stroke={strokeColor}
+        strokeWidth="3"
+        strokeOpacity="0.5"
         width={width}
         height={height}
       />
