@@ -17,6 +17,7 @@ export type TaskDescription = {
   plots: PlotDef[];
   category: CategoryEncoding;
   enablePlotAddition: boolean;
+  predictionSupport: boolean;
 };
 
 const taskList: TaskDescription[] = [
@@ -29,7 +30,8 @@ const taskList: TaskDescription[] = [
       show: false,
       column: "Profession"
     },
-    enablePlotAddition: true
+    enablePlotAddition: true,
+    predictionSupport: false
   },
   {
     id: "1",
@@ -40,7 +42,8 @@ const taskList: TaskDescription[] = [
       show: false,
       column: "Profession"
     },
-    enablePlotAddition: false
+    enablePlotAddition: false,
+    predictionSupport: true
   }
 ];
 

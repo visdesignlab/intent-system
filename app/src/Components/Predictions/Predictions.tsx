@@ -1,4 +1,4 @@
-import React, { FC, useState, memo } from "react";
+import React, { FC, useState, memo, useContext } from "react";
 import IntentStore from "../../Store/IntentStore";
 import { inject, observer } from "mobx-react";
 import AnnotationBox from "./AnnotationBox";
@@ -10,6 +10,7 @@ import {
   UserSelections,
   defaultSelections
 } from "./PredictionRowType";
+import { TaskConfigContext } from "../../Contexts";
 
 interface Props {
   store?: IntentStore;
@@ -17,6 +18,10 @@ interface Props {
 
 const Predictions: FC<Props> = ({ store }: Props) => {
   const { annotation, plots, multiBrushBehaviour } = store!;
+
+  const task = useContext(TaskConfigContext) || {};
+
+  const { predictionSupport = true } = task;
 
   const [selections, setSelections] = useState<UserSelections>(
     defaultSelections
@@ -32,9 +37,9 @@ const Predictions: FC<Props> = ({ store }: Props) => {
   }
 
   return (
-    <div className={predictionColumnStyle}>
+    <div className={predictionColumnStyle(predictionSupport)}>
       <AnnotationBox annotation={annotation} />
-      <PredictionList selections={selections.values} />
+      {predictionSupport && <PredictionList selections={selections.values} />}
       <Selections selections={selections} />
     </div>
   );
@@ -42,14 +47,26 @@ const Predictions: FC<Props> = ({ store }: Props) => {
 
 export default memo(inject("store")(observer(Predictions)));
 
-const predictionColumnStyle = style({
-  gridArea: "pred",
-  height: "100vh",
-  display: "grid",
-  gridTemplateRows: "min-content 1fr 0.75fr",
-  gridTemplateAreas: `
+const predictionColumnStyle = (predictionSupport: boolean) => {
+  const gridTemplateRows = predictionSupport
+    ? "min-content 1fr 0.75fr"
+    : "min-content auto";
+  const gridTemplateAreas = predictionSupport
+    ? `
   "annotation"
   "predictions"
   "selections"
   `
-});
+    : `
+  "annotation"
+  "selections"
+  `;
+
+  return style({
+    gridArea: "pred",
+    height: "100vh",
+    display: "grid",
+    gridTemplateRows,
+    gridTemplateAreas
+  });
+};

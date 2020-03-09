@@ -2,7 +2,6 @@ import { createContext } from "react";
 import { ProvenanceActions } from "./Store/Provenance";
 import { Data } from "./Utils/Dataset";
 import { TaskDescription } from "./Study/TaskList";
-import { StudyActions } from "./Store/StudyStore/StudyProvenance";
 import { ProvenanceGraph } from "@visdesignlab/provenance-lib-core";
 
 export type StudyCommands = {
