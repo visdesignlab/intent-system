@@ -1,4 +1,4 @@
-import React, {useState, useEffect, ReactChild} from 'react';
+import React, { useState, useEffect, ReactChild } from 'react';
 import 'semantic-ui-css/semantic.min.css';
 import {
   ProvenanceGraph,
@@ -6,23 +6,26 @@ import {
   Nodes,
   ProvenanceNode,
   isStateNode,
-  StateNode,
+  StateNode
 } from '@visdesignlab/provenance-lib-core';
-import {stratify, HierarchyNode} from 'd3';
-import {treeLayout} from '../Utils/TreeLayout';
+import { stratify, HierarchyNode } from 'd3';
+import { treeLayout } from '../Utils/TreeLayout';
+import findBundleParent  from '../Utils/findBundleParent';
+
 import translate from '../Utils/translate';
-import {NodeGroup} from 'react-move';
+import { NodeGroup } from 'react-move';
 import BackboneNode from './BackboneNode';
 import Link from './Link';
-import {treeColor} from './Styles';
+import { treeColor } from './Styles';
 import nodeTransitions from './NodeTransitions';
 import linkTransitions from './LinkTransitions';
 import bundleTransitions from './BundleTransitions';
 
-import {style} from 'typestyle';
-import {EventConfig} from '../Utils/EventConfig';
-import {BundleMap} from '../Utils/BundleMap';
-import {Popup} from 'semantic-ui-react';
+import { style } from 'typestyle';
+import { EventConfig } from '../Utils/EventConfig';
+import { BundleMap } from '../Utils/BundleMap';
+import { Popup } from 'semantic-ui-react'
+
 
 interface ProvVisProps<T, S extends string, A> {
   graph: ProvenanceGraph<T, S, A>;
@@ -49,13 +52,11 @@ interface ProvVisProps<T, S extends string, A> {
   clusterLabels?: boolean;
   bundleMap?: BundleMap;
   eventConfig?: EventConfig<S>;
-  popupContent?: (nodeId: StateNode<T, S, A>) => ReactChild;
-  annotationContent?: (nodeId: StateNode<T, S, A>) => ReactChild;
+  popupContent?: (nodeId:StateNode<T, S, A>) => ReactChild;
+  annotationContent?: (nodeId:StateNode<T, S, A>) => ReactChild;
 }
 
-export type StratifiedMap<T, S, A> = {
-  [key: string]: HierarchyNode<ProvenanceNode<T, S, A>>;
-};
+export type StratifiedMap<T, S, A> = { [key: string]: HierarchyNode<ProvenanceNode<T, S, A>> };
 export type StratifiedList<T, S, A> = HierarchyNode<ProvenanceNode<T, S, A>>[];
 
 function ProvVis<T, S extends string, A>({
@@ -69,7 +70,7 @@ function ProvVis<T, S extends string, A>({
   backboneGutter = 20,
   verticalSpace = 50,
   annotationHeight = 100,
-  clusterVerticalSpace = 30,
+  clusterVerticalSpace = 50,
   regularCircleRadius = 4,
   backboneCircleRadius = 5,
   regularCircleStroke = 3,
@@ -83,45 +84,89 @@ function ProvVis<T, S extends string, A>({
   bundleMap,
   eventConfig,
   popupContent,
-  annotationContent,
+  annotationContent
 }: ProvVisProps<T, S, A>) {
   const [first, setFirst] = useState(true);
   const [annotationOpen, setAnnotationOpen] = useState(-1);
+  const [expandedClusterList, setExpandedClusterList] = useState<string[]>([]);
 
   useEffect(() => {
     setFirst(false);
   }, []);
 
-  const nodeList = Object.values(nodeMap).filter(
-    d => d.metadata.createdOn! >= nodeMap[root].metadata.createdOn!,
+  let nodeList = Object.values(nodeMap).filter(
+    d => d.metadata.createdOn! >= nodeMap[root].metadata.createdOn!
   );
+
+  let copyList = Array.from(nodeList);
+
+  const keys = bundleMap ? Object.keys(bundleMap) : [];
+
+  //Find a list of all nodes included in a bundle.
+  let bundledNodes:string[] = [];
+
+  if(bundleMap)
+  {
+    for(let key of keys){
+      bundledNodes = bundledNodes.concat(bundleMap[key].bunchedNodes)
+      bundledNodes.push(key);
+    }
+  }
 
   const strat = stratify<ProvenanceNode<T, S, A>>()
     .id(d => d.id)
     .parentId(d => {
       if (d.id === root) return null;
       if (isStateNode(d)) {
+
+        if(bundleMap && (Object.keys(bundleMap).includes(d.id)) && !(expandedClusterList.includes(d.id)))
+        {
+          let curr = d;
+
+          while(true)
+          {
+            if(!(bundledNodes.includes(curr.parent)))
+            {
+              return curr.parent
+            }
+
+
+            let temp = copyList.filter(d => {
+              return d.id === curr.parent
+            })[0];
+
+            if(isStateNode(temp))
+            {
+              curr = temp;
+            }
+          }
+        }
+
+        let bundleParent = findBundleParent(d.parent, bundleMap)
+
+        if(bundledNodes.includes(d.parent) && bundleMap && !(Object.keys(bundleMap).includes(d.parent)) && !(expandedClusterList.includes(bundleParent)))
+        {
+          return bundleParent;
+        }
         return d.parent;
       } else {
         return null;
       }
     });
 
-  const keys = bundleMap ? Object.keys(bundleMap) : [];
+  for(let i = 0; i < nodeList.length; i++)
+  {
+    if (bundledNodes.includes(nodeList[i].id) && !(expandedClusterList.includes(findBundleParent(nodeList[i].id, bundleMap))) && bundleMap && !(Object.keys(bundleMap).includes(nodeList[i].id)))
+    {
+      nodeList.splice(i, 1);
+      i--;
+    }
+  }
 
   const stratifiedTree = strat(nodeList);
   const stratifiedList: StratifiedList<T, S, A> = stratifiedTree.descendants();
   const stratifiedMap: StratifiedMap<T, S, A> = {};
 
-  // Find a list of all nodes included in a bundle.
-  let bundledNodes: string[] = [];
-
-  if (bundleMap) {
-    for (let key of keys) {
-      bundledNodes = bundledNodes.concat(bundleMap[key].bunchedNodes);
-      bundledNodes.push(key);
-    }
-  }
 
   stratifiedList.forEach(c => (stratifiedMap[c.id!] = c));
   treeLayout(stratifiedMap, current, root);
@@ -152,6 +197,22 @@ function ProvVis<T, S extends string, A>({
     );
   }
 
+  function bundleGlyph(node: ProvenanceNode<T, S, A>) {
+    if (eventConfig) {
+      const eventType = node.metadata.type;
+      if (eventType && eventType in eventConfig && eventType !== 'Root') {
+        return eventConfig[eventType].bundleGlyph;
+      }
+    }
+    return (
+      <circle
+        r={regularCircleRadius}
+        strokeWidth={regularCircleStroke}
+        className={treeColor(false)}
+      />
+    );
+  }
+
   return (
     <div className={container} id="prov-vis">
       <svg height={height} width={width}>
@@ -160,79 +221,40 @@ function ProvVis<T, S extends string, A>({
           <NodeGroup
             data={keys}
             keyAccessor={key => `${key}`}
-            {...bundleTransitions(
-              xOffset,
-              verticalSpace,
-              clusterVerticalSpace,
-              backboneGutter - gutter,
-              duration,
-              stratifiedMap,
-              stratifiedList,
-              annotationOpen,
-              annotationHeight,
-              bundleMap,
-            )}>
+            {...bundleTransitions(xOffset, verticalSpace, clusterVerticalSpace,  backboneGutter - gutter, duration, expandedClusterList, stratifiedMap, stratifiedList, annotationOpen, annotationHeight, bundleMap)}
+          >
             {bundle => (
               <>
-                {bundle
-                  .filter(b => {
-                    const {state} = b;
-                    return (
-                      bundleMap === undefined ||
-                      (stratifiedMap[b.key] as any).width !== 0 ||
-                      state.validity === false
-                    );
-                  })
-                  .map(b => {
-                    const {key, state} = b;
+              {bundle.map(b => {
+                const { key, state } = b;
+                if(bundleMap === undefined || (stratifiedMap[b.key] as any).width !== 0 || state.validity === false)
+                {
+                  return null;
+                }
 
-                    return (
-                      <g
-                        key={key}
-                        transform={translate(
-                          state.x - gutter,
-                          state.y - clusterVerticalSpace / 2,
-                        )}>
-                        <rect
-                          width={sideOffset - gutter}
-                          height={state.height}
-                          rx="10"
-                          ry="10"
-                          fill="#F0F0F0"
-                          stroke="none"></rect>
-                      </g>
-                    );
-                  })}
+                return (
+                  <g key={key} transform={translate(state.x - gutter, state.y - clusterVerticalSpace / 2)}>
+                    <rect width={sideOffset} height={state.height} rx='10' ry='10' fill='#F0F0F0' stroke='none'>
+                    </rect>
+                  </g>
+                );
+              })}
               </>
             )}
           </NodeGroup>
           <NodeGroup
             data={links}
             keyAccessor={link => `${link.source.id}${link.target.id}`}
-            {...linkTransitions(
-              xOffset,
-              yOffset,
-              clusterVerticalSpace,
-              backboneGutter - gutter,
-              duration,
-              stratifiedList,
-              stratifiedMap,
-              annotationOpen,
-              annotationHeight,
-              bundleMap,
-            )}>
+            {...linkTransitions(xOffset, yOffset, clusterVerticalSpace, backboneGutter - gutter, duration, stratifiedList, stratifiedMap, annotationOpen, annotationHeight, bundleMap)}
+          >
             {linkArr => (
               <>
                 {linkArr.map(link => {
-                  const {key, state} = link;
+                  const { key, state } = link;
 
                   return (
                     <g key={key}>
-                      <Link
-                        {...state}
-                        className={treeColor(true)}
-                        strokeWidth={linkWidth}
-                      />
+                      <Link {...state} className={treeColor(true)} strokeWidth={linkWidth} />
                     </g>
                   );
                 })}
@@ -242,24 +264,14 @@ function ProvVis<T, S extends string, A>({
           <NodeGroup
             data={stratifiedList}
             keyAccessor={d => d.id}
-            {...nodeTransitions(
-              xOffset,
-              yOffset,
-              clusterVerticalSpace,
-              backboneGutter - gutter,
-              duration,
-              stratifiedList,
-              stratifiedMap,
-              annotationOpen,
-              annotationHeight,
-              bundleMap,
-            )}>
+            {...nodeTransitions(xOffset, yOffset, clusterVerticalSpace, backboneGutter - gutter, duration, stratifiedList, stratifiedMap, annotationOpen, annotationHeight,  bundleMap)}
+          >
             {nodes => {
               return (
                 <>
                   {nodes.map(node => {
-                    const {data: d, key, state} = node;
-                    const popupTrigger = (
+                    const { data: d, key, state } = node;
+                    const popupTrigger =
                       <g
                         key={key}
                         onClick={() => {
@@ -267,11 +279,8 @@ function ProvVis<T, S extends string, A>({
                             changeCurrent(d.id);
                           }
                         }}
-                        transform={
-                          d.width === 0
-                            ? translate(state.x, state.y)
-                            : translate(state.x, state.y)
-                        }>
+                        transform={d.width === 0 ? translate(state.x, state.y) : translate(state.x, state.y)}
+                      >
                         {d.width === 0 ? (
                           <BackboneNode
                             textSize={textSize}
@@ -286,28 +295,24 @@ function ProvVis<T, S extends string, A>({
                             clusterLabels={clusterLabels}
                             annotationOpen={annotationOpen}
                             setAnnotationOpen={setAnnotationOpen}
+                            exemptList={expandedClusterList}
+                            setExemptList={setExpandedClusterList}
                             eventConfig={eventConfig}
                             annotationContent={annotationContent}
                             popupContent={popupContent}
                           />
-                        ) : popupContent !== undefined ? (
-                          <Popup
-                            content={popupContent(d)}
-                            trigger={
-                              <g onClick={() => setAnnotationOpen(-1)}>
-                                {regularGlyph(d.data)}
-                              </g>
-                            }
-                          />
                         ) : (
-                          <g onClick={() => setAnnotationOpen(-1)}>
-                            {regularGlyph(d.data)}
-                          </g>
+                          (popupContent !== undefined)?
+                            (
+                              <Popup content={popupContent(d)} trigger={<g onClick={() => {setAnnotationOpen(-1);}}>{keys.includes(d.id) ? bundleGlyph(d.data) : regularGlyph(d.data)}</g>}/>
+                            ) : (
+                              <g onClick={() => {setAnnotationOpen(-1);}}>{regularGlyph(d.data)}</g>
+                            )
+
                         )}
                       </g>
-                    );
 
-                    return popupTrigger;
+                      return popupTrigger;
                   })}
                 </>
               );
@@ -325,5 +330,5 @@ const container = style({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  overflow: 'auto',
+  overflow: 'auto'
 });
