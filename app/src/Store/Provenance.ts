@@ -4,8 +4,8 @@ import {
   NodeID,
   Extra,
   isStateNode,
-  StateNode,
-} from '@visdesignlab/provenance-lib-core';
+  StateNode
+} from "@visdesignlab/provenance-lib-core";
 import {
   defaultState,
   IntentState,
@@ -14,17 +14,17 @@ import {
   ExtendedBrushCollection,
   Plots,
   ExtendedBrush,
-  BrushType,
-} from './IntentState';
-import IntentStore from './IntentStore';
-import {Dataset} from '../Utils/Dataset';
+  BrushType
+} from "./IntentState";
+import IntentStore from "./IntentStore";
+import { Dataset } from "../Utils/Dataset";
 import {
   PredictionSet,
   MultiBrushBehavior,
   PredictionRequest,
-  Prediction,
-} from '../contract';
-import axios from 'axios';
+  Prediction
+} from "../contract";
+import axios from "axios";
 import {
   addDummyInteraction,
   addPlotInteraction,
@@ -32,25 +32,25 @@ import {
   removePointSelectionInteraction,
   brushInteraction,
   removeBrushInteraction,
-  removePlotInteraction,
-} from './ProvenanceHelpers';
+  removePlotInteraction
+} from "./ProvenanceHelpers";
 
 export type IntentEvents =
-  | 'Load Dataset'
-  | 'MultiBrush'
-  | 'Switch Category Visibility'
-  | 'Change Category'
-  | 'Add Plot'
-  | 'Point Selection'
-  | 'Point Deselection'
-  | 'Add Brush'
-  | 'Lock Prediction'
-  | 'Turn Prediction'
-  | 'Invert'
-  | 'Change Brush'
-  | 'Remove Brush'
-  | 'Clear All'
-  | 'Change Brush Type';
+  | "Load Dataset"
+  | "MultiBrush"
+  | "Switch Category Visibility"
+  | "Change Category"
+  | "Add Plot"
+  | "Point Selection"
+  | "Point Deselection"
+  | "Add Brush"
+  | "Lock Prediction"
+  | "Turn Prediction"
+  | "Invert"
+  | "Change Brush"
+  | "Remove Brush"
+  | "Clear All"
+  | "Change Brush Type";
 
 export type Annotation = {
   annotation: string;
@@ -60,7 +60,7 @@ export type Annotation = {
 export function setupProvenance(store: IntentStore): ProvenanceControl {
   const provenance = initProvenance<IntentState, IntentEvents, Annotation>(
     defaultState,
-    true,
+    true
   );
 
   store.graph = provenance.graph();
@@ -80,16 +80,16 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
         return state;
       },
       undefined,
-      {type: 'Load Dataset'},
+      { type: "Load Dataset" }
     );
   }
 
   function toggleCategories(show: boolean, categories: string[] = []) {
     provenance.applyAction(
-      `${show ? 'Show' : 'Hide'} Categories`,
+      `${show ? "Show" : "Hide"} Categories`,
       (state: IntentState) => {
         state.showCategories = show;
-        if (categories.length > 0 && state.categoryColumn === '') {
+        if (categories.length > 0 && state.categoryColumn === "") {
           state.categoryColumn = categories[0];
         }
 
@@ -97,7 +97,7 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
         return state;
       },
       undefined,
-      {type: 'Switch Category Visibility'},
+      { type: "Switch Category Visibility" }
     );
   }
 
@@ -110,7 +110,7 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
         return state;
       },
       undefined,
-      {type: 'Change Category'},
+      { type: "Change Category" }
     );
   }
 
@@ -123,7 +123,7 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
         return state;
       },
       undefined,
-      {type: 'MultiBrush'},
+      { type: "MultiBrush" }
     );
   }
 
@@ -141,7 +141,7 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
         return state;
       },
       undefined,
-      {type: 'Add Plot'},
+      { type: "Add Plot" }
     );
   }
 
@@ -164,7 +164,7 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
         return state;
       },
       undefined,
-      {type: 'Add Plot'},
+      { type: "Add Plot" }
     );
   }
 
@@ -183,7 +183,7 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
         return state;
       },
       undefined,
-      {type: 'Point Selection'},
+      { type: "Point Selection" }
     );
   }
 
@@ -194,7 +194,7 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
         for (let i = 0; i < state.plots.length; ++i) {
           if (plot.id === state.plots[i].id) {
             const pts = state.plots[i].selectedPoints.filter(
-              p => !points.includes(p),
+              p => !points.includes(p)
             );
             state.plots[i].selectedPoints = [...pts];
             break;
@@ -204,21 +204,21 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
         return state;
       },
       undefined,
-      {type: 'Point Deselection'},
+      { type: "Point Deselection" }
     );
   }
 
   function addBrush(
     plot: Plot,
     brushCollection: ExtendedBrushCollection,
-    affectedBrush: ExtendedBrush,
+    affectedBrush: ExtendedBrush
   ) {
     provenance.applyAction(
       `Add brush to plot`,
       (state: IntentState) => {
         for (let i = 0; i < state.plots.length; ++i) {
           if (plot.id === state.plots[i].id) {
-            state.plots[i].brushes = {...brushCollection};
+            state.plots[i].brushes = { ...brushCollection };
             break;
           }
         }
@@ -227,14 +227,14 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
         return state;
       },
       undefined,
-      {type: 'Add Brush'},
+      { type: "Add Brush" }
     );
   }
 
   function changeBrush(
     plot: Plot,
     brushCollection: ExtendedBrushCollection,
-    affectedBrush: ExtendedBrush,
+    affectedBrush: ExtendedBrush
   ) {
     provenance.applyAction(
       `Change Brush`,
@@ -242,7 +242,7 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
         let i = 0;
         for (i = 0; i < state.plots.length; ++i) {
           if (plot.id === state.plots[i].id) {
-            state.plots[i].brushes = {...brushCollection};
+            state.plots[i].brushes = { ...brushCollection };
             break;
           }
         }
@@ -252,21 +252,21 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
         return state;
       },
       undefined,
-      {type: 'Change Brush'},
+      { type: "Change Brush" }
     );
   }
 
   function removeBrush(
     plot: Plot,
     brushCollection: ExtendedBrushCollection,
-    affectedBrush: ExtendedBrush,
+    affectedBrush: ExtendedBrush
   ) {
     provenance.applyAction(
       `Remove Brush`,
       (state: IntentState) => {
         for (let i = 0; i < state.plots.length; ++i) {
           if (plot.id === state.plots[i].id) {
-            state.plots[i].brushes = {...brushCollection};
+            state.plots[i].brushes = { ...brushCollection };
             break;
           }
         }
@@ -276,7 +276,7 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
         return state;
       },
       undefined,
-      {type: 'Remove Brush'},
+      { type: "Remove Brush" }
     );
   }
 
@@ -291,14 +291,14 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
         return state;
       },
       undefined,
-      {type: 'Clear All'},
+      { type: "Clear All" }
     );
   }
 
   function annotateNode(annotate: string) {
     provenance.addExtraToNodeArtifact(current().id, {
       annotation: annotate,
-      predictionSet: JSON.parse(JSON.stringify(store.predictionSet)),
+      predictionSet: JSON.parse(JSON.stringify(store.predictionSet))
     });
   }
 
@@ -307,15 +307,15 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
   }
 
   function changeBrushType(brushType: BrushType) {
-    let message: string = '';
+    let message: string = "";
     switch (brushType) {
-      case 'Rectangular':
-      case 'Freeform':
+      case "Rectangular":
+      case "Freeform":
         message = `Switch to ${brushType} brush`;
         break;
-      case 'None':
+      case "None":
       default:
-        message = 'Brushing disabled';
+        message = "Brushing disabled";
     }
 
     provenance.applyAction(
@@ -326,7 +326,7 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
         return state;
       },
       undefined,
-      {type: 'Change Brush Type'},
+      { type: "Change Brush Type" }
     );
   }
 
@@ -350,13 +350,13 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
         return state;
       },
       undefined,
-      {type: 'Invert'},
+      { type: "Invert" }
     );
   }
 
   function turnPredictionInSelection(
     pred: Prediction,
-    currentSelections: number[],
+    currentSelections: number[]
   ) {
     provenance.applyAction(
       `Turn prediction in selection`,
@@ -373,20 +373,20 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
         removePointSelectionInteraction(state, basePlot, currentSelections);
         addPointSelectionInteraction(state, basePlot, newSelection);
         return state;
-      },
+      }
     );
   }
 
   function lockPrediction(pred: Prediction) {
     provenance.applyAction(
-      'Lock prediction',
+      "Lock prediction",
       (state: IntentState) => {
         state.lockedPrediction = pred;
         addDummyInteraction(state);
         return state;
       },
       undefined,
-      {type: 'Lock Prediction'},
+      { type: "Lock Prediction" }
     );
   }
 
@@ -411,8 +411,8 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
       selectPrediction,
       changeBrushType,
       lockPrediction,
-      invertSelection,
-    },
+      invertSelection
+    }
   };
 }
 
@@ -434,17 +434,17 @@ export interface ProvenanceActions {
   addBrush: (
     plot: Plot,
     brushCollection: ExtendedBrushCollection,
-    affectedBrush: ExtendedBrush,
+    affectedBrush: ExtendedBrush
   ) => void;
   changeBrush: (
     plot: Plot,
     brushCollection: ExtendedBrushCollection,
-    affectedBrush: ExtendedBrush,
+    affectedBrush: ExtendedBrush
   ) => void;
   removeBrush: (
     plot: Plot,
     brushCollection: ExtendedBrushCollection,
-    affectedBrush: ExtendedBrush,
+    affectedBrush: ExtendedBrush
   ) => void;
   clearSelections: () => void;
   annotateNode: (annotation: string) => void;
@@ -454,20 +454,20 @@ export interface ProvenanceActions {
   lockPrediction: (pred: Prediction) => void;
   turnPredictionInSelection: (
     pred: Prediction,
-    currentSelection: number[],
+    currentSelection: number[]
   ) => void;
 }
 
 function getExtra(
   provenance: Provenance<IntentState, IntentEvents, Annotation>,
-  node: StateNode<IntentState, IntentEvents, Annotation>,
+  node: StateNode<IntentState, IntentEvents, Annotation>
 ): Extra<Annotation>[] {
   return provenance.getExtraFromArtifact(node.id);
 }
 
 function setupObservers(
   provenance: Provenance<IntentState, IntentEvents, Annotation>,
-  store: IntentStore,
+  store: IntentStore
 ) {
   provenance.addGlobalObserver(() => {
     store.isAtRoot = provenance.current().id === provenance.root().id;
@@ -485,12 +485,12 @@ function setupObservers(
     }
   });
 
-  provenance.addObserver(['interactionHistory'], (state?: IntentState) => {
+  provenance.addObserver(["interactionHistory"], (state?: IntentState) => {
     if (state) {
       const current = provenance.current();
 
       const multiBrushBehavior =
-        state.multiBrushBehaviour === 'Union'
+        state.multiBrushBehaviour === "Union"
           ? MultiBrushBehavior.UNION
           : MultiBrushBehavior.INTERSECTION;
 
@@ -501,7 +501,7 @@ function setupObservers(
 
       const request: PredictionRequest = {
         multiBrushBehavior,
-        interactionHistory,
+        interactionHistory
       };
 
       if (isStateNode(current)) {
@@ -517,8 +517,8 @@ function setupObservers(
                   const predictionSet: PredictionSet = response.data;
 
                   const annotate: Annotation = {
-                    annotation: '',
-                    predictionSet: predictionSet,
+                    annotation: "",
+                    predictionSet: predictionSet
                   };
 
                   provenance.addExtraToNodeArtifact(current.id, annotate);
@@ -538,8 +538,8 @@ function setupObservers(
               if (extraList.length === 0) return;
               const extra = extraList[extraList.length - 1].e;
               provenance.addExtraToNodeArtifact(currentNode.id, {
-                annotation: '',
-                predictionSet: extra.predictionSet,
+                annotation: "",
+                predictionSet: extra.predictionSet
               });
             }
           }
@@ -549,12 +549,12 @@ function setupObservers(
   });
 
   const arrs = [
-    'dataset',
-    'multiBrushBehaviour',
-    'showCategories',
-    'categoryColumn',
-    'plots',
-    'brushType',
+    "dataset",
+    "multiBrushBehaviour",
+    "showCategories",
+    "categoryColumn",
+    "plots",
+    "brushType"
   ];
 
   arrs.forEach(key => {

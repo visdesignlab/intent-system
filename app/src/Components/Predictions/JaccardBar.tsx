@@ -1,12 +1,12 @@
-import React, {FC, useRef, useState, useEffect} from 'react';
-import IntentStore from '../../Store/IntentStore';
-import {inject, observer} from 'mobx-react';
-import {scaleLinear} from 'd3';
-import translate from '../../Utils/Translate';
+import React, { FC, useRef, useState, useEffect } from "react";
+import IntentStore from "../../Store/IntentStore";
+import { inject, observer } from "mobx-react";
+import { scaleLinear } from "d3";
+import translate from "../../Utils/Translate";
 import {
   JACCARD_BAR_BACKGROUND,
-  JACCARD_BAR_FOREGROUND,
-} from '../Styles/PredictionBarStyle';
+  JACCARD_BAR_FOREGROUND
+} from "../Styles/PredictionBarStyle";
 
 export interface Props {
   store?: IntentStore;
@@ -15,7 +15,7 @@ export interface Props {
   label: string;
 }
 
-const JaccardBar: FC<Props> = ({score, height, label}: Props) => {
+const JaccardBar: FC<Props> = ({ score, height, label }: Props) => {
   const ref = useRef<SVGSVGElement>(null);
 
   const [maxWidth, setMaxWidth] = useState(0);
@@ -50,11 +50,12 @@ const JaccardBar: FC<Props> = ({score, height, label}: Props) => {
       />
       <text
         transform={translate(maxWidth * 0.05, height / 2)}
-        dominantBaseline="middle">
+        dominantBaseline="middle"
+      >
         {label}
       </text>
     </svg>
   );
 };
 
-export default inject('store')(observer(JaccardBar));
+export default inject("store")(observer(JaccardBar));

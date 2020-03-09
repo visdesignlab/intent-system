@@ -1,8 +1,9 @@
-export type Mode = 'default' | 'study';
-export type ShowCategories = 'show' | 'hide';
+export type Mode = "default" | "study";
+export type ShowCategories = "show" | "hide";
 
 export type AppConfig = {
   mode: Mode;
-  datasetName: string;
-  showCategories: ShowCategories;
+  participantId: string;
+  sessionId: string;
+  studyId: string;
 };

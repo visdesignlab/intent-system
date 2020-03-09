@@ -1,9 +1,51 @@
-import React, {FC} from 'react';
+import React, { FC, useState, useEffect } from "react";
+import { TaskDescription } from "./Study/TaskList";
+import StudyApp from "./StudyApp";
+import {
+  setupStudy,
+  StudyProvenanceControl
+} from "./Store/StudyStore/StudyProvenance";
+import { StudyActionContext } from "./Contexts";
+import { ProvenanceGraph } from "@visdesignlab/provenance-lib-core";
+import { AppConfig } from "./AppConfig";
 
-type Props = {};
+type Props = {
+  tasks: TaskDescription[];
+  config: AppConfig;
+};
 
-const StudyMode: FC<Props> = ({}: Props) => {
-  return <div></div>;
+const StudyMode: FC<Props> = ({ tasks, config }: Props) => {
+  const [currentTaskId, setCurrentTaskId] = useState<number>(0);
+  const { studyActions } = useState<StudyProvenanceControl>(() =>
+    setupStudy(config)
+  )[0];
+  const studyDone = currentTaskId === -1;
+
+  useEffect(() => {
+    if (currentTaskId !== -1) studyActions.startTask(tasks[currentTaskId].id);
+    else studyActions.completeStudy();
+  }, [currentTaskId, tasks, studyActions]);
+
+  function advanceTask() {
+    const isLast = currentTaskId === tasks.length - 1;
+    if (isLast) setCurrentTaskId(-1);
+    else setCurrentTaskId(currentTaskId + 1);
+  }
+
+  function endTask(points: number[], graph: ProvenanceGraph<any, any, any>) {
+    studyActions.endTask(tasks[currentTaskId].id, points, graph);
+    advanceTask();
+  }
+
+  if (studyDone) {
+    return <div>Done</div>;
+  }
+
+  return (
+    <StudyActionContext.Provider value={{ endTask }}>
+      <StudyApp key={tasks[currentTaskId].task} task={tasks[currentTaskId]} />
+    </StudyActionContext.Provider>
+  );
 };
 
 export default StudyMode;

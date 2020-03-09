@@ -1,5 +1,5 @@
-import React, { useEffect, useContext, useState, memo } from 'react';
-import { inject, observer } from 'mobx-react';
+import React, { useEffect, useContext, useState, memo } from "react";
+import { inject, observer } from "mobx-react";
 import {
   Button,
   Dropdown,
@@ -7,12 +7,12 @@ import {
   Radio,
   Icon,
   Container
-} from 'semantic-ui-react';
-import { Dataset, Data } from '../Utils/Dataset';
-import { style } from 'typestyle';
-import AddPlotMenu from './AddPlotMenu';
-import { getAllSelections } from './Predictions/PredictionRowType';
-import { ActionContext } from '../Contexts';
+} from "semantic-ui-react";
+import { Dataset, Data } from "../Utils/Dataset";
+import { style } from "typestyle";
+import AddPlotMenu from "./AddPlotMenu";
+import { getAllSelections } from "./Predictions/PredictionRowType";
+import { ActionContext, TaskConfigContext } from "../Contexts";
 
 interface NavbarProps {
   store?: any;
@@ -31,10 +31,13 @@ function Navbar({ store, data, datasets, setDataset }: NavbarProps) {
     plots
   } = store!;
 
-  const selections = getAllSelections(plots, multiBrushBehaviour === 'Union')
+  const selections = getAllSelections(plots, multiBrushBehaviour === "Union")
     .values;
 
   const actions = useContext(ActionContext);
+  const task = useContext(TaskConfigContext);
+
+  const { enablePlotAddition = true } = task || {};
 
   const [addingPlot, setAddingPlot] = useState(false);
 
@@ -43,7 +46,7 @@ function Navbar({ store, data, datasets, setDataset }: NavbarProps) {
   useEffect(() => {
     if (
       showCategories &&
-      categoryColumn === '' &&
+      categoryColumn === "" &&
       categoricalColumns.length > 0
     ) {
       actions.toggleCategories(showCategories, categoricalColumns);
@@ -128,10 +131,10 @@ function Navbar({ store, data, datasets, setDataset }: NavbarProps) {
       <Radio
         toggle
         label="Union"
-        checked={multiBrushBehaviour === 'Union'}
+        checked={multiBrushBehaviour === "Union"}
         onChange={() => {
           actions.toggleMultiBrushBehaviour(
-            multiBrushBehaviour === 'Union' ? 'Intersection' : 'Union'
+            multiBrushBehaviour === "Union" ? "Intersection" : "Union"
           );
         }}
       />
@@ -174,8 +177,8 @@ function Navbar({ store, data, datasets, setDataset }: NavbarProps) {
             <AddPlotMenu closeMenu={setAddingPlot} />
           ) : (
             <>
-              {datasetDropdown}
-              {addPlot}
+              {datasets.length > 1 && datasetDropdown}
+              {enablePlotAddition && addPlot}
               {categoricalColumns.length > 0 && showCategoriesToggle}
               {showCategories && showCategoriesDropdown}
               {brushToggle}
@@ -190,12 +193,12 @@ function Navbar({ store, data, datasets, setDataset }: NavbarProps) {
 }
 
 (Navbar as any).whyDidYouRender = true;
-export default memo(inject('store')(observer(Navbar)));
+export default memo(inject("store")(observer(Navbar)));
 
 const menuStyle = style({
-  margin: '1em'
+  margin: "1em"
 });
 
 const navStyle = style({
-  gridArea: 'nav'
+  gridArea: "nav"
 });

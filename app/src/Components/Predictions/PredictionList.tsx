@@ -1,11 +1,11 @@
-import React, { FC, useContext, memo, useState } from 'react';
-import IntentStore from '../../Store/IntentStore';
-import { Loader, Segment, Dimmer, Header } from 'semantic-ui-react';
-import { inject, observer } from 'mobx-react';
-import { style } from 'typestyle';
-import PredictionTable from './PredictionTable';
-import { extendPrediction, PredictionRowType } from './PredictionRowType';
-import { DataContext } from '../../Contexts';
+import React, { FC, useContext, memo, useState } from "react";
+import IntentStore from "../../Store/IntentStore";
+import { Loader, Segment, Dimmer, Header } from "semantic-ui-react";
+import { inject, observer } from "mobx-react";
+import { style } from "typestyle";
+import PredictionTable from "./PredictionTable";
+import { extendPrediction, PredictionRowType } from "./PredictionRowType";
+import { DataContext } from "../../Contexts";
 
 interface Props {
   store?: IntentStore;
@@ -57,9 +57,9 @@ const PredictionList: FC<Props> = ({ store, selections }: Props) => {
 };
 
 (PredictionList as any).whyDidYouRender = true;
-export default memo(inject('store')(observer(PredictionList)));
+export default memo(inject("store")(observer(PredictionList)));
 
 const listStyle = style({
-  gridArea: 'predictions',
-  overflow: 'auto'
+  gridArea: "predictions",
+  overflow: "auto"
 });

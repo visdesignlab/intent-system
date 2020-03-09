@@ -1,16 +1,16 @@
-import React, { useState, useEffect, useMemo, FC } from 'react';
-import { Provider } from 'mobx-react';
-import { setupProvenance } from './Store/Provenance';
-import IntentStore from './Store/IntentStore';
-import Navbar from './Components/Navbar';
-import axios from 'axios';
-import { style } from 'typestyle';
-import { Datasets, Dataset, loadData, Data } from './Utils/Dataset';
-import ProvenanceVisualization from './Components/ProvenanceVisualization';
-import Visualization from './Components/Scatterplot/Visualization';
-import getPlotId from './Utils/PlotIDGen';
-import Predictions from './Components/Predictions/Predictions';
-import { ActionContext, DataContext } from './Contexts';
+import React, { useState, useEffect, useMemo, FC } from "react";
+import { Provider } from "mobx-react";
+import { setupProvenance } from "./Store/Provenance";
+import IntentStore from "./Store/IntentStore";
+import Navbar from "./Components/Navbar";
+import axios from "axios";
+import { style } from "typestyle";
+import { Datasets, Dataset, loadData, Data } from "./Utils/Dataset";
+import ProvenanceVisualization from "./Components/ProvenanceVisualization";
+import Visualization from "./Components/Scatterplot/Visualization";
+import getPlotId from "./Utils/PlotIDGen";
+import Predictions from "./Components/Predictions/Predictions";
+import { ActionContext, DataContext } from "./Contexts";
 
 type Props = {};
 
@@ -19,8 +19,8 @@ const store = new IntentStore();
 const App: FC<Props> = (_: Props) => {
   const [datasets, setDatasets] = useState<Datasets>([]);
   const [selectedDataset, setSelectedDataset] = useState<Dataset>({
-    key: '',
-    name: '',
+    key: "",
+    name: ""
   });
 
   const [data, setData] = useState<Data>(null as any);
@@ -48,7 +48,7 @@ const App: FC<Props> = (_: Props) => {
             x: data.numericColumns[0],
             y: data.numericColumns[1],
             selectedPoints: [],
-            brushes: {},
+            brushes: {}
           });
         }
         setData(data);
@@ -57,7 +57,7 @@ const App: FC<Props> = (_: Props) => {
   }, [selectedDataset, actions]);
 
   useEffect(() => {
-    axios.get('./dataset').then(response => {
+    axios.get("./dataset").then(response => {
       const datasets: any[] = response.data;
       if (datasetString !== JSON.stringify(datasets)) {
         setDatasets(datasets);
@@ -98,22 +98,22 @@ const App: FC<Props> = (_: Props) => {
 export default App;
 
 const layoutStyle = style({
-  display: 'grid',
-  height: '100vh',
-  width: '100vw',
-  gridTemplateColumns: '5fr 2fr 1fr',
+  display: "grid",
+  height: "100vh",
+  width: "100vw",
+  gridTemplateColumns: "5fr 2fr 1fr",
   gridTemplateAreas: `
   "vis pred prov"
-  `,
+  `
 });
 
 const visStyle = style({
-  gridArea: 'vis',
-  display: 'grid',
-  gridTemplateRows: 'min-content auto',
-  overflow: 'hidden',
+  gridArea: "vis",
+  display: "grid",
+  gridTemplateRows: "min-content auto",
+  overflow: "hidden",
   gridTemplateAreas: `
   "nav"
   "vis"
-  `,
+  `
 });

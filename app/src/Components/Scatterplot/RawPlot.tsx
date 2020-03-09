@@ -127,8 +127,6 @@ const RawPlot: FC<Props> = ({
             y + 2.5 >= top &&
             y + 2.5 <= bottom;
           const idx = mappedData[`${x}-${y}`];
-          if (idx === 159)
-            console.log(idx, isSelected, { x, y, left, right, top, bottom });
           if (isSelected && idx >= 0) {
             points.push(idx);
           }

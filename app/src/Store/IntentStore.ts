@@ -1,19 +1,19 @@
-import {observable, action, computed} from 'mobx';
+import { observable, action, computed } from "mobx";
 import {
   defaultState,
   IntentState,
   MultiBrushBehaviour,
-  BrushType,
-} from './IntentState';
-import {ProvenanceGraph} from '@visdesignlab/provenance-lib-core';
-import {IntentEvents, Annotation} from './Provenance';
-import {Dataset} from '../Utils/Dataset';
-import {PredictionSet, InteractionHistory, Prediction} from '../contract';
+  BrushType
+} from "./IntentState";
+import { ProvenanceGraph } from "@visdesignlab/provenance-lib-core";
+import { IntentEvents, Annotation } from "./Provenance";
+import { Dataset } from "../Utils/Dataset";
+import { PredictionSet, InteractionHistory, Prediction } from "../contract";
 
 export const predSet: PredictionSet = {
   dimensions: [],
   selectedIds: [],
-  predictions: [],
+  predictions: []
 };
 
 export default class IntentStore implements IntentState {
@@ -24,7 +24,7 @@ export default class IntentStore implements IntentState {
     Annotation
   > = null as any;
   @observable isAtRoot: boolean = false;
-  @observable selectedPrediction: string = '';
+  @observable selectedPrediction: string = "";
   @observable isAtLatest: boolean = false;
 
   // State Properties
@@ -40,19 +40,19 @@ export default class IntentStore implements IntentState {
 
   // Artifact Properties
   @observable predictionSet = predSet;
-  @observable annotation = '';
+  @observable annotation = "";
   @observable isLoadingPredictions: boolean = false;
 
   // Restore state action
   @action resetStore(state?: IntentState) {
-    Object.assign(this, {...defaultState, ...state});
+    Object.assign(this, { ...defaultState, ...state });
     this.resetPredAndAnnotation();
   }
   @action resetPrediction() {
     this.predictionSet = predSet;
   }
   @action resetAnnotation() {
-    this.annotation = '';
+    this.annotation = "";
   }
   @action resetPredAndAnnotation() {
     this.resetAnnotation();
