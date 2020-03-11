@@ -21,7 +21,10 @@ const defaultStudyState = {
   taskId: "-1",
   eventTime: Date.now().toString(),
   selections: [] as number[],
-  graph: "None"
+  graph: "None",
+  confidenceScore: -1,
+  difficultyScore: -1,
+  feedback: ""
 };
 
 export function stringifyGraph(

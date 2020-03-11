@@ -62,7 +62,10 @@ export function setupStudy(config: AppConfig): StudyProvenanceControl {
   function endTask(
     taskId: string,
     points: number[],
-    graph: ProvenanceGraph<IntentState, IntentEvents, Annotation>
+    graph: ProvenanceGraph<IntentState, IntentEvents, Annotation>,
+    confidenceScore: number,
+    difficultyScore: number,
+    feedback: string
   ) {
     studyProvenance.applyAction(
       `Complete task: ${taskId}`,
@@ -72,6 +75,9 @@ export function setupStudy(config: AppConfig): StudyProvenanceControl {
         state.selections = points;
         state.eventTime = Date.now().toString();
         state.graph = stringifyGraph(graph);
+        state.confidenceScore = confidenceScore;
+        state.difficultyScore = difficultyScore;
+        state.feedback = feedback;
         return state;
       }
     );
@@ -101,7 +107,10 @@ export interface StudyActions {
   endTask: (
     taskId: string,
     points: number[],
-    graph: ProvenanceGraph<IntentState, IntentEvents, Annotation>
+    graph: ProvenanceGraph<IntentState, IntentEvents, Annotation>,
+    confidenceScore: number,
+    difficultyScore: number,
+    feedback: string
   ) => void;
   completeStudy: () => void;
 }

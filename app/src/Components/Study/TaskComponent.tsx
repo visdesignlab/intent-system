@@ -8,6 +8,7 @@ import {
   UserSelections,
   getAllSelections
 } from "../Predictions/PredictionRowType";
+import Feedback from "./Feedback";
 
 type Props = {
   store?: IntentStore;
@@ -26,9 +27,7 @@ const TaskComponent: FC<Props> = ({ task, store }: Props) => {
   if (JSON.stringify(selections) !== JSON.stringify(computedSelections))
     setSelections(computedSelections);
 
-  const { currentTaskNumber, totalTasks, endTask } = useContext(
-    StudyActionContext
-  );
+  const { currentTaskNumber, totalTasks } = useContext(StudyActionContext);
 
   const graph = useContext(ProvenanceContext);
 
@@ -37,7 +36,7 @@ const TaskComponent: FC<Props> = ({ task, store }: Props) => {
       <Card>
         <Card.Content textAlign="center" className={headerStyle}>
           <Card.Header className={whiteText}>
-            Task {(Math.random() * 10).toFixed(0)}
+            Task {currentTaskNumber}
           </Card.Header>
           <Card.Meta className={`${whiteText} ${metaSize}`}>
             {Math.random() < 0.5 ? "Guided" : "Manual"}
@@ -45,13 +44,16 @@ const TaskComponent: FC<Props> = ({ task, store }: Props) => {
         </Card.Content>
         <Card.Content className={questionTextSize}>{task}</Card.Content>
         <Card.Content textAlign="center">
-          <Button
-            disabled={!selections || selections.values.length === 0}
-            primary
-            content="Submit"
-            onClick={() => {
-              endTask(selections ? selections.values : [], graph());
-            }}
+          <Feedback
+            trigger={
+              <Button
+                // disabled={!selections || selections.values.length === 0}
+                primary
+                content="Submit"
+              />
+            }
+            graph={graph()}
+            selections={selections ? selections.values : []}
           />
         </Card.Content>
         <Card.Content extra>

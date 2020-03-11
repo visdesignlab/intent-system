@@ -133,7 +133,7 @@ const Selections: FC<Props> = ({ store, selections }: Props) => {
           </SelectionLabel>
         ))}
       </div>
-      <div>
+      {/* <div>
         <Divider />
         <Container fluid textAlign="center">
           <Button
@@ -144,7 +144,7 @@ const Selections: FC<Props> = ({ store, selections }: Props) => {
             Submit
           </Button>
         </Container>
-      </div>
+      </div> */}
     </div>
   );
 };

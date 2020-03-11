@@ -5,7 +5,13 @@ import { TaskDescription } from "./Study/TaskList";
 import { ProvenanceGraph } from "@visdesignlab/provenance-lib-core";
 
 export type StudyCommands = {
-  endTask: (points: number[], graph: ProvenanceGraph<any, any, any>) => void;
+  endTask: (
+    points: number[],
+    graph: ProvenanceGraph<any, any, any>,
+    confidenceScore: number,
+    difficultyScore: number,
+    feedback: string
+  ) => void;
   currentTaskNumber: number;
   totalTasks: number;
 };

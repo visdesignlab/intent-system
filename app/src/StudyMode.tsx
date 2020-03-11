@@ -33,9 +33,21 @@ const StudyMode: FC<Props> = ({ tasks, config }: Props) => {
     else setCurrentTaskId(currentTaskId + 1);
   }
 
-  function endTask(points: number[], graph: ProvenanceGraph<any, any, any>) {
-    console.log(points);
-    studyActions.endTask(tasks[currentTaskId].id, points, graph);
+  function endTask(
+    points: number[],
+    graph: ProvenanceGraph<any, any, any>,
+    confidenceScore: number,
+    difficultyScore: number,
+    feedback: string
+  ) {
+    studyActions.endTask(
+      tasks[currentTaskId].id,
+      points,
+      graph,
+      confidenceScore,
+      difficultyScore,
+      feedback
+    );
     advanceTask();
   }
 
