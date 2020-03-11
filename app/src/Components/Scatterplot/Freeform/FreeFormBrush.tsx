@@ -89,14 +89,19 @@ const FreeFormBrush: FC<Props> = ({
     }
   }
 
-  function handleMouseUpAndLeave() {
+  function handleMouseUpAndLeave(
+    event: React.MouseEvent<SVGCircleElement, MouseEvent>
+  ) {
+    const target = event.currentTarget.getBoundingClientRect();
+    const [x, y] = [event.clientX - target.left, event.clientY - target.top];
+
     dispatch({
       type: "mousedown",
       mouseDown: false
     });
 
     if (onBrushEnd) {
-      onBrushEnd();
+      onBrushEnd({ x, y });
     }
   }
 
@@ -110,7 +115,6 @@ const FreeFormBrush: FC<Props> = ({
 
       const edgeX = x + radius >= width + 10 || x - radius <= -10;
       const edgeY = y + radius >= height + 10 || y - radius <= -10;
-      console.log(y - radius, height);
 
       if (!edgeX) nodeSelection.attr("cx", x);
 

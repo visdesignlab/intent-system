@@ -435,10 +435,13 @@ const RawPlot: FC<Props> = ({
         const func = parentFunc(x, y, radius);
         quad.visit(func);
       }}
-      onBrushEnd={() => {
+      onBrushEnd={(mousePos?: MousePosition) => {
         if (freeFormPoints.length === 0) return;
         actions.addPointSelection(plot, freeFormPoints);
         freeFormPoints = [];
+        if (mousePos) {
+          setMousePos(mousePos);
+        }
       }}
     />
   );
