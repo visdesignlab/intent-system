@@ -270,7 +270,7 @@ const BrushComponent: FC<Props> = ({
 
     setCurrentBrush(null as any);
     setResizeDirection(null as any);
-    onBrushUpdate({ ...brushes }, curr, "Change", {
+    onBrushUpdate({ ...brushes }, curr, `Change`, {
       x: event.clientX - currentTarget.left,
       y: event.clientY - currentTarget.top
     });
