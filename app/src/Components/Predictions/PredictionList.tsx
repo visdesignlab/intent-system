@@ -25,6 +25,7 @@ const PredictionList: FC<Props> = ({ store, selections }: Props) => {
 
   const computedPreds = predictions
     .map(pred => extendPrediction(pred, selections, columnMap))
+    .filter(d => !task || (d.type !== "Range" && d.type !== "Simplified Range"))
     .sort((a, b) => b.similarity - a.similarity);
 
   if (JSON.stringify(computedPreds) !== JSON.stringify(preds)) {
