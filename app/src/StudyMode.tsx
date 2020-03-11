@@ -19,6 +19,7 @@ const StudyMode: FC<Props> = ({ tasks, config }: Props) => {
   const { studyActions } = useState<StudyProvenanceControl>(() =>
     setupStudy(config)
   )[0];
+
   const studyDone = currentTaskId === -1;
 
   useEffect(() => {
@@ -33,6 +34,7 @@ const StudyMode: FC<Props> = ({ tasks, config }: Props) => {
   }
 
   function endTask(points: number[], graph: ProvenanceGraph<any, any, any>) {
+    console.log(points);
     studyActions.endTask(tasks[currentTaskId].id, points, graph);
     advanceTask();
   }
@@ -42,7 +44,13 @@ const StudyMode: FC<Props> = ({ tasks, config }: Props) => {
   }
 
   return (
-    <StudyActionContext.Provider value={{ endTask }}>
+    <StudyActionContext.Provider
+      value={{
+        endTask,
+        currentTaskNumber: currentTaskId + 1,
+        totalTasks: tasks.length
+      }}
+    >
       <StudyApp key={tasks[currentTaskId].task} task={tasks[currentTaskId]} />
     </StudyActionContext.Provider>
   );

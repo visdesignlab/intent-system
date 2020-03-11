@@ -1,7 +1,7 @@
 import React, { FC, useContext, memo } from "react";
 import IntentStore from "../../Store/IntentStore";
 import { style } from "typestyle";
-import { Menu, Button, Input, Header } from "semantic-ui-react";
+import { Menu, Button } from "semantic-ui-react";
 import { inject, observer } from "mobx-react";
 import { Plot } from "../../Store/IntentState";
 import { ActionContext } from "../../Contexts";
@@ -12,7 +12,7 @@ type Props = {
 };
 
 const ScatterplotControls: FC<Props> = ({ store, plotID }: Props) => {
-  const { brushType, plots } = store!;
+  const { plots } = store!;
 
   const plot = plots.find(f => f.id === plotID) as Plot;
 
@@ -20,48 +20,6 @@ const ScatterplotControls: FC<Props> = ({ store, plotID }: Props) => {
 
   return (
     <Menu className={brushButtonStyle} borderless fluid secondary size="mini">
-      {/* <Menu.Item className={itemStyle}>
-        <Button.Group size="mini">
-          <Button
-            icon="square outline"
-            content="Rectangular"
-            active={brushType === "Rectangular"}
-            onClick={() => {
-              if (brushType === "Rectangular") actions.changeBrushType("None");
-              else actions.changeBrushType("Rectangular");
-            }}
-          />
-          <Button.Or />
-          <Button
-            icon="magic"
-            content="Freeform"
-            active={brushType === "Freeform"}
-            onClick={() => {
-              if (brushType === "Freeform") actions.changeBrushType("None");
-              else actions.changeBrushType("Freeform");
-            }}
-          />
-        </Button.Group>
-      </Menu.Item>
-      {brushType === "Freeform" && (
-        <>
-          <Menu.Item className={itemStyle}>
-            <Input
-              type="range"
-              min={minBrushRange}
-              max={maxBrushRange}
-              step={1}
-              value={freeFormBrushRadius}
-              onChange={(_, data) => {
-                setFreeFormBrushRadius(parseInt(data.value) || 0);
-              }}
-            />
-          </Menu.Item>
-          <Menu.Item className={itemStyle}>
-            <Header>Brush Size: </Header> {freeFormBrushRadius}
-          </Menu.Item>
-        </>
-      )} */}
       {plots.length > 1 && (
         <Menu.Menu position="right">
           <Menu.Item className={itemStyle}>

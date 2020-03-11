@@ -12,7 +12,6 @@ import {
   ProvenanceContext
 } from "./Contexts";
 import { style } from "typestyle";
-import ProvenanceVisualization from "./Components/ProvenanceVisualization";
 import Predictions from "./Components/Predictions/Predictions";
 import Visualization from "./Components/Scatterplot/Visualization";
 import Navbar from "./Components/Navbar";
@@ -62,8 +61,8 @@ const StudyApp = ({ task }: Props) => {
           <TaskConfigContext.Provider value={task}>
             <ProvenanceContext.Provider value={() => provenance.graph()}>
               <div className={layoutStyle}>
+                <TaskComponent task={task.task} />
                 <div className={visStyle}>
-                  <TaskComponent task={task.task} />
                   <Navbar
                     data={data}
                     datasets={[{ key: dataset, name: dataset }]}
@@ -71,8 +70,8 @@ const StudyApp = ({ task }: Props) => {
                   />
                   <Visualization />
                 </div>
-                <Predictions />
-                <ProvenanceVisualization />
+                {/* <Predictions />
+                <ProvenanceVisualization /> */}
               </div>
             </ProvenanceContext.Provider>
           </TaskConfigContext.Provider>
@@ -90,19 +89,18 @@ const layoutStyle = style({
   display: "grid",
   height: "100vh",
   width: "100vw",
-  gridTemplateColumns: "5fr 2fr 1fr",
+  gridTemplateColumns: "min-content 1fr",
   gridTemplateAreas: `
-  "vis pred prov"
+  "question vis"
   `
 });
 
 const visStyle = style({
   gridArea: "vis",
   display: "grid",
-  gridTemplateRows: "min-content min-content auto",
+  gridTemplateRows: "min-content auto",
   overflow: "hidden",
   gridTemplateAreas: `
-  "question"
   "nav"
   "vis"
   `

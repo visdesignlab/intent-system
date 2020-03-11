@@ -1,4 +1,4 @@
-import React, { FC, createRef, useReducer, useContext } from "react";
+import React, { FC, createRef, useReducer } from "react";
 import IntentStore from "../../../Store/IntentStore";
 import { inject, observer } from "mobx-react";
 import { BrushableRegion } from "../../Brush/Types/BrushableRegion";

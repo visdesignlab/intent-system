@@ -21,7 +21,7 @@ const Predictions: FC<Props> = ({ store }: Props) => {
 
   const task = useContext(TaskConfigContext) || {};
 
-  const { predictionSupport = true } = task;
+  const { taskType = "supported" } = task;
 
   const [selections, setSelections] = useState<UserSelections>(
     defaultSelections
@@ -37,9 +37,11 @@ const Predictions: FC<Props> = ({ store }: Props) => {
   }
 
   return (
-    <div className={predictionColumnStyle(predictionSupport)}>
+    <div className={predictionColumnStyle(taskType === "supported")}>
       <AnnotationBox annotation={annotation} />
-      {predictionSupport && <PredictionList selections={selections.values} />}
+      {taskType === "supported" && (
+        <PredictionList selections={selections.values} />
+      )}
       <Selections selections={selections} />
     </div>
   );

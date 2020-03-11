@@ -171,11 +171,9 @@ function Navbar({ store, data, datasets, setDataset }: NavbarProps) {
     </Menu.Item>
   );
 
-  console.log(brushSize);
-
   const brushSelection = (
     <Menu.Item>
-      <Button.Group positive size="mini">
+      <Button.Group primary size="mini">
         <Button
           icon="square outline"
           content="Rect"
@@ -186,29 +184,35 @@ function Navbar({ store, data, datasets, setDataset }: NavbarProps) {
           }}
         />
         <Button
-          icon="magic"
-          content="20"
+          icon
+          circular
           active={brushSize === "20"}
           onClick={() => {
             actions.changeBrushSize("20");
           }}
-        />
+        >
+          <Icon size="mini" name="circle" />
+        </Button>
         <Button
-          icon="magic"
-          content="35"
+          icon
+          circular
           active={brushSize === "35"}
           onClick={() => {
             actions.changeBrushSize("35");
           }}
-        />
+        >
+          <Icon size="small" name="circle" />
+        </Button>
         <Button
-          icon="magic"
-          content="50"
+          icon
+          circular
           active={brushSize === "50"}
           onClick={() => {
             actions.changeBrushSize("50");
           }}
-        />
+        >
+          <Icon size="large" name="circle" />
+        </Button>
       </Button.Group>
     </Menu.Item>
   );

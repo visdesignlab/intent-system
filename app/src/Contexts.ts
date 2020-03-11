@@ -6,6 +6,8 @@ import { ProvenanceGraph } from "@visdesignlab/provenance-lib-core";
 
 export type StudyCommands = {
   endTask: (points: number[], graph: ProvenanceGraph<any, any, any>) => void;
+  currentTaskNumber: number;
+  totalTasks: number;
 };
 
 const DataContext = createContext<Data>(null as any);

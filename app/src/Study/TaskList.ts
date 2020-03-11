@@ -1,4 +1,4 @@
-export type TaskType = "with_predictions" | "without_predictions";
+export type TaskType = "manual" | "supported";
 
 export type PlotDef = {
   x: string;
@@ -17,25 +17,27 @@ export type TaskDescription = {
   plots: PlotDef[];
   category: CategoryEncoding;
   enablePlotAddition: boolean;
-  predictionSupport: boolean;
+  taskType: TaskType;
 };
 
 const taskList: TaskDescription[] = [
   {
     id: "0",
-    task: "Select a ll points",
+    task:
+      "Select the points which show a strong correlation in Physics and CS.",
     dataset: "cluster",
-    plots: [{ x: "Math", y: "CS" }],
+    plots: [{ x: "Physics", y: "CS" }],
     category: {
       show: false,
       column: "Profession"
     },
     enablePlotAddition: true,
-    predictionSupport: false
+    taskType: "manual"
   },
   {
     id: "1",
-    task: "Select all outliers",
+    task:
+      "Select the points which belong to the cluster centered on the cross [SYMBOL].",
     dataset: "cluster",
     plots: [{ x: "Physics", y: "CS" }],
     category: {
@@ -43,7 +45,7 @@ const taskList: TaskDescription[] = [
       column: "Profession"
     },
     enablePlotAddition: false,
-    predictionSupport: true
+    taskType: "supported"
   }
 ];
 
