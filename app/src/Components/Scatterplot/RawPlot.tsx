@@ -33,12 +33,15 @@ import {
 import {
   FADE_OUT_PRED_SELECTION,
   COLOR,
-  REGULAR_MARK_STYLE
+  REGULAR_MARK_STYLE,
+  FADE_SELECTION_IN,
+  FADE_OUT,
+  FADE_COMP_IN
 } from "../Styles/MarkStyle";
 import FreeFormBrush from "./Freeform/FreeFormBrush";
 import { ActionContext, DataContext, TaskConfigContext } from "../../Contexts";
-import { style } from "typestyle";
 import { Prediction } from "../../contract";
+import hoverable from "../UtilComponent/hoverable";
 
 export interface Props {
   store?: IntentStore;
@@ -440,6 +443,8 @@ const RawPlot: FC<Props> = ({
     />
   );
 
+  const SelectionLabel = hoverable(Label);
+
   return (
     <>
       <g transform={transform}>
@@ -469,9 +474,32 @@ const RawPlot: FC<Props> = ({
           }
           content={
             <Label.Group>
-              {topThree.map(pred => (
-                <Label key={pred.intent}>{pred.type}</Label>
-              ))}
+              {topThree.map(pred => {
+                const idx = (pred.dataIds || [])
+                  .map(d => `#mark-${d}`)
+                  .join(",");
+
+                return (
+                  <SelectionLabel
+                    configs={[
+                      {
+                        selector: ".base-mark",
+                        classToApply: FADE_OUT
+                      },
+                      { selector: idx, classToApply: FADE_COMP_IN }
+                    ]}
+                    key={pred.intent}
+                    onClick={() => {
+                      actions.turnPredictionInSelection(
+                        pred,
+                        selections.values
+                      );
+                    }}
+                  >
+                    {pred.type}
+                  </SelectionLabel>
+                );
+              })}
             </Label.Group>
           }
         ></Popup>

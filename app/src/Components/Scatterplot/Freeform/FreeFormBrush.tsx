@@ -6,10 +6,11 @@ import translate from "../../../Utils/Translate";
 import { select } from "d3";
 import { style } from "typestyle";
 import { union_color } from "../../Styles/MarkStyle";
+import { MousePosition } from "../RawPlot";
 
 type BrushStartHandler = () => void;
 type BrushMoveHandler = (x: number, y: number, radius: number) => void;
-type BrushEndHandler = () => void;
+type BrushEndHandler = (mousePos?: MousePosition) => void;
 
 type Props = {
   store?: IntentStore;

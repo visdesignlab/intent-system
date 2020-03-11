@@ -1,12 +1,5 @@
 import React, { FC, useContext, memo } from "react";
-import {
-  Divider,
-  Header,
-  Statistic,
-  Label,
-  Button,
-  Container
-} from "semantic-ui-react";
+import { Divider, Header, Statistic, Label } from "semantic-ui-react";
 import { style } from "typestyle";
 import IntentStore from "../../Store/IntentStore";
 import { inject, observer } from "mobx-react";
@@ -27,10 +20,6 @@ export interface Props {
 const Selections: FC<Props> = ({ store, selections }: Props) => {
   const { multiBrushBehaviour } = store!;
   const data = useContext(DataContext);
-  const graph = useContext(ProvenanceContext);
-
-  const studyActions = useContext(StudyActionContext);
-
   const HoverableStatistic = hoverable(Statistic);
   const SelectionLabel = hoverable(Label);
 
