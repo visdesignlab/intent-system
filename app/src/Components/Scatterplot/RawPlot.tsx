@@ -25,15 +25,20 @@ import MarkType from "./MarkType";
 import Mark from "./Mark";
 import XAxis from "./XAxis";
 import YAxis from "./YAxis";
-import { Popup, Header, Table } from "semantic-ui-react";
-import { UserSelections } from "../Predictions/PredictionRowType";
+import { Popup, Header, Table, Label } from "semantic-ui-react";
+import {
+  UserSelections,
+  extendPrediction
+} from "../Predictions/PredictionRowType";
 import {
   FADE_OUT_PRED_SELECTION,
   COLOR,
   REGULAR_MARK_STYLE
 } from "../Styles/MarkStyle";
 import FreeFormBrush from "./Freeform/FreeFormBrush";
-import { ActionContext, DataContext } from "../../Contexts";
+import { ActionContext, DataContext, TaskConfigContext } from "../../Contexts";
+import { style } from "typestyle";
+import { Prediction } from "../../contract";
 
 export interface Props {
   store?: IntentStore;
@@ -46,6 +51,11 @@ export interface Props {
   yScale: ScaleLinear<number, number>;
   selections: UserSelections;
 }
+
+export type MousePosition = {
+  x: number;
+  y: number;
+};
 
 const RawPlot: FC<Props> = ({
   store,
@@ -68,6 +78,10 @@ const RawPlot: FC<Props> = ({
     brushType
   } = store!;
   const { selectedPoints, brushes } = plot;
+
+  const [mousePos, setMousePos] = useState<MousePosition | null>(null);
+
+  const { taskType = "supported" } = useContext(TaskConfigContext);
 
   let freeFormPoints: number[] = [];
 
@@ -142,7 +156,8 @@ const RawPlot: FC<Props> = ({
   function brushHandler(
     _: BrushCollection,
     affectedBrush: Brush,
-    affectType: BrushAffectType
+    affectType: BrushAffectType,
+    mousePosition?: MousePosition
   ) {
     let { x1, x2, y1, y2 } = affectedBrush.extents;
     [x1, x2, y1, y2] = [x1 * width, x2 * width, y1 * height, y2 * height];
@@ -171,6 +186,15 @@ const RawPlot: FC<Props> = ({
         break;
       default:
         break;
+    }
+
+    if (mousePosition) {
+      if (JSON.stringify(mousePos) !== JSON.stringify(mousePosition)) {
+        console.log("Setting");
+        setMousePos(mousePosition);
+      }
+    } else {
+      setMousePos(null);
     }
   }
 
@@ -217,8 +241,25 @@ const RawPlot: FC<Props> = ({
       switchOff={brushType !== "Rectangular"}
     />
   );
+  const { columnMap } = useContext(DataContext);
 
   const { predictions } = predictionSet;
+
+  const predictionString = JSON.stringify(predictions);
+
+  const topThree = useMemo(() => {
+    const preds: Prediction[] = JSON.parse(predictionString);
+    if (preds.length > 3) {
+      return preds
+        .map(p => extendPrediction(p, selections.values, columnMap))
+        .sort((a, b) => b.similarity - a.similarity)
+        .slice(0, 3);
+    }
+    return preds
+      .map(p => extendPrediction(p, selections.values, columnMap))
+      .sort((a, b) => b.similarity - a.similarity);
+  }, [predictionString, selections, columnMap]);
+
   const selectedPred = predictions.find(p => p.intent === selectedPrediction);
 
   function drawMark(
@@ -335,8 +376,6 @@ const RawPlot: FC<Props> = ({
     return <Popup key={idx} content={popupContent} trigger={mark} />;
   }
 
-  const { columnMap } = useContext(DataContext);
-
   const plotComponent = (
     <g style={{ pointerEvents: mouseDown ? "none" : "all" }}>
       <g transform={translate(0, height)} style={{ pointerEvents: "none" }}>
@@ -402,17 +441,42 @@ const RawPlot: FC<Props> = ({
   );
 
   return (
-    <g transform={transform}>
-      <g
-        onMouseDown={() => setMouseDown(true)}
-        onMouseUp={() => setMouseDown(false)}
-        onMouseLeave={() => setMouseDown(false)}
-      >
-        {brushComponent}
-        {brushType === "Freeform" && freeFormBrushComponent}
+    <>
+      <g transform={transform}>
+        <g
+          onMouseDown={() => {
+            setMouseDown(true);
+            setMousePos(null);
+          }}
+          onMouseUp={() => setMouseDown(false)}
+          onMouseLeave={() => setMouseDown(false)}
+        >
+          {brushComponent}
+          {brushType === "Freeform" && freeFormBrushComponent}
+        </g>
+        {plotComponent}
       </g>
-      {plotComponent}
-    </g>
+      {taskType === "supported" && (
+        <Popup
+          basic
+          open={mousePos !== null}
+          trigger={
+            <g transform={translate(mousePos?.x || 0, mousePos?.y || 0)}>
+              {mousePos && (
+                <rect fill="gray" opacity="0.2" height={1} width={1} />
+              )}
+            </g>
+          }
+          content={
+            <Label.Group>
+              {topThree.map(pred => (
+                <Label key={pred.intent}>{pred.type}</Label>
+              ))}
+            </Label.Group>
+          }
+        ></Popup>
+      )}
+    </>
   );
 };
 

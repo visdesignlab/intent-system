@@ -60,8 +60,8 @@ const StudyApp = ({ task }: Props) => {
         <ActionContext.Provider value={actions}>
           <TaskConfigContext.Provider value={task}>
             <ProvenanceContext.Provider value={() => provenance.graph()}>
-              <div className={layoutStyle}>
-                <TaskComponent task={task.task} />
+              <div className={layoutStyle(task.taskType === "supported")}>
+                <TaskComponent taskDesc={task} />
                 <div className={visStyle}>
                   <Navbar
                     data={data}
@@ -70,8 +70,8 @@ const StudyApp = ({ task }: Props) => {
                   />
                   <Visualization />
                 </div>
-                {/* <Predictions />
-                <ProvenanceVisualization /> */}
+                {task.taskType === "supported" && <Predictions />}
+                {/* <ProvenanceVisualization /> */}
               </div>
             </ProvenanceContext.Provider>
           </TaskConfigContext.Provider>
@@ -85,15 +85,18 @@ const StudyApp = ({ task }: Props) => {
 
 export default StudyApp;
 
-const layoutStyle = style({
-  display: "grid",
-  height: "100vh",
-  width: "100vw",
-  gridTemplateColumns: "min-content 1fr",
-  gridTemplateAreas: `
-  "question vis"
+const layoutStyle = (isGuide: boolean) =>
+  style({
+    display: "grid",
+    height: "100vh",
+    width: "100vw",
+    gridTemplateColumns: isGuide ? "min-content 3fr 1fr" : "min-content 1fr",
+    gridTemplateAreas: isGuide
+      ? `
+  "question vis pred"
   `
-});
+      : `"question vis"`
+  });
 
 const visStyle = style({
   gridArea: "vis",

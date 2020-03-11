@@ -227,9 +227,9 @@ function Navbar({ store, data, datasets, setDataset }: NavbarProps) {
             <>
               {datasets.length > 1 && datasetDropdown}
               {enablePlotAddition && addPlot}
-              {categoricalColumns.length > 0 && showCategoriesToggle}
-              {showCategories && showCategoriesDropdown}
-              {brushToggle}
+              {!task && categoricalColumns.length > 0 && showCategoriesToggle}
+              {!task && showCategories && showCategoriesDropdown}
+              {!task && brushToggle}
               {brushSelection}
               {invertSelectionButton}
               {clearSelectionButton}

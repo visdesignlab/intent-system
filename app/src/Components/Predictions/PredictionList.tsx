@@ -5,7 +5,7 @@ import { inject, observer } from "mobx-react";
 import { style } from "typestyle";
 import PredictionTable from "./PredictionTable";
 import { extendPrediction, PredictionRowType } from "./PredictionRowType";
-import { DataContext } from "../../Contexts";
+import { DataContext, TaskConfigContext } from "../../Contexts";
 
 interface Props {
   store?: IntentStore;
@@ -19,6 +19,8 @@ const PredictionList: FC<Props> = ({ store, selections }: Props) => {
 
   const { predictions } = predictionSet;
 
+  const task = useContext(TaskConfigContext);
+
   const [preds, setPreds] = useState<PredictionRowType[]>([]);
 
   const computedPreds = predictions
@@ -29,7 +31,9 @@ const PredictionList: FC<Props> = ({ store, selections }: Props) => {
     setPreds(computedPreds);
   }
 
-  const predictionTable = <PredictionTable predictions={preds} />;
+  const predictionTable = (
+    <PredictionTable predictions={preds} isTask={task !== null} />
+  );
 
   const loadingComponent = (
     <Segment placeholder basic>

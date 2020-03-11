@@ -19,9 +19,9 @@ interface Props {
 const Predictions: FC<Props> = ({ store }: Props) => {
   const { annotation, plots, multiBrushBehaviour } = store!;
 
-  const task = useContext(TaskConfigContext) || {};
+  const task = useContext(TaskConfigContext);
 
-  const { taskType = "supported" } = task;
+  const { taskType = "supported" } = task || {};
 
   const [selections, setSelections] = useState<UserSelections>(
     defaultSelections
@@ -38,11 +38,11 @@ const Predictions: FC<Props> = ({ store }: Props) => {
 
   return (
     <div className={predictionColumnStyle(taskType === "supported")}>
-      <AnnotationBox annotation={annotation} />
+      {!task && <AnnotationBox annotation={annotation} />}
       {taskType === "supported" && (
         <PredictionList selections={selections.values} />
       )}
-      <Selections selections={selections} />
+      {!task && <Selections selections={selections} />}
     </div>
   );
 };

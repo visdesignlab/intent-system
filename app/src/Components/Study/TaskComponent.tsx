@@ -9,14 +9,16 @@ import {
   getAllSelections
 } from "../Predictions/PredictionRowType";
 import Feedback from "./Feedback";
+import { TaskDescription } from "../../Study/TaskList";
 
 type Props = {
   store?: IntentStore;
-  task: string;
+  taskDesc: TaskDescription;
 };
 
-const TaskComponent: FC<Props> = ({ task, store }: Props) => {
+const TaskComponent: FC<Props> = ({ taskDesc, store }: Props) => {
   const { plots, multiBrushBehaviour } = store!;
+  const { task, taskType } = taskDesc;
   const [selections, setSelections] = useState<UserSelections | null>(null);
 
   const computedSelections = getAllSelections(
@@ -34,12 +36,12 @@ const TaskComponent: FC<Props> = ({ task, store }: Props) => {
   return (
     <div className={taskStyle}>
       <Card>
-        <Card.Content textAlign="center" className={headerStyle}>
+        <Card.Content textAlign="left" className={headerStyle}>
           <Card.Header className={whiteText}>
             Task {currentTaskNumber}
           </Card.Header>
           <Card.Meta className={`${whiteText} ${metaSize}`}>
-            {Math.random() < 0.5 ? "Guided" : "Manual"}
+            {taskType === "supported" ? "Guided" : "Manual"}
           </Card.Meta>
         </Card.Content>
         <Card.Content className={questionTextSize}>{task}</Card.Content>
@@ -47,7 +49,7 @@ const TaskComponent: FC<Props> = ({ task, store }: Props) => {
           <Feedback
             trigger={
               <Button
-                // disabled={!selections || selections.values.length === 0}
+                disabled={!selections || selections.values.length === 0}
                 primary
                 content="Submit"
               />
@@ -77,7 +79,7 @@ const taskStyle = style({
 
 const questionTextSize = style({
   fontSize: "1.5em !important",
-  textAlign: "justify"
+  textAlign: "left"
 });
 
 const metaSize = style({
