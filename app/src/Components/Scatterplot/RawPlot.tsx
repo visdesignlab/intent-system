@@ -255,11 +255,13 @@ const RawPlot: FC<Props> = ({
     if (preds.length > 3) {
       return preds
         .map(p => extendPrediction(p, selections.values, columnMap))
+        .filter(d => d.type !== "Range" && d.type !== "Simplified Range")
         .sort((a, b) => b.similarity - a.similarity)
         .slice(0, 3);
     }
     return preds
       .map(p => extendPrediction(p, selections.values, columnMap))
+      .filter(d => d.type !== "Range" && d.type !== "Simplified Range")
       .sort((a, b) => b.similarity - a.similarity);
   }, [predictionString, selections, columnMap]);
 
@@ -493,6 +495,7 @@ const RawPlot: FC<Props> = ({
                     ]}
                     key={pred.intent}
                     onClick={() => {
+                      setMousePos(null);
                       actions.turnPredictionInSelection(
                         pred,
                         selections.values

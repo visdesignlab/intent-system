@@ -110,13 +110,15 @@ const PredictionTable: FC<Props> = ({
         <Table.Cell onClick={rowClick}>
           <JaccardBar height={barHeight} score={similarity} label={type} />
         </Table.Cell>
-        <Table.Cell onClick={rowClick}>
-          <ProbabilityBar
-            height={barHeight}
-            score={probability}
-            label={probability.toFixed(2)}
-          />
-        </Table.Cell>
+        {!isTask && (
+          <Table.Cell onClick={rowClick}>
+            <ProbabilityBar
+              height={barHeight}
+              score={probability}
+              label={probability.toFixed(2)}
+            />
+          </Table.Cell>
+        )}
         {!isTask && (
           <Table.Cell>
             <Button
@@ -168,7 +170,7 @@ const PredictionTable: FC<Props> = ({
             </>
           )}
           <Table.HeaderCell>Similarity</Table.HeaderCell>
-          <Table.HeaderCell>Probability</Table.HeaderCell>
+          {!isTask && <Table.HeaderCell>Probability</Table.HeaderCell>}
           <Table.HeaderCell colSpan={isTask ? 1 : 2}></Table.HeaderCell>
         </Table.Row>
       </Table.Header>
