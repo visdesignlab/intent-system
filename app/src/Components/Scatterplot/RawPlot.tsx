@@ -42,6 +42,7 @@ import FreeFormBrush from "./Freeform/FreeFormBrush";
 import { ActionContext, DataContext, TaskConfigContext } from "../../Contexts";
 import { Prediction } from "../../contract";
 import hoverable from "../UtilComponent/hoverable";
+import { ColumnMap } from "../../Utils/Dataset";
 
 export interface Props {
   store?: IntentStore;
@@ -249,9 +250,14 @@ const RawPlot: FC<Props> = ({
   const { predictions } = predictionSet;
 
   const predictionString = JSON.stringify(predictions);
+  const selectionString = JSON.stringify(selections);
+  const colMapString = JSON.stringify(columnMap);
 
   const topThree = useMemo(() => {
     const preds: Prediction[] = JSON.parse(predictionString);
+    const selections: UserSelections = JSON.parse(selectionString);
+    const columnMap: ColumnMap = JSON.parse(colMapString);
+
     if (preds.length > 3) {
       return preds
         .map(p => extendPrediction(p, selections.values, columnMap))
@@ -263,7 +269,7 @@ const RawPlot: FC<Props> = ({
       .map(p => extendPrediction(p, selections.values, columnMap))
       .filter(d => d.type !== "Range" && d.type !== "Simplified Range")
       .sort((a, b) => b.similarity - a.similarity);
-  }, [predictionString, selections, columnMap]);
+  }, [predictionString, selectionString, colMapString]);
 
   const selectedPred = predictions.find(p => p.intent === selectedPrediction);
 
@@ -496,6 +502,7 @@ const RawPlot: FC<Props> = ({
                     key={pred.intent}
                     onClick={() => {
                       setMousePos(null);
+                      selectAll(".base-mark").classed(FADE_OUT, false);
                       actions.turnPredictionInSelection(
                         pred,
                         selections.values
