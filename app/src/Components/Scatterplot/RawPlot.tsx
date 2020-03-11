@@ -194,7 +194,6 @@ const RawPlot: FC<Props> = ({
 
     if (mousePosition) {
       if (JSON.stringify(mousePos) !== JSON.stringify(mousePosition)) {
-        console.log("Setting");
         setMousePos(mousePosition);
       }
     } else {

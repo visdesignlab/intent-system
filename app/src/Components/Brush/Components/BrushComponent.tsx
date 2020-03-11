@@ -175,14 +175,19 @@ const BrushComponent: FC<Props> = ({
     setBrushes({ ...brushes });
   };
 
-  const handleDragStop = <T extends {}>(
+  const handleDragStop = <T extends SVGElement>(
     event: React.MouseEvent<T, MouseEvent>
   ) => {
+    const currentTarget = event.currentTarget.getBoundingClientRect();
+
     const curr = currentBrush;
     setMouseDown(false);
     setMovingBrush(false);
     setCurrentBrush(null as any);
-    onBrushUpdate({ ...brushes }, curr, "Change");
+    onBrushUpdate({ ...brushes }, curr, "Change", {
+      x: event.clientX - currentTarget.left,
+      y: event.clientY - currentTarget.top
+    });
   };
 
   const removeAllBrushes = () => {
@@ -256,14 +261,19 @@ const BrushComponent: FC<Props> = ({
   };
 
   const handleOnResizeEnd = <T extends SVGGElement>(
-    _: React.MouseEvent<T, MouseEvent>
+    event: React.MouseEvent<T, MouseEvent>
   ) => {
+    const currentTarget = event.currentTarget.getBoundingClientRect();
+
     const curr = currentBrush;
     setMouseDownForResize(false);
 
     setCurrentBrush(null as any);
     setResizeDirection(null as any);
-    onBrushUpdate({ ...brushes }, curr, "Change");
+    onBrushUpdate({ ...brushes }, curr, "Change", {
+      x: event.clientX - currentTarget.left,
+      y: event.clientY - currentTarget.top
+    });
   };
 
   const brushOverlay = (
