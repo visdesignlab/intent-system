@@ -39,8 +39,6 @@ function Navbar({ store, data, datasets, setDataset }: NavbarProps) {
   const actions = useContext(ActionContext);
   const task = useContext(TaskConfigContext);
 
-  const { enablePlotAddition = true } = task || {};
-
   const [addingPlot, setAddingPlot] = useState(false);
 
   const { categoricalColumns } = data;
@@ -226,7 +224,7 @@ function Navbar({ store, data, datasets, setDataset }: NavbarProps) {
           ) : (
             <>
               {datasets.length > 1 && datasetDropdown}
-              {!task && enablePlotAddition && addPlot}
+              {!task && addPlot}
               {!task && categoricalColumns.length > 0 && showCategoriesToggle}
               {!task && showCategories && showCategoriesDropdown}
               {!task && brushToggle}
