@@ -8,6 +8,7 @@ import {
 import { StudyActionContext } from "./Contexts";
 import { ProvenanceGraph } from "@visdesignlab/provenance-lib-core";
 import { AppConfig } from "./AppConfig";
+import FinalFeedback from "./Components/Study/FinalFeedback";
 
 type Props = {
   tasks: TaskDescription[];
@@ -51,10 +52,6 @@ const StudyMode: FC<Props> = ({ tasks, config }: Props) => {
     advanceTask();
   }
 
-  if (studyDone) {
-    return <div>Done</div>;
-  }
-
   return (
     <StudyActionContext.Provider
       value={{
@@ -63,7 +60,11 @@ const StudyMode: FC<Props> = ({ tasks, config }: Props) => {
         totalTasks: tasks.length
       }}
     >
-      <StudyApp key={tasks[currentTaskId].task} task={tasks[currentTaskId]} />
+      {studyDone ? (
+        <FinalFeedback />
+      ) : (
+        <StudyApp key={tasks[currentTaskId].task} task={tasks[currentTaskId]} />
+      )}
     </StudyActionContext.Provider>
   );
 };

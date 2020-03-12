@@ -1,5 +1,15 @@
 export type TaskType = "manual" | "supported";
 
+type DatasetType =
+  | "cluster"
+  | "outlier"
+  | "linear regression"
+  | "quadratic regression"
+  | "category"
+  | "skyline";
+
+type Difficulty = "easy" | "medium" | "hard";
+
 export type PlotDef = {
   x: string;
   y: string;
@@ -10,6 +20,10 @@ type CategoryEncoding = {
   column: string;
 };
 
+type Training = "yes" | "no";
+
+type Center = { x: number; y: number };
+
 export type TaskDescription = {
   id: string;
   task: string;
@@ -18,6 +32,10 @@ export type TaskDescription = {
   category: CategoryEncoding;
   enablePlotAddition: boolean;
   taskType: TaskType;
+  type: DatasetType;
+  difficulty: Difficulty;
+  training: Training;
+  center: Center | null;
 };
 
 const taskList: TaskDescription[] = [
@@ -32,7 +50,11 @@ const taskList: TaskDescription[] = [
       column: "Profession"
     },
     enablePlotAddition: true,
-    taskType: "manual"
+    taskType: "manual",
+    type: "linear regression",
+    difficulty: "easy",
+    training: "yes",
+    center: { x: 19, y: 23 }
   },
   {
     id: "1",
@@ -45,7 +67,11 @@ const taskList: TaskDescription[] = [
       column: "Profession"
     },
     enablePlotAddition: false,
-    taskType: "supported"
+    taskType: "supported",
+    type: "cluster",
+    difficulty: "easy",
+    training: "no",
+    center: null
   }
 ];
 
