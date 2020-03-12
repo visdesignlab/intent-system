@@ -2885,8 +2885,6 @@ class Dataset:
         for i in range(0, len(df["Label"])):
             df.loc[i, ('Label')] = i
 
-        print(df)
-
         convert_dict = {
             'X': 'float',
             'Y': 'float',
