@@ -43,6 +43,17 @@ export type TaskDescription = {
 
 const taskList = getTaskFromString();
 
+export function getAllTasks(isCoding: boolean = false): TaskDescription[] {
+  const training = taskList.filter(d => d.training === "yes");
+  const tasks = taskList
+    .filter(d => d.training === "no")
+    .map(d => ({ sort: Math.random(), value: d }))
+    .sort((a, b) => a.sort - b.sort)
+    .map(d => d.value);
+
+  return [...training, ...tasks].map(d => ({ ...d, taskType: "manual" }));
+}
+
 // const taskList: TaskDescription[] = [
 //   {
 //     id: "0",
@@ -77,10 +88,3 @@ const taskList = getTaskFromString();
 //     center: null
 //   }
 // ];
-
-export function getAllTasks(): TaskDescription[] {
-  return taskList
-    .map(d => ({ sort: Math.random(), value: d }))
-    .sort((a, b) => a.sort - b.sort)
-    .map(d => d.value);
-}

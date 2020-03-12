@@ -20,7 +20,8 @@ let config: AppConfig = {
   mode: "default",
   participantId: "NULL",
   sessionId: "NULL",
-  studyId: "NULL"
+  studyId: "NULL",
+  coding: "no"
 };
 
 const url = new URLSearchParams(window.location.search);
@@ -29,20 +30,26 @@ if (url.toString().length > 0) {
   const participantId = url.get(PROLIFIC_PID) || config.participantId;
   const sessionId = url.get(SESSION_ID) || config.sessionId;
   const studyId = url.get(STUDY_ID) || config.studyId;
+  const coding = url.get("coding") || config.coding;
 
   config = {
     ...config,
     mode: mode ? (mode.toLocaleLowerCase() as Mode) : config.mode,
     participantId,
     sessionId,
-    studyId
+    studyId,
+    coding
   };
 }
 
 const isStudy = config.mode === "study";
 
 ReactDOM.render(
-  isStudy ? <StudyMode tasks={getAllTasks()} config={config} /> : <App />,
+  isStudy ? (
+    <StudyMode tasks={getAllTasks(config.coding === "yes")} config={config} />
+  ) : (
+    <App />
+  ),
   document.getElementById("root")
 );
 

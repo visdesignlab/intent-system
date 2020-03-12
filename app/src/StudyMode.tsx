@@ -63,7 +63,7 @@ const StudyMode: FC<Props> = ({ tasks, config }: Props) => {
       {studyDone ? (
         <FinalFeedback />
       ) : (
-        <StudyApp key={tasks[currentTaskId].task} task={tasks[currentTaskId]} />
+        <StudyApp key={currentTaskId} task={tasks[currentTaskId]} />
       )}
     </StudyActionContext.Provider>
   );
