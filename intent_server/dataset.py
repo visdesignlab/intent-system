@@ -167,6 +167,3355 @@ class Dataset:
             }
         })
 
+
+    @staticmethod
+    def load_quad_easy_training_1() -> 'Dataset':
+        df = pd.read_csv('data/quad_easy_training_1.csv')
+
+        df['cat'] = '1'
+
+        df["Label"] = 0
+
+        for i in range(0, len(df["Label"])):
+            df.loc[i, ('Label')] = i
+
+
+        convert_dict = {
+            'X': 'float',
+            'Y': 'float',
+            'Label': 'category',
+            'cat': 'category'
+        }
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+
+        return Dataset('Label', df,
+                       'quad_easy_training_1', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'X': {
+                'text': 'X',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'Y': {
+                'text': "Y",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            "cat": {
+                'text': "cat",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            }
+        })
+
+
+    @staticmethod
+    def load_quad_easy_task_1() -> 'Dataset':
+        df = pd.read_csv('data/quad_easy_task_1.csv')
+
+        df['cat'] = '1'
+
+        df["Label"] = 0
+
+        for i in range(0, len(df["Label"])):
+            df.loc[i, ('Label')] = i
+
+
+        convert_dict = {
+            'X': 'float',
+            'Y': 'float',
+            'Label': 'category',
+            'cat': 'category'
+        }
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+
+        return Dataset('Label', df,
+                       'quad_easy_task_1', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'X': {
+                'text': 'X',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'Y': {
+                'text': "Y",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            "cat": {
+                'text': "cat",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            }
+        })
+
+
+    @staticmethod
+    def load_quad_easy_task_2() -> 'Dataset':
+        df = pd.read_csv('data/quad_easy_task_2.csv')
+
+        df['cat'] = '1'
+
+        df["Label"] = 0
+
+        for i in range(0, len(df["Label"])):
+            df.loc[i, ('Label')] = i
+
+
+        convert_dict = {
+            'X': 'float',
+            'Y': 'float',
+            'Label': 'category',
+            'cat': 'category'
+        }
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+
+        return Dataset('Label', df,
+                       'quad_easy_task_2', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'X': {
+                'text': 'X',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'Y': {
+                'text': "Y",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            "cat": {
+                'text': "cat",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            }
+        })
+
+
+    @staticmethod
+    def load_quad_med_training_1() -> 'Dataset':
+        df = pd.read_csv('data/quad_med_training_1.csv')
+
+        df['cat'] = '1'
+
+        df["Label"] = 0
+
+        for i in range(0, len(df["Label"])):
+            df.loc[i, ('Label')] = i
+
+
+        convert_dict = {
+            'X': 'float',
+            'Y': 'float',
+            'Label': 'category',
+            'cat': 'category'
+        }
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+
+        return Dataset('Label', df,
+                       'quad_med_training_1', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'X': {
+                'text': 'X',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'Y': {
+                'text': "Y",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            "cat": {
+                'text': "cat",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            }
+        })
+
+
+    @staticmethod
+    def load_quad_med_task_1() -> 'Dataset':
+        df = pd.read_csv('data/quad_med_task_1.csv')
+
+        df['cat'] = '1'
+
+        df["Label"] = 0
+
+        for i in range(0, len(df["Label"])):
+            df.loc[i, ('Label')] = i
+
+
+        convert_dict = {
+            'X': 'float',
+            'Y': 'float',
+            'Label': 'category',
+            'cat': 'category'
+        }
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+
+        return Dataset('Label', df,
+                       'quad_med_task_1', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'X': {
+                'text': 'X',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'Y': {
+                'text': "Y",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            "cat": {
+                'text': "cat",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            }
+        })
+
+
+    @staticmethod
+    def load_quad_med_task_2() -> 'Dataset':
+        df = pd.read_csv('data/quad_med_task_2.csv')
+
+        df['cat'] = '1'
+
+        df["Label"] = 0
+
+        for i in range(0, len(df["Label"])):
+            df.loc[i, ('Label')] = i
+
+
+        convert_dict = {
+            'X': 'float',
+            'Y': 'float',
+            'Label': 'category',
+            'cat': 'category'
+        }
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+
+        return Dataset('Label', df,
+                       'quad_med_task_2', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'X': {
+                'text': 'X',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'Y': {
+                'text': "Y",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            "cat": {
+                'text': "cat",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            }
+        })
+
+
+    @staticmethod
+    def load_quad_hard_training_1() -> 'Dataset':
+        df = pd.read_csv('data/quad_hard_training_1.csv')
+
+        df['cat'] = '1'
+
+        df["Label"] = 0
+
+        for i in range(0, len(df["Label"])):
+            df.loc[i, ('Label')] = i
+
+
+        convert_dict = {
+            'X': 'float',
+            'Y': 'float',
+            'Label': 'category',
+            'cat': 'category'
+        }
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+
+        return Dataset('Label', df,
+                       'quad_hard_training_1', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'X': {
+                'text': 'X',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'Y': {
+                'text': "Y",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            "cat": {
+                'text': "cat",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            }
+        })
+
+
+    @staticmethod
+    def load_quad_hard_task_1() -> 'Dataset':
+        df = pd.read_csv('data/quad_hard_task_1.csv')
+
+        df['cat'] = '1'
+
+        df["Label"] = 0
+
+        for i in range(0, len(df["Label"])):
+            df.loc[i, ('Label')] = i
+
+
+        convert_dict = {
+            'X': 'float',
+            'Y': 'float',
+            'Label': 'category',
+            'cat': 'category'
+        }
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+
+        return Dataset('Label', df,
+                       'quad_hard_task_1', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'X': {
+                'text': 'X',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'Y': {
+                'text': "Y",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            "cat": {
+                'text': "cat",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            }
+        })
+
+
+    @staticmethod
+    def load_quad_hard_task_2() -> 'Dataset':
+        df = pd.read_csv('data/quad_hard_task_2.csv')
+
+
+        df['cat'] = '1'
+
+        df["Label"] = 0
+
+        for i in range(0, len(df["Label"])):
+            df.loc[i, ('Label')] = i
+
+
+        convert_dict = {
+            'X': 'float',
+            'Y': 'float',
+            'Label': 'category',
+            'cat': 'category'
+        }
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+
+        return Dataset('Label', df,
+                       'quad_hard_task_2', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'X': {
+                'text': 'X',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'Y': {
+                'text': "Y",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            "cat": {
+                'text': "cat",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            }
+        })
+
+
+    @staticmethod
+    def load_sky_easy_training_1() -> 'Dataset':
+        df = pd.read_csv('data/sky_easy_training_1.csv')
+
+        df['cat'] = '1'
+
+        print(df)
+
+        convert_dict = {
+            'Distance': 'float',
+            'CostPerNight': 'float',
+            'Label': 'category',
+            'cat':'category'
+        }
+
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+
+        return Dataset('Label', df,
+                       'sky_easy_training_1', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'Distance': {
+                'text': 'Distance',
+                'unit': 'Miles',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'CostPerNight': {
+                'text': "Cost Per Night",
+                'unit': 'Dollars',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            'cat': {
+                'text': "cat",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            }
+        })
+
+
+    @staticmethod
+    def load_sky_easy_task_1() -> 'Dataset':
+        df = pd.read_csv('data/sky_easy_task_1.csv')
+
+        df['cat'] = '1'
+
+        print(df)
+
+        convert_dict = {
+            'Distance': 'float',
+            'CostPerNight': 'float',
+            'Label': 'category',
+            'cat':'category'
+        }
+
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+
+        return Dataset('Label', df,
+                       'sky_easy_task_1', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'Distance': {
+                'text': 'Distance',
+                'unit': 'Miles',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'CostPerNight': {
+                'text': "Cost Per Night",
+                'unit': 'Dollars',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            'cat': {
+                'text': "cat",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            }
+        })
+
+
+    @staticmethod
+    def load_sky_easy_task_2() -> 'Dataset':
+        df = pd.read_csv('data/sky_easy_task_2.csv')
+
+        df['cat'] = '1'
+
+        print(df)
+
+        convert_dict = {
+            'Distance': 'float',
+            'CostPerNight': 'float',
+            'Label': 'category',
+            'cat':'category'
+        }
+
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+
+        return Dataset('Label', df,
+                       'sky_easy_task_2', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'Distance': {
+                'text': 'Distance',
+                'unit': 'Miles',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'CostPerNight': {
+                'text': "Cost Per Night",
+                'unit': 'Dollars',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            'cat': {
+                'text': "cat",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            }
+        })
+
+
+    @staticmethod
+    def load_sky_med_training_1() -> 'Dataset':
+        df = pd.read_csv('data/sky_med_training_1.csv')
+
+        df['cat'] = '1'
+
+        print(df)
+
+        convert_dict = {
+            'Distance': 'float',
+            'CostPerNight': 'float',
+            'Label': 'category',
+            'cat':'category'
+        }
+
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+
+        return Dataset('Label', df,
+                       'sky_med_training_1', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'Distance': {
+                'text': 'Distance',
+                'unit': 'Miles',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'CostPerNight': {
+                'text': "Cost Per Night",
+                'unit': 'Dollars',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            'cat': {
+                'text': "cat",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            }
+        })
+
+
+    @staticmethod
+    def load_sky_med_task_1() -> 'Dataset':
+        df = pd.read_csv('data/sky_med_task_1.csv')
+
+        df['cat'] = '1'
+
+        print(df)
+
+        convert_dict = {
+            'Distance': 'float',
+            'CostPerNight': 'float',
+            'Label': 'category',
+            'cat':'category'
+        }
+
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+
+        return Dataset('Label', df,
+                       'sky_med_task_1', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'Distance': {
+                'text': 'Distance',
+                'unit': 'Miles',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'CostPerNight': {
+                'text': "Cost Per Night",
+                'unit': 'Dollars',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            'cat': {
+                'text': "cat",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            }
+        })
+
+
+    @staticmethod
+    def load_sky_med_task_2() -> 'Dataset':
+        df = pd.read_csv('data/sky_med_task_2.csv')
+
+        df['cat'] = '1'
+
+        print(df)
+
+        convert_dict = {
+            'Distance': 'float',
+            'CostPerNight': 'float',
+            'Label': 'category',
+            'cat':'category'
+        }
+
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+
+        return Dataset('Label', df,
+                       'sky_med_task_2', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'Distance': {
+                'text': 'Distance',
+                'unit': 'Miles',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'CostPerNight': {
+                'text': "Cost Per Night",
+                'unit': 'Dollars',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            'cat': {
+                'text': "cat",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            }
+        })
+
+
+    @staticmethod
+    def load_sky_hard_training_1() -> 'Dataset':
+        df = pd.read_csv('data/sky_hard_training_1.csv')
+
+        df['cat'] = '1'
+
+        print(df)
+
+        convert_dict = {
+            'Distance': 'float',
+            'CostPerNight': 'float',
+            'Label': 'category',
+            'cat':'category'
+        }
+
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+
+        return Dataset('Label', df,
+                       'sky_hard_training_1', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'Distance': {
+                'text': 'Distance',
+                'unit': 'Miles',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'CostPerNight': {
+                'text': "Cost Per Night",
+                'unit': 'Dollars',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            'cat': {
+                'text': "cat",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            }
+        })
+
+
+    @staticmethod
+    def load_sky_hard_task_1() -> 'Dataset':
+        df = pd.read_csv('data/sky_hard_task_1.csv')
+
+        df['cat'] = '1'
+
+        print(df)
+
+        convert_dict = {
+            'Distance': 'float',
+            'CostPerNight': 'float',
+            'Label': 'category',
+            'cat':'category'
+        }
+
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+
+        return Dataset('Label', df,
+                       'sky_hard_task_1', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'Distance': {
+                'text': 'Distance',
+                'unit': 'Miles',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'CostPerNight': {
+                'text': "Cost Per Night",
+                'unit': 'Dollars',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            'cat': {
+                'text': "cat",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            }
+        })
+
+
+    @staticmethod
+    def load_sky_hard_task_2() -> 'Dataset':
+        df = pd.read_csv('data/sky_hard_task_2.csv')
+
+        df['cat'] = '1'
+
+        print(df)
+
+        convert_dict = {
+            'Distance': 'float',
+            'CostPerNight': 'float',
+            'Label': 'category',
+            'cat':'category'
+        }
+
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+
+        return Dataset('Label', df,
+                       'sky_hard_task_2', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'Distance': {
+                'text': 'Distance',
+                'unit': 'Miles',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'CostPerNight': {
+                'text': "Cost Per Night",
+                'unit': 'Dollars',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            'cat': {
+                'text': "cat",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            }
+        })
+
+
+
+    @staticmethod
+    def load_cluster_easy_training_1() -> 'Dataset':
+        df = pd.read_csv('data/cluster_easy_training_1.csv')
+
+
+        df["Label"] = 0
+
+        for i in range(0, len(df["Label"])):
+            df.loc[i, ('Label')] = i
+
+
+        convert_dict = {
+            'X': 'float',
+            'Y': 'float',
+            'Label': 'category',
+            'Cluster': 'category',
+        }
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+        df['Cluster'] = df['Cluster'].apply(str)
+
+        return Dataset('Label', df,
+                       'cluster_easy_training_1', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'X': {
+                'text': 'X',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'Y': {
+                'text': "Y",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            'Cluster': {
+                'text': "Cluster",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            }
+        })
+
+
+    @staticmethod
+    def load_cluster_easy_task_1() -> 'Dataset':
+        df = pd.read_csv('data/cluster_easy_task_1.csv')
+
+
+        df["Label"] = 0
+
+        for i in range(0, len(df["Label"])):
+            df.loc[i, ('Label')] = i
+
+
+        convert_dict = {
+            'X': 'float',
+            'Y': 'float',
+            'Label': 'category',
+            'Cluster': 'category',
+        }
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+        df['Cluster'] = df['Cluster'].apply(str)
+
+        return Dataset('Label', df,
+                       'cluster_easy_task_1', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'X': {
+                'text': 'X',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'Y': {
+                'text': "Y",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            'Cluster': {
+                'text': "Cluster",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            }
+        })
+
+
+    @staticmethod
+    def load_cluster_easy_task_2() -> 'Dataset':
+        df = pd.read_csv('data/cluster_easy_task_2.csv')
+
+
+        df["Label"] = 0
+
+        for i in range(0, len(df["Label"])):
+            df.loc[i, ('Label')] = i
+
+
+        convert_dict = {
+            'X': 'float',
+            'Y': 'float',
+            'Label': 'category',
+            'Cluster': 'category',
+        }
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+        df['Cluster'] = df['Cluster'].apply(str)
+
+        return Dataset('Label', df,
+                       'cluster_easy_task_2', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'X': {
+                'text': 'X',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'Y': {
+                'text': "Y",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            'Cluster': {
+                'text': "Cluster",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            }
+        })
+
+
+    @staticmethod
+    def load_cluster_med_training_1() -> 'Dataset':
+        df = pd.read_csv('data/cluster_med_training_1.csv')
+
+
+        df["Label"] = 0
+
+        for i in range(0, len(df["Label"])):
+            df.loc[i, ('Label')] = i
+
+
+        convert_dict = {
+            'X': 'float',
+            'Y': 'float',
+            'Label': 'category',
+            'Cluster': 'category',
+        }
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+        df['Cluster'] = df['Cluster'].apply(str)
+
+        return Dataset('Label', df,
+                       'cluster_med_training_1', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'X': {
+                'text': 'X',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'Y': {
+                'text': "Y",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            'Cluster': {
+                'text': "Cluster",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            }
+        })
+
+
+    @staticmethod
+    def load_cluster_med_task_1() -> 'Dataset':
+        df = pd.read_csv('data/cluster_med_task_1.csv')
+
+
+        df["Label"] = 0
+
+        for i in range(0, len(df["Label"])):
+            df.loc[i, ('Label')] = i
+
+
+        convert_dict = {
+            'X': 'float',
+            'Y': 'float',
+            'Label': 'category',
+            'Cluster': 'category',
+        }
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+        df['Cluster'] = df['Cluster'].apply(str)
+
+        return Dataset('Label', df,
+                       'cluster_med_task_1', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'X': {
+                'text': 'X',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'Y': {
+                'text': "Y",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            'Cluster': {
+                'text': "Cluster",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            }
+        })
+
+
+    @staticmethod
+    def load_cluster_med_task_2() -> 'Dataset':
+        df = pd.read_csv('data/cluster_med_task_2.csv')
+
+
+        df["Label"] = 0
+
+        for i in range(0, len(df["Label"])):
+            df.loc[i, ('Label')] = i
+
+
+        convert_dict = {
+            'X': 'float',
+            'Y': 'float',
+            'Label': 'category',
+            'Cluster': 'category',
+        }
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+        df['Cluster'] = df['Cluster'].apply(str)
+
+        return Dataset('Label', df,
+                       'cluster_med_task_2', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'X': {
+                'text': 'X',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'Y': {
+                'text': "Y",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            'Cluster': {
+                'text': "Cluster",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            }
+        })
+
+
+    @staticmethod
+    def load_cluster_hard_training_1() -> 'Dataset':
+        df = pd.read_csv('data/cluster_hard_training_1.csv')
+
+
+        df["Label"] = 0
+
+        for i in range(0, len(df["Label"])):
+            df.loc[i, ('Label')] = i
+
+
+        convert_dict = {
+            'X': 'float',
+            'Y': 'float',
+            'Label': 'category',
+            'Cluster': 'category',
+        }
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+        df['Cluster'] = df['Cluster'].apply(str)
+
+        return Dataset('Label', df,
+                       'cluster_hard_training_1', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'X': {
+                'text': 'X',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'Y': {
+                'text': "Y",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            'Cluster': {
+                'text': "Cluster",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            }
+        })
+
+
+    @staticmethod
+    def load_cluster_hard_task_1() -> 'Dataset':
+        df = pd.read_csv('data/cluster_hard_task_1.csv')
+
+
+        df["Label"] = 0
+
+        for i in range(0, len(df["Label"])):
+            df.loc[i, ('Label')] = i
+
+
+        convert_dict = {
+            'X': 'float',
+            'Y': 'float',
+            'Label': 'category',
+            'Cluster': 'category',
+        }
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+        df['Cluster'] = df['Cluster'].apply(str)
+
+        return Dataset('Label', df,
+                       'cluster_hard_task_1', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'X': {
+                'text': 'X',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'Y': {
+                'text': "Y",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            'Cluster': {
+                'text': "Cluster",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            }
+        })
+
+
+    @staticmethod
+    def load_cluster_hard_task_2() -> 'Dataset':
+        df = pd.read_csv('data/cluster_hard_task_2.csv')
+
+
+        df["Label"] = 0
+
+        for i in range(0, len(df["Label"])):
+            df.loc[i, ('Label')] = i
+
+
+        convert_dict = {
+            'X': 'float',
+            'Y': 'float',
+            'Label': 'category',
+            'Cluster': 'category',
+        }
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+        df['Cluster'] = df['Cluster'].apply(str)
+
+        return Dataset('Label', df,
+                       'cluster_hard_task_2', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'X': {
+                'text': 'X',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'Y': {
+                'text': "Y",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            'Cluster': {
+                'text': "Cluster",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            }
+        })
+
+
+    @staticmethod
+    def load_cat_easy_task_1() -> 'Dataset':
+        df = pd.read_csv('data/cat_easy_task_1.csv')
+
+
+        df["Label"] = 0
+
+        for i in range(0, len(df["Label"])):
+            df.loc[i, ('Label')] = i
+
+
+        convert_dict = {
+            'X': 'float',
+            'Y': 'float',
+            'Label': 'category',
+            'Cluster': 'category',
+        }
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+        df['Cluster'] = df['Cluster'].apply(str)
+
+        return Dataset('Label', df,
+                       'cat_easy_task_1', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'X': {
+                'text': 'X',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'Y': {
+                'text': "Y",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            'Cluster': {
+                'text': "Cluster",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            }
+        })
+
+    @staticmethod
+    def load_cat_easy_task_2() -> 'Dataset':
+        df = pd.read_csv('data/cat_easy_task_2.csv')
+
+
+        df["Label"] = 0
+
+        for i in range(0, len(df["Label"])):
+            df.loc[i, ('Label')] = i
+
+
+        convert_dict = {
+            'X': 'float',
+            'Y': 'float',
+            'Label': 'category',
+            'Cluster': 'category',
+        }
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+        df['Cluster'] = df['Cluster'].apply(str)
+
+        return Dataset('Label', df,
+                       'cat_easy_task_2', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'X': {
+                'text': 'X',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'Y': {
+                'text': "Y",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            'Cluster': {
+                'text': "Cluster",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            }
+        })
+
+
+    @staticmethod
+    def load_cat_easy_training_1() -> 'Dataset':
+        df = pd.read_csv('data/cat_easy_training_1.csv')
+
+
+        df["Label"] = 0
+
+        for i in range(0, len(df["Label"])):
+            df.loc[i, ('Label')] = i
+
+
+        convert_dict = {
+            'X': 'float',
+            'Y': 'float',
+            'Label': 'category',
+            'Cluster': 'category',
+        }
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+        df['Cluster'] = df['Cluster'].apply(str)
+
+        return Dataset('Label', df,
+                       'cat_easy_training_1', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'X': {
+                'text': 'X',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'Y': {
+                'text': "Y",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            'Cluster': {
+                'text': "Cluster",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            }
+        })
+
+
+    @staticmethod
+    def load_cat_hard_task_1() -> 'Dataset':
+        df = pd.read_csv('data/cat_hard_task_1.csv')
+
+
+        df["Label"] = 0
+
+        for i in range(0, len(df["Label"])):
+            df.loc[i, ('Label')] = i
+
+
+        convert_dict = {
+            'X': 'float',
+            'Y': 'float',
+            'Label': 'category',
+            'Cluster': 'category',
+        }
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+        df['Cluster'] = df['Cluster'].apply(str)
+
+        return Dataset('Label', df,
+                       'cat_hard_task_1', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'X': {
+                'text': 'X',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'Y': {
+                'text': "Y",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            'Cluster': {
+                'text': "Cluster",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            }
+        })
+
+
+    @staticmethod
+    def load_cat_hard_task_2() -> 'Dataset':
+        df = pd.read_csv('data/cat_hard_task_2.csv')
+
+
+        df["Label"] = 0
+
+        for i in range(0, len(df["Label"])):
+            df.loc[i, ('Label')] = i
+
+
+        convert_dict = {
+            'X': 'float',
+            'Y': 'float',
+            'Label': 'category',
+            'Cluster': 'category',
+        }
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+        df['Cluster'] = df['Cluster'].apply(str)
+
+        return Dataset('Label', df,
+                       'cat_hard_task_2', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'X': {
+                'text': 'X',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'Y': {
+                'text': "Y",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            'Cluster': {
+                'text': "Cluster",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            }
+        })
+
+
+    @staticmethod
+    def load_cat_hard_task_3() -> 'Dataset':
+        df = pd.read_csv('data/cat_hard_task_3.csv')
+
+
+        df["Label"] = 0
+
+        for i in range(0, len(df["Label"])):
+            df.loc[i, ('Label')] = i
+
+
+        convert_dict = {
+            'X': 'float',
+            'Y': 'float',
+            'Label': 'category',
+            'Cluster': 'category',
+        }
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+        df['Cluster'] = df['Cluster'].apply(str)
+
+        return Dataset('Label', df,
+                       'cat_hard_task_3', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'X': {
+                'text': 'X',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'Y': {
+                'text': "Y",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            'Cluster': {
+                'text': "Cluster",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            }
+        })
+
+
+    @staticmethod
+    def load_cat_hard_task_4() -> 'Dataset':
+        df = pd.read_csv('data/cat_hard_task_4.csv')
+
+
+        df["Label"] = 0
+
+        for i in range(0, len(df["Label"])):
+            df.loc[i, ('Label')] = i
+
+
+        convert_dict = {
+            'X': 'float',
+            'Y': 'float',
+            'Label': 'category',
+            'Cluster': 'category',
+        }
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+        df['Cluster'] = df['Cluster'].apply(str)
+
+        return Dataset('Label', df,
+                       'cat_hard_task_4', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'X': {
+                'text': 'X',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'Y': {
+                'text': "Y",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            'Cluster': {
+                'text': "Cluster",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            }
+        })
+
+
+    @staticmethod
+    def load_cat_hard_training_1() -> 'Dataset':
+        df = pd.read_csv('data/cat_hard_training_1.csv')
+
+
+        df["Label"] = 0
+
+        for i in range(0, len(df["Label"])):
+            df.loc[i, ('Label')] = i
+
+
+        convert_dict = {
+            'X': 'float',
+            'Y': 'float',
+            'Label': 'category',
+            'Cluster': 'category',
+        }
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+        df['Cluster'] = df['Cluster'].apply(str)
+
+        return Dataset('Label', df,
+                       'cat_hard_training_1', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'X': {
+                'text': 'X',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'Y': {
+                'text': "Y",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            'Cluster': {
+                'text': "Cluster",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            }
+        })
+
+
+    @staticmethod
+    def load_cat_med_task_1() -> 'Dataset':
+        df = pd.read_csv('data/cat_med_task_1.csv')
+
+
+        df["Label"] = 0
+
+        for i in range(0, len(df["Label"])):
+            df.loc[i, ('Label')] = i
+
+
+        convert_dict = {
+            'X': 'float',
+            'Y': 'float',
+            'Label': 'category',
+            'Cluster': 'category',
+        }
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+        df['Cluster'] = df['Cluster'].apply(str)
+
+        return Dataset('Label', df,
+                       'cat_med_task_1', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'X': {
+                'text': 'X',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'Y': {
+                'text': "Y",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            'Cluster': {
+                'text': "Cluster",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            }
+        })
+
+    @staticmethod
+    def load_cat_med_task_2() -> 'Dataset':
+        df = pd.read_csv('data/cat_med_task_2.csv')
+
+
+        df["Label"] = 0
+
+        for i in range(0, len(df["Label"])):
+            df.loc[i, ('Label')] = i
+
+
+        convert_dict = {
+            'X': 'float',
+            'Y': 'float',
+            'Label': 'category',
+            'Cluster': 'category',
+        }
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+        df['Cluster'] = df['Cluster'].apply(str)
+
+        return Dataset('Label', df,
+                       'cat_med_task_2', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'X': {
+                'text': 'X',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'Y': {
+                'text': "Y",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            'Cluster': {
+                'text': "Cluster",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            }
+        })
+
+
+    @staticmethod
+    def load_cat_med_task_3() -> 'Dataset':
+        df = pd.read_csv('data/cat_med_task_3.csv')
+
+
+        df["Label"] = 0
+
+        for i in range(0, len(df["Label"])):
+            df.loc[i, ('Label')] = i
+
+
+        convert_dict = {
+            'X': 'float',
+            'Y': 'float',
+            'Label': 'category',
+            'Cluster': 'category',
+        }
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+        df['Cluster'] = df['Cluster'].apply(str)
+
+        return Dataset('Label', df,
+                       'cat_med_task_3', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'X': {
+                'text': 'X',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'Y': {
+                'text': "Y",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            'Cluster': {
+                'text': "Cluster",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            }
+        })
+
+
+    @staticmethod
+    def load_cat_med_task_4() -> 'Dataset':
+        df = pd.read_csv('data/cat_med_task_4.csv')
+
+
+        df["Label"] = 0
+
+        for i in range(0, len(df["Label"])):
+            df.loc[i, ('Label')] = i
+
+
+        convert_dict = {
+            'X': 'float',
+            'Y': 'float',
+            'Label': 'category',
+            'Cluster': 'category',
+        }
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+        df['Cluster'] = df['Cluster'].apply(str)
+
+        return Dataset('Label', df,
+                       'cat_med_task_4', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'X': {
+                'text': 'X',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'Y': {
+                'text': "Y",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            'Cluster': {
+                'text': "Cluster",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            }
+        })
+
+
+    @staticmethod
+    def load_cat_med_training_1() -> 'Dataset':
+        df = pd.read_csv('data/cat_med_training_1.csv')
+
+
+        df["Label"] = 0
+
+        for i in range(0, len(df["Label"])):
+            df.loc[i, ('Label')] = i
+
+
+        convert_dict = {
+            'X': 'float',
+            'Y': 'float',
+            'Label': 'category',
+            'Cluster': 'category',
+        }
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+        df['Cluster'] = df['Cluster'].apply(str)
+
+        return Dataset('Label', df,
+                       'cat_med_training_1', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'X': {
+                'text': 'X',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'Y': {
+                'text': "Y",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            'Cluster': {
+                'text': "Cluster",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            }
+        })
+
+    @staticmethod
+    def load_lin_easy_task_1() -> 'Dataset':
+        df = pd.read_csv('data/lin_easy_task_1.csv')
+
+        df['cat'] = '1'
+
+        df["Label"] = 0
+
+        for i in range(0, len(df["Label"])):
+            df.loc[i, ('Label')] = i
+
+
+        convert_dict = {
+            'X': 'float',
+            'Y': 'float',
+            'Label': 'category',
+            'cat': 'category'
+        }
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+
+        return Dataset('Label', df,
+                       'lin_easy_task_1', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'X': {
+                'text': 'X',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'Y': {
+                'text': "Y",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            "cat": {
+                'text': "cat",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            }
+        })
+
+    @staticmethod
+    def load_lin_easy_training_1() -> 'Dataset':
+        df = pd.read_csv('data/lin_easy_training_1.csv')
+
+        df['cat'] = '1'
+
+        df["Label"] = 0
+
+        for i in range(0, len(df["Label"])):
+            df.loc[i, ('Label')] = i
+
+
+        convert_dict = {
+            'X': 'float',
+            'Y': 'float',
+            'Label': 'category',
+            'cat': 'category'
+        }
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+
+        return Dataset('Label', df,
+                       'lin_easy_training_1', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'X': {
+                'text': 'X',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'Y': {
+                'text': "Y",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            "cat": {
+                'text': "cat",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            }
+        })
+
+
+    @staticmethod
+    def load_lin_easy_task_2() -> 'Dataset':
+        df = pd.read_csv('data/lin_easy_task_2.csv')
+
+        df['cat'] = '1'
+
+        df["Label"] = 0
+
+        for i in range(0, len(df["Label"])):
+            df.loc[i, ('Label')] = i
+
+
+        convert_dict = {
+            'X': 'float',
+            'Y': 'float',
+            'Label': 'category',
+            'cat': 'category'
+        }
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+
+        return Dataset('Label', df,
+                       'lin_easy_task_2', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'X': {
+                'text': 'X',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'Y': {
+                'text': "Y",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            "cat": {
+                'text': "cat",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            }
+        })
+
+    @staticmethod
+    def load_lin_hard_task_1() -> 'Dataset':
+        df = pd.read_csv('data/lin_hard_task_1.csv')
+
+        df['cat'] = '1'
+
+        df["Label"] = 0
+
+        for i in range(0, len(df["Label"])):
+            df.loc[i, ('Label')] = i
+
+
+        convert_dict = {
+            'X': 'float',
+            'Y': 'float',
+            'Label': 'category',
+            'cat': 'category'
+        }
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+
+        return Dataset('Label', df,
+                       'lin_hard_task_1', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'X': {
+                'text': 'X',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'Y': {
+                'text': "Y",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            "cat": {
+                'text': "cat",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            }
+        })
+
+    @staticmethod
+    def load_lin_hard_task_2() -> 'Dataset':
+        df = pd.read_csv('data/lin_hard_task_2.csv')
+
+        df['cat'] = '1'
+
+        df["Label"] = 0
+
+        for i in range(0, len(df["Label"])):
+            df.loc[i, ('Label')] = i
+
+
+        convert_dict = {
+            'X': 'float',
+            'Y': 'float',
+            'Label': 'category',
+            'cat': 'category'
+        }
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+
+        return Dataset('Label', df,
+                       'lin_hard_task_2', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'X': {
+                'text': 'X',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'Y': {
+                'text': "Y",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            "cat": {
+                'text': "cat",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            }
+        })
+
+    @staticmethod
+    def load_lin_hard_training_1() -> 'Dataset':
+        df = pd.read_csv('data/lin_hard_training_1.csv')
+
+        df['cat'] = '1'
+
+        df["Label"] = 0
+
+        for i in range(0, len(df["Label"])):
+            df.loc[i, ('Label')] = i
+
+
+        convert_dict = {
+            'X': 'float',
+            'Y': 'float',
+            'Label': 'category',
+            'cat': 'category'
+        }
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+
+        return Dataset('Label', df,
+                       'lin_hard_training_1', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'X': {
+                'text': 'X',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'Y': {
+                'text': "Y",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            "cat": {
+                'text': "cat",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            }
+        })
+
+    @staticmethod
+    def load_lin_med_task_1() -> 'Dataset':
+        df = pd.read_csv('data/lin_med_task_1.csv')
+
+        df['cat'] = '1'
+
+        df["Label"] = 0
+
+        for i in range(0, len(df["Label"])):
+            df.loc[i, ('Label')] = i
+
+
+        convert_dict = {
+            'X': 'float',
+            'Y': 'float',
+            'Label': 'category',
+            'cat': 'category'
+        }
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+
+        return Dataset('Label', df,
+                       'lin_med_task_1', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'X': {
+                'text': 'X',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'Y': {
+                'text': "Y",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            "cat": {
+                'text': "cat",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            }
+        })
+
+    @staticmethod
+    def load_lin_med_task_2() -> 'Dataset':
+        df = pd.read_csv('data/lin_med_task_2.csv')
+
+        df['cat'] = '1'
+
+        df["Label"] = 0
+
+        for i in range(0, len(df["Label"])):
+            df.loc[i, ('Label')] = i
+
+
+        convert_dict = {
+            'X': 'float',
+            'Y': 'float',
+            'Label': 'category',
+            'cat': 'category'
+        }
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+
+        return Dataset('Label', df,
+                       'lin_med_task_2', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'X': {
+                'text': 'X',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'Y': {
+                'text': "Y",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            "cat": {
+                'text': "cat",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            }
+        })
+
+    @staticmethod
+    def load_lin_med_training_1() -> 'Dataset':
+        df = pd.read_csv('data/lin_med_training_1.csv')
+
+        df['cat'] = '1'
+
+        df["Label"] = 0
+
+        for i in range(0, len(df["Label"])):
+            df.loc[i, ('Label')] = i
+
+
+        convert_dict = {
+            'X': 'float',
+            'Y': 'float',
+            'Label': 'category',
+            'cat': 'category'
+        }
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+
+        return Dataset('Label', df,
+                       'lin_med_training_1', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'X': {
+                'text': 'X',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'Y': {
+                'text': "Y",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            "cat": {
+                'text': "cat",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            }
+        })
+
+    @staticmethod
+    def load_out_easy_training_1() -> 'Dataset':
+        df = pd.read_csv('data/out_easy_training_1.csv')
+
+        df['cat'] = '1'
+        df["Label"] = 0
+
+        for i in range(0, len(df["Label"])):
+            df.loc[i, ('Label')] = i
+
+
+        convert_dict = {
+            'X': 'float',
+            'Y': 'float',
+            'Label': 'category',
+            'cat': 'category'
+        }
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+
+        return Dataset('Label', df,
+                       'out_easy_training_1', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'X': {
+                'text': 'X',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'Y': {
+                'text': "Y",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            "cat": {
+                'text': "cat",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            },
+        })
+
+    @staticmethod
+    def load_out_easy_task_1() -> 'Dataset':
+        df = pd.read_csv('data/out_easy_task_1.csv')
+
+        df['cat'] = '1'
+        df["Label"] = 0
+
+        for i in range(0, len(df["Label"])):
+            df.loc[i, ('Label')] = i
+
+
+        convert_dict = {
+            'X': 'float',
+            'Y': 'float',
+            'Label': 'category',
+            'cat': 'category'
+        }
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+
+        return Dataset('Label', df,
+                       'out_easy_task_1', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'X': {
+                'text': 'X',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'Y': {
+                'text': "Y",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            "cat": {
+                'text': "cat",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            },
+        })
+
+    @staticmethod
+    def load_out_easy_task_2() -> 'Dataset':
+        df = pd.read_csv('data/out_easy_task_2.csv')
+
+        df['cat'] = '1'
+        df["Label"] = 0
+
+        for i in range(0, len(df["Label"])):
+            df.loc[i, ('Label')] = i
+
+
+        convert_dict = {
+            'X': 'float',
+            'Y': 'float',
+            'Label': 'category',
+            'cat': 'category'
+        }
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+
+        return Dataset('Label', df,
+                       'out_easy_task_2', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'X': {
+                'text': 'X',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'Y': {
+                'text': "Y",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            "cat": {
+                'text': "cat",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            },
+        })
+    @staticmethod
+    def load_out_easy_task_3() -> 'Dataset':
+        df = pd.read_csv('data/out_easy_task_3.csv')
+
+        df['cat'] = '1'
+        df["Label"] = 0
+
+        for i in range(0, len(df["Label"])):
+            df.loc[i, ('Label')] = i
+
+
+        convert_dict = {
+            'X': 'float',
+            'Y': 'float',
+            'Label': 'category',
+            'cat': 'category'
+        }
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+
+        return Dataset('Label', df,
+                       'out_easy_task_3', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'X': {
+                'text': 'X',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'Y': {
+                'text': "Y",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            "cat": {
+                'text': "cat",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            },
+        })
+
+    @staticmethod
+    def load_out_easy_task_4() -> 'Dataset':
+        df = pd.read_csv('data/out_easy_task_4.csv')
+
+        df['cat'] = '1'
+        df["Label"] = 0
+
+        for i in range(0, len(df["Label"])):
+            df.loc[i, ('Label')] = i
+
+
+        convert_dict = {
+            'X': 'float',
+            'Y': 'float',
+            'Label': 'category',
+            'cat': 'category'
+        }
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+
+        return Dataset('Label', df,
+                       'out_easy_task_4', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'X': {
+                'text': 'X',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'Y': {
+                'text': "Y",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            "cat": {
+                'text': "cat",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            },
+        })
+
+    @staticmethod
+    def load_out_easy_task_5() -> 'Dataset':
+        df = pd.read_csv('data/out_easy_task_5.csv')
+
+        df['cat'] = '1'
+        df["Label"] = 0
+
+        for i in range(0, len(df["Label"])):
+            df.loc[i, ('Label')] = i
+
+
+        convert_dict = {
+            'X': 'float',
+            'Y': 'float',
+            'Label': 'category',
+            'cat': 'category'
+        }
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+
+        return Dataset('Label', df,
+                       'out_easy_task_5', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'X': {
+                'text': 'X',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'Y': {
+                'text': "Y",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            "cat": {
+                'text': "cat",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            },
+        })
+
+
+
+    @staticmethod
+    def load_out_med_training_1() -> 'Dataset':
+        df = pd.read_csv('data/out_med_training_1.csv')
+
+        df['cat'] = '1'
+        df["Label"] = 0
+
+        for i in range(0, len(df["Label"])):
+            df.loc[i, ('Label')] = i
+
+
+        convert_dict = {
+            'X': 'float',
+            'Y': 'float',
+            'Label': 'category',
+            'cat': 'category'
+        }
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+
+        return Dataset('Label', df,
+                       'out_med_training_1', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'X': {
+                'text': 'X',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'Y': {
+                'text': "Y",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            "cat": {
+                'text': "cat",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            },
+        })
+
+    @staticmethod
+    def load_out_med_task_1() -> 'Dataset':
+        df = pd.read_csv('data/out_med_task_1.csv')
+
+        df['cat'] = '1'
+        df["Label"] = 0
+
+        for i in range(0, len(df["Label"])):
+            df.loc[i, ('Label')] = i
+
+
+        convert_dict = {
+            'X': 'float',
+            'Y': 'float',
+            'Label': 'category',
+            'cat': 'category'
+        }
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+
+        return Dataset('Label', df,
+                       'out_med_task_1', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'X': {
+                'text': 'X',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'Y': {
+                'text': "Y",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            "cat": {
+                'text': "cat",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            },
+        })
+
+    @staticmethod
+    def load_out_med_task_2() -> 'Dataset':
+        df = pd.read_csv('data/out_med_task_2.csv')
+
+        df['cat'] = '1'
+        df["Label"] = 0
+
+        for i in range(0, len(df["Label"])):
+            df.loc[i, ('Label')] = i
+
+
+        convert_dict = {
+            'X': 'float',
+            'Y': 'float',
+            'Label': 'category',
+            'cat': 'category'
+        }
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+
+        return Dataset('Label', df,
+                       'out_med_task_2', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'X': {
+                'text': 'X',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'Y': {
+                'text': "Y",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            "cat": {
+                'text': "cat",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            },
+        })
+    @staticmethod
+    def load_out_med_task_3() -> 'Dataset':
+        df = pd.read_csv('data/out_med_task_3.csv')
+
+        df['cat'] = '1'
+        df["Label"] = 0
+
+        for i in range(0, len(df["Label"])):
+            df.loc[i, ('Label')] = i
+
+
+        convert_dict = {
+            'X': 'float',
+            'Y': 'float',
+            'Label': 'category',
+            'cat': 'category'
+        }
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+
+        return Dataset('Label', df,
+                       'out_med_task_3', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'X': {
+                'text': 'X',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'Y': {
+                'text': "Y",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            "cat": {
+                'text': "cat",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            },
+        })
+
+    @staticmethod
+    def load_out_med_task_4() -> 'Dataset':
+        df = pd.read_csv('data/out_med_task_4.csv')
+
+        df['cat'] = '1'
+        df["Label"] = 0
+
+        for i in range(0, len(df["Label"])):
+            df.loc[i, ('Label')] = i
+
+
+        convert_dict = {
+            'X': 'float',
+            'Y': 'float',
+            'Label': 'category',
+            'cat': 'category'
+        }
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+
+        return Dataset('Label', df,
+                       'out_med_task_4', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'X': {
+                'text': 'X',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'Y': {
+                'text': "Y",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            "cat": {
+                'text': "cat",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            },
+        })
+
+    @staticmethod
+    def load_out_med_task_5() -> 'Dataset':
+        df = pd.read_csv('data/out_med_task_5.csv')
+
+        df['cat'] = '1'
+        df["Label"] = 0
+
+        for i in range(0, len(df["Label"])):
+            df.loc[i, ('Label')] = i
+
+
+        convert_dict = {
+            'X': 'float',
+            'Y': 'float',
+            'Label': 'category',
+            'cat': 'category'
+        }
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+
+        return Dataset('Label', df,
+                       'out_med_task_5', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'X': {
+                'text': 'X',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'Y': {
+                'text': "Y",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            "cat": {
+                'text': "cat",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            },
+        })
+
+
+
+    @staticmethod
+    def load_out_hard_training_1() -> 'Dataset':
+        df = pd.read_csv('data/out_hard_training_1.csv')
+
+        df['cat'] = '1'
+        df["Label"] = 0
+
+        for i in range(0, len(df["Label"])):
+            df.loc[i, ('Label')] = i
+
+
+        convert_dict = {
+            'X': 'float',
+            'Y': 'float',
+            'Label': 'category',
+            'cat': 'category'
+        }
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+
+        return Dataset('Label', df,
+                       'out_hard_training_1', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'X': {
+                'text': 'X',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'Y': {
+                'text': "Y",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            "cat": {
+                'text': "cat",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            },
+        })
+
+    @staticmethod
+    def load_out_hard_task_1() -> 'Dataset':
+        df = pd.read_csv('data/out_hard_task_1.csv')
+
+        df['cat'] = '1'
+        df["Label"] = 0
+
+        for i in range(0, len(df["Label"])):
+            df.loc[i, ('Label')] = i
+
+
+        convert_dict = {
+            'X': 'float',
+            'Y': 'float',
+            'Label': 'category',
+            'cat': 'category'
+        }
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+
+        return Dataset('Label', df,
+                       'out_hard_task_1', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'X': {
+                'text': 'X',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'Y': {
+                'text': "Y",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            "cat": {
+                'text': "cat",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            },
+        })
+
+    @staticmethod
+    def load_out_hard_task_2() -> 'Dataset':
+        df = pd.read_csv('data/out_hard_task_2.csv')
+
+        df['cat'] = '1'
+        df["Label"] = 0
+
+        for i in range(0, len(df["Label"])):
+            df.loc[i, ('Label')] = i
+
+
+        convert_dict = {
+            'X': 'float',
+            'Y': 'float',
+            'Label': 'category',
+            'cat': 'category'
+        }
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+
+        return Dataset('Label', df,
+                       'out_hard_task_2', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'X': {
+                'text': 'X',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'Y': {
+                'text': "Y",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            "cat": {
+                'text': "cat",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            },
+        })
+    @staticmethod
+    def load_out_hard_task_3() -> 'Dataset':
+        df = pd.read_csv('data/out_hard_task_3.csv')
+
+        df['cat'] = '1'
+        df["Label"] = 0
+
+        for i in range(0, len(df["Label"])):
+            df.loc[i, ('Label')] = i
+
+
+        convert_dict = {
+            'X': 'float',
+            'Y': 'float',
+            'Label': 'category',
+            'cat': 'category'
+        }
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+
+        return Dataset('Label', df,
+                       'out_hard_task_3', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'X': {
+                'text': 'X',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'Y': {
+                'text': "Y",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            "cat": {
+                'text': "cat",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            },
+        })
+
+    @staticmethod
+    def load_out_hard_task_4() -> 'Dataset':
+        df = pd.read_csv('data/out_hard_task_4.csv')
+
+        df['cat'] = '1'
+        df["Label"] = 0
+
+        for i in range(0, len(df["Label"])):
+            df.loc[i, ('Label')] = i
+
+
+        convert_dict = {
+            'X': 'float',
+            'Y': 'float',
+            'Label': 'category',
+            'cat': 'category'
+        }
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+
+        return Dataset('Label', df,
+                       'out_hard_task_4', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'X': {
+                'text': 'X',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'Y': {
+                'text': "Y",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            "cat": {
+                'text': "cat",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            },
+        })
+
+    @staticmethod
+    def load_out_hard_task_5() -> 'Dataset':
+        df = pd.read_csv('data/out_hard_task_5.csv')
+
+        df['cat'] = '1'
+        df["Label"] = 0
+
+        for i in range(0, len(df["Label"])):
+            df.loc[i, ('Label')] = i
+
+
+        convert_dict = {
+            'X': 'float',
+            'Y': 'float',
+            'Label': 'category',
+            'cat': 'category'
+        }
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+
+        return Dataset('Label', df,
+                       'out_hard_task_5', {
+
+            'Label': {
+                'text': 'Label',
+                'unit': 'label',
+                'short': 'A',
+                'type': 'label',
+            },
+            'X': {
+                'text': 'X',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric',
+            },
+            'Y': {
+                'text': "Y",
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            "cat": {
+                'text': "cat",
+                'unit': '',
+                'short': 'D',
+                'type': 'categorical'
+            },
+        })
+
+
+
     @staticmethod
     def load_macro_mito() -> 'Dataset':
         df = pd.read_csv('data/MDAMB231MacrophageInjectedMitoTransfer.csv')
