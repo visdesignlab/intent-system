@@ -50,7 +50,7 @@ const StudyApp = ({ task }: Props) => {
     actions.toggleCategories(category.show, [category.column]);
   }, [data, actions, dataset, plots, category]);
 
-  const isManual = task.taskType === "manual";
+  const isManual = task.manual === "manual";
   const isTraining = task.training === "yes";
   const hasCenter =
     task.type === "cluster" &&
