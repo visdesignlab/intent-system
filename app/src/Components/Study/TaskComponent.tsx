@@ -8,7 +8,7 @@ import { ProvenanceContext, StudyActionContext, TaskConfigContext } from '../../
 import IntentStore from '../../Store/IntentStore';
 import { TaskDescription } from '../../Study/TaskList';
 import { getAllSelections, UserSelections } from '../Predictions/PredictionRowType';
-import { FADE_COMP_IN, FADE_OUT } from '../Styles/MarkStyle';
+import { FADE_OUT, REFERENCE_MARK } from '../Styles/MarkStyle';
 import Feedback from './Feedback';
 
 type Props = {
@@ -54,12 +54,14 @@ const TaskComponent: FC<Props> = ({ taskDesc, store }: Props) => {
             !trainingSubmitted ? (
               <Button
                 content="Submit"
-                disabled={!selections || selections.values.length === 0}
+                // disabled={!selections || selections.values.length === 0}
                 primary
                 onClick={() => {
                   const marks = reference.map(d => `#mark-${d}`).join(",");
                   selectAll(".base-mark").classed(FADE_OUT, true);
-                  selectAll(marks).classed(FADE_COMP_IN, true);
+                  selectAll(marks)
+                    .classed(FADE_OUT, false)
+                    .classed(REFERENCE_MARK, true);
                   setTrainingSubmitted(true);
                 }}
               />

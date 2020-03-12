@@ -1,4 +1,4 @@
-import { style } from "typestyle";
+import { style } from 'typestyle';
 
 const goldenBorder = {
   stroke: "gold",
@@ -83,4 +83,9 @@ export const FADE_OUT_PRED_SELECTION = style({
 
 export const COLOR = style({
   fill: "red !important"
+});
+
+export const REFERENCE_MARK = style({
+  stroke: "black",
+  strokeWidth: "2px"
 });

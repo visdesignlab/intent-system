@@ -46,7 +46,7 @@ export type TaskDescription = {
 const taskList = getTaskFromString();
 
 function getRandom(): number[] {
-  const pointCount = Math.round(Math.random() * 10) + 1;
+  const pointCount = Math.round(Math.random() * 10) * 2 + 1;
   const pointGen = () => Math.round(Math.random() * 100);
 
   const arr = new Array<number>(pointCount).fill(0);
