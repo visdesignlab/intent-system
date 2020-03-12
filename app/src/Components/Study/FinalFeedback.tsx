@@ -1,6 +1,6 @@
-import React from "react";
-import { style } from "typestyle";
-import { Form } from "semantic-ui-react";
+import React from 'react';
+import { Form } from 'semantic-ui-react';
+import { style } from 'typestyle';
 
 const FinalFeedback = () => {
   const scores = [1, 2, 3, 4, 5, 6, 7];

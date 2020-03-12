@@ -1,22 +1,18 @@
-import React, { useState, useEffect, useMemo } from "react";
-import { TaskDescription } from "./Study/TaskList";
-import { Data, loadData } from "./Utils/Dataset";
-import Axios from "axios";
-import { setupProvenance } from "./Store/Provenance";
-import IntentStore from "./Store/IntentStore";
-import { Provider } from "mobx-react";
-import {
-  DataContext,
-  ActionContext,
-  TaskConfigContext,
-  ProvenanceContext
-} from "./Contexts";
-import { style } from "typestyle";
-import Predictions from "./Components/Predictions/Predictions";
-import Visualization from "./Components/Scatterplot/Visualization";
-import Navbar from "./Components/Navbar";
-import getPlotId from "./Utils/PlotIDGen";
-import TaskComponent from "./Components/Study/TaskComponent";
+import Axios from 'axios';
+import { Provider } from 'mobx-react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { style } from 'typestyle';
+
+import Navbar from './Components/Navbar';
+import Predictions from './Components/Predictions/Predictions';
+import Visualization from './Components/Scatterplot/Visualization';
+import TaskComponent from './Components/Study/TaskComponent';
+import { ActionContext, DataContext, ProvenanceContext, TaskConfigContext } from './Contexts';
+import IntentStore from './Store/IntentStore';
+import { setupProvenance } from './Store/Provenance';
+import { TaskDescription } from './Study/TaskList';
+import { Data, loadData } from './Utils/Dataset';
+import getPlotId from './Utils/PlotIDGen';
 
 type Props = {
   task: TaskDescription;
@@ -54,13 +50,23 @@ const StudyApp = ({ task }: Props) => {
     actions.toggleCategories(category.show, [category.column]);
   }, [data, actions, dataset, plots, category]);
 
+  const isManual = task.taskType === "manual";
+  const isTraining = task.training === "yes";
+  const hasCenter =
+    task.type === "cluster" &&
+    task.center !== null &&
+    task.center !== undefined;
+  const hasCategory = task.type === "category" && task.symbol !== "None";
+
   return dataset && data ? (
     <Provider store={store}>
       <DataContext.Provider value={data}>
         <ActionContext.Provider value={actions}>
-          <TaskConfigContext.Provider value={task}>
+          <TaskConfigContext.Provider
+            value={{ task, isManual, isTraining, hasCenter, hasCategory }}
+          >
             <ProvenanceContext.Provider value={() => provenance.graph()}>
-              <div className={layoutStyle(task.taskType === "supported")}>
+              <div className={layoutStyle(!isManual)}>
                 <TaskComponent taskDesc={task} />
                 <div className={visStyle}>
                   <Navbar
@@ -70,8 +76,7 @@ const StudyApp = ({ task }: Props) => {
                   />
                   <Visualization />
                 </div>
-                {task.taskType === "supported" && <Predictions />}
-                {/* <ProvenanceVisualization /> */}
+                {!isManual && <Predictions />}
               </div>
             </ProvenanceContext.Provider>
           </TaskConfigContext.Provider>

@@ -1,14 +1,12 @@
-import React, { FC, useState, useEffect } from "react";
-import { TaskDescription } from "./Study/TaskList";
-import StudyApp from "./StudyApp";
-import {
-  setupStudy,
-  StudyProvenanceControl
-} from "./Store/StudyStore/StudyProvenance";
-import { StudyActionContext } from "./Contexts";
-import { ProvenanceGraph } from "@visdesignlab/provenance-lib-core";
-import { AppConfig } from "./AppConfig";
-import FinalFeedback from "./Components/Study/FinalFeedback";
+import { ProvenanceGraph } from '@visdesignlab/provenance-lib-core';
+import React, { FC, useEffect, useState } from 'react';
+
+import { AppConfig } from './AppConfig';
+import FinalFeedback from './Components/Study/FinalFeedback';
+import { StudyActionContext } from './Contexts';
+import { setupStudy, StudyProvenanceControl } from './Store/StudyStore/StudyProvenance';
+import { TaskDescription } from './Study/TaskList';
+import StudyApp from './StudyApp';
 
 type Props = {
   tasks: TaskDescription[];

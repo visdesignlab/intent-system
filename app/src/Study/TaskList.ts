@@ -1,4 +1,4 @@
-import { getTaskFromString } from "./TaskString";
+import { getTaskFromString } from './TaskString';
 
 export type TaskType = "manual" | "supported";
 
@@ -26,7 +26,7 @@ type Training = "yes" | "no";
 
 type Center = { x: number; y: number };
 
-const temp = getTaskFromString();
+type CategorySymbol = "diamond" | "cross" | "square" | "circle" | "None";
 
 export type TaskDescription = {
   id: string;
@@ -39,6 +39,8 @@ export type TaskDescription = {
   difficulty: Difficulty;
   training: Training;
   center: Center | null;
+  symbol: CategorySymbol;
+  reference: number[];
 };
 
 const taskList = getTaskFromString();
@@ -49,9 +51,17 @@ export function getAllTasks(isCoding: boolean = false): TaskDescription[] {
     .filter(d => d.training === "no")
     .map(d => ({ sort: Math.random(), value: d }))
     .sort((a, b) => a.sort - b.sort)
-    .map(d => d.value);
+    .map(d => d.value)
+    .map(d => ({ ...d, reference: [] } as TaskDescription));
 
-  return [...training, ...tasks].map(d => ({ ...d, taskType: "manual" }));
+  let allTasks = [...training, ...tasks];
+  if (isCoding) {
+    allTasks = allTasks.map(
+      d => ({ ...d, taskType: "manual" } as TaskDescription)
+    );
+  }
+
+  return allTasks;
 }
 
 // const taskList: TaskDescription[] = [

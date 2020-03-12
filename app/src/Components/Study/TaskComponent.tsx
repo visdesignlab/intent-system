@@ -1,15 +1,13 @@
-import React, { FC, useContext, useState } from "react";
-import { Card, Button, Progress } from "semantic-ui-react";
-import { style } from "typestyle";
-import { StudyActionContext, ProvenanceContext } from "../../Contexts";
-import { inject, observer } from "mobx-react";
-import IntentStore from "../../Store/IntentStore";
-import {
-  UserSelections,
-  getAllSelections
-} from "../Predictions/PredictionRowType";
-import Feedback from "./Feedback";
-import { TaskDescription } from "../../Study/TaskList";
+import { inject, observer } from 'mobx-react';
+import React, { FC, useContext, useState } from 'react';
+import { Button, Card, Progress } from 'semantic-ui-react';
+import { style } from 'typestyle';
+
+import { ProvenanceContext, StudyActionContext, TaskConfigContext } from '../../Contexts';
+import IntentStore from '../../Store/IntentStore';
+import { TaskDescription } from '../../Study/TaskList';
+import { getAllSelections, UserSelections } from '../Predictions/PredictionRowType';
+import Feedback from './Feedback';
 
 type Props = {
   store?: IntentStore;
@@ -18,7 +16,8 @@ type Props = {
 
 const TaskComponent: FC<Props> = ({ taskDesc, store }: Props) => {
   const { plots, multiBrushBehaviour } = store!;
-  const { task, taskType } = taskDesc;
+  const { task } = taskDesc;
+  const { isManual = false } = useContext(TaskConfigContext);
   const [selections, setSelections] = useState<UserSelections | null>(null);
 
   const computedSelections = getAllSelections(
@@ -41,7 +40,7 @@ const TaskComponent: FC<Props> = ({ taskDesc, store }: Props) => {
             Task {currentTaskNumber}
           </Card.Header>
           <Card.Meta className={`${whiteText} ${metaSize}`}>
-            {taskType === "supported" ? "Guided" : "Manual"}
+            {!isManual ? "Guided" : "Manual"}
           </Card.Meta>
         </Card.Content>
         <Card.Content className={questionTextSize}>{task}</Card.Content>
@@ -62,7 +61,7 @@ const TaskComponent: FC<Props> = ({ taskDesc, store }: Props) => {
           <Progress
             value={currentTaskNumber}
             total={totalTasks}
-            progress="ratio"
+            progress="value"
             color="blue"
           />
         </Card.Content>

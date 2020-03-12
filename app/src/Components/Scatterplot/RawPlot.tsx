@@ -1,48 +1,25 @@
-import React, {
-  FC,
-  useContext,
-  useState,
-  useEffect,
-  useMemo,
-  memo
-} from "react";
-import IntentStore from "../../Store/IntentStore";
-import translate from "../../Utils/Translate";
-import {
-  ScaleLinear,
-  select,
-  axisBottom,
-  axisLeft,
-  quadtree,
-  selectAll
-} from "d3";
-import { Plot, ExtendedBrush } from "../../Store/IntentState";
-import BrushComponent from "../Brush/Components/BrushComponent";
-import { BrushCollection, Brush, BrushAffectType } from "../Brush/Types/Brush";
-import { inject, observer } from "mobx-react";
-import _ from "lodash";
-import MarkType from "./MarkType";
-import Mark from "./Mark";
-import XAxis from "./XAxis";
-import YAxis from "./YAxis";
-import { Popup, Header, Table, Label } from "semantic-ui-react";
-import {
-  UserSelections,
-  extendPrediction
-} from "../Predictions/PredictionRowType";
-import {
-  FADE_OUT_PRED_SELECTION,
-  COLOR,
-  REGULAR_MARK_STYLE,
-  FADE_SELECTION_IN,
-  FADE_OUT,
-  FADE_COMP_IN
-} from "../Styles/MarkStyle";
-import FreeFormBrush from "./Freeform/FreeFormBrush";
-import { ActionContext, DataContext, TaskConfigContext } from "../../Contexts";
-import { Prediction } from "../../contract";
-import hoverable from "../UtilComponent/hoverable";
-import { ColumnMap } from "../../Utils/Dataset";
+import { axisBottom, axisLeft, quadtree, ScaleLinear, select, selectAll } from 'd3';
+import _ from 'lodash';
+import { inject, observer } from 'mobx-react';
+import React, { FC, memo, useContext, useEffect, useMemo, useState } from 'react';
+import { Header, Label, Popup, Table } from 'semantic-ui-react';
+
+import { ActionContext, DataContext, TaskConfigContext } from '../../Contexts';
+import { Prediction } from '../../contract';
+import { ExtendedBrush, Plot } from '../../Store/IntentState';
+import IntentStore from '../../Store/IntentStore';
+import { ColumnMap } from '../../Utils/Dataset';
+import translate from '../../Utils/Translate';
+import BrushComponent from '../Brush/Components/BrushComponent';
+import { Brush, BrushAffectType, BrushCollection } from '../Brush/Types/Brush';
+import { extendPrediction, UserSelections } from '../Predictions/PredictionRowType';
+import { COLOR, FADE_COMP_IN, FADE_OUT, FADE_OUT_PRED_SELECTION, REGULAR_MARK_STYLE } from '../Styles/MarkStyle';
+import hoverable from '../UtilComponent/hoverable';
+import FreeFormBrush from './Freeform/FreeFormBrush';
+import Mark from './Mark';
+import MarkType from './MarkType';
+import XAxis from './XAxis';
+import YAxis from './YAxis';
 
 export interface Props {
   store?: IntentStore;
@@ -85,8 +62,8 @@ const RawPlot: FC<Props> = ({
 
   const [mousePos, setMousePos] = useState<MousePosition | null>(null);
 
-  const task = useContext(TaskConfigContext);
-  const { taskType = "supported" } = task || {};
+  const taskConfig = useContext(TaskConfigContext);
+  const { task, isManual = false } = taskConfig || {};
   let freeFormPoints: number[] = [];
 
   const rawData = useContext(DataContext);
@@ -471,7 +448,7 @@ const RawPlot: FC<Props> = ({
         </g>
         {plotComponent}
       </g>
-      {taskType === "supported" && (
+      {!isManual && (
         <Popup
           basic
           open={mousePos !== null}

@@ -1,16 +1,13 @@
-import React, { FC, useState, memo, useContext } from "react";
-import IntentStore from "../../Store/IntentStore";
-import { inject, observer } from "mobx-react";
-import AnnotationBox from "./AnnotationBox";
-import { style } from "typestyle";
-import PredictionList from "./PredictionList";
-import Selections from "./Selections";
-import {
-  getAllSelections,
-  UserSelections,
-  defaultSelections
-} from "./PredictionRowType";
-import { TaskConfigContext } from "../../Contexts";
+import { inject, observer } from 'mobx-react';
+import React, { FC, memo, useContext, useState } from 'react';
+import { style } from 'typestyle';
+
+import { TaskConfigContext } from '../../Contexts';
+import IntentStore from '../../Store/IntentStore';
+import AnnotationBox from './AnnotationBox';
+import PredictionList from './PredictionList';
+import { defaultSelections, getAllSelections, UserSelections } from './PredictionRowType';
+import Selections from './Selections';
 
 interface Props {
   store?: IntentStore;
@@ -19,9 +16,9 @@ interface Props {
 const Predictions: FC<Props> = ({ store }: Props) => {
   const { annotation, plots, multiBrushBehaviour } = store!;
 
-  const task = useContext(TaskConfigContext);
+  const taskConfig = useContext(TaskConfigContext);
 
-  const { taskType = "supported" } = task || {};
+  const { task, isManual = false } = taskConfig || {};
 
   const [selections, setSelections] = useState<UserSelections>(
     defaultSelections
@@ -37,11 +34,9 @@ const Predictions: FC<Props> = ({ store }: Props) => {
   }
 
   return (
-    <div className={predictionColumnStyle(taskType === "supported")}>
+    <div className={predictionColumnStyle(!isManual)}>
       {!task && <AnnotationBox annotation={annotation} />}
-      {taskType === "supported" && (
-        <PredictionList selections={selections.values} />
-      )}
+      {!isManual && <PredictionList selections={selections.values} />}
       {!task && <Selections selections={selections} />}
     </div>
   );

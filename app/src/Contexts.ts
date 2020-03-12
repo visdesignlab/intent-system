@@ -1,8 +1,9 @@
-import { createContext } from "react";
-import { ProvenanceActions } from "./Store/Provenance";
-import { Data } from "./Utils/Dataset";
-import { TaskDescription } from "./Study/TaskList";
-import { ProvenanceGraph } from "@visdesignlab/provenance-lib-core";
+import { ProvenanceGraph } from '@visdesignlab/provenance-lib-core';
+import { createContext } from 'react';
+
+import { ProvenanceActions } from './Store/Provenance';
+import { TaskDescription } from './Study/TaskList';
+import { Data } from './Utils/Dataset';
 
 export type StudyCommands = {
   endTask: (
@@ -16,9 +17,17 @@ export type StudyCommands = {
   totalTasks: number;
 };
 
+export type TaskConfig = {
+  task: TaskDescription;
+  isManual: boolean;
+  isTraining: boolean;
+  hasCenter: boolean;
+  hasCategory: boolean;
+};
+
 const DataContext = createContext<Data>(null as any);
 const ActionContext = createContext<ProvenanceActions>(null as any);
-const TaskConfigContext = createContext<TaskDescription>(null as any);
+const TaskConfigContext = createContext<TaskConfig>(null as any);
 const StudyActionContext = createContext<StudyCommands>(null as any);
 const ProvenanceContext = createContext<() => ProvenanceGraph<any, any, any>>(
   null as any
