@@ -26,7 +26,85 @@ datasets = {
     'MDAMB231MacrophageMacroControl': Dataset.load_macro_control(),
     'MDAMB231MacrophageMacroMito': Dataset.load_macro_mito(),
     'nba_raptor': Dataset.load_nba_raptor_data(),
-    'sp500': Dataset.load_sp500_data()
+    'sp500': Dataset.load_sp500_data(),
+
+
+    'sky_easy_training_1': Dataset.load_sky_easy_training_1(),
+    'sky_easy_task_1': Dataset.load_sky_easy_task_1(),
+    'sky_easy_task_2': Dataset.load_sky_easy_task_2(),
+    'sky_med_training_1': Dataset.load_sky_med_training_1(),
+    'sky_med_task_2': Dataset.load_sky_med_task_1(),
+    'sky_med_task_2': Dataset.load_sky_med_task_2(),
+    'sky_hard_training_1': Dataset.load_sky_hard_training_1(),
+    'sky_hard_task_1': Dataset.load_sky_hard_task_1(),
+    'sky_hard_task_2': Dataset.load_sky_hard_task_2(),
+
+    'quad_easy_training_1': Dataset.load_cluster_easy_training_1(),
+    'quad_easy_task_1': Dataset.load_quad_easy_task_1(),
+    'quad_easy_task_2': Dataset.load_quad_easy_task_2(),
+    'quad_med_training_1': Dataset.load_quad_med_training_1(),
+    'quad_med_task_2': Dataset.load_quad_med_task_1(),
+    'quad_med_task_2': Dataset.load_quad_med_task_2(),
+    'quad_hard_training_1': Dataset.load_quad_hard_training_1(),
+    'quad_hard_task_1': Dataset.load_quad_hard_task_1(),
+    'quad_hard_task_2': Dataset.load_quad_hard_task_2(),
+
+
+    'out_easy_task_1': Dataset.load_out_easy_task_1(),
+    'out_easy_task_2': Dataset.load_out_easy_task_2(),
+    'out_easy_task_3': Dataset.load_out_easy_task_3(),
+    'out_easy_task_4': Dataset.load_out_easy_task_4(),
+    'out_easy_task_5': Dataset.load_out_easy_task_5(),
+    'out_med_task_1': Dataset.load_out_med_task_1(),
+    'out_med_task_2': Dataset.load_out_med_task_2(),
+    'out_med_task_3': Dataset.load_out_med_task_3(),
+    'out_med_task_4': Dataset.load_out_med_task_4(),
+    'out_med_task_5': Dataset.load_out_med_task_5(),
+    'out_hard_task_1': Dataset.load_out_hard_task_1(),
+    'out_hard_task_2': Dataset.load_out_hard_task_2(),
+    'out_hard_task_3': Dataset.load_out_hard_task_3(),
+    'out_hard_task_4': Dataset.load_out_hard_task_4(),
+    'out_hard_task_5': Dataset.load_out_hard_task_5(),
+    'out_hard_training_1': Dataset.load_out_easy_task_1(),
+    'out_med_training_1': Dataset.load_out_easy_task_1(),
+    'out_easy_training_1': Dataset.load_out_easy_task_1(),
+
+
+    'cluster_easy_training_1': Dataset.load_cluster_easy_training_1(),
+    'cluster_easy_task_1': Dataset.load_cluster_easy_task_1(),
+    'cluster_easy_task_2': Dataset.load_cluster_easy_task_2(),
+    'cluster_med_training_1': Dataset.load_cluster_med_training_1(),
+    'cluster_med_task_2': Dataset.load_cluster_med_task_1(),
+    'cluster_med_task_2': Dataset.load_cluster_med_task_2(),
+    'cluster_hard_training_1': Dataset.load_cluster_hard_training_1(),
+    'cluster_hard_task_1': Dataset.load_cluster_hard_task_1(),
+    'cluster_hard_task_2': Dataset.load_cluster_hard_task_2(),
+
+
+    'cat_easy_training_1': Dataset.load_cat_easy_training_1(),
+    'cat_easy_task_1': Dataset.load_cat_easy_task_1(),
+    'cat_easy_task_2': Dataset.load_cat_easy_task_2(),
+    'cat_med_training_1': Dataset.load_cat_med_training_1(),
+    'cat_med_task_1': Dataset.load_cat_med_task_1(),
+    'cat_med_task_2': Dataset.load_cat_med_task_2(),
+    'cat_med_task_3': Dataset.load_cat_med_task_3(),
+    'cat_med_task_4': Dataset.load_cat_med_task_4(),
+    'cat_hard_training_1': Dataset.load_cat_hard_training_1(),
+    'cat_hard_task_1': Dataset.load_cat_hard_task_1(),
+    'cat_hard_task_2': Dataset.load_cat_hard_task_2(),
+    'cat_hard_task_3': Dataset.load_cat_hard_task_3(),
+    'cat_hard_task_4': Dataset.load_cat_hard_task_4(),
+    'lin_easy_training_1': Dataset.load_lin_easy_training_1(),
+    'lin_easy_task_1': Dataset.load_lin_easy_task_1(),
+    'lin_easy_task_2': Dataset.load_lin_easy_task_2(),
+    'lin_med_training_1': Dataset.load_lin_med_training_1(),
+    'lin_med_task_1': Dataset.load_lin_med_task_1(),
+    'lin_med_task_2': Dataset.load_lin_med_task_2(),
+    'lin_hard_training_1': Dataset.load_lin_hard_training_1(),
+    'lin_hard_task_1': Dataset.load_lin_hard_task_1(),
+    'lin_hard_task_2': Dataset.load_lin_hard_task_2()
+
+
 }
 
 views = Blueprint('views', __name__)
