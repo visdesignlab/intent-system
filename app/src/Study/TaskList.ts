@@ -60,6 +60,13 @@ export function getAllTasks(isCoding: boolean = false) {
   const urlCategory = url.get("taskCategory");
 
   let task: DatasetType = "none";
+  let countString = url.get("count");
+
+  let count = 1000;
+  if (countString) {
+    count = parseInt(countString);
+    if (count === 0) count = count + 1;
+  }
 
   if (urlCategory) {
     if (urlCategory === "lr") task = "linear regression";
@@ -76,7 +83,7 @@ export function getAllTasks(isCoding: boolean = false) {
   let trainingTasks = tl
     .filter(d => d.training === "yes")
     .map(d => ({ ...d, reference: getRandom() } as TaskDescription))
-    .slice(0, 3);
+    .slice(0, count);
 
   let tasks = tl
     .filter(d => d.training === "no")
@@ -84,7 +91,7 @@ export function getAllTasks(isCoding: boolean = false) {
     .sort((a, b) => a.sort - b.sort)
     .map(d => d.value)
     .map(d => ({ ...d, reference: [] } as TaskDescription))
-    .slice(0, 3);
+    .slice(0, count);
 
   if (isCoding) {
     trainingTasks = trainingTasks.map(
