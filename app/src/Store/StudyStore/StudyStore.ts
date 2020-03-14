@@ -1,7 +1,7 @@
 import { observable } from 'mobx';
 
-import { Phase } from './StudyState';
+import { defaultStudyState, Phase } from './StudyState';
 
 export default class StudyStore {
-  @observable phase: Phase = "Passive Training";
+  @observable phase: Phase = defaultStudyState.phase;
 }

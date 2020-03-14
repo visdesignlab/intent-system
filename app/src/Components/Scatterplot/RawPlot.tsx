@@ -178,7 +178,7 @@ const RawPlot: FC<Props> = ({
     }
   }
 
-  const [brushKey, setBrushKey] = useState(Math.random());
+  const [brushKey, setBrushKey] = useState(Math.random);
 
   useEffect(() => {
     const brushCount = Object.keys(brushes).length;

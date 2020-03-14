@@ -4,6 +4,7 @@ import React, { FC } from 'react';
 import FinalFeedback from '../Components/Study/FinalFeedback';
 import { StudyActions } from '../Store/StudyStore/StudyProvenance';
 import StudyStore from '../Store/StudyStore/StudyStore';
+import PassiveTraining from './PassiveTraining';
 import { TaskDescription } from './TaskList';
 import Tasks from './Tasks';
 import Training from './Training';
@@ -23,9 +24,12 @@ const StudyParent: FC<Props> = ({
 }: Props) => {
   const { phase } = studyStore!;
 
+  console.log(phase);
+
   return (function() {
     switch (phase) {
       case "Passive Training":
+        return <PassiveTraining actions={actions} />;
       case "Training Tasks":
         return <Training actions={actions} tasks={trainingTasks} />;
       case "Tasks":

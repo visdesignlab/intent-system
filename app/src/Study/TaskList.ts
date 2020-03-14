@@ -1,3 +1,4 @@
+import { url } from '..';
 import { getTaskFromString } from './TaskString';
 
 export type TaskType = "manual" | "supported";
@@ -8,7 +9,8 @@ type DatasetType =
   | "linear regression"
   | "quadratic regression"
   | "category"
-  | "skyline";
+  | "skyline"
+  | "none";
 
 type Difficulty = "easy" | "medium" | "hard";
 
@@ -55,7 +57,21 @@ function getRandom(): number[] {
 }
 
 export function getAllTasks(isCoding: boolean = false) {
-  const tl = taskList.filter(d => d.type !== "category");
+  const urlCategory = url.get("taskCategory");
+
+  let task: DatasetType = "none";
+
+  if (urlCategory) {
+    if (urlCategory === "lr") task = "linear regression";
+    else if (urlCategory === "qr") task = "quadratic regression";
+    else task = urlCategory as any;
+  }
+
+  let tl = taskList.filter(d => d.type !== "category");
+
+  if (task !== "none") {
+    tl = tl.filter(d => d.type === task);
+  }
 
   let trainingTasks = tl
     .filter(d => d.training === "yes")

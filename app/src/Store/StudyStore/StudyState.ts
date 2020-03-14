@@ -33,7 +33,7 @@ export const defaultStudyState = {
   confidenceScore: -1,
   difficultyScore: -1,
   feedback: "",
-  phase: "Passive Training" as Phase
+  phase: "Training Tasks" as Phase
 };
 
 export function stringifyGraph(

@@ -4,7 +4,7 @@ import React, { FC, useContext, useState } from 'react';
 import { Button, Card, Icon, Message, Progress } from 'semantic-ui-react';
 import { style } from 'typestyle';
 
-import { ProvenanceContext, StudyActionContext, TaskConfigContext } from '../../Contexts';
+import { DataContext, ProvenanceContext, StudyActionContext, TaskConfigContext } from '../../Contexts';
 import IntentStore from '../../Store/IntentStore';
 import { TaskDescription } from '../../Study/TaskList';
 import { getAllSelections, UserSelections } from '../Predictions/PredictionRowType';
@@ -26,8 +26,10 @@ const TaskComponent: FC<Props> = ({ taskDesc, store }: Props) => {
     "success" | "error" | "none"
   >("none");
 
+  const data = useContext(DataContext);
+
   const successMessage = (selected: number = 0, actual: number = 0) =>
-    `Well done, you correctly selected ${selected}/${actual} points. The points you missed are shown in green`;
+    `Well done, you correctly selected ${selected}/${actual} points. The points you missed are highlighted`;
 
   const failMessage =
     "You have wrongly selected or have missed a lot of points. Please refine your selection and try again.";
@@ -56,8 +58,22 @@ const TaskComponent: FC<Props> = ({ taskDesc, store }: Props) => {
   }
 
   function isSelectionAcceptable(): boolean {
-    if (selections?.values?.length && selections.values.length > 0) return true;
-    return false;
+    const selectedPoints = selections?.values || [];
+
+    const selArr = data.values.map((_, i) =>
+      selectedPoints.includes(i) ? 1 : 0
+    );
+    const refArr = data.values.map((_, i) => (reference.includes(i) ? 1 : 0));
+
+    if (selArr.length === 0 && refArr.length === 0) return false;
+
+    const intersection = selArr.filter((s, i) => s === refArr[i]);
+
+    const ji =
+      intersection.length /
+      (selArr.length + refArr.length - intersection.length);
+
+    return ji >= 0.1;
   }
 
   return (

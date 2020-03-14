@@ -26,7 +26,7 @@ let config: AppConfig = {
   coding: "no"
 };
 
-const url = new URLSearchParams(window.location.search);
+export const url = new URLSearchParams(window.location.search);
 if (url.toString().length > 0) {
   const mode = url.get("mode");
   const participantId = url.get(PROLIFIC_PID) || config.participantId;
