@@ -3,7 +3,7 @@ import { Form } from 'semantic-ui-react';
 import { style } from 'typestyle';
 
 const FinalFeedback = () => {
-  const scores = [1, 2, 3, 4, 5, 6, 7];
+  // const scores = [1, 2, 3, 4, 5, 6, 7];
 
   return (
     <div className={finalFeedbackStyle}>

@@ -54,26 +54,30 @@ function getRandom(): number[] {
   return arr.map(d => pointGen());
 }
 
-export function getAllTasks(isCoding: boolean = false): TaskDescription[] {
-  const training = taskList
-    .filter(d => d.training === "yes")
-    .map(d => ({ ...d, reference: getRandom() } as TaskDescription));
+export function getAllTasks(isCoding: boolean = false) {
+  const tl = taskList.filter(d => d.type !== "category");
 
-  const tasks = taskList
+  let trainingTasks = tl
+    .filter(d => d.training === "yes")
+    .map(d => ({ ...d, reference: getRandom() } as TaskDescription))
+    .slice(0, 3);
+
+  let tasks = tl
     .filter(d => d.training === "no")
     .map(d => ({ sort: Math.random(), value: d }))
     .sort((a, b) => a.sort - b.sort)
     .map(d => d.value)
-    .map(d => ({ ...d, reference: [] } as TaskDescription));
+    .map(d => ({ ...d, reference: [] } as TaskDescription))
+    .slice(0, 3);
 
-  let allTasks = [...training, ...tasks];
   if (isCoding) {
-    allTasks = allTasks.map(
+    trainingTasks = trainingTasks.map(
       d => ({ ...d, taskType: "manual" } as TaskDescription)
     );
+    tasks = tasks.map(d => ({ ...d, taskType: "manual" } as TaskDescription));
   }
 
-  return allTasks;
+  return { trainingTasks, tasks };
 }
 
 // const taskList: TaskDescription[] = [

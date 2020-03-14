@@ -1,7 +1,7 @@
 import { selectAll } from 'd3';
 import { inject, observer } from 'mobx-react';
 import React, { FC, useContext, useState } from 'react';
-import { Button, Card, Icon, Progress } from 'semantic-ui-react';
+import { Button, Card, Icon, Message, Progress } from 'semantic-ui-react';
 import { style } from 'typestyle';
 
 import { ProvenanceContext, StudyActionContext, TaskConfigContext } from '../../Contexts';
@@ -22,6 +22,15 @@ const TaskComponent: FC<Props> = ({ taskDesc, store }: Props) => {
   const { isManual = false, isTraining } = useContext(TaskConfigContext);
   const [selections, setSelections] = useState<UserSelections | null>(null);
   const [trainingSubmitted, setTrainingSubmitted] = useState(false);
+  const [messageSubmitted, setMessageSubmitted] = useState<
+    "success" | "error" | "none"
+  >("none");
+
+  const successMessage = (selected: number = 0, actual: number = 0) =>
+    `Well done, you correctly selected ${selected}/${actual} points. The points you missed are shown in green`;
+
+  const failMessage =
+    "You have wrongly selected or have missed a lot of points. Please refine your selection and try again.";
 
   const computedSelections = getAllSelections(
     plots,
@@ -37,6 +46,20 @@ const TaskComponent: FC<Props> = ({ taskDesc, store }: Props) => {
 
   const graph = useContext(ProvenanceContext);
 
+  function highlightMissing() {
+    const marks = reference.map(d => `#mark-${d}`).join(",");
+    selectAll(".base-mark").classed(FADE_OUT, true);
+    selectAll(marks)
+      .classed(FADE_OUT, false)
+      .classed(REFERENCE_MARK, true);
+    setTrainingSubmitted(true);
+  }
+
+  function isSelectionAcceptable(): boolean {
+    if (selections?.values?.length && selections.values.length > 0) return true;
+    return false;
+  }
+
   return (
     <div className={taskStyle}>
       <Card>
@@ -49,6 +72,23 @@ const TaskComponent: FC<Props> = ({ taskDesc, store }: Props) => {
           </Card.Meta>
         </Card.Content>
         <Card.Content className={questionTextSize}>{task}</Card.Content>
+        {messageSubmitted !== "none" && (
+          <Card.Content>
+            <Message
+              positive={messageSubmitted === "success"}
+              negative={messageSubmitted === "error"}
+            >
+              {messageSubmitted === "success" && (
+                <Message.Content>
+                  {successMessage(selections?.values?.length || 0, 10)}
+                </Message.Content>
+              )}
+              {messageSubmitted === "error" && (
+                <Message.Content>{failMessage}</Message.Content>
+              )}
+            </Message>
+          </Card.Content>
+        )}
         <Card.Content textAlign="center">
           {isTraining ? (
             !trainingSubmitted ? (
@@ -57,12 +97,12 @@ const TaskComponent: FC<Props> = ({ taskDesc, store }: Props) => {
                 // disabled={!selections || selections.values.length === 0}
                 primary
                 onClick={() => {
-                  const marks = reference.map(d => `#mark-${d}`).join(",");
-                  selectAll(".base-mark").classed(FADE_OUT, true);
-                  selectAll(marks)
-                    .classed(FADE_OUT, false)
-                    .classed(REFERENCE_MARK, true);
-                  setTrainingSubmitted(true);
+                  if (isSelectionAcceptable()) {
+                    setMessageSubmitted("success");
+                    highlightMissing();
+                  } else {
+                    setMessageSubmitted("error");
+                  }
                 }}
               />
             ) : (

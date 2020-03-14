@@ -63,7 +63,7 @@ const RawPlot: FC<Props> = ({
   const [mousePos, setMousePos] = useState<MousePosition | null>(null);
 
   const taskConfig = useContext(TaskConfigContext);
-  const { task, isManual = false } = taskConfig || {};
+  const { isManual = false } = taskConfig || {};
   let freeFormPoints: number[] = [];
 
   const rawData = useContext(DataContext);

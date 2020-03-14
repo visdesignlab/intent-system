@@ -1,12 +1,14 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import App from "./App";
-import * as serviceWorker from "./serviceWorker";
-import "semantic-ui-css/semantic.min.css";
-import whyDidYouRender from "@welldone-software/why-did-you-render";
-import { AppConfig, Mode } from "./AppConfig";
-import StudyMode from "./StudyMode";
-import { getAllTasks } from "./Study/TaskList";
+import 'semantic-ui-css/semantic.min.css';
+
+import whyDidYouRender from '@welldone-software/why-did-you-render';
+import React from 'react';
+import ReactDOM from 'react-dom';
+
+import App from './App';
+import { AppConfig, Mode } from './AppConfig';
+import * as serviceWorker from './serviceWorker';
+import { getAllTasks } from './Study/TaskList';
+import StudyMode from './StudyMode';
 
 const PROLIFIC_PID = "PROLIFIC_PID";
 const STUDY_ID = "STUDY_ID";
@@ -41,12 +43,13 @@ if (url.toString().length > 0) {
     coding
   };
 }
-
 const isStudy = config.mode === "study";
+
+const { trainingTasks, tasks } = getAllTasks(config.coding === "yes");
 
 ReactDOM.render(
   isStudy ? (
-    <StudyMode tasks={getAllTasks(config.coding === "yes")} config={config} />
+    <StudyMode tasks={tasks} trainingTasks={trainingTasks} config={config} />
   ) : (
     <App />
   ),

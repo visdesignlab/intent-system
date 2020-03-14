@@ -1,16 +1,17 @@
-import React, { useState, useEffect, useMemo, FC } from "react";
-import { Provider } from "mobx-react";
-import { setupProvenance } from "./Store/Provenance";
-import IntentStore from "./Store/IntentStore";
-import Navbar from "./Components/Navbar";
-import axios from "axios";
-import { style } from "typestyle";
-import { Datasets, Dataset, loadData, Data } from "./Utils/Dataset";
-import ProvenanceVisualization from "./Components/ProvenanceVisualization";
-import Visualization from "./Components/Scatterplot/Visualization";
-import getPlotId from "./Utils/PlotIDGen";
-import Predictions from "./Components/Predictions/Predictions";
-import { ActionContext, DataContext } from "./Contexts";
+import axios from 'axios';
+import { Provider } from 'mobx-react';
+import React, { FC, useEffect, useMemo, useState } from 'react';
+import { style } from 'typestyle';
+
+import Navbar from './Components/Navbar';
+import Predictions from './Components/Predictions/Predictions';
+import ProvenanceVisualization from './Components/ProvenanceVisualization';
+import Visualization from './Components/Scatterplot/Visualization';
+import { ActionContext, DataContext } from './Contexts';
+import IntentStore from './Store/IntentStore';
+import { setupProvenance } from './Store/Provenance';
+import { Data, Dataset, Datasets, loadData } from './Utils/Dataset';
+import getPlotId from './Utils/PlotIDGen';
 
 type Props = {};
 
