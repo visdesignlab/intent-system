@@ -1,18 +1,16 @@
 import { axisBottom, axisLeft, quadtree, ScaleLinear, select, selectAll } from 'd3';
 import _ from 'lodash';
 import { inject, observer } from 'mobx-react';
-import React, { FC, memo, useContext, useEffect, useMemo, useState } from 'react';
+import React, { FC, memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Header, Label, Popup, Table } from 'semantic-ui-react';
 
 import { ActionContext, DataContext, TaskConfigContext } from '../../Contexts';
-import { Prediction } from '../../contract';
 import { ExtendedBrush, Plot } from '../../Store/IntentState';
 import IntentStore from '../../Store/IntentStore';
-import { ColumnMap } from '../../Utils/Dataset';
 import translate from '../../Utils/Translate';
 import BrushComponent from '../Brush/Components/BrushComponent';
 import { Brush, BrushAffectType, BrushCollection } from '../Brush/Types/Brush';
-import { extendPrediction, UserSelections } from '../Predictions/PredictionRowType';
+import { extendPrediction, PredictionRowType, UserSelections } from '../Predictions/PredictionRowType';
 import { COLOR, FADE_COMP_IN, FADE_OUT, FADE_OUT_PRED_SELECTION, REGULAR_MARK_STYLE } from '../Styles/MarkStyle';
 import hoverable from '../UtilComponent/hoverable';
 import FreeFormBrush from './Freeform/FreeFormBrush';
@@ -38,6 +36,8 @@ export type MousePosition = {
   y: number;
 };
 
+const emptyFreeform: number[] = [];
+
 const RawPlot: FC<Props> = ({
   store,
   plot,
@@ -59,12 +59,13 @@ const RawPlot: FC<Props> = ({
     brushType
   } = store!;
   const { selectedPoints, brushes } = plot;
+  const [topThree, setTopThree] = useState<PredictionRowType[]>([]);
 
   const [mousePos, setMousePos] = useState<MousePosition | null>(null);
 
   const taskConfig = useContext(TaskConfigContext);
   const { isManual = false } = taskConfig || {};
-  let freeFormPoints: number[] = [];
+  const freeFromRef = useRef<number[]>(emptyFreeform);
 
   const rawData = useContext(DataContext);
 
@@ -225,27 +226,14 @@ const RawPlot: FC<Props> = ({
 
   const { predictions } = predictionSet;
 
-  const predictionString = JSON.stringify(predictions);
-  const selectionString = JSON.stringify(selections);
-  const colMapString = JSON.stringify(columnMap);
+  const topThreeMemoized = predictions
+    .map(p => extendPrediction(p, selections.values, columnMap))
+    .filter(d => d.type !== "Range" && d.type !== "Simplified Range")
+    .sort((a, b) => b.similarity - a.similarity);
 
-  const topThree = useMemo(() => {
-    const preds: Prediction[] = JSON.parse(predictionString);
-    const selections: UserSelections = JSON.parse(selectionString);
-    const columnMap: ColumnMap = JSON.parse(colMapString);
-
-    if (preds.length > 3) {
-      return preds
-        .map(p => extendPrediction(p, selections.values, columnMap))
-        .filter(d => d.type !== "Range" && d.type !== "Simplified Range")
-        .sort((a, b) => b.similarity - a.similarity)
-        .slice(0, 3);
-    }
-    return preds
-      .map(p => extendPrediction(p, selections.values, columnMap))
-      .filter(d => d.type !== "Range" && d.type !== "Simplified Range")
-      .sort((a, b) => b.similarity - a.similarity);
-  }, [predictionString, selectionString, colMapString]);
+  if (JSON.stringify(topThree) !== JSON.stringify(topThreeMemoized)) {
+    setTopThree(topThreeMemoized);
+  }
 
   const selectedPred = predictions.find(p => p.intent === selectedPrediction);
 
@@ -379,54 +367,80 @@ const RawPlot: FC<Props> = ({
     return Math.pow(Math.pow(x - x1, 2) + Math.pow(y - y1, 2), 0.5);
   }
 
-  function parentFunc(x: number, y: number, r: number) {
-    return function(node: any, x1: number, y1: number, x2: number, y2: number) {
-      const ctnx = x - r <= x1 && x + r >= x2;
-      const ctny = y - r <= y1 && y + r >= y2;
-      const interx1 = r + x < x2 && r + x > x1;
-      const interx2 = x - r > x1 && x - r < x2;
-      const intery1 = y - r > y1 && y - r < y2;
-      const intery2 = y + r < y2 && y + r > y1;
+  const parentFunc = useCallback(
+    (x: number, y: number, r: number) => {
+      return function(
+        node: any,
+        x1: number,
+        y1: number,
+        x2: number,
+        y2: number
+      ) {
+        const ctnx = x - r <= x1 && x + r >= x2;
+        const ctny = y - r <= y1 && y + r >= y2;
+        const interx1 = r + x < x2 && r + x > x1;
+        const interx2 = x - r > x1 && x - r < x2;
+        const intery1 = y - r > y1 && y - r < y2;
+        const intery2 = y + r < y2 && y + r > y1;
 
-      if (!((interx1 || interx2) && (intery1 || intery2)) && !(ctnx || ctny))
-        return;
-      const { data } = node!;
-      if (data) {
-        const { x: x1, y: y1 } = data;
-        const ptr = radius(x, y, x1, y1);
-        if (ptr <= r) {
-          const idx = mappedData[`${x1}-${y1}`];
-          if (idx >= 0) {
-            const marks = selectAll(`#mark-${idx}`);
-            if (!marks.classed(REGULAR_MARK_STYLE)) return;
+        if (!((interx1 || interx2) && (intery1 || intery2)) && !(ctnx || ctny))
+          return;
+        const { data } = node!;
+        if (data) {
+          const { x: x1, y: y1 } = data;
+          const ptr = radius(x, y, x1, y1);
+          if (ptr <= r) {
+            const idx = mappedData[`${x1}-${y1}`];
+            if (idx >= 0) {
+              const marks = selectAll(`#mark-${idx}`);
+              if (!marks.classed(REGULAR_MARK_STYLE)) return;
 
-            marks.classed(COLOR, true);
-            if (!freeFormPoints.includes(idx)) freeFormPoints.push(idx);
+              marks.classed(COLOR, true);
+              if (!freeFromRef.current.includes(idx))
+                freeFromRef.current.push(idx);
+            }
           }
         }
+      };
+    },
+    [mappedData]
+  );
+
+  const onBrushStart = useCallback(() => {
+    freeFromRef.current = emptyFreeform;
+  }, []);
+
+  const onBrush = useCallback(
+    (x: number, y: number, radius: number) => {
+      const func = parentFunc(x, y, radius);
+      quad.visit(func);
+    },
+    [quad, parentFunc]
+  );
+
+  const onBrushEnd = useCallback(
+    (mousePos?: MousePosition) => {
+      if (freeFromRef.current.length === 0) return;
+      actions.addPointSelection(plot, freeFromRef.current);
+      freeFromRef.current = emptyFreeform;
+      if (mousePos) {
+        setMousePos(mousePos);
       }
-    };
-  }
+    },
+    [actions, plot]
+  );
+
+  const extents = useMemo(() => {
+    return { left: 0, top: 0, right: width, bottom: height };
+  }, [height, width]);
 
   const freeFormBrushComponent = (
     <FreeFormBrush
-      extents={{ left: 0, top: 0, right: width, bottom: height }}
+      extents={extents}
       extentPadding={10}
-      onBrushStart={() => {
-        freeFormPoints = [];
-      }}
-      onBrush={(x: number, y: number, radius) => {
-        const func = parentFunc(x, y, radius);
-        quad.visit(func);
-      }}
-      onBrushEnd={(mousePos?: MousePosition) => {
-        if (freeFormPoints.length === 0) return;
-        actions.addPointSelection(plot, freeFormPoints);
-        freeFormPoints = [];
-        if (mousePos) {
-          setMousePos(mousePos);
-        }
-      }}
+      onBrushStart={onBrushStart}
+      onBrush={onBrush}
+      onBrushEnd={onBrushEnd}
     />
   );
 

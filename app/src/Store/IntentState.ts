@@ -1,6 +1,6 @@
-import { Dataset } from "../Utils/Dataset";
-import { Brush } from "../Components/Brush/Types/Brush";
-import { InteractionHistory, Prediction } from "../contract";
+import { Brush } from '../Components/Brush/Types/Brush';
+import { InteractionHistory, Prediction } from '../contract';
+import { Dataset } from '../Utils/Dataset';
 
 export type MultiBrushBehaviour = "Union" | "Intersection";
 
@@ -43,7 +43,7 @@ export const defaultState: IntentState = {
   categoryColumn: "",
   plots: [],
   interactionHistory: [],
-  brushType: "Rectangular",
+  brushType: "Freeform",
   lockedPrediction: null as any,
-  brushSize: "None"
+  brushSize: "20"
 };

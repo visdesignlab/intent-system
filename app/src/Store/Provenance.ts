@@ -1,40 +1,29 @@
+import { Extra, initProvenance, isStateNode, NodeID, Provenance, StateNode } from '@visdesignlab/provenance-lib-core';
+import axios from 'axios';
+
+import { MultiBrushBehavior, Prediction, PredictionRequest, PredictionSet } from '../contract';
+import { Dataset } from '../Utils/Dataset';
 import {
-  initProvenance,
-  Provenance,
-  NodeID,
-  Extra,
-  isStateNode,
-  StateNode
-} from "@visdesignlab/provenance-lib-core";
-import {
+  BrushSize,
+  BrushType,
   defaultState,
+  ExtendedBrush,
+  ExtendedBrushCollection,
   IntentState,
   MultiBrushBehaviour,
   Plot,
-  ExtendedBrushCollection,
   Plots,
-  ExtendedBrush,
-  BrushType,
-  BrushSize
-} from "./IntentState";
-import IntentStore from "./IntentStore";
-import { Dataset } from "../Utils/Dataset";
-import {
-  PredictionSet,
-  MultiBrushBehavior,
-  PredictionRequest,
-  Prediction
-} from "../contract";
-import axios from "axios";
+} from './IntentState';
+import IntentStore from './IntentStore';
 import {
   addDummyInteraction,
   addPlotInteraction,
   addPointSelectionInteraction,
-  removePointSelectionInteraction,
   brushInteraction,
   removeBrushInteraction,
-  removePlotInteraction
-} from "./ProvenanceHelpers";
+  removePlotInteraction,
+  removePointSelectionInteraction,
+} from './ProvenanceHelpers';
 
 export type IntentEvents =
   | "Load Dataset"
@@ -171,6 +160,7 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
   }
 
   function addPointSelection(plot: Plot, points: number[]) {
+    if (points.length === 0) return;
     provenance.applyAction(
       `Add Point Selection`,
       (state: IntentState) => {
