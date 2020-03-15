@@ -24,8 +24,6 @@ const StudyParent: FC<Props> = ({
 }: Props) => {
   const { phase } = studyStore!;
 
-  console.log(phase);
-
   return (function() {
     switch (phase) {
       case "Passive Training":

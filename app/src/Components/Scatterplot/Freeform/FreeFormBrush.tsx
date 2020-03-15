@@ -1,12 +1,13 @@
-import React, { FC, createRef, useReducer } from "react";
-import IntentStore from "../../../Store/IntentStore";
-import { inject, observer } from "mobx-react";
-import { BrushableRegion } from "../../Brush/Types/BrushableRegion";
-import translate from "../../../Utils/Translate";
-import { select } from "d3";
-import { style } from "typestyle";
-import { union_color } from "../../Styles/MarkStyle";
-import { MousePosition } from "../RawPlot";
+import { select } from 'd3';
+import { inject, observer } from 'mobx-react';
+import React, { createRef, FC, useReducer, useState } from 'react';
+import { style } from 'typestyle';
+
+import IntentStore from '../../../Store/IntentStore';
+import translate from '../../../Utils/Translate';
+import { BrushableRegion } from '../../Brush/Types/BrushableRegion';
+import { union_color } from '../../Styles/MarkStyle';
+import { MousePosition } from '../RawPlot';
 
 type BrushStartHandler = () => void;
 type BrushMoveHandler = (x: number, y: number, radius: number) => void;
@@ -20,41 +21,6 @@ type Props = {
   onBrush?: BrushMoveHandler;
   onBrushEnd?: BrushEndHandler;
 };
-
-type LocalState = typeof initialState;
-
-const initialState = {
-  mouseDown: false,
-  mousePosition: {
-    x: -1,
-    y: -1
-  }
-};
-
-type Action =
-  | { type: "mousedown"; mouseDown: boolean }
-  | { type: "mouseposition"; mousePosition: { x: number; y: number } }
-  | {
-      type: "all";
-      mouseDown: boolean;
-      mousePosition: { x: number; y: number };
-    };
-
-function reducer(state: LocalState, action: Action): LocalState {
-  switch (action.type) {
-    case "mousedown":
-      const { mouseDown } = action;
-      return { ...state, mouseDown };
-    case "mouseposition":
-      const { mousePosition } = action;
-      return { ...state, mousePosition };
-    case "all":
-      const { mouseDown: md, mousePosition: mp } = action;
-      return { mouseDown: md, mousePosition: mp };
-    default:
-      throw new Error("Lol");
-  }
-}
 
 const FreeFormBrush: FC<Props> = ({
   extents,
@@ -71,7 +37,7 @@ const FreeFormBrush: FC<Props> = ({
 
   const radius = parseInt(brushSize) || 20;
 
-  const [{ mouseDown }, dispatch] = useReducer(reducer, initialState);
+  const [mouseDown, setMouseDown] = useState(false);
 
   const [height, width] = [
     Math.abs(bottom + extentPadding - (top - extentPadding)),
@@ -79,10 +45,7 @@ const FreeFormBrush: FC<Props> = ({
   ];
 
   function handleMouseDown() {
-    dispatch({
-      type: "mousedown",
-      mouseDown: true
-    });
+    setMouseDown(true);
 
     if (onBrushStart) {
       onBrushStart();
@@ -94,11 +57,7 @@ const FreeFormBrush: FC<Props> = ({
   ) {
     const target = event.currentTarget.getBoundingClientRect();
     const [x, y] = [event.clientX - target.left, event.clientY - target.top];
-
-    dispatch({
-      type: "mousedown",
-      mouseDown: false
-    });
+    setMouseDown(false);
 
     if (onBrushEnd) {
       onBrushEnd({ x, y });
