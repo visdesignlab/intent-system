@@ -64,7 +64,8 @@ const RawPlot: FC<Props> = ({
   const [mousePos, setMousePos] = useState<MousePosition | null>(null);
 
   const taskConfig = useContext(TaskConfigContext);
-  const { isManual = false } = taskConfig || {};
+  const { isManual = false, task } = taskConfig || {};
+  const { center } = task || {};
   const freeFromRef = useRef<number[]>(emptyFreeform);
 
   const rawData = useContext(DataContext);
@@ -353,6 +354,12 @@ const RawPlot: FC<Props> = ({
 
   const plotComponent = (
     <g style={{ pointerEvents: mouseDown ? "none" : "all" }}>
+      {center && (
+        <g transform={translate(xScale(center.x), yScale(center.y))}>
+          <line stroke="red" strokeWidth="4" x1="-15" x2="15" />
+          <line stroke="red" strokeWidth="4" y1="-15" y2="15" />
+        </g>
+      )}
       <g transform={translate(0, height)} style={{ pointerEvents: "none" }}>
         <XAxis width={width} scale={xScale} dimension={columnMap[plot.x]} />
       </g>

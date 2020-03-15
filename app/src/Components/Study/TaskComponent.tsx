@@ -18,7 +18,7 @@ type Props = {
 
 const TaskComponent: FC<Props> = ({ taskDesc, store }: Props) => {
   const { plots, multiBrushBehaviour } = store!;
-  const { task, reference } = taskDesc;
+  const { task, reference = [], ground = [] } = taskDesc;
   const { isManual = false, isTraining } = useContext(TaskConfigContext);
   const [selections, setSelections] = useState<UserSelections | null>(null);
   const [trainingSubmitted, setTrainingSubmitted] = useState(false);
@@ -49,7 +49,11 @@ const TaskComponent: FC<Props> = ({ taskDesc, store }: Props) => {
   const graph = useContext(ProvenanceContext);
 
   function highlightMissing() {
-    const marks = reference.map(d => `#mark-${d}`).join(",");
+    let marks = "";
+    if (reference.length > 0)
+      marks = reference.map(d => `#mark-${d}`).join(",");
+    else if (ground.length > 0) marks = ground.map(d => `#mark-${d}`).join(",");
+
     selectAll(".base-mark").classed(FADE_OUT, true);
     selectAll(marks)
       .classed(FADE_OUT, false)

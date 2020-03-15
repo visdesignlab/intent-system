@@ -42,6 +42,7 @@ export type TaskDescription = {
   training: Training;
   center: Center | null;
   symbol: CategorySymbol;
+  ground: number[];
   reference: number[];
 };
 
@@ -80,17 +81,13 @@ export function getAllTasks(isCoding: boolean = false) {
     tl = tl.filter(d => d.type === task);
   }
 
-  let trainingTasks = tl
-    .filter(d => d.training === "yes")
-    .map(d => ({ ...d, reference: getRandom() } as TaskDescription))
-    .slice(0, count);
+  let trainingTasks = tl.filter(d => d.training === "yes").slice(0, count);
 
   let tasks = tl
     .filter(d => d.training === "no")
     .map(d => ({ sort: Math.random(), value: d }))
     .sort((a, b) => a.sort - b.sort)
     .map(d => d.value)
-    .map(d => ({ ...d, reference: [] } as TaskDescription))
     .slice(0, count);
 
   if (isCoding) {

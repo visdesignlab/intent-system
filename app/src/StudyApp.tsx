@@ -58,6 +58,8 @@ const StudyApp = ({ task }: Props) => {
     task.center !== undefined;
   const hasCategory = task.type === "category" && task.symbol !== "None";
 
+  console.log(task);
+
   return dataset && data ? (
     <Provider store={store}>
       <DataContext.Provider value={data}>
