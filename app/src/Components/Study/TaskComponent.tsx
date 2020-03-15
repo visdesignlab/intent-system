@@ -76,6 +76,19 @@ const TaskComponent: FC<Props> = ({ taskDesc, store }: Props) => {
     return ji >= 0.1;
   }
 
+  function formatTask(task: string) {
+    const taskSplit = task.split(".");
+    if (taskSplit.length === 1) return task;
+
+    return (
+      <>
+        {taskSplit.map((d, i) => (
+          <p key={i}>{d}</p>
+        ))}
+      </>
+    );
+  }
+
   return (
     <div className={taskStyle}>
       <Card>
@@ -87,7 +100,9 @@ const TaskComponent: FC<Props> = ({ taskDesc, store }: Props) => {
             {!isManual ? "Guided" : "Manual"}
           </Card.Meta>
         </Card.Content>
-        <Card.Content className={questionTextSize}>{task}</Card.Content>
+        <Card.Content className={questionTextSize}>
+          {formatTask(task)}
+        </Card.Content>
         {messageSubmitted !== "none" && (
           <Card.Content>
             <Message

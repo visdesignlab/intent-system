@@ -1,6 +1,6 @@
 import { select } from 'd3';
 import { inject, observer } from 'mobx-react';
-import React, { createRef, FC, memo, useEffect, useReducer, useRef, useState } from 'react';
+import React, { createRef, FC, memo, useEffect, useState } from 'react';
 import { style } from 'typestyle';
 
 import IntentStore from '../../../Store/IntentStore';
