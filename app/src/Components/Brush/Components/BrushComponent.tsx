@@ -1,10 +1,10 @@
-import React, { FC, useRef, useState, useEffect } from "react";
+import React, { createRef, FC, useEffect, useRef, useState } from 'react';
 
-import { Brush, BrushAffectType, BrushCollection } from "../Types/Brush";
-import { BrushableRegion } from "../Types/BrushableRegion";
-import { BrushResizeType } from "../Types/BrushResizeEnum";
-import SingleBrushComponent from "./SingleBrushComponent";
-import { MousePosition } from "../../Scatterplot/RawPlot";
+import { MousePosition } from '../../Scatterplot/RawPlot';
+import { Brush, BrushAffectType, BrushCollection } from '../Types/Brush';
+import { BrushableRegion } from '../Types/BrushableRegion';
+import { BrushResizeType } from '../Types/BrushResizeEnum';
+import SingleBrushComponent from './SingleBrushComponent';
 
 interface Props {
   extents: BrushableRegion;
@@ -31,6 +31,8 @@ const BrushComponent: FC<Props> = ({
   switchOff = true
 }: Props) => {
   if (!extentPadding) extentPadding = 0;
+
+  const layerRef = createRef<SVGRectElement>();
 
   const { top, left, right, bottom } = extents;
   const [height, width] = [
@@ -278,6 +280,7 @@ const BrushComponent: FC<Props> = ({
 
   const brushOverlay = (
     <rect
+      ref={layerRef}
       height={height}
       width={width}
       fill="none"
