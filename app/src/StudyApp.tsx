@@ -39,6 +39,7 @@ const StudyApp = ({ task }: Props) => {
     if (!data) return;
     actions.setDataset({ key: dataset, name: data.name });
     plots.forEach(plot => {
+      console.log(JSON.parse(JSON.stringify(plot)));
       actions.addPlot({
         id: getPlotId(),
         x: plot.x,
