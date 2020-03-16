@@ -18,7 +18,7 @@ type Props = {
 
 const TaskComponent: FC<Props> = ({ taskDesc, store }: Props) => {
   const { plots, multiBrushBehaviour } = store!;
-  const { task, reference = [], ground = [] } = taskDesc;
+  const { reference = [], ground = [] } = taskDesc;
   const { isManual = false, isTraining } = useContext(TaskConfigContext);
   const [selections, setSelections] = useState<UserSelections | null>(null);
   const [trainingSubmitted, setTrainingSubmitted] = useState(false);
