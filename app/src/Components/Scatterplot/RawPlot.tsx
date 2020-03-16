@@ -229,7 +229,12 @@ const RawPlot: FC<Props> = ({
 
   const topThreeMemoized = predictions
     .map(p => extendPrediction(p, selections.values, columnMap))
-    .filter(d => d.type !== "Range" && d.type !== "Simplified Range")
+    .filter(
+      d =>
+        d.type !== "Range" &&
+        d.type !== "Simplified Range" &&
+        d.type !== "Category"
+    )
     .sort((a, b) => b.similarity - a.similarity)
     .slice(0, 3);
 
