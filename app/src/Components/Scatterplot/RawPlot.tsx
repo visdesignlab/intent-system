@@ -414,9 +414,14 @@ const RawPlot: FC<Props> = ({
     [mappedData]
   );
 
-  const onBrushStart = useCallback(() => {
-    freeFromRef.current = emptyFreeform;
-  }, []);
+  const onBrushStart = useCallback(
+    (x: number, y: number, radius: number) => {
+      freeFromRef.current = emptyFreeform;
+      const func = parentFunc(x, y, radius);
+      quad.visit(func);
+    },
+    [quad, parentFunc]
+  );
 
   const onBrush = useCallback(
     (x: number, y: number, radius: number) => {

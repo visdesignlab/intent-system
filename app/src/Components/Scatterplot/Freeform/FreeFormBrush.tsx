@@ -9,7 +9,7 @@ import { BrushableRegion } from '../../Brush/Types/BrushableRegion';
 import { union_color } from '../../Styles/MarkStyle';
 import { MousePosition } from '../RawPlot';
 
-type BrushStartHandler = () => void;
+type BrushStartHandler = (x: number, y: number, radius: number) => void;
 type BrushMoveHandler = (x: number, y: number, radius: number) => void;
 type BrushEndHandler = (mousePos?: MousePosition) => void;
 
@@ -45,12 +45,17 @@ const FreeFormBrush: FC<Props> = ({
     Math.abs(left - extentPadding - (right + extentPadding))
   ];
 
-  function handleMouseDown() {
-    setMouseDown(true);
-
-    if (onBrushStart) {
-      onBrushStart();
+  function handleMouseDown(event: React.MouseEvent<SVGElement, MouseEvent>) {
+    const targetNode = layerRef.current;
+    if (targetNode) {
+      const target = targetNode.getBoundingClientRect();
+      const [x, y] = [event.clientX - target.left, event.clientY - target.top];
+      if (onBrushStart) {
+        onBrushStart(x, y, radius);
+      }
     }
+
+    setMouseDown(true);
   }
 
   function handleMouseUp(event: MouseEvent) {
