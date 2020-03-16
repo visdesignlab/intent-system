@@ -424,7 +424,6 @@ const RawPlot: FC<Props> = ({
       freeFromRef.current = [...emptyFreeform];
       const func = parentFunc(x, y, radius);
       quad.visit(func);
-      console.log(freeFromRef.current.length);
     },
     [quad, parentFunc]
   );
@@ -442,7 +441,6 @@ const RawPlot: FC<Props> = ({
       if (freeFromRef.current.length === 0) return;
       actions.addPointSelection(plot, freeFromRef.current);
       freeFromRef.current = [...emptyFreeform];
-      console.log(freeFromRef.current);
       if (mousePos) {
         setMousePos(mousePos);
       }
