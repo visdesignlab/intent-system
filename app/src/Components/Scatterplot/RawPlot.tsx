@@ -495,6 +495,7 @@ const RawPlot: FC<Props> = ({
 
                 return (
                   <SelectionLabel
+                    as="a"
                     configs={[
                       {
                         selector: ".base-mark",
