@@ -66,7 +66,9 @@ export function getAllTasks(isCoding: boolean = false) {
     else task = urlCategory as any;
   }
 
-  let tl = taskList.filter(d => d.type !== "category");
+  let tl = taskList
+    .filter(d => d.type !== "category")
+    .map(d => ({ ...d, manual: "supported" } as TaskDescription));
 
   if (task !== "none") {
     tl = tl.filter(d => d.type === task);

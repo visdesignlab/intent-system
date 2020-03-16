@@ -66,7 +66,7 @@ const RawPlot: FC<Props> = ({
   const taskConfig = useContext(TaskConfigContext);
   const { isManual = false, task } = taskConfig || {};
   const { center } = task || {};
-  const freeFromRef = useRef<number[]>(emptyFreeform);
+  const freeFromRef = useRef<number[]>([...emptyFreeform]);
 
   const rawData = useContext(DataContext);
 
@@ -421,9 +421,10 @@ const RawPlot: FC<Props> = ({
 
   const onBrushStart = useCallback(
     (x: number, y: number, radius: number) => {
-      freeFromRef.current = emptyFreeform;
+      freeFromRef.current = [...emptyFreeform];
       const func = parentFunc(x, y, radius);
       quad.visit(func);
+      console.log(freeFromRef.current.length);
     },
     [quad, parentFunc]
   );
@@ -440,7 +441,8 @@ const RawPlot: FC<Props> = ({
     (mousePos?: MousePosition) => {
       if (freeFromRef.current.length === 0) return;
       actions.addPointSelection(plot, freeFromRef.current);
-      freeFromRef.current = emptyFreeform;
+      freeFromRef.current = [...emptyFreeform];
+      console.log(freeFromRef.current);
       if (mousePos) {
         setMousePos(mousePos);
       }
