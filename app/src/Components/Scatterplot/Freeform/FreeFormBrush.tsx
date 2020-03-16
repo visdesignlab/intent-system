@@ -1,14 +1,15 @@
-import React, { FC, createRef, useReducer } from "react";
-import IntentStore from "../../../Store/IntentStore";
-import { inject, observer } from "mobx-react";
-import { BrushableRegion } from "../../Brush/Types/BrushableRegion";
-import translate from "../../../Utils/Translate";
-import { select } from "d3";
-import { style } from "typestyle";
-import { union_color } from "../../Styles/MarkStyle";
-import { MousePosition } from "../RawPlot";
+import { select } from 'd3';
+import { inject, observer } from 'mobx-react';
+import React, { createRef, FC, memo, useEffect, useState } from 'react';
+import { style } from 'typestyle';
 
-type BrushStartHandler = () => void;
+import IntentStore from '../../../Store/IntentStore';
+import translate from '../../../Utils/Translate';
+import { BrushableRegion } from '../../Brush/Types/BrushableRegion';
+import { union_color } from '../../Styles/MarkStyle';
+import { MousePosition } from '../RawPlot';
+
+type BrushStartHandler = (x: number, y: number, radius: number) => void;
 type BrushMoveHandler = (x: number, y: number, radius: number) => void;
 type BrushEndHandler = (mousePos?: MousePosition) => void;
 
@@ -21,41 +22,6 @@ type Props = {
   onBrushEnd?: BrushEndHandler;
 };
 
-type LocalState = typeof initialState;
-
-const initialState = {
-  mouseDown: false,
-  mousePosition: {
-    x: -1,
-    y: -1
-  }
-};
-
-type Action =
-  | { type: "mousedown"; mouseDown: boolean }
-  | { type: "mouseposition"; mousePosition: { x: number; y: number } }
-  | {
-      type: "all";
-      mouseDown: boolean;
-      mousePosition: { x: number; y: number };
-    };
-
-function reducer(state: LocalState, action: Action): LocalState {
-  switch (action.type) {
-    case "mousedown":
-      const { mouseDown } = action;
-      return { ...state, mouseDown };
-    case "mouseposition":
-      const { mousePosition } = action;
-      return { ...state, mousePosition };
-    case "all":
-      const { mouseDown: md, mousePosition: mp } = action;
-      return { mouseDown: md, mousePosition: mp };
-    default:
-      throw new Error("Lol");
-  }
-}
-
 const FreeFormBrush: FC<Props> = ({
   extents,
   extentPadding = 0,
@@ -65,50 +31,50 @@ const FreeFormBrush: FC<Props> = ({
   store
 }: Props) => {
   const brushRef = createRef<SVGCircleElement>();
+  const layerRef = createRef<SVGRectElement>();
   const { left = 0, right = 0, top = 0, bottom = 0 } = extents;
 
   const { brushSize } = store!;
 
   const radius = parseInt(brushSize) || 20;
 
-  const [{ mouseDown }, dispatch] = useReducer(reducer, initialState);
+  const [mouseDown, setMouseDown] = useState(false);
 
   const [height, width] = [
     Math.abs(bottom + extentPadding - (top - extentPadding)),
     Math.abs(left - extentPadding - (right + extentPadding))
   ];
 
-  function handleMouseDown() {
-    dispatch({
-      type: "mousedown",
-      mouseDown: true
-    });
-
-    if (onBrushStart) {
-      onBrushStart();
+  function handleMouseDown(event: React.MouseEvent<SVGElement, MouseEvent>) {
+    const targetNode = layerRef.current;
+    if (targetNode) {
+      const target = targetNode.getBoundingClientRect();
+      const [x, y] = [event.clientX - target.left, event.clientY - target.top];
+      if (onBrushStart) {
+        onBrushStart(x, y, radius);
+      }
     }
+
+    setMouseDown(true);
   }
 
-  function handleMouseUpAndLeave(
-    event: React.MouseEvent<SVGCircleElement, MouseEvent>
-  ) {
-    const target = event.currentTarget.getBoundingClientRect();
-    const [x, y] = [event.clientX - target.left, event.clientY - target.top];
-
-    dispatch({
-      type: "mousedown",
-      mouseDown: false
-    });
-
-    if (onBrushEnd) {
-      onBrushEnd({ x, y });
+  function handleMouseUp(event: MouseEvent) {
+    const targetNode = layerRef.current;
+    if (targetNode) {
+      const target = targetNode.getBoundingClientRect();
+      const [x, y] = [event.clientX - target.left, event.clientY - target.top];
+      if (onBrushEnd) {
+        onBrushEnd({ x, y });
+      }
     }
+    setMouseDown(false);
   }
 
-  function handleMove(event: React.MouseEvent<SVGCircleElement, MouseEvent>) {
+  function handleMove(event: MouseEvent) {
     const node = brushRef.current;
-    if (node) {
-      const target = event.currentTarget.getBoundingClientRect();
+    const targetNode = layerRef.current;
+    if (node && targetNode) {
+      const target = targetNode.getBoundingClientRect();
       const [x, y] = [event.clientX - target.left, event.clientY - target.top];
 
       const nodeSelection = select(node);
@@ -125,17 +91,35 @@ const FreeFormBrush: FC<Props> = ({
     }
   }
 
+  function addEvent() {
+    window.addEventListener("mousemove", handleMove);
+    window.addEventListener("mouseup", handleMouseUp);
+  }
+
+  function removeEvent() {
+    window.removeEventListener("mousedown", handleMove);
+    window.removeEventListener("mouseup", handleMouseUp);
+  }
+
+  useEffect(() => {
+    addEvent();
+    return removeEvent;
+  });
+
   const strokeColor = mouseDown ? union_color : "gray";
 
   return (
     <g
       onMouseDown={handleMouseDown}
-      onMouseUp={handleMouseUpAndLeave}
-      onMouseLeave={handleMouseUpAndLeave}
-      onMouseMove={handleMove}
       transform={translate(-extentPadding, -extentPadding)}
     >
-      <rect fill="none" pointerEvents="all" width={width} height={height} />
+      <rect
+        ref={layerRef}
+        fill="none"
+        pointerEvents="all"
+        width={width}
+        height={height}
+      />
       <circle
         className={brushStyle}
         pointerEvents={mouseDown ? "all" : "initial"}
@@ -149,7 +133,9 @@ const FreeFormBrush: FC<Props> = ({
   );
 };
 
-export default inject("store")(observer(FreeFormBrush));
+(FreeFormBrush as any).whyDidYouRender = true;
+
+export default memo(inject("store")(observer(FreeFormBrush)));
 
 const brushStyle = style({
   cursor: "grabbing"

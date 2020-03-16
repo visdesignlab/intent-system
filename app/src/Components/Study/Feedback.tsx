@@ -1,7 +1,8 @@
-import React, { FC, useState, ReactChild, useContext } from "react";
-import { Modal, Header, Form, Button, TextArea } from "semantic-ui-react";
-import { ProvenanceGraph } from "@visdesignlab/provenance-lib-core";
-import { StudyActionContext } from "../../Contexts";
+import { ProvenanceGraph } from '@visdesignlab/provenance-lib-core';
+import React, { FC, ReactChild, useContext, useState } from 'react';
+import { Button, Form, Header, Icon, Modal, TextArea } from 'semantic-ui-react';
+
+import { StudyActionContext } from '../../Contexts';
 
 type Props = {
   selections: number[];
@@ -84,7 +85,8 @@ const Feedback: FC<Props> = ({ selections, graph, trigger }: Props) => {
       <Modal.Actions>
         <Button
           positive
-          content="Next Task"
+          icon
+          labelPosition="right"
           onClick={() => {
             if (confidenceScore && difficultyScore) {
               endTask(
@@ -96,7 +98,10 @@ const Feedback: FC<Props> = ({ selections, graph, trigger }: Props) => {
               );
             }
           }}
-        />
+        >
+          Next
+          <Icon name="triangle right" />
+        </Button>
       </Modal.Actions>
     </Modal>
   );

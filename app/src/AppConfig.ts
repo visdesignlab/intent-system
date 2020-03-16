@@ -6,4 +6,5 @@ export type AppConfig = {
   participantId: string;
   sessionId: string;
   studyId: string;
+  coding: string;
 };

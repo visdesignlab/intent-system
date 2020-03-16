@@ -1,11 +1,12 @@
-import React, { FC, useContext, memo, useState } from "react";
-import IntentStore from "../../Store/IntentStore";
-import { Loader, Segment, Dimmer, Header } from "semantic-ui-react";
-import { inject, observer } from "mobx-react";
-import { style } from "typestyle";
-import PredictionTable from "./PredictionTable";
-import { extendPrediction, PredictionRowType } from "./PredictionRowType";
-import { DataContext, TaskConfigContext } from "../../Contexts";
+import { inject, observer } from 'mobx-react';
+import React, { FC, memo, useContext, useState } from 'react';
+import { Dimmer, Header, Loader, Segment } from 'semantic-ui-react';
+import { style } from 'typestyle';
+
+import { DataContext, TaskConfigContext } from '../../Contexts';
+import IntentStore from '../../Store/IntentStore';
+import { extendPrediction, PredictionRowType } from './PredictionRowType';
+import PredictionTable from './PredictionTable';
 
 interface Props {
   store?: IntentStore;
@@ -23,10 +24,21 @@ const PredictionList: FC<Props> = ({ store, selections }: Props) => {
 
   const [preds, setPreds] = useState<PredictionRowType[]>([]);
 
-  const computedPreds = predictions
+  let computedPreds = predictions
     .map(pred => extendPrediction(pred, selections, columnMap))
-    .filter(d => !task || (d.type !== "Range" && d.type !== "Simplified Range"))
     .sort((a, b) => b.similarity - a.similarity);
+
+  if (task) {
+    computedPreds = computedPreds
+      .filter(
+        d =>
+          !task ||
+          (d.type !== "Range" &&
+            d.type !== "Simplified Range" &&
+            d.type !== "Category")
+      )
+      .sort((a, b) => b.similarity - a.similarity);
+  }
 
   if (JSON.stringify(computedPreds) !== JSON.stringify(preds)) {
     setPreds(computedPreds);

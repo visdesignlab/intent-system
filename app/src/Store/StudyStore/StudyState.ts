@@ -1,9 +1,17 @@
-import { ProvenanceGraph } from "@visdesignlab/provenance-lib-core";
-import { IntentState } from "../IntentState";
-import { IntentEvents, Annotation } from "../Provenance";
-import { AppConfig } from "../../AppConfig";
+import { ProvenanceGraph } from '@visdesignlab/provenance-lib-core';
+
+import { AppConfig } from '../../AppConfig';
+import { IntentState } from '../IntentState';
+import { Annotation, IntentEvents } from '../Provenance';
 
 export type StudyState = typeof defaultStudyState;
+
+export type Phase =
+  | "Passive Training"
+  | "Training Tasks"
+  | "Tasks"
+  | "Final Feedback"
+  | "Complete";
 
 export type TaskEvents =
   | "StudyStart"
@@ -13,7 +21,7 @@ export type TaskEvents =
   | "FocusOut"
   | "FocusIn";
 
-const defaultStudyState = {
+export const defaultStudyState = {
   participantId: "",
   sessionId: "",
   studyId: "",
@@ -24,7 +32,8 @@ const defaultStudyState = {
   graph: "None",
   confidenceScore: -1,
   difficultyScore: -1,
-  feedback: ""
+  feedback: "",
+  phase: "Training Tasks" as Phase
 };
 
 export function stringifyGraph(

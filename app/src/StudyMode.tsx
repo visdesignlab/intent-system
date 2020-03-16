@@ -1,70 +1,42 @@
-import React, { FC, useState, useEffect } from "react";
-import { TaskDescription } from "./Study/TaskList";
-import StudyApp from "./StudyApp";
-import {
-  setupStudy,
-  StudyProvenanceControl
-} from "./Store/StudyStore/StudyProvenance";
-import { StudyActionContext } from "./Contexts";
-import { ProvenanceGraph } from "@visdesignlab/provenance-lib-core";
-import { AppConfig } from "./AppConfig";
+import { ProvenanceGraph } from '@visdesignlab/provenance-lib-core';
+import { Provider } from 'mobx-react';
+import React, { FC, useState } from 'react';
+
+import { AppConfig } from './AppConfig';
+import { setupStudy, StudyProvenanceControl } from './Store/StudyStore/StudyProvenance';
+import StudyStore from './Store/StudyStore/StudyStore';
+import StudyParent from './Study/StudyParent';
+import { TaskDescription } from './Study/TaskList';
 
 type Props = {
+  trainingTasks: TaskDescription[];
   tasks: TaskDescription[];
   config: AppConfig;
 };
 
-const StudyMode: FC<Props> = ({ tasks, config }: Props) => {
-  const [currentTaskId, setCurrentTaskId] = useState<number>(0);
+export type EndTaskFunction = (
+  points: number[],
+  graph: ProvenanceGraph<any, any, any>,
+  confidenceScore: number,
+  difficultyScore: number,
+  feedback: string
+) => void;
+
+const store = new StudyStore();
+
+const StudyMode: FC<Props> = ({ trainingTasks, tasks, config }: Props) => {
   const { studyActions } = useState<StudyProvenanceControl>(() =>
-    setupStudy(config)
+    setupStudy(config, store)
   )[0];
 
-  const studyDone = currentTaskId === -1;
-
-  useEffect(() => {
-    if (currentTaskId !== -1) studyActions.startTask(tasks[currentTaskId].id);
-    else studyActions.completeStudy();
-  }, [currentTaskId, tasks, studyActions]);
-
-  function advanceTask() {
-    const isLast = currentTaskId === tasks.length - 1;
-    if (isLast) setCurrentTaskId(-1);
-    else setCurrentTaskId(currentTaskId + 1);
-  }
-
-  function endTask(
-    points: number[],
-    graph: ProvenanceGraph<any, any, any>,
-    confidenceScore: number,
-    difficultyScore: number,
-    feedback: string
-  ) {
-    studyActions.endTask(
-      tasks[currentTaskId].id,
-      points,
-      graph,
-      confidenceScore,
-      difficultyScore,
-      feedback
-    );
-    advanceTask();
-  }
-
-  if (studyDone) {
-    return <div>Done</div>;
-  }
-
   return (
-    <StudyActionContext.Provider
-      value={{
-        endTask,
-        currentTaskNumber: currentTaskId + 1,
-        totalTasks: tasks.length
-      }}
-    >
-      <StudyApp key={tasks[currentTaskId].task} task={tasks[currentTaskId]} />
-    </StudyActionContext.Provider>
+    <Provider studyStore={store}>
+      <StudyParent
+        actions={studyActions}
+        trainingTasks={trainingTasks}
+        tasks={tasks}
+      />
+    </Provider>
   );
 };
 

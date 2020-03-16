@@ -1,6 +1,6 @@
-import { Dataset } from "../Utils/Dataset";
-import { Brush } from "../Components/Brush/Types/Brush";
-import { InteractionHistory, Prediction } from "../contract";
+import { Brush } from '../Components/Brush/Types/Brush';
+import { InteractionHistory, Prediction } from '../contract';
+import { Dataset } from '../Utils/Dataset';
 
 export type MultiBrushBehaviour = "Union" | "Intersection";
 

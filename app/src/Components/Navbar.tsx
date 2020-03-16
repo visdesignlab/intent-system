@@ -1,18 +1,12 @@
-import React, { useEffect, useContext, useState, memo } from "react";
-import { inject, observer } from "mobx-react";
-import {
-  Button,
-  Dropdown,
-  Menu,
-  Radio,
-  Icon,
-  Container
-} from "semantic-ui-react";
-import { Dataset, Data } from "../Utils/Dataset";
-import { style } from "typestyle";
-import AddPlotMenu from "./AddPlotMenu";
-import { getAllSelections } from "./Predictions/PredictionRowType";
-import { ActionContext, TaskConfigContext } from "../Contexts";
+import { inject, observer } from 'mobx-react';
+import React, { memo, useContext, useEffect, useState } from 'react';
+import { Button, Container, Dropdown, Icon, Menu, Radio } from 'semantic-ui-react';
+import { style } from 'typestyle';
+
+import { ActionContext, TaskConfigContext } from '../Contexts';
+import { Data, Dataset } from '../Utils/Dataset';
+import AddPlotMenu from './AddPlotMenu';
+import { getAllSelections } from './Predictions/PredictionRowType';
 
 interface NavbarProps {
   store?: any;
@@ -38,8 +32,6 @@ function Navbar({ store, data, datasets, setDataset }: NavbarProps) {
 
   const actions = useContext(ActionContext);
   const task = useContext(TaskConfigContext);
-
-  const { enablePlotAddition = true } = task || {};
 
   const [addingPlot, setAddingPlot] = useState(false);
 
@@ -227,7 +219,7 @@ function Navbar({ store, data, datasets, setDataset }: NavbarProps) {
           ) : (
             <>
               {datasets.length > 1 && datasetDropdown}
-              {!task && enablePlotAddition && addPlot}
+              {!task && addPlot}
               {!task && categoricalColumns.length > 0 && showCategoriesToggle}
               {!task && showCategories && showCategoriesDropdown}
               {!task && brushToggle}

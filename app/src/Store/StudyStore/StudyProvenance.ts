@@ -1,15 +1,16 @@
-import {
-  Provenance,
-  initProvenance,
-  ProvenanceGraph
-} from "@visdesignlab/provenance-lib-core";
-import { StudyState, getDefaultStudyState, stringifyGraph } from "./StudyState";
-import { Annotation, IntentEvents } from "../Provenance";
-import { IntentState } from "../IntentState";
-import { AppConfig } from "../../AppConfig";
-import { initializeFirebase } from "./Firebase";
+import { initProvenance, Provenance, ProvenanceGraph } from '@visdesignlab/provenance-lib-core';
 
-export function setupStudy(config: AppConfig): StudyProvenanceControl {
+import { AppConfig } from '../../AppConfig';
+import { IntentState } from '../IntentState';
+import { Annotation, IntentEvents } from '../Provenance';
+import { initializeFirebase } from './Firebase';
+import { getDefaultStudyState, Phase, stringifyGraph, StudyState } from './StudyState';
+import StudyStore from './StudyStore';
+
+export function setupStudy(
+  config: AppConfig,
+  store: StudyStore
+): StudyProvenanceControl {
   const studyProvenance = initProvenance<StudyState, any, any>(
     getDefaultStudyState(config)
   );
@@ -23,6 +24,12 @@ export function setupStudy(config: AppConfig): StudyProvenanceControl {
         .collection(`${participantId}_${studyId}`)
         .doc(sessionId)
         .set(studyProvenance.graph());
+    }
+  });
+
+  studyProvenance.addObserver(["phase"], (state?: StudyState) => {
+    if (state) {
+      store.phase = state.phase;
     }
   });
 
@@ -91,19 +98,36 @@ export function setupStudy(config: AppConfig): StudyProvenanceControl {
     });
   }
 
+  function nextPhase(phase: Phase) {
+    studyProvenance.applyAction(
+      `Start phase: ${phase}`,
+      (state: StudyState) => {
+        state.phase = phase;
+        return state;
+      }
+    );
+  }
+
+  function phase() {
+    return studyProvenance.current().state.phase;
+  }
+
   return {
     studyProvenance,
-    studyActions: { startTask, endTask, completeStudy }
+    studyActions: { startTask, endTask, completeStudy, nextPhase },
+    phase
   };
 }
 
 export interface StudyProvenanceControl {
   studyProvenance: Provenance<StudyState, any, any>;
   studyActions: StudyActions;
+  phase: () => Phase;
 }
 
 export interface StudyActions {
   startTask: (taskId: string) => void;
+  nextPhase: (phase: Phase) => void;
   endTask: (
     taskId: string,
     points: number[],

@@ -6,11 +6,7 @@ import { inject, observer } from "mobx-react";
 import { UserSelections } from "./PredictionRowType";
 import hoverable from "../UtilComponent/hoverable";
 import { FADE_OUT, FADE_IN, FADE_SELECTION_IN } from "../Styles/MarkStyle";
-import {
-  DataContext,
-  StudyActionContext,
-  ProvenanceContext
-} from "../../Contexts";
+import { DataContext } from "../../Contexts";
 
 export interface Props {
   store?: IntentStore;
