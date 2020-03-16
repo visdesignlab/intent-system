@@ -230,7 +230,8 @@ const RawPlot: FC<Props> = ({
   const topThreeMemoized = predictions
     .map(p => extendPrediction(p, selections.values, columnMap))
     .filter(d => d.type !== "Range" && d.type !== "Simplified Range")
-    .sort((a, b) => b.similarity - a.similarity);
+    .sort((a, b) => b.similarity - a.similarity)
+    .slice(0, 3);
 
   if (JSON.stringify(topThree) !== JSON.stringify(topThreeMemoized)) {
     setTopThree(topThreeMemoized);
