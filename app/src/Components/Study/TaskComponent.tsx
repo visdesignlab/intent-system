@@ -80,13 +80,12 @@ const TaskComponent: FC<Props> = ({ taskDesc, store }: Props) => {
     return ji >= 0.1;
   }
 
-  function formatTask(task: string) {
-    const taskSplit = task.split(".");
-    if (taskSplit.length === 1) return task;
-
+  function formatTask(taskDesc: TaskDescription) {
+    if (taskDesc.type !== "skyline") return taskDesc.task;
+    const taskList = taskDesc.task.split("||");
     return (
       <>
-        {taskSplit.map((d, i) => (
+        {taskList.map((d, i) => (
           <p key={i}>{d}</p>
         ))}
       </>
@@ -105,7 +104,7 @@ const TaskComponent: FC<Props> = ({ taskDesc, store }: Props) => {
           </Card.Meta>
         </Card.Content>
         <Card.Content className={questionTextSize}>
-          {formatTask(task)}
+          {formatTask(taskDesc)}
         </Card.Content>
         {messageSubmitted !== "none" && (
           <Card.Content>
