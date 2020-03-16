@@ -63,6 +63,7 @@ function Navbar({ store, data, datasets, setDataset }: NavbarProps) {
         labeled
         button
         text={dataset.name}
+        scrolling
       >
         <Dropdown.Menu>
           {datasets.map(d => (

@@ -634,7 +634,7 @@ class Dataset:
 
         df['cat'] = '1'
 
-        print(df)
+
 
         convert_dict = {
             'Distance': 'float',
@@ -682,7 +682,6 @@ class Dataset:
 
         df['cat'] = '1'
 
-        print(df)
 
         convert_dict = {
             'Distance': 'float',
@@ -730,7 +729,7 @@ class Dataset:
 
         df['cat'] = '1'
 
-        print(df)
+
 
         convert_dict = {
             'Distance': 'float',
@@ -778,7 +777,7 @@ class Dataset:
 
         df['cat'] = '1'
 
-        print(df)
+
 
         convert_dict = {
             'Distance': 'float',
@@ -826,7 +825,6 @@ class Dataset:
 
         df['cat'] = '1'
 
-        print(df)
 
         convert_dict = {
             'Distance': 'float',
@@ -874,7 +872,7 @@ class Dataset:
 
         df['cat'] = '1'
 
-        print(df)
+
 
         convert_dict = {
             'Distance': 'float',
@@ -922,7 +920,7 @@ class Dataset:
 
         df['cat'] = '1'
 
-        print(df)
+
 
         convert_dict = {
             'Distance': 'float',
@@ -970,7 +968,7 @@ class Dataset:
 
         df['cat'] = '1'
 
-        print(df)
+
 
         convert_dict = {
             'Distance': 'float',
@@ -1018,7 +1016,7 @@ class Dataset:
 
         df['cat'] = '1'
 
-        print(df)
+
 
         convert_dict = {
             'Distance': 'float',
