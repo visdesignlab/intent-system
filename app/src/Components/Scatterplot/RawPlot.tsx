@@ -59,14 +59,20 @@ const RawPlot: FC<Props> = ({
     brushType
   } = store!;
   const { selectedPoints, brushes } = plot;
-  const [topThree, setTopThree] = useState<PredictionRowType[]>([]);
+  const initialBrushesString = JSON.stringify(brushes);
 
+  const [topThree, setTopThree] = useState<PredictionRowType[]>([]);
   const [mousePos, setMousePos] = useState<MousePosition | null>(null);
 
   const taskConfig = useContext(TaskConfigContext);
   const { isManual = false, task } = taskConfig || {};
   const { center } = task || {};
   const freeFromRef = useRef<number[]>([...emptyFreeform]);
+
+  const initialBrushes = useMemo(() => {
+    return JSON.parse(initialBrushesString);
+  }, [initialBrushesString]);
+  const initBrushCounts = Object.keys(initialBrushes).length;
 
   const rawData = useContext(DataContext);
 
@@ -203,9 +209,6 @@ const RawPlot: FC<Props> = ({
 
   const brushPointCount = _.countBy(brushSelectedPoints);
 
-  const initialBrushes = JSON.parse(JSON.stringify(brushes));
-  const initBrushCounts = Object.keys(initialBrushes).length;
-
   useEffect(() => {
     const xAxis = axisBottom(xScale);
     const yAxis = axisLeft(yScale);
@@ -213,16 +216,10 @@ const RawPlot: FC<Props> = ({
     select(".y-axis").call(yAxis as any);
   }, [xScale, yScale]);
 
-  const brushComponent = (
-    <BrushComponent
-      key={brushKey}
-      extents={{ left: 0, top: 0, right: width, bottom: height }}
-      extentPadding={20}
-      onBrushUpdate={brushHandler}
-      initialBrushes={initBrushCounts === 0 ? null : initialBrushes}
-      switchOff={brushType !== "Rectangular"}
-    />
-  );
+  const extents = useMemo(() => {
+    return { left: 0, top: 0, right: width, bottom: height };
+  }, [height, width]);
+
   const { columnMap } = useContext(DataContext);
 
   const { predictions } = predictionSet;
@@ -448,9 +445,16 @@ const RawPlot: FC<Props> = ({
     [actions, plot]
   );
 
-  const extents = useMemo(() => {
-    return { left: 0, top: 0, right: width, bottom: height };
-  }, [height, width]);
+  const brushComponent = (
+    <BrushComponent
+      key={brushKey}
+      extents={extents}
+      extentPadding={20}
+      onBrushUpdate={brushHandler}
+      initialBrushes={initBrushCounts === 0 ? null : initialBrushes}
+      switchOff={brushType !== "Rectangular"}
+    />
+  );
 
   const freeFormBrushComponent = (
     <FreeFormBrush

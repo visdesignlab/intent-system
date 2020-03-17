@@ -50,6 +50,7 @@ const taskList = getTaskFromString();
 
 export function getAllTasks(isCoding: boolean = false) {
   const urlCategory = url.get("taskCategory");
+  const predMode = url.get("pred");
 
   let task: DatasetType = "none";
   let countString = url.get("count");
@@ -71,6 +72,10 @@ export function getAllTasks(isCoding: boolean = false) {
 
   if (task !== "none") {
     tl = tl.filter(d => d.type === task);
+  }
+
+  if (predMode === "supported" || predMode === "manual") {
+    tl = tl.map(d => ({ ...d, manual: predMode } as TaskDescription));
   }
 
   let trainingTasks = tl.filter(d => d.training === "yes").slice(0, count);
