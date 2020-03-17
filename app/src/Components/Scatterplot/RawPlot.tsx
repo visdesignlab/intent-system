@@ -21,7 +21,7 @@ import YAxis from './YAxis';
 
 export interface Props {
   store?: IntentStore;
-  plot: Plot;
+  plotId: string;
   data: { x: number; y: number; category?: string }[];
   transform: string;
   height: number;
@@ -40,7 +40,7 @@ const emptyFreeform: number[] = [];
 
 const RawPlot: FC<Props> = ({
   store,
-  plot,
+  plotId,
   data,
   transform,
   height,
@@ -58,6 +58,7 @@ const RawPlot: FC<Props> = ({
     selectedPrediction,
     brushType
   } = store!;
+  const plot: Plot = plots.find(d => d.id === plotId) as any;
   const { selectedPoints, brushes } = plot;
   const initialBrushesString = JSON.stringify(brushes);
 

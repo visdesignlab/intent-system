@@ -1,23 +1,16 @@
-import React, {
-  FC,
-  useRef,
-  useState,
-  useEffect,
-  useContext,
-  useMemo,
-  memo
-} from "react";
-import { inject, observer } from "mobx-react";
-import IntentStore from "../../Store/IntentStore";
-import { style } from "typestyle";
-import { Plot } from "../../Store/IntentState";
-import { scaleLinear } from "d3";
-import translate from "../../Utils/Translate";
-import RawPlot from "./RawPlot";
-import { UserSelections } from "../Predictions/PredictionRowType";
-import { Data } from "../../Utils/Dataset";
-import ScatterplotControls from "./ScatterplotControls";
-import { DataContext } from "../../Contexts";
+import { scaleLinear } from 'd3';
+import { inject, observer } from 'mobx-react';
+import React, { FC, memo, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { style } from 'typestyle';
+
+import { DataContext } from '../../Contexts';
+import { Plot } from '../../Store/IntentState';
+import IntentStore from '../../Store/IntentStore';
+import { Data } from '../../Utils/Dataset';
+import translate from '../../Utils/Translate';
+import { UserSelections } from '../Predictions/PredictionRowType';
+import RawPlot from './RawPlot';
+import ScatterplotControls from './ScatterplotControls';
 
 export interface Props {
   store?: IntentStore;
@@ -105,7 +98,7 @@ const Scatterplot: FC<Props> = ({
         <rect height={dim.height} width={dim.width} fill="#ccc" opacity="0.1" />
 
         <RawPlot
-          plot={plot}
+          plotId={plot.id}
           height={adjustedHeight}
           width={adjustedWidth}
           data={xyData}
