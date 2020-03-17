@@ -288,6 +288,7 @@ const RawPlot: FC<Props> = ({
 
     const mark = (
       <g
+        key={idx}
         onClick={() => {
           if (!selectedPoints.includes(idx)) {
             actions.addPointSelection(plot, [idx]);
@@ -352,7 +353,11 @@ const RawPlot: FC<Props> = ({
       </div>
     );
 
-    return <Popup key={idx} content={popupContent} trigger={mark} />;
+    return taskConfig ? (
+      mark
+    ) : (
+      <Popup key={idx} content={popupContent} trigger={mark} />
+    );
   }
 
   const plotComponent = (
@@ -490,7 +495,7 @@ const RawPlot: FC<Props> = ({
           open={mousePos !== null}
           trigger={
             <g transform={translate(mousePos?.x || 0, mousePos?.y || 0)}>
-              {mousePos && (
+              {mousePos && topThree.length > 0 && (
                 <rect fill="gray" opacity="0.2" height={1} width={1} />
               )}
             </g>

@@ -1,6 +1,6 @@
 import { select } from 'd3';
 import { inject, observer } from 'mobx-react';
-import React, { createRef, FC, memo, useEffect, useState } from 'react';
+import React, { FC, memo, useEffect, useRef, useState } from 'react';
 import { style } from 'typestyle';
 
 import IntentStore from '../../../Store/IntentStore';
@@ -30,8 +30,8 @@ const FreeFormBrush: FC<Props> = ({
   onBrushEnd,
   store
 }: Props) => {
-  const brushRef = createRef<SVGCircleElement>();
-  const layerRef = createRef<SVGRectElement>();
+  const brushRef = useRef<SVGCircleElement>(null);
+  const layerRef = useRef<SVGRectElement>(null);
   const { left = 0, right = 0, top = 0, bottom = 0 } = extents;
 
   const { brushSize } = store!;
@@ -54,7 +54,6 @@ const FreeFormBrush: FC<Props> = ({
         onBrushStart(x, y, radius);
       }
     }
-
     setMouseDown(true);
   }
 
@@ -132,8 +131,6 @@ const FreeFormBrush: FC<Props> = ({
     </g>
   );
 };
-
-(FreeFormBrush as any).whyDidYouRender = true;
 
 export default memo(inject("store")(observer(FreeFormBrush)));
 

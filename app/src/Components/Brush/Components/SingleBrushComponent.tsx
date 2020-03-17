@@ -1,8 +1,8 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
-import {Brush} from '../Types/Brush';
-import {BrushResizeType} from '../Types/BrushResizeEnum';
+import { Brush } from '../Types/Brush';
+import { BrushResizeType } from '../Types/BrushResizeEnum';
 
 interface Props {
   x1: number;
@@ -10,11 +10,15 @@ interface Props {
   x2: number;
   y2: number;
   brush: Brush;
-  onDragStart: (event: React.MouseEvent<any, MouseEvent>, brush: Brush) => void;
+  onDragStart: (
+    event: React.MouseEvent<any, MouseEvent>,
+    brush: Brush,
+    ref: any
+  ) => void;
   onResizeStart: (
     event: React.MouseEvent<any, MouseEvent>,
     brush: Brush,
-    resizeDirection: BrushResizeType,
+    resizeDirection: BrushResizeType
   ) => void;
   onResize: (event: React.MouseEvent<any, MouseEvent>, brush: Brush) => void;
   onResizeEnd: (event: React.MouseEvent<any, MouseEvent>) => void;
@@ -33,11 +37,13 @@ function SingleBrushComponent({
   resizeControlSize,
   onResizeStart,
   onResize,
-  onResizeEnd,
+  onResizeEnd
 }: Props) {
   if (!resizeControlSize) {
     resizeControlSize = 7;
   }
+
+  const brushRef = useRef<SVGRectElement>(null);
 
   const [showCloseIcon, setShowCloseIcon] = useState(false);
   const [timeoutClear, setTimeoutClear] = useState(-1);
@@ -49,8 +55,9 @@ function SingleBrushComponent({
   });
 
   return (
-    <>
+    <g>
       <BrushRectangle
+        ref={brushRef}
         x={x1}
         y={y1}
         height={y2 - y1}
@@ -59,7 +66,7 @@ function SingleBrushComponent({
           clearInterval(timeoutClear);
           setShowCloseIcon(true);
         }}
-        onMouseDown={event => onDragStart(event, brush)}
+        onMouseDown={event => onDragStart(event, brush, brushRef.current)}
         onMouseLeave={event => {
           const tout = setTimeout(() => {
             setShowCloseIcon(false);
@@ -147,7 +154,8 @@ function SingleBrushComponent({
       <g
         className="close-icon"
         transform={`translate(${x2 - 10}, ${y1 + 10})`}
-        display={showCloseIcon ? 'visible' : 'none'}>
+        display={showCloseIcon ? "visible" : "none"}
+      >
         <CloseIcon dominantBaseline="middle" textAnchor="middle">
           &#xf05e;
         </CloseIcon>
@@ -158,13 +166,13 @@ function SingleBrushComponent({
           }}
         />
       </g>
-    </>
+    </g>
   );
 }
 
 export default SingleBrushComponent;
 
-const BrushRectangle = styled('rect')`
+const BrushRectangle = styled("rect")`
   fill: lightgray;
   opacity: 0.2;
   stroke: black;
@@ -195,13 +203,13 @@ const TRBLResizeRectangle = styled(ResizeRectangle)`
   cursor: nesw-resize;
 `;
 
-const CloseIcon = styled('text')`
+const CloseIcon = styled("text")`
   font-family: FontAwesome;
   font-size: 1.5em;
   fill: red;
 `;
 
-const RemoveBrushCircle = styled('circle')`
+const RemoveBrushCircle = styled("circle")`
   cursor: pointer;
   fill: #777;
   opacity: 0.01;
