@@ -91,38 +91,3 @@ export function getAllTasks(isCoding: boolean = false) {
 
   return { trainingTasks, tasks };
 }
-
-// const taskList: TaskDescription[] = [
-//   {
-//     id: "0",
-//     task:
-//       "Select the points which show a strong correlation in Physics and CS.",
-//     dataset: "cluster",
-//     plots: [{ x: "Physics", y: "CS" }],
-//     category: {
-//       show: false,
-//       column: "Profession"
-//     },
-//     taskType: "manual",
-//     type: "linear regression",
-//     difficulty: "easy",
-//     training: "yes",
-//     center: { x: 19, y: 23 }
-//   },
-//   {
-//     id: "1",
-//     task:
-//       "Select the points which belong to the cluster centered on the cross [SYMBOL].",
-//     dataset: "cluster",
-//     plots: [{ x: "Physics", y: "CS" }],
-//     category: {
-//       show: false,
-//       column: "Profession"
-//     },
-//     taskType: "supported",
-//     type: "cluster",
-//     difficulty: "easy",
-//     training: "no",
-//     center: null
-//   }
-// ];
