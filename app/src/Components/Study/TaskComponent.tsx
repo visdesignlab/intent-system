@@ -100,11 +100,9 @@ const TaskComponent: FC<Props> = ({ taskDesc, store }: Props) => {
     <div className={taskStyle}>
       <Card>
         <Card.Content textAlign="left" className={headerStyle}>
-          <Card.Header className={whiteText}>
-            Task {currentTaskNumber} {isTraining && "(Training)"}
-          </Card.Header>
+          <Card.Header className={whiteText}>{taskTypeDesc}</Card.Header>
           <Card.Meta className={`${whiteText} ${metaSize}`}>
-            {taskTypeDesc}
+            Task {currentTaskNumber} {isTraining && "(Training)"}
           </Card.Meta>
         </Card.Content>
         <Card.Content className={questionTextSize}>
@@ -203,6 +201,6 @@ const whiteText = style({
 });
 
 const headerStyle = style({
-  fontSize: "1.5em !important",
+  fontSize: "1.3em !important",
   backgroundColor: "#2185d0 !important"
 });

@@ -233,7 +233,7 @@ function Navbar({ store, data, datasets, setDataset }: NavbarProps) {
               {clearSelectionButton}
               {task && (
                 <Menu.Item>
-                  <Header>{taskTypeDesc}</Header>
+                  <Header as="h2">{taskTypeDesc}</Header>
                 </Menu.Item>
               )}
             </>
