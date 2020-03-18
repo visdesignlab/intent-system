@@ -54,8 +54,10 @@ function SingleBrushComponent({
     };
   });
 
+  // console.log({ x1, x2, y1, y2 });
+
   return (
-    <g>
+    <>
       <BrushRectangle
         ref={brushRef}
         x={x1}
@@ -79,7 +81,10 @@ function SingleBrushComponent({
         y={y1 + resizeControlSize / 2}
         height={y2 - y1 - resizeControlSize}
         width={resizeControlSize}
-        onMouseDown={event => onResizeStart(event, brush, BrushResizeType.LEFT)}
+        onMouseDown={event => {
+          console.log("Left");
+          onResizeStart(event, brush, BrushResizeType.LEFT);
+        }}
         onMouseUp={event => onResizeEnd(event)}
       />
       <HorizontalResizeRectangle
@@ -166,7 +171,7 @@ function SingleBrushComponent({
           }}
         />
       </g>
-    </g>
+    </>
   );
 }
 

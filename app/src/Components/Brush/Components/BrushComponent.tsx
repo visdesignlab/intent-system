@@ -25,7 +25,7 @@ type MousePosition = { x: number; y: number };
 type State = {
   mouseDown: boolean;
   brushes: BrushCollection;
-  currentBrush: Brush;
+  currentBrushId: string;
   isCreatingNewBrush: boolean;
   movingBrush: boolean;
   mouseDownForResize: boolean;
@@ -36,7 +36,7 @@ type State = {
 const defaultState: State = {
   mouseDown: false,
   brushes: {},
-  currentBrush: null as any,
+  currentBrushId: "",
   isCreatingNewBrush: false,
   movingBrush: false,
   mouseDownForResize: false,
@@ -74,7 +74,7 @@ const BrushComponent: FC<Props> = ({
   const {
     mouseDown,
     brushes,
-    currentBrush,
+    currentBrushId,
     isCreatingNewBrush,
     movingBrush,
     mouseDownForResize,
@@ -86,6 +86,27 @@ const BrushComponent: FC<Props> = ({
     if (JSON.stringify(st) !== JSON.stringify(state)) {
       setState(JSON.parse(JSON.stringify(st)));
     }
+  }
+
+  function manageBrush(brush: Brush) {
+    let { x1, x2, y1, y2 } = brush.extents;
+
+    if (x2 < x1 && y2 < y1) {
+      [x1, x2] = [x2, x1];
+      [y1, y2] = [y2, y1];
+    }
+
+    if (x2 < x1) {
+      [x1, x2] = [x2, x1];
+    }
+
+    if (y2 < y1) {
+      [y1, y2] = [y2, y1];
+    }
+
+    brush.extents = { x1, x2, y1, y2 };
+
+    return brush;
   }
 
   // Effect Hooks
@@ -118,7 +139,7 @@ const BrushComponent: FC<Props> = ({
     setStateEff({
       ...state,
       mouseDown: true,
-      currentBrush: brush,
+      currentBrushId: brush.id,
       brushes: { ...JSON.parse(JSON.stringify(brushes)) },
       isCreatingNewBrush: true
     });
@@ -126,17 +147,22 @@ const BrushComponent: FC<Props> = ({
 
   function handleMouseMoveWhenCreating(event: MouseEvent) {
     if (!mouseDown) return;
-
     const targetNode = layerRef.current;
+    const currentBrush = brushes[currentBrushId];
     if (targetNode) {
+      const currentBrush = brushes[currentBrushId];
       const target = targetNode.getBoundingClientRect();
       let x1 = currentBrush.extents.x1;
       let y1 = currentBrush.extents.y1;
       let x2 = (event.clientX - target.left) / width;
       let y2 = (event.clientY - target.top) / height;
 
-      if (x2 * width < 0 || x2 * width > width) x2 = currentBrush.extents.x2;
-      if (y2 * height < 0 || y2 * height > height) y2 = currentBrush.extents.y2;
+      if (x2 * width < 0 || x2 * width > width) {
+        x2 = currentBrush.extents.x2;
+      }
+      if (y2 * height < 0 || y2 * height > height) {
+        y2 = currentBrush.extents.y2;
+      }
 
       currentBrush.extents = { x1, x2, y1, y2 };
       brushes[currentBrush.id] = currentBrush;
@@ -148,7 +174,7 @@ const BrushComponent: FC<Props> = ({
     const currentTargetNode = layerRef.current;
     if (currentTargetNode) {
       const currentTarget = currentTargetNode.getBoundingClientRect();
-
+      const currentBrush = brushes[currentBrushId];
       const isNewBrushZero =
         currentBrush.extents &&
         (currentBrush.extents.x1 === currentBrush.extents.x2 ||
@@ -174,7 +200,7 @@ const BrushComponent: FC<Props> = ({
 
       setStateEff({
         ...state,
-        currentBrush: null as any,
+        currentBrushId: "",
         mouseDown: false,
         isCreatingNewBrush: false
       });
@@ -200,13 +226,15 @@ const BrushComponent: FC<Props> = ({
       ...state,
       mouseDown: true,
       movingBrush: true,
-      currentBrush: brush,
+      currentBrushId: brush.id,
       mouseDiff: { diffX, diffY }
     });
   }
 
-  function handleOnDrag(event: MouseEvent, brush: Brush) {
+  function handleOnDrag(event: MouseEvent, currentBrushId: string) {
     if (!mouseDown) return;
+
+    const brush = brushes[currentBrushId];
 
     const targetNode = layerRef.current;
     if (!targetNode) return;
@@ -256,13 +284,13 @@ const BrushComponent: FC<Props> = ({
     const targetNode = layerRef.current;
     if (!targetNode) return;
     const currentTarget = targetNode.getBoundingClientRect();
+    const curr = brushes[currentBrushId];
 
-    const curr = currentBrush;
     setState({
       ...state,
       mouseDown: false,
       movingBrush: false,
-      currentBrush: null as any,
+      currentBrushId: "",
       mouseDiff: null
     });
     onBrushUpdate({ ...brushes }, curr, "Change", {
@@ -291,12 +319,12 @@ const BrushComponent: FC<Props> = ({
 
   function handleOnResizeStart<T extends SVGGElement>(
     event: React.MouseEvent<T, MouseEvent>,
-    brush: Brush,
+    currentBrush: Brush,
     resizeDirection: BrushResizeType
   ) {
     const targetNode = layerRef.current;
     if (!targetNode) return;
-
+    const brush = brushes[currentBrush.id];
     const target = targetNode.getBoundingClientRect();
     const [x, y] = [event.clientX - target.left, event.clientY - target.top];
 
@@ -308,14 +336,16 @@ const BrushComponent: FC<Props> = ({
     setStateEff({
       ...state,
       mouseDownForResize: true,
-      currentBrush: brush,
+      currentBrushId: brush.id,
       resizeDirection,
       mouseDiff: { diffX, diffY }
     });
   }
 
-  function handleOnResize(event: MouseEvent, brush: Brush) {
+  function handleOnResize(event: MouseEvent, currentBrushId: string) {
     if (!mouseDownForResize) return;
+
+    const brush = brushes[currentBrushId];
 
     let [X1, X2, Y1, Y2] = [
       brush.extents.x1,
@@ -384,12 +414,15 @@ const BrushComponent: FC<Props> = ({
     const targetNode = layerRef.current;
     if (!targetNode) return;
     const currentTarget = targetNode.getBoundingClientRect();
+    let curr = brushes[currentBrushId];
+    curr = manageBrush(curr);
+    brushes[curr.id] = curr;
 
-    const curr = currentBrush;
     setStateEff({
       ...state,
+      brushes,
       mouseDownForResize: false,
-      currentBrush: null as any,
+      currentBrushId: "",
       resizeDirection: null as any,
       mouseDiff: null
     });
@@ -400,10 +433,10 @@ const BrushComponent: FC<Props> = ({
   }
 
   let brushKeys = Object.keys(brushes);
-  if (currentBrush && currentBrush.id) {
+  if (currentBrushId !== "") {
     brushKeys = [
-      ...brushKeys.filter(b => b !== currentBrush.id),
-      currentBrush.id
+      ...brushKeys.filter(b => b !== currentBrushId),
+      currentBrushId
     ];
   }
 
@@ -412,10 +445,10 @@ const BrushComponent: FC<Props> = ({
       handleMouseMoveWhenCreating(event as any);
     }
     if (movingBrush) {
-      handleOnDrag(event as any, currentBrush);
+      handleOnDrag(event as any, currentBrushId);
     }
     if (mouseDownForResize) {
-      handleOnResize(event as any, currentBrush);
+      handleOnResize(event as any, currentBrushId);
     }
   }
 
@@ -458,11 +491,13 @@ const BrushComponent: FC<Props> = ({
     <g ref={brushGroupRef} className="brushGroup">
       {brushKeys.map(brushKey => {
         const brush = brushes[brushKey];
-        let { x1, y1, x2, y2 } = brush.extents;
+        let { x1, y1, x2, y2 } = JSON.parse(JSON.stringify(brush.extents));
         x1 = x1 * width;
         x2 = x2 * width;
         y1 *= height;
         y2 *= height;
+
+        const prev = JSON.parse(JSON.stringify({ x1, x2, y1, y2 }));
 
         if (x2 < x1 && y2 < y1) {
           [x1, x2] = [x2, x1];
@@ -476,6 +511,8 @@ const BrushComponent: FC<Props> = ({
         if (y2 < y1) {
           [y1, y2] = [y2, y1];
         }
+
+        // console.log({ prev, curr: { x1, x2, y1, y2 } });
 
         return (
           <SingleBrushComponent
