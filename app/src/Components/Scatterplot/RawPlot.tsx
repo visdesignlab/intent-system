@@ -106,86 +106,86 @@ const RawPlot: FC<Props> = ({
       .addAll(JSON.parse(scaledDataString));
   }, [scaledDataString]);
 
-  function brushSearch(
-    quad: any,
-    left: number,
-    top: number,
-    right: number,
-    bottom: number
-  ) {
-    const points: number[] = [];
-    quad.visit(function(
-      node: any,
-      x1: number,
-      y1: number,
-      x2: number,
-      y2: number
-    ) {
-      if (!node.length) {
-        do {
-          let { x, y } = node.data;
+  const brushSearch = useCallback(
+    (quad: any, left: number, top: number, right: number, bottom: number) => {
+      const points: number[] = [];
+      quad.visit(function(
+        node: any,
+        x1: number,
+        y1: number,
+        x2: number,
+        y2: number
+      ) {
+        if (!node.length) {
+          do {
+            let { x, y } = node.data;
 
-          const isSelected =
-            x + 2.5 >= left &&
-            x + 2.5 <= right &&
-            y + 2.5 >= top &&
-            y + 2.5 <= bottom;
-          const idx = mappedData[`${x}-${y}`];
-          if (isSelected && idx >= 0) {
-            points.push(idx);
-          }
-        } while ((node = node.next));
+            const isSelected =
+              x + 2.5 >= left &&
+              x + 2.5 <= right &&
+              y + 2.5 >= top &&
+              y + 2.5 <= bottom;
+            const idx = mappedData[`${x}-${y}`];
+            if (isSelected && idx >= 0) {
+              points.push(idx);
+            }
+          } while ((node = node.next));
+        }
+        return (
+          x1 + 5 >= right || y1 + 5 >= bottom || x2 + 5 <= left || y2 + 5 <= top
+        );
+      });
+      return points;
+    },
+    [mappedData]
+  );
+
+  const brushHandler = useCallback(
+    (
+      _: BrushCollection,
+      affectedBrush: Brush,
+      affectType: BrushAffectType,
+      mousePosition?: MousePosition
+    ) => {
+      let { x1, x2, y1, y2 } = affectedBrush.extents;
+      [x1, x2, y1, y2] = [x1 * width, x2 * width, y1 * height, y2 * height];
+
+      let brushCollection = JSON.parse(JSON.stringify(brushes));
+      const points = [];
+      switch (affectType) {
+        case "Add":
+          points.push(...brushSearch(quad, x1, y1, x2, y2));
+          const addBr: ExtendedBrush = { ...affectedBrush, points };
+          brushCollection[addBr.id] = addBr;
+          actions.addBrush(plot, brushCollection, addBr);
+          break;
+        case "Change":
+          points.push(...brushSearch(quad, x1, y1, x2, y2));
+          const changeBr: ExtendedBrush = { ...affectedBrush, points };
+          brushCollection[changeBr.id] = changeBr;
+          actions.changeBrush(plot, brushCollection, changeBr);
+          break;
+        case "Remove":
+          delete brushCollection[affectedBrush.id];
+          const removeBr: ExtendedBrush = { ...affectedBrush, points: [] };
+          actions.removeBrush(plot, brushCollection, removeBr);
+          break;
+        case "Clear":
+          break;
+        default:
+          break;
       }
-      return (
-        x1 + 5 >= right || y1 + 5 >= bottom || x2 + 5 <= left || y2 + 5 <= top
-      );
-    });
-    return points;
-  }
 
-  function brushHandler(
-    _: BrushCollection,
-    affectedBrush: Brush,
-    affectType: BrushAffectType,
-    mousePosition?: MousePosition
-  ) {
-    let { x1, x2, y1, y2 } = affectedBrush.extents;
-    [x1, x2, y1, y2] = [x1 * width, x2 * width, y1 * height, y2 * height];
-
-    let brushCollection = JSON.parse(JSON.stringify(brushes));
-    const points = [];
-    switch (affectType) {
-      case "Add":
-        points.push(...brushSearch(quad, x1, y1, x2, y2));
-        const addBr: ExtendedBrush = { ...affectedBrush, points };
-        brushCollection[addBr.id] = addBr;
-        actions.addBrush(plot, brushCollection, addBr);
-        break;
-      case "Change":
-        points.push(...brushSearch(quad, x1, y1, x2, y2));
-        const changeBr: ExtendedBrush = { ...affectedBrush, points };
-        brushCollection[changeBr.id] = changeBr;
-        actions.changeBrush(plot, brushCollection, changeBr);
-        break;
-      case "Remove":
-        delete brushCollection[affectedBrush.id];
-        const removeBr: ExtendedBrush = { ...affectedBrush, points: [] };
-        actions.removeBrush(plot, brushCollection, removeBr);
-        break;
-      case "Clear":
-        break;
-      default:
-        break;
-    }
-
-    if (mousePosition) {
-      if (JSON.stringify(mousePos) !== JSON.stringify(mousePosition)) {
-        setMousePos(mousePosition);
+      if (mousePosition) {
+        if (JSON.stringify(mousePos) !== JSON.stringify(mousePosition)) {
+          setMousePos(mousePosition);
+        }
+      } else {
+        setMousePos(null);
       }
-    } else {
-      setMousePos(null);
-    }
-  }
+    },
+    [actions, brushSearch, brushes, height, mousePos, plot, quad, width]
+  );
 
   const [brushKey, setBrushKey] = useState(Math.random);
 
@@ -490,7 +490,7 @@ const RawPlot: FC<Props> = ({
         </g>
         {plotComponent}
       </g>
-      {!isManual && (
+      {!isManual && topThree.length > 0 && (
         <Popup
           basic
           open={mousePos !== null}
@@ -540,5 +540,4 @@ const RawPlot: FC<Props> = ({
   );
 };
 
-(RawPlot as any).whyDidYouRender = true;
 export default memo(inject("store")(observer(RawPlot)));

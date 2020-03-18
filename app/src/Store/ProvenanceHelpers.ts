@@ -1,5 +1,5 @@
-import {IntentState, Plot, ExtendedBrush} from './IntentState';
-import {VisualizationType} from '../contract';
+import { VisualizationType } from '../contract';
+import { ExtendedBrush, IntentState, Plot } from './IntentState';
 
 export function addDummyInteraction(state: IntentState) {
   state.interactionHistory.push(null as any);
@@ -8,49 +8,55 @@ export function addDummyInteraction(state: IntentState) {
 export function addPointSelectionInteraction(
   state: IntentState,
   plot: Plot,
-  points: number[],
+  points: number[]
 ) {
   state.interactionHistory.push({
     visualizationType: VisualizationType.Scatterplot,
     interactionType: {
-      kind: 'selection',
+      kind: "selection",
       plot: {
         id: plot.id,
         x: plot.x,
         y: plot.y,
-        color: state.categoryColumn,
+        color: state.categoryColumn
       },
       dimensions: [plot.x, plot.y],
-      dataIds: points,
-    },
+      dataIds: points
+    }
   });
 }
+
+export function addInvertSelectionInteraction(
+  state: IntentState,
+  plot: Plot,
+  points: number[]
+) {}
 
 export function removePointSelectionInteraction(
   state: IntentState,
   plot: Plot,
-  points: number[],
+  points: number[]
 ) {
   state.interactionHistory.push({
     visualizationType: VisualizationType.Scatterplot,
     interactionType: {
-      kind: 'deselection',
+      kind: "deselection",
       plot: {
         id: plot.id,
         x: plot.x,
         y: plot.y,
-        color: state.categoryColumn,
+        color: state.categoryColumn
       },
       dimensions: [plot.x, plot.y],
-      dataIds: points,
-    },
+      dataIds: points
+    }
   });
 }
 
 export function brushInteraction(
   state: IntentState,
   plot: Plot,
-  affectedBrush: ExtendedBrush,
+  affectedBrush: ExtendedBrush
 ) {
   state.interactionHistory.push({
     visualizationType: VisualizationType.Scatterplot,
@@ -66,16 +72,16 @@ export function brushInteraction(
         id: plot.id,
         x: plot.x,
         y: plot.y,
-        color: state.categoryColumn,
-      },
-    },
+        color: state.categoryColumn
+      }
+    }
   });
 }
 
 export function removeBrushInteraction(
   state: IntentState,
   plot: Plot,
-  affectedBrush: ExtendedBrush,
+  affectedBrush: ExtendedBrush
 ) {
   brushInteraction(state, plot, {
     ...affectedBrush,
@@ -83,9 +89,9 @@ export function removeBrushInteraction(
       x1: null as any,
       x2: null as any,
       y1: null as any,
-      y2: null as any,
+      y2: null as any
     },
-    points: [],
+    points: []
   });
 }
 
@@ -93,14 +99,14 @@ export function addPlotInteraction(state: IntentState, plot: Plot) {
   state.interactionHistory.push({
     visualizationType: VisualizationType.Scatterplot,
     interactionType: {
-      kind: 'ADD',
+      kind: "ADD",
       plot: {
         id: plot.id,
         x: plot.x,
         y: plot.y,
-        color: state.categoryColumn,
-      },
-    },
+        color: state.categoryColumn
+      }
+    }
   });
 }
 
@@ -120,13 +126,13 @@ export function removePlotInteraction(state: IntentState, plot: Plot) {
   state.interactionHistory.push({
     visualizationType: VisualizationType.Scatterplot,
     interactionType: {
-      kind: 'REMOVE',
+      kind: "REMOVE",
       plot: {
         id: plot.id,
         x: plot.x,
         y: plot.y,
-        color: state.categoryColumn,
-      },
-    },
+        color: state.categoryColumn
+      }
+    }
   });
 }

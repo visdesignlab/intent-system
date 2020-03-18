@@ -80,13 +80,23 @@ const BrushComponent: FC<Props> = ({
     mouseDownForResize,
     resizeDirection,
     mouseDiff = { diffX: 0, diffY: 0 }
-  } = state;
+  } = JSON.parse(JSON.stringify(state)) as State;
+
+  function setStateEff(st: State) {
+    if (JSON.stringify(st) !== JSON.stringify(state)) {
+      setState(JSON.parse(JSON.stringify(st)));
+    }
+  }
 
   // Effect Hooks
   useEffect(() => {
     const initialBrushes = JSON.parse(initialBrushString);
     if (initialBrushes) {
-      setState(s => ({ ...s, brushes: initialBrushes }));
+      setState(s => {
+        if (initialBrushString !== JSON.stringify(s.brushes))
+          return { ...s, brushes: initialBrushes };
+        return s;
+      });
     }
   }, [initialBrushString]);
 
@@ -105,11 +115,11 @@ const BrushComponent: FC<Props> = ({
     };
     brushes[brush.id] = brush;
 
-    setState({
+    setStateEff({
       ...state,
       mouseDown: true,
       currentBrush: brush,
-      brushes: { ...brushes },
+      brushes: { ...JSON.parse(JSON.stringify(brushes)) },
       isCreatingNewBrush: true
     });
   }
@@ -130,7 +140,7 @@ const BrushComponent: FC<Props> = ({
 
       currentBrush.extents = { x1, x2, y1, y2 };
       brushes[currentBrush.id] = currentBrush;
-      setState({ ...state, brushes });
+      setStateEff({ ...state, brushes: JSON.parse(JSON.stringify(brushes)) });
     }
   }
 
@@ -162,7 +172,7 @@ const BrushComponent: FC<Props> = ({
         });
       }
 
-      setState({
+      setStateEff({
         ...state,
         currentBrush: null as any,
         mouseDown: false,
@@ -186,7 +196,7 @@ const BrushComponent: FC<Props> = ({
       Math.abs(brush.extents.x1 * width - x),
       Math.abs(brush.extents.y1 * width - y)
     ];
-    setState({
+    setStateEff({
       ...state,
       mouseDown: true,
       movingBrush: true,
@@ -237,7 +247,7 @@ const BrushComponent: FC<Props> = ({
     brush.extents.y2 = Y2 / height;
 
     brushes[brush.id] = brush;
-    setState({ ...state, brushes });
+    setStateEff({ ...state, brushes });
   }
 
   function handleDragStop<T extends SVGElement>(
@@ -263,7 +273,7 @@ const BrushComponent: FC<Props> = ({
 
   function removeAllBrushes() {
     const brs = JSON.parse(JSON.stringify(brushes));
-    setState({ ...state, brushes: {} });
+    setStateEff({ ...state, brushes: {} });
     onBrushUpdate({ ...brushes }, brs, "Clear");
   }
 
@@ -275,7 +285,7 @@ const BrushComponent: FC<Props> = ({
 
   function removeBrush(brush: Brush) {
     delete brushes[brush.id];
-    setState({ ...state, brushes });
+    setStateEff({ ...state, brushes });
     onBrushUpdate({ ...brushes }, brush, "Remove");
   }
 
@@ -295,7 +305,7 @@ const BrushComponent: FC<Props> = ({
       Math.abs(brush.extents.y1 * width - y)
     ];
 
-    setState({
+    setStateEff({
       ...state,
       mouseDownForResize: true,
       currentBrush: brush,
@@ -313,8 +323,6 @@ const BrushComponent: FC<Props> = ({
       brush.extents.y1,
       brush.extents.y2
     ];
-
-    const { diffX = 0, diffY = 0 } = mouseDiff || {};
 
     switch (BrushResizeType[resizeDirection]) {
       case BrushResizeType.LEFT:
@@ -351,11 +359,11 @@ const BrushComponent: FC<Props> = ({
 
     [X1, X2, Y1, Y2] = [X1 * width, X2 * width, Y1 * height, Y2 * height];
 
-    if (X1 <= 0 || X2 >= width) {
+    if (X1 <= 0 || X2 >= width || X1 >= width || X2 <= 0) {
       X1 = brush.extents.x1 * width;
       X2 = brush.extents.x2 * width;
     }
-    if (Y1 <= 0 || Y2 >= height) {
+    if (Y1 <= 0 || Y2 >= height || Y2 <= 0 || Y1 >= height) {
       Y1 = brush.extents.y1 * height;
       Y2 = brush.extents.y2 * height;
     }
@@ -367,7 +375,7 @@ const BrushComponent: FC<Props> = ({
       y2: Y2 / height
     };
     brushes[brush.id] = brush;
-    setState({ ...state, brushes });
+    setStateEff({ ...state, brushes });
   }
 
   function handleOnResizeEnd<T extends SVGGElement>(
@@ -378,7 +386,7 @@ const BrushComponent: FC<Props> = ({
     const currentTarget = targetNode.getBoundingClientRect();
 
     const curr = currentBrush;
-    setState({
+    setStateEff({
       ...state,
       mouseDownForResize: false,
       currentBrush: null as any,
@@ -501,5 +509,5 @@ const BrushComponent: FC<Props> = ({
   );
 };
 
-// (BrushComponent as any).whyDidYouRender = true;
+(BrushComponent as any).whyDidYouRender = true;
 export default memo(BrushComponent);

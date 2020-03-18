@@ -132,6 +132,7 @@ const FreeFormBrush: FC<Props> = ({
   );
 };
 
+// (FreeFormBrush as any).whyDidYouRender = true;
 export default memo(inject("store")(observer(FreeFormBrush)));
 
 const brushStyle = style({
