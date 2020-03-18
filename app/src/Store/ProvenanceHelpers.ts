@@ -28,9 +28,17 @@ export function addPointSelectionInteraction(
 
 export function addInvertSelectionInteraction(
   state: IntentState,
-  plot: Plot,
   points: number[]
-) {}
+) {
+  state.interactionHistory = [];
+  state.plots.forEach(plot => addPlotInteraction(state, plot));
+  addPointSelectionInteraction(state, state.plots[0], points);
+}
+
+export function clearSelectionInteraction(state: IntentState) {
+  state.interactionHistory = [];
+  state.plots.forEach(plot => addPlotInteraction(state, plot));
+}
 
 export function removePointSelectionInteraction(
   state: IntentState,
