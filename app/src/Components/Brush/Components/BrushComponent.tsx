@@ -148,7 +148,6 @@ const BrushComponent: FC<Props> = ({
   function handleMouseMoveWhenCreating(event: MouseEvent) {
     if (!mouseDown) return;
     const targetNode = layerRef.current;
-    const currentBrush = brushes[currentBrushId];
     if (targetNode) {
       const currentBrush = brushes[currentBrushId];
       const target = targetNode.getBoundingClientRect();
@@ -496,8 +495,6 @@ const BrushComponent: FC<Props> = ({
         x2 = x2 * width;
         y1 *= height;
         y2 *= height;
-
-        const prev = JSON.parse(JSON.stringify({ x1, x2, y1, y2 }));
 
         if (x2 < x1 && y2 < y1) {
           [x1, x2] = [x2, x1];

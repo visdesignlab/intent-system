@@ -81,10 +81,7 @@ function SingleBrushComponent({
         y={y1 + resizeControlSize / 2}
         height={y2 - y1 - resizeControlSize}
         width={resizeControlSize}
-        onMouseDown={event => {
-          console.log("Left");
-          onResizeStart(event, brush, BrushResizeType.LEFT);
-        }}
+        onMouseDown={event => onResizeStart(event, brush, BrushResizeType.LEFT)}
         onMouseUp={event => onResizeEnd(event)}
       />
       <HorizontalResizeRectangle

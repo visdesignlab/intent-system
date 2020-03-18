@@ -335,8 +335,6 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
     provenance.applyAction(
       `Invert current selection`,
       (state: IntentState) => {
-        const basePlot = state.plots[0];
-
         const newSelection = all.filter(a => !currentSelected.includes(a));
         for (let i = 0; i < state.plots.length; ++i) {
           if (i === 0) {

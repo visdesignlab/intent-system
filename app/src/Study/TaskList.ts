@@ -2,6 +2,7 @@ import { url } from '..';
 import { getTaskFromString } from './TaskString';
 
 export type TaskType = "manual" | "supported";
+export type TaskTypeDescription = "User Driven" | "Computer Supported";
 
 type DatasetType =
   | "cluster"
