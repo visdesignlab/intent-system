@@ -1,6 +1,7 @@
 import { ProvenanceGraph } from '@visdesignlab/provenance-lib-core';
 import { inject, observer } from 'mobx-react';
 import React, { FC, useEffect, useState } from 'react';
+import { Dimmer, Loader } from 'semantic-ui-react';
 
 import { StudyActionContext } from '../Contexts';
 import { StudyActions } from '../Store/StudyStore/StudyProvenance';
@@ -16,6 +17,8 @@ type Props = {
 
 const Training: FC<Props> = ({ studyStore, tasks, actions }: Props) => {
   const [taskId, setTaskId] = useState<number>(0);
+
+  const { loading = false } = studyStore!;
 
   useEffect(() => {
     if (taskId !== -1) actions.startTask(tasks[taskId].id);
@@ -56,7 +59,14 @@ const Training: FC<Props> = ({ studyStore, tasks, actions }: Props) => {
         totalTasks: tasks.length
       }}
     >
-      <StudyApp key={taskId} task={tasks[taskId]} />
+      <StudyApp key={taskId} task={tasks[taskId]} studyActions={actions} />
+      {loading && (
+        <Dimmer active>
+          <Loader active size="massive">
+            Loading Task
+          </Loader>
+        </Dimmer>
+      )}
     </StudyActionContext.Provider>
   );
 };

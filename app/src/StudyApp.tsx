@@ -1,6 +1,6 @@
 import Axios from 'axios';
 import { Provider } from 'mobx-react';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { style } from 'typestyle';
 
 import Navbar from './Components/Navbar';
@@ -10,24 +10,31 @@ import TaskComponent from './Components/Study/TaskComponent';
 import { ActionContext, DataContext, ProvenanceContext, TaskConfigContext } from './Contexts';
 import IntentStore from './Store/IntentStore';
 import { setupProvenance } from './Store/Provenance';
+import { StudyActions } from './Store/StudyStore/StudyProvenance';
 import { TaskDescription } from './Study/TaskList';
 import { Data, loadData } from './Utils/Dataset';
 import getPlotId from './Utils/PlotIDGen';
 
 type Props = {
   task: TaskDescription;
+  studyActions?: StudyActions;
 };
 
-const StudyApp = ({ task }: Props) => {
-  const { dataset, plots, category } = task;
+const StudyApp = ({ task: t, studyActions }: Props) => {
   const [data, setData] = useState<Data>(null as any);
+  const [task, setTask] = useState(t);
+
+  if (JSON.stringify(task) !== JSON.stringify(t)) setTask(t);
+
+  const { dataset, plots, category } = task;
 
   useEffect(() => {
     Axios.get(`/dataset/${dataset}`).then(d => {
       const data = loadData(d.data);
       setData(data);
+      if (studyActions) studyActions.setLoading(false);
     });
-  }, [dataset]);
+  }, [dataset, studyActions]);
 
   const { store, provenance, actions } = useMemo(() => {
     const store = new IntentStore();
@@ -58,6 +65,8 @@ const StudyApp = ({ task }: Props) => {
     task.center !== undefined;
   const hasCategory = task.type === "category" && task.symbol !== "None";
 
+  const emptyFunction = useCallback(() => {}, []);
+
   return dataset && data ? (
     <Provider store={store}>
       <DataContext.Provider value={data}>
@@ -72,7 +81,7 @@ const StudyApp = ({ task }: Props) => {
                   <Navbar
                     data={data}
                     datasets={[{ key: dataset, name: dataset }]}
-                    setDataset={() => {}}
+                    setDataset={emptyFunction}
                   />
                   <Visualization />
                 </div>
@@ -88,7 +97,7 @@ const StudyApp = ({ task }: Props) => {
   );
 };
 
-export default StudyApp;
+export default memo(StudyApp);
 
 const layoutStyle = (isGuide: boolean) =>
   style({

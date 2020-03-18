@@ -24,7 +24,7 @@ const StudyParent: FC<Props> = ({
 }: Props) => {
   const { phase } = studyStore!;
 
-  return (function() {
+  const component = function() {
     switch (phase) {
       case "Passive Training":
         return <PassiveTraining actions={actions} />;
@@ -37,7 +37,9 @@ const StudyParent: FC<Props> = ({
       default:
         return <div>Test</div>;
     }
-  })();
+  };
+
+  return component();
 };
 
 export default inject("studyStore")(observer(StudyParent));
