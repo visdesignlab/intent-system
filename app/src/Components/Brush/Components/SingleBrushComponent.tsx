@@ -2,6 +2,7 @@ import { select } from 'd3';
 import React, { memo, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
+import translate from '../../../Utils/Translate';
 import { Brush, BrushCollection } from '../Types/Brush';
 import { BrushUpdateFunction } from './BrushComponent';
 
@@ -18,6 +19,7 @@ interface Props {
   onBrushUpdate: BrushUpdateFunction;
   brushes: BrushCollection;
   onResizeStart: (brushId: string, resizeDirection: ResizeDirection) => void;
+  removeBrush: (brushId: string) => void;
 }
 
 export type ResizeDirection =
@@ -41,7 +43,8 @@ function SingleBrushComponent({
   onBrushUpdate,
   brushes,
   brushId,
-  onResizeStart
+  onResizeStart,
+  removeBrush
 }: Props) {
   // States
   const [mouseDown, setMouseDown] = useState(false);
@@ -53,6 +56,8 @@ function SingleBrushComponent({
     diffX: number;
     diffY: number;
   } | null>(null);
+  const [showCloseIcon, setShowCloseIcon] = useState(false);
+  const [timeoutClear, setTimeoutClear] = useState(-1);
 
   // Destructuring
   const { x, y } = position;
@@ -71,6 +76,12 @@ function SingleBrushComponent({
     if (JSON.stringify(position) !== JSON.stringify({ x: initX, y: initY }))
       setPosition({ x: initX, y: initY });
   }, [initX, initY]);
+
+  useEffect(() => {
+    return () => {
+      clearInterval(timeoutClear);
+    };
+  });
 
   // Drag Handlers
   function handleMouseDown(
@@ -157,6 +168,14 @@ function SingleBrushComponent({
         height={height}
         width={width}
         onMouseDown={handleMouseDown}
+        onMouseEnter={_ => {
+          clearInterval(timeoutClear);
+          setShowCloseIcon(true);
+        }}
+        onMouseLeave={_ => {
+          const tout = setTimeout(() => setShowCloseIcon(false), 900);
+          setTimeoutClear(tout);
+        }}
       />
       {width - 2 * resizeRectSize >= 0 && (
         <VerticalResizeRectangle
@@ -224,6 +243,21 @@ function SingleBrushComponent({
         width={resizeRectSize}
         onMouseDown={() => onResizeStart(brushId, "Top Right")}
       />
+      <g
+        className="close-icon"
+        display={showCloseIcon ? "visible" : "none"}
+        transform={translate(x + width, y)}
+      >
+        <CloseIcon dominantBaseline="middle" textAnchor="middle">
+          &#xf05e;
+        </CloseIcon>
+        <RemoveBrushCircle
+          r="10"
+          onClick={() => {
+            removeBrush(brushId);
+          }}
+        />
+      </g>
     </>
   );
 }
@@ -243,7 +277,7 @@ const BrushRectangle = styled("rect")`
 const ResizeRectangle = styled(BrushRectangle)`
   stroke: darkred;
   fill: red;
-  opacity: 0.5;
+  opacity: 0;
 `;
 
 const HorizontalResizeRectangle = styled(ResizeRectangle)`

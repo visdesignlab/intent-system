@@ -289,11 +289,19 @@ const BrushComponent: FC<Props> = ({
         onResizeStart={(brushId: string, resizeDirection: ResizeDirection) => {
           handleMouseDownResize({} as any, brushId, resizeDirection);
         }}
+        removeBrush={removeBrush}
       />
     );
   });
 
   const [first, second] = mouseDown ? [brs, overlay] : [overlay, brs];
+
+  function removeBrush(brushId: string) {
+    const br = JSON.parse(JSON.stringify(brushes[brushId]));
+    delete brushes[brushId];
+    setBrushes(brushes);
+    onBrushUpdate(brushes, br, "Remove");
+  }
 
   return (
     <g
