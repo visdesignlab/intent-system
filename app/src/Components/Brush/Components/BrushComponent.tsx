@@ -3,7 +3,7 @@ import React, { FC, memo, useEffect, useRef, useState } from 'react';
 import getBrushId from '../../../Utils/BrushIDGen';
 import { Brush, BrushAffectType, BrushCollection } from '../Types/Brush';
 import { BrushableRegion } from '../Types/BrushableRegion';
-import SingleBrushComponent from './SingleBrushComponent';
+import SingleBrushComponent, { ResizeDirection } from './SingleBrushComponent';
 
 export type BrushUpdateFunction = (
   brushes: BrushCollection,
@@ -45,9 +45,13 @@ const BrushComponent: FC<Props> = ({
 
   // State
   const [mouseDown, setMouseDown] = useState(false);
+  const [mouseDownResize, setMouseDownResize] = useState(false);
   const [baseBrushes, setBrushes] = useState<BrushCollection>({});
   const [activeBrushId, setActiveBrushId] = useState<string | null>(null);
-
+  const [
+    resizeDirection,
+    setResizeDirection
+  ] = useState<ResizeDirection | null>(null);
   // Effects
   useEffect(() => {
     const initalBrushes: BrushCollection = JSON.parse(ibString);
@@ -56,7 +60,7 @@ const BrushComponent: FC<Props> = ({
 
   // Event Add Effect
   useEffect(() => {
-    if (!mouseDown) return;
+    if (!mouseDown && !mouseDownResize) return;
     addEvents();
     return removeEvents;
   });
@@ -119,10 +123,12 @@ const BrushComponent: FC<Props> = ({
     const { left, top } = target;
     const currentBrush = brushes[activeBrushId];
     let { x1, x2, y1, y2 } = currentBrush.extents;
-    const isNewBrushRedundant = x1 === x2 || y1 === y2;
+    const isNewBrushRedundant =
+      Math.abs(x1 - x2) < 0.00001 || Math.abs(y1 - y2) < 0.00001;
 
     if (isNewBrushRedundant) {
       delete brushes[activeBrushId];
+      setBrushes(brushes);
     } else {
       if (x1 > x2) [x1, x2] = [x2, x1];
       if (y1 > y2) [y1, y2] = [y2, y1];
@@ -143,15 +149,111 @@ const BrushComponent: FC<Props> = ({
     setActiveBrushId(null);
   }
 
+  // Resize Handlers
+  function handleMouseDownResize(
+    event: React.MouseEvent<SVGRectElement, MouseEvent>,
+    brushId: string,
+    resizeDirection: ResizeDirection
+  ) {
+    setMouseDownResize(true);
+    setActiveBrushId(brushId);
+    setResizeDirection(resizeDirection);
+  }
+
+  function handleMouseMoveResize(event: MouseEvent) {
+    const targetNode = overlayRef.current;
+    if (!targetNode || !activeBrushId || !brushes[activeBrushId]) return;
+    const currentBrush = brushes[activeBrushId];
+    const target = targetNode.getBoundingClientRect();
+
+    let { x1, x2, y1, y2 } = currentBrush.extents;
+
+    switch (resizeDirection) {
+      case "Top":
+        y1 += event.movementY / height;
+        break;
+      case "Bottom":
+        y2 += event.movementY / height;
+        break;
+      case "Left":
+        x1 += event.movementX / width;
+        break;
+      case "Right":
+        x2 += event.movementX / width;
+        break;
+      case "Top Left":
+        y1 += event.movementY / height;
+        x1 += event.movementX / width;
+        break;
+      case "Top Right":
+        y1 += event.movementY / height;
+        x2 += event.movementX / width;
+        break;
+      case "Bottom Left":
+        y2 += event.movementY / height;
+        x1 += event.movementX / width;
+        break;
+      case "Bottom Right":
+        y2 += event.movementY / height;
+        x2 += event.movementX / width;
+        break;
+      default:
+        console.log(resizeDirection);
+        return;
+    }
+
+    if (x1 * width < 0 || x1 * width > width) {
+      x1 = currentBrush.extents.x1;
+    }
+
+    if (x2 * width < 0 || x2 * width > width) {
+      x2 = currentBrush.extents.x2;
+    }
+
+    if (y1 * height < 0 || y1 * height > height) {
+      y1 = currentBrush.extents.y1;
+    }
+
+    if (y2 * height < 0 || y2 * height > height) {
+      y2 = currentBrush.extents.y2;
+    }
+
+    currentBrush.extents = { x1, x2, y1, y2 };
+    brushes[activeBrushId] = currentBrush;
+    if (JSON.stringify(brushes) !== JSON.stringify(baseBrushes))
+      setBrushes(brushes);
+  }
+
+  function handleMouseUpResize(event: MouseEvent) {
+    if (!activeBrushId) return;
+
+    console.log("Yay");
+
+    onBrushUpdate(brushes, brushes[activeBrushId], "Change");
+    setMouseDownResize(false);
+    setActiveBrushId(null);
+    setResizeDirection(null);
+  }
+
   // Add/Remove Events
   function addEvents() {
-    window.addEventListener("mouseup", handleMouseUp);
-    window.addEventListener("mousemove", handleMouseMove);
+    if (mouseDown) {
+      window.addEventListener("mouseup", handleMouseUp);
+      window.addEventListener("mousemove", handleMouseMove);
+    } else if (mouseDownResize) {
+      window.addEventListener("mouseup", handleMouseUpResize);
+      window.addEventListener("mousemove", handleMouseMoveResize);
+    }
   }
 
   function removeEvents() {
-    window.removeEventListener("mouseup", handleMouseUp);
-    window.removeEventListener("mousemove", handleMouseMove);
+    if (mouseDown) {
+      window.removeEventListener("mouseup", handleMouseUp);
+      window.removeEventListener("mousemove", handleMouseMove);
+    } else if (mouseDownResize) {
+      window.removeEventListener("mouseup", handleMouseUpResize);
+      window.removeEventListener("mousemove", handleMouseMoveResize);
+    }
   }
 
   // Components
@@ -184,6 +286,9 @@ const BrushComponent: FC<Props> = ({
         overlayRef={overlayRef}
         onBrushUpdate={onBrushUpdate}
         brushes={brushes}
+        onResizeStart={(brushId: string, resizeDirection: ResizeDirection) => {
+          handleMouseDownResize({} as any, brushId, resizeDirection);
+        }}
       />
     );
   });

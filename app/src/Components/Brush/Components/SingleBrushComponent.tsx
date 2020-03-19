@@ -3,7 +3,7 @@ import React, { memo, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { Brush, BrushCollection } from '../Types/Brush';
-import { BrushUpdateFunction, correctBrushExtents } from './BrushComponent';
+import { BrushUpdateFunction } from './BrushComponent';
 
 interface Props {
   x: number;
@@ -17,9 +17,10 @@ interface Props {
   overlayRef: React.RefObject<SVGRectElement>;
   onBrushUpdate: BrushUpdateFunction;
   brushes: BrushCollection;
+  onResizeStart: (brushId: string, resizeDirection: ResizeDirection) => void;
 }
 
-type ResizeDirection =
+export type ResizeDirection =
   | "Left"
   | "Right"
   | "Top"
@@ -32,40 +33,29 @@ type ResizeDirection =
 function SingleBrushComponent({
   x: initX,
   y: initY,
-  height: initHeight,
-  width: initWidth,
+  height,
+  width,
   extentHeight,
   extentWidth,
   overlayRef,
   onBrushUpdate,
   brushes,
-  brushId
+  brushId,
+  onResizeStart
 }: Props) {
   // States
   const [mouseDown, setMouseDown] = useState(false);
-  const [mouseDownResize, setMouseDownResize] = useState(false);
   const [position, setPosition] = useState<{ x: number; y: number }>({
     x: initX,
     y: initY
   });
-  const [brushSize, setBrushSize] = useState<{ height: number; width: number }>(
-    {
-      height: initHeight,
-      width: initWidth
-    }
-  );
   const [diff, setDiff] = useState<{
     diffX: number;
     diffY: number;
   } | null>(null);
-  const [
-    resizeDirection,
-    setResizeDirection
-  ] = useState<ResizeDirection | null>(null);
 
   // Destructuring
   const { x, y } = position;
-  const { height, width } = brushSize;
 
   // Ref
   const brushRef = useRef<SVGRectElement>(null);
@@ -78,34 +68,9 @@ function SingleBrushComponent({
   });
 
   useEffect(() => {
-    if (!mouseDownResize) return;
-    addEventsForResize();
-    return removeEventsForResize;
-  });
-
-  useEffect(() => {
-    setPosition(pos => {
-      const { x, y } = pos;
-      if (x !== initX || y !== initY) {
-        return { x: initX, y: initY };
-      } else return pos;
-    });
-    setBrushSize(size => {
-      const { height, width } = size;
-      if (height !== initHeight || width !== initWidth) {
-        return { height: initHeight, width: initWidth };
-      } else return size;
-    });
-  }, [initX, initY, initHeight, initWidth]);
-
-  function drawAtPosition(x: number, y: number) {
-    select("#brush-component")
-      .append("circle")
-      .attr("r", 5)
-      .attr("cx", x)
-      .attr("cy", y)
-      .style("fill", "red");
-  }
+    if (JSON.stringify(position) !== JSON.stringify({ x: initX, y: initY }))
+      setPosition({ x: initX, y: initY });
+  }, [initX, initY]);
 
   // Drag Handlers
   function handleMouseDown(
@@ -170,52 +135,6 @@ function SingleBrushComponent({
     setMouseDown(false);
   }
 
-  // Resize Handlers
-  function handleResizeDown(
-    event: React.MouseEvent<SVGRectElement, MouseEvent>,
-    resizeDirection: ResizeDirection
-  ) {
-    setMouseDownResize(true);
-    setResizeDirection(resizeDirection);
-  }
-
-  function handleResizeMove(event: MouseEvent) {
-    const targetNode = overlayRef.current;
-    if (!targetNode) return;
-    const target = targetNode.getBoundingClientRect();
-    const { left, top } = target;
-    let [newX, newY] = [event.clientX - left, event.clientY - top];
-
-    const { height, width } = brushSize;
-    let [x1, x2, y1, y2] = [x, x + width, y, y + height];
-
-    switch (resizeDirection) {
-      case "Top":
-        y1 += event.movementY;
-        break;
-      default:
-        return;
-    }
-
-    const temp = correctBrushExtents({ x1, x2, y1, y2 });
-    [x1, x2, y1, y2] = [temp.x1, temp.x2, temp.y1, temp.y2];
-    const [newHeight, newWidth] = [Math.abs(y2 - y1), Math.abs(x2 - x1)];
-
-    if (JSON.stringify({ x: x1, y: y1 }) !== JSON.stringify(position))
-      setPosition({ x: x1, y: y1 });
-
-    if (
-      JSON.stringify({ height: newHeight, width: newWidth }) !==
-      JSON.stringify(brushSize)
-    )
-      setBrushSize({ height: newHeight, width: newWidth });
-  }
-
-  function handleResizeUp(event: MouseEvent) {
-    setResizeDirection(null);
-    setMouseDownResize(false);
-  }
-
   // Add/Remove Events
   function addEvents() {
     window.addEventListener("mouseup", handleMouseUp);
@@ -225,17 +144,6 @@ function SingleBrushComponent({
   function removeEvents() {
     window.removeEventListener("mouseup", handleMouseUp);
     window.removeEventListener("mousemove", handleMouseMove);
-  }
-
-  // Add resize events
-  function addEventsForResize() {
-    window.addEventListener("mouseup", handleResizeUp);
-    window.addEventListener("mousemove", handleResizeMove);
-  }
-
-  function removeEventsForResize() {
-    window.removeEventListener("mouseup", handleResizeUp);
-    window.removeEventListener("mousemove", handleResizeMove);
   }
 
   const resizeRectSize = 7;
@@ -256,57 +164,66 @@ function SingleBrushComponent({
           y={y - resizeRectSize / 2}
           height={resizeRectSize}
           width={width - 2 * resizeRectSize}
-          onMouseDown={event => handleResizeDown(event, "Top")}
+          onMouseDown={() => onResizeStart(brushId, "Top")}
         />
       )}
-      {/* <HorizontalResizeRectangle
-        x={x2 - resizeControlSize / 2}
-        y={y1 + resizeControlSize / 2}
-        height={
-          y2 - y1 - resizeControlSize < 0 ? 0 : y2 - y1 - resizeControlSize
-        }
-        width={resizeControlSize}
-      />
-      <VerticalResizeRectangle
-        x={x1 + resizeControlSize / 2}
-        y={y1 - resizeControlSize / 2}
-        height={resizeControlSize}
-        width={
-          x2 - x1 - resizeControlSize < 0 ? 0 : x2 - x1 - resizeControlSize
-        }
-      />
-      <VerticalResizeRectangle
-        x={x1 + resizeControlSize / 2}
-        y={y2 - resizeControlSize / 2}
-        height={resizeControlSize}
-        width={
-          x2 - x1 - resizeControlSize < 0 ? 0 : x2 - x1 - resizeControlSize
-        }
+      {width - 2 * resizeRectSize >= 0 && (
+        <VerticalResizeRectangle
+          x={x + resizeRectSize}
+          y={y + height - resizeRectSize / 2}
+          height={resizeRectSize}
+          width={width - 2 * resizeRectSize}
+          onMouseDown={() => onResizeStart(brushId, "Bottom")}
+        />
+      )}
+      {height - 2 * resizeRectSize >= 0 && (
+        <HorizontalResizeRectangle
+          x={x - resizeRectSize / 2}
+          y={y + resizeRectSize}
+          height={height - 2 * resizeRectSize}
+          width={resizeRectSize}
+          onMouseDown={() => onResizeStart(brushId, "Left")}
+        />
+      )}
+
+      {height - 2 * resizeRectSize >= 0 && (
+        <HorizontalResizeRectangle
+          x={x + width - resizeRectSize / 2}
+          y={y + resizeRectSize}
+          height={height - 2 * resizeRectSize}
+          width={resizeRectSize}
+          onMouseDown={() => onResizeStart(brushId, "Right")}
+        />
+      )}
+
+      <TLBRResizeRectangle
+        x={x - resizeRectSize / 2}
+        y={y - resizeRectSize / 2}
+        height={resizeRectSize}
+        width={resizeRectSize}
+        onMouseDown={() => onResizeStart(brushId, "Top Left")}
       />
       <TLBRResizeRectangle
-        x={x1 - resizeControlSize / 2}
-        y={y1 - resizeControlSize / 2}
-        height={resizeControlSize}
-        width={resizeControlSize}
-      />
-      <TLBRResizeRectangle
-        x={x2 - resizeControlSize / 2}
-        y={y2 - resizeControlSize / 2}
-        height={resizeControlSize}
-        width={resizeControlSize}
+        x={x + width - resizeRectSize / 2}
+        y={y + height - resizeRectSize / 2}
+        height={resizeRectSize}
+        width={resizeRectSize}
+        onMouseDown={() => onResizeStart(brushId, "Bottom Right")}
       />
       <TRBLResizeRectangle
-        x={x2 - resizeControlSize / 2}
-        y={y1 - resizeControlSize / 2}
-        height={resizeControlSize}
-        width={resizeControlSize}
+        x={x - resizeRectSize / 2}
+        y={y + height - resizeRectSize / 2}
+        height={resizeRectSize}
+        width={resizeRectSize}
+        onMouseDown={() => onResizeStart(brushId, "Bottom Left")}
       />
       <TRBLResizeRectangle
-        x={x1 - resizeControlSize / 2}
-        y={y2 - resizeControlSize / 2}
-        height={resizeControlSize}
-        width={resizeControlSize}
-      /> */}
+        x={x + width - resizeRectSize / 2}
+        y={y - resizeRectSize / 2}
+        height={resizeRectSize}
+        width={resizeRectSize}
+        onMouseDown={() => onResizeStart(brushId, "Top Right")}
+      />
     </>
   );
 }
@@ -356,3 +273,12 @@ const RemoveBrushCircle = styled("circle")`
   fill: #777;
   opacity: 0.01;
 `;
+
+export function drawAtPosition(x: number, y: number) {
+  select("#brush-component")
+    .append("circle")
+    .attr("r", 5)
+    .attr("cx", x)
+    .attr("cy", y)
+    .style("fill", "red");
+}
