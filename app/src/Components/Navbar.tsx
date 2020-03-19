@@ -33,6 +33,7 @@ function Navbar({ store, data, datasets, setDataset }: NavbarProps) {
 
   const actions = useContext(ActionContext);
   const task = useContext(TaskConfigContext);
+  const { isManual = false } = task || {};
 
   const [addingPlot, setAddingPlot] = useState(false);
 
@@ -211,7 +212,7 @@ function Navbar({ store, data, datasets, setDataset }: NavbarProps) {
     </Menu.Item>
   );
 
-  const taskTypeDesc: TaskTypeDescription = task.isManual
+  const taskTypeDesc: TaskTypeDescription = isManual
     ? "User Driven"
     : "Computer Supported";
 
