@@ -33,15 +33,15 @@ const Scatterplot: FC<Props> = ({
   const { categoryColumn, plots } = store!;
 
   const [dim, setDim] = useState({ height: 0, width: 0 });
+  const { height: dh, width: dw } = dim;
 
   useEffect(() => {
-    const { height, width } = dim;
     const { current } = svgRef;
-    if (current && height === 0 && width === 0) {
+    if (current && dh === 0 && dw === 0) {
       const size = current.getBoundingClientRect();
       setDim({ height: size.height, width: size.width });
     }
-  }, [dim]);
+  }, [dh, dw]);
 
   let reducePercentage = 0.85;
 
@@ -92,7 +92,7 @@ const Scatterplot: FC<Props> = ({
   }, [adjustedHeight, yMax, yMin]);
 
   return (
-    <div className={surroundDiv} style={{ height, width }}>
+    <div className={surroundDiv}>
       <ScatterplotControls plotID={plot.id} />
       <svg className={svgStyle} ref={svgRef}>
         <rect height={dim.height} width={dim.width} fill="#ccc" opacity="0.1" />
