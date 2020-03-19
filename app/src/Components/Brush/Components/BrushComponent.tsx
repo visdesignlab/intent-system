@@ -164,7 +164,6 @@ const BrushComponent: FC<Props> = ({
     const targetNode = overlayRef.current;
     if (!targetNode || !activeBrushId || !brushes[activeBrushId]) return;
     const currentBrush = brushes[activeBrushId];
-    const target = targetNode.getBoundingClientRect();
 
     let { x1, x2, y1, y2 } = currentBrush.extents;
 
