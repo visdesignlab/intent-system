@@ -96,7 +96,7 @@ const FreeFormBrush: FC<Props> = ({
   }
 
   function removeEvent() {
-    window.removeEventListener("mousedown", handleMove);
+    window.removeEventListener("mousemove", handleMove);
     window.removeEventListener("mouseup", handleMouseUp);
   }
 
