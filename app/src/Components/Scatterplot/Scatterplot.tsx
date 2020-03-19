@@ -95,8 +95,13 @@ const Scatterplot: FC<Props> = ({
     <div className={surroundDiv}>
       <ScatterplotControls plotID={plot.id} />
       <svg className={svgStyle} ref={svgRef}>
-        <rect height={dim.height} width={dim.width} fill="#ccc" opacity="0.1" />
-
+        <rect
+          id="background"
+          height={dim.height}
+          width={dim.width}
+          fill="#ccc"
+          opacity="0.1"
+        />
         <RawPlot
           plotId={plot.id}
           height={adjustedHeight}

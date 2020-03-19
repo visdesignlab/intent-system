@@ -264,7 +264,6 @@ const BrushComponent: FC<Props> = ({
       width={width}
       fill="none"
       cursor="crosshair"
-      stroke="black"
       pointerEvents="all"
       onMouseDown={handleMouseDown}
     />

@@ -119,7 +119,6 @@ const RawPlot: FC<Props> = ({
         if (!node.length) {
           do {
             let { x, y } = node.data;
-
             const isSelected =
               x + 2.5 >= left &&
               x + 2.5 <= right &&
@@ -131,9 +130,7 @@ const RawPlot: FC<Props> = ({
             }
           } while ((node = node.next));
         }
-        return (
-          x1 + 5 >= right || y1 + 5 >= bottom || x2 + 5 <= left || y2 + 5 <= top
-        );
+        return x1 >= right || y1 >= bottom || x2 <= left || y2 <= top;
       });
       return points;
     },
@@ -455,7 +452,6 @@ const RawPlot: FC<Props> = ({
     <BrushComponent
       key={brushKey}
       extents={extents}
-      extentPadding={20}
       onBrushUpdate={brushHandler}
       initialBrushes={initBrushCounts === 0 ? null : initialBrushes}
       switchOff={brushType !== "Rectangular"}
