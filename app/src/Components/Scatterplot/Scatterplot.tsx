@@ -1,23 +1,16 @@
-import React, {
-  FC,
-  useRef,
-  useState,
-  useEffect,
-  useContext,
-  useMemo,
-  memo
-} from "react";
-import { inject, observer } from "mobx-react";
-import IntentStore from "../../Store/IntentStore";
-import { style } from "typestyle";
-import { Plot } from "../../Store/IntentState";
-import { scaleLinear } from "d3";
-import translate from "../../Utils/Translate";
-import RawPlot from "./RawPlot";
-import { UserSelections } from "../Predictions/PredictionRowType";
-import { Data } from "../../Utils/Dataset";
-import ScatterplotControls from "./ScatterplotControls";
-import { DataContext } from "../../Contexts";
+import { scaleLinear } from 'd3';
+import { inject, observer } from 'mobx-react';
+import React, { FC, memo, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { style } from 'typestyle';
+
+import { DataContext } from '../../Contexts';
+import { Plot } from '../../Store/IntentState';
+import IntentStore from '../../Store/IntentStore';
+import { Data } from '../../Utils/Dataset';
+import translate from '../../Utils/Translate';
+import { UserSelections } from '../Predictions/PredictionRowType';
+import RawPlot from './RawPlot';
+import ScatterplotControls from './ScatterplotControls';
 
 export interface Props {
   store?: IntentStore;
@@ -40,15 +33,15 @@ const Scatterplot: FC<Props> = ({
   const { categoryColumn, plots } = store!;
 
   const [dim, setDim] = useState({ height: 0, width: 0 });
+  const { height: dh, width: dw } = dim;
 
   useEffect(() => {
-    const { height, width } = dim;
     const { current } = svgRef;
-    if (current && height === 0 && width === 0) {
+    if (current && dh === 0 && dw === 0) {
       const size = current.getBoundingClientRect();
       setDim({ height: size.height, width: size.width });
     }
-  }, [dim]);
+  }, [dh, dw]);
 
   let reducePercentage = 0.85;
 
@@ -99,13 +92,18 @@ const Scatterplot: FC<Props> = ({
   }, [adjustedHeight, yMax, yMin]);
 
   return (
-    <div className={surroundDiv} style={{ height, width }}>
+    <div className={surroundDiv}>
       <ScatterplotControls plotID={plot.id} />
       <svg className={svgStyle} ref={svgRef}>
-        <rect height={dim.height} width={dim.width} fill="#ccc" opacity="0.1" />
-
+        <rect
+          id="background"
+          height={dim.height}
+          width={dim.width}
+          fill="#ccc"
+          opacity="0.1"
+        />
         <RawPlot
-          plot={plot}
+          plotId={plot.id}
           height={adjustedHeight}
           width={adjustedWidth}
           data={xyData}

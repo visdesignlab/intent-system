@@ -71,7 +71,6 @@ class Range:
         # Train simpler decision tree
         suggestion = None
 
-        depth = model.get_depth()
         if model.get_depth() > 1:
             sugg_model = tree.DecisionTreeClassifier(max_depth=model.get_depth() - 1)
             sugg_model.fit(df, selection)
@@ -83,15 +82,13 @@ class Range:
                 intent=self.to_string() + "Simplified",
                 data_ids=[],
                 suggestion=None,
-                rank=(1 / (depth * depth))-0.0001,
+                rank=(1 / (model.get_depth() * model.get_depth()))-0.0001,
                 info={"rules": list(sugg_paths)})
             suggestion = [sugg_pred]
-        else:
-            depth = 5
 
         preds = [Prediction(
             intent=self.to_string(),
-            rank=1 / (depth * depth),
+            rank=1 / (model.get_depth() * model.get_depth()),
             data_ids=[],
             info={"rules": list(paths)},
             suggestion=suggestion),

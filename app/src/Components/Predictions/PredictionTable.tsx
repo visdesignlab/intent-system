@@ -1,13 +1,14 @@
-import React, { FC, useContext, memo } from "react";
-import { inject, observer } from "mobx-react";
-import IntentStore from "../../Store/IntentStore";
-import { Table, Label, Popup, Button } from "semantic-ui-react";
-import { PredictionRowType, getAllSelections } from "./PredictionRowType";
-import JaccardBar from "./JaccardBar";
-import ProbabilityBar from "./ProbabilityBar";
-import hoverable from "../UtilComponent/hoverable";
-import { FADE_OUT, FADE_COMP_IN } from "../Styles/MarkStyle";
-import { ActionContext } from "../../Contexts";
+import { inject, observer } from 'mobx-react';
+import React, { FC, memo, useContext } from 'react';
+import { Button, Header, Label, Popup, Table } from 'semantic-ui-react';
+
+import { ActionContext } from '../../Contexts';
+import IntentStore from '../../Store/IntentStore';
+import { FADE_COMP_IN, FADE_OUT } from '../Styles/MarkStyle';
+import hoverable from '../UtilComponent/hoverable';
+import JaccardBar from './JaccardBar';
+import { getAllSelections, PredictionRowType } from './PredictionRowType';
+import ProbabilityBar from './ProbabilityBar';
 
 type Props = {
   store?: IntentStore;
@@ -143,6 +144,34 @@ const PredictionTable: FC<Props> = ({
             }}
           />
         </Table.Cell>
+        <Table.Cell>
+          <Popup
+            hoverable
+            mouseEnterDelay={500}
+            trigger={
+              <Button
+                icon="info"
+                circular
+                onClick={() => console.log(JSON.parse(JSON.stringify(pred)))}
+              />
+            }
+            content={
+              <>
+                <Header>Info</Header>
+                <pre>
+                  {JSON.stringify(
+                    pred,
+                    (k, v) =>
+                      ["dataIds", "matches", "isnp", "ipns"].includes(k)
+                        ? undefined
+                        : v,
+                    2
+                  )}
+                </pre>
+              </>
+            }
+          />
+        </Table.Cell>
       </Table.Row>
     );
   }
@@ -171,7 +200,7 @@ const PredictionTable: FC<Props> = ({
           )}
           <Table.HeaderCell>Similarity</Table.HeaderCell>
           {!isTask && <Table.HeaderCell>Probability</Table.HeaderCell>}
-          <Table.HeaderCell colSpan={isTask ? 1 : 2}></Table.HeaderCell>
+          <Table.HeaderCell colSpan={isTask ? 2 : 3}></Table.HeaderCell>
         </Table.Row>
       </Table.Header>
       <Table.Body>{predictions.map(predRowRender)}</Table.Body>

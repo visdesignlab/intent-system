@@ -1,72 +1,80 @@
-import React, { createRef, FC, useEffect, useRef, useState } from 'react';
+import React, { FC, memo, useEffect, useRef, useState } from 'react';
 
-import { MousePosition } from '../../Scatterplot/RawPlot';
+import getBrushId from '../../../Utils/BrushIDGen';
 import { Brush, BrushAffectType, BrushCollection } from '../Types/Brush';
 import { BrushableRegion } from '../Types/BrushableRegion';
-import { BrushResizeType } from '../Types/BrushResizeEnum';
-import SingleBrushComponent from './SingleBrushComponent';
+import SingleBrushComponent, { ResizeDirection } from './SingleBrushComponent';
+
+export type BrushUpdateFunction = (
+  brushes: BrushCollection,
+  affectedBrush: Brush,
+  affectType: BrushAffectType,
+  mousePosition?: MousePosition
+) => void;
 
 interface Props {
   extents: BrushableRegion;
   showBrushBorder?: boolean;
   extentPadding?: number;
-  onBrushUpdate: (
-    brushes: BrushCollection,
-    affectedBrush: Brush,
-    affectType: BrushAffectType,
-    mousePosition?: MousePosition
-  ) => void;
+  onBrushUpdate: BrushUpdateFunction;
   clearAllBrushSetup?: (handler: () => void) => void;
   initialBrushes?: BrushCollection;
   switchOff?: boolean;
 }
+
+type MousePosition = { x: number; y: number };
 
 const BrushComponent: FC<Props> = ({
   extents,
   showBrushBorder,
   clearAllBrushSetup,
   onBrushUpdate,
-  extentPadding,
-  initialBrushes,
+  extentPadding = 0,
+  initialBrushes = {},
   switchOff = true
 }: Props) => {
-  if (!extentPadding) extentPadding = 0;
-
-  const layerRef = createRef<SVGRectElement>();
-
-  const { top, left, right, bottom } = extents;
+  const { left, right, top, bottom } = extents;
   const [height, width] = [
     Math.abs(bottom + extentPadding - (top - extentPadding)),
     Math.abs(left - extentPadding - (right + extentPadding))
   ];
+  const ibString = JSON.stringify(initialBrushes);
 
-  const [mouseDown, setMouseDown] = useState<boolean>(false);
-  const [brushes, setBrushes] = useState<BrushCollection>({});
-  const [currentBrush, setCurrentBrush] = useState<Brush>(null as any);
-  const [isCreatingNewBrush, setIsCreatingNewBrush] = useState<boolean>(false);
-  const [movingBrush, setMovingBrush] = useState<boolean>(false);
-  const [mouseDownForResize, setMouseDownForResize] = useState<boolean>(false);
-  const [resizeDirection, setResizeDirection] = useState<BrushResizeType>(
-    null as any
-  );
-  const brushGroupRef = useRef<SVGGElement>(null);
+  // Refs
+  const overlayRef = useRef<SVGRectElement>(null);
 
-  const initialBrushString = JSON.stringify(initialBrushes);
-
+  // State
+  const [mouseDown, setMouseDown] = useState(false);
+  const [mouseDownResize, setMouseDownResize] = useState(false);
+  const [baseBrushes, setBrushes] = useState<BrushCollection>({});
+  const [activeBrushId, setActiveBrushId] = useState<string | null>(null);
+  const [
+    resizeDirection,
+    setResizeDirection
+  ] = useState<ResizeDirection | null>(null);
+  // Effects
   useEffect(() => {
-    const initialBrushes = JSON.parse(initialBrushString);
-    if (initialBrushes) {
-      setBrushes(initialBrushes);
-    }
-  }, [initialBrushString]);
+    const initalBrushes: BrushCollection = JSON.parse(ibString);
+    if (initalBrushes) setBrushes(initalBrushes);
+  }, [ibString]);
 
-  const handleMouseDownWhenCreating = <T extends SVGElement>(
-    event: React.MouseEvent<T, MouseEvent>
-  ) => {
-    setMouseDown(true);
+  // Event Add Effect
+  useEffect(() => {
+    if (!mouseDown && !mouseDownResize) return;
+    addEvents();
+    return removeEvents;
+  });
+
+  // Copies
+  const brushes: BrushCollection = JSON.parse(JSON.stringify(baseBrushes));
+
+  // Handlers
+  function handleMouseDown(
+    event: React.MouseEvent<SVGRectElement, MouseEvent>
+  ) {
     const currentTarget = event.currentTarget.getBoundingClientRect();
     const brush: Brush = {
-      id: new Date().getTime().toString(),
+      id: getBrushId(),
       extents: {
         x1: (event.clientX - currentTarget.left) / width,
         x2: (event.clientX - currentTarget.left) / width,
@@ -75,338 +83,251 @@ const BrushComponent: FC<Props> = ({
       }
     };
     brushes[brush.id] = brush;
+    setMouseDown(true);
+    setBrushes(brushes);
+    setActiveBrushId(brush.id);
+  }
 
-    setCurrentBrush(brush);
-    setBrushes({ ...brushes });
-    setIsCreatingNewBrush(true);
-  };
+  function handleMouseMove(event: MouseEvent) {
+    const targetNode = overlayRef.current;
+    if (!targetNode || !activeBrushId || !brushes[activeBrushId]) return;
 
-  const handleMouseMoveWhenCreating = <T extends SVGGElement>(
-    event: React.MouseEvent<T, MouseEvent>
-  ) => {
-    if (!mouseDown) return;
-    const currentTarget = event.currentTarget.getBoundingClientRect();
+    const currentBrush = brushes[activeBrushId];
+    const target = targetNode.getBoundingClientRect();
+    const { left, top } = target;
+
     let x1 = currentBrush.extents.x1;
     let y1 = currentBrush.extents.y1;
-    let x2 = (event.clientX - currentTarget.left) / width;
-    let y2 = (event.clientY - currentTarget.top) / height;
+    let x2 = (event.clientX - left) / width;
+    let y2 = (event.clientY - top) / height;
+
+    if (x2 * width < 0 || x2 * width > width) {
+      x2 = currentBrush.extents.x2;
+    }
+    if (y2 * height < 0 || y2 * height > height) {
+      y2 = currentBrush.extents.y2;
+    }
 
     currentBrush.extents = { x1, x2, y1, y2 };
+    brushes[activeBrushId] = currentBrush;
+    if (JSON.stringify(brushes) !== JSON.stringify(baseBrushes))
+      setBrushes(brushes);
+  }
 
-    brushes[currentBrush.id] = currentBrush;
-    setBrushes({ ...brushes });
-  };
+  function handleMouseUp(event: MouseEvent) {
+    const targetNode = overlayRef.current;
+    if (!targetNode || !activeBrushId || !brushes[activeBrushId])
+      throw new Error("Something went wrong in create brush mouse up handler");
 
-  const handleMouseUpWhenCreating = <T extends SVGGElement>(
-    event: React.MouseEvent<T, MouseEvent>
-  ) => {
-    const currentTarget = event.currentTarget.getBoundingClientRect();
+    const target = targetNode.getBoundingClientRect();
+    const { left, top } = target;
+    const currentBrush = brushes[activeBrushId];
+    let { x1, x2, y1, y2 } = currentBrush.extents;
+    const isNewBrushRedundant =
+      Math.abs(x1 - x2) < 0.00001 || Math.abs(y1 - y2) < 0.00001;
 
-    const isNewBrushZero =
-      currentBrush.extents &&
-      (currentBrush.extents.x1 === currentBrush.extents.x2 ||
-        currentBrush.extents.y1 === currentBrush.extents.y2);
-
-    if (isNewBrushZero) {
-      delete brushes[currentBrush.id];
+    if (isNewBrushRedundant) {
+      delete brushes[activeBrushId];
+      setBrushes(brushes);
     } else {
-      const curr = currentBrush;
-      let { x1, x2, y1, y2 } = curr.extents;
-
       if (x1 > x2) [x1, x2] = [x2, x1];
       if (y1 > y2) [y1, y2] = [y2, y1];
 
-      curr.extents = { x1, x2, y1, y2 };
-      brushes[curr.id] = curr;
+      currentBrush.extents = { x1, x2, y1, y2 };
+      brushes[activeBrushId] = currentBrush;
 
-      onBrushUpdate({ ...brushes }, curr, "Add", {
-        x: event.clientX - currentTarget.left,
-        y: event.clientY - currentTarget.top
+      onBrushUpdate(brushes, currentBrush, "Add", {
+        x: event.clientX - left,
+        y: event.clientY - top
       });
+
+      if (JSON.stringify(brushes) !== JSON.stringify(baseBrushes))
+        setBrushes(brushes);
     }
 
-    setCurrentBrush(null as any);
     setMouseDown(false);
-    setIsCreatingNewBrush(false);
-  };
-
-  const handleDragStart = <T extends SVGElement>(
-    _: React.MouseEvent<T, MouseEvent>,
-    brush: Brush
-  ) => {
-    setMouseDown(true);
-    setMovingBrush(true);
-    setCurrentBrush(brush);
-  };
-
-  const handleOnDrag = <T extends SVGGElement>(
-    event: React.MouseEvent<T, MouseEvent>,
-    brush: Brush
-  ) => {
-    if (!mouseDown) return;
-
-    let [X1, X2, Y1, Y2] = [
-      brush.extents.x1 * width,
-      brush.extents.x2 * width,
-      brush.extents.y1 * height,
-      brush.extents.y2 * height
-    ];
-
-    let [delX1, delX2, delY1, delY2] = [
-      event.movementX,
-      event.movementX,
-      event.movementY,
-      event.movementY
-    ];
-
-    if (X1 + delX1 <= 0 || X2 + delX2 >= width) {
-      delX1 = 0;
-      delX2 = 0;
-    }
-    if (Y2 + delY2 >= height || Y1 + delY1 <= 0) {
-      delY1 = 0;
-      delY2 = 0;
-    }
-
-    brush.extents.x1 = (X1 + delX1) / width;
-    brush.extents.x2 = (X2 + delX2) / width;
-    brush.extents.y1 = (Y1 + delY1) / height;
-    brush.extents.y2 = (Y2 + delY2) / height;
-
-    brushes[brush.id] = brush;
-    setBrushes({ ...brushes });
-  };
-
-  const handleDragStop = <T extends SVGElement>(
-    event: React.MouseEvent<T, MouseEvent>
-  ) => {
-    const currentTarget = event.currentTarget.getBoundingClientRect();
-
-    const curr = currentBrush;
-    setMouseDown(false);
-    setMovingBrush(false);
-    setCurrentBrush(null as any);
-    onBrushUpdate({ ...brushes }, curr, "Change", {
-      x: event.clientX - currentTarget.left,
-      y: event.clientY - currentTarget.top
-    });
-  };
-
-  const removeAllBrushes = () => {
-    const brs = JSON.parse(JSON.stringify(brushes));
-    setBrushes({});
-    onBrushUpdate({ ...brushes }, brs, "Clear");
-  };
-
-  if (!clearAllBrushSetup) {
-    clearAllBrushSetup = (_: any) => {};
+    setActiveBrushId(null);
   }
 
-  clearAllBrushSetup(removeAllBrushes);
-
-  const removeBrush = (brush: Brush) => {
-    delete brushes[brush.id];
-    setBrushes({ ...brushes });
-    onBrushUpdate({ ...brushes }, brush, "Remove");
-  };
-
-  const handleOnResizeStart = <T extends SVGGElement>(
-    _: React.MouseEvent<T, MouseEvent>,
-    brush: Brush,
-    resizeDirection: BrushResizeType
-  ) => {
-    setMouseDownForResize(true);
-    setCurrentBrush(brush);
+  // Resize Handlers
+  function handleMouseDownResize(
+    event: React.MouseEvent<SVGRectElement, MouseEvent>,
+    brushId: string,
+    resizeDirection: ResizeDirection
+  ) {
+    setMouseDownResize(true);
+    setActiveBrushId(brushId);
     setResizeDirection(resizeDirection);
-  };
+  }
 
-  const handleOnResize = <T extends SVGGElement>(
-    event: React.MouseEvent<T, MouseEvent>,
-    brush: Brush
-  ) => {
-    if (!mouseDownForResize) return;
-    switch (BrushResizeType[resizeDirection]) {
-      case BrushResizeType.LEFT:
-        brush.extents.x1 += event.movementX / width;
+  function handleMouseMoveResize(event: MouseEvent) {
+    const targetNode = overlayRef.current;
+    if (!targetNode || !activeBrushId || !brushes[activeBrushId]) return;
+    const currentBrush = brushes[activeBrushId];
+
+    let { x1, x2, y1, y2 } = currentBrush.extents;
+
+    switch (resizeDirection) {
+      case "Top":
+        y1 += event.movementY / height;
         break;
-      case BrushResizeType.RIGHT:
-        brush.extents.x2 += event.movementX / width;
+      case "Bottom":
+        y2 += event.movementY / height;
         break;
-      case BrushResizeType.TOP:
-        brush.extents.y1 += event.movementY / height;
+      case "Left":
+        x1 += event.movementX / width;
         break;
-      case BrushResizeType.BOTTOM:
-        brush.extents.y2 += event.movementY / height;
+      case "Right":
+        x2 += event.movementX / width;
         break;
-      case BrushResizeType.TOPLEFT:
-        brush.extents.x1 += event.movementX / width;
-        brush.extents.y1 += event.movementY / height;
+      case "Top Left":
+        y1 += event.movementY / height;
+        x1 += event.movementX / width;
         break;
-      case BrushResizeType.TOPRIGHT:
-        brush.extents.x2 += event.movementX / width;
-        brush.extents.y1 += event.movementY / height;
+      case "Top Right":
+        y1 += event.movementY / height;
+        x2 += event.movementX / width;
         break;
-      case BrushResizeType.BOTTOMLEFT:
-        brush.extents.x1 += event.movementX / width;
-        brush.extents.y2 += event.movementY / height;
+      case "Bottom Left":
+        y2 += event.movementY / height;
+        x1 += event.movementX / width;
         break;
-      case BrushResizeType.BOTTOMRIGHT:
-        brush.extents.x2 += event.movementX / width;
-        brush.extents.y2 += event.movementY / height;
+      case "Bottom Right":
+        y2 += event.movementY / height;
+        x2 += event.movementX / width;
         break;
       default:
-        console.log(event.movementX, event.movementY);
+        console.log(resizeDirection);
+        return;
     }
 
-    brushes[brush.id] = brush;
-    setBrushes({ ...brushes });
-  };
+    if (x1 * width < 0 || x1 * width > width) {
+      x1 = currentBrush.extents.x1;
+    }
 
-  const handleOnResizeEnd = <T extends SVGGElement>(
-    event: React.MouseEvent<T, MouseEvent>
-  ) => {
-    const currentTarget = event.currentTarget.getBoundingClientRect();
+    if (x2 * width < 0 || x2 * width > width) {
+      x2 = currentBrush.extents.x2;
+    }
 
-    const curr = currentBrush;
-    setMouseDownForResize(false);
+    if (y1 * height < 0 || y1 * height > height) {
+      y1 = currentBrush.extents.y1;
+    }
 
-    setCurrentBrush(null as any);
-    setResizeDirection(null as any);
-    onBrushUpdate({ ...brushes }, curr, `Change`, {
-      x: event.clientX - currentTarget.left,
-      y: event.clientY - currentTarget.top
-    });
-  };
+    if (y2 * height < 0 || y2 * height > height) {
+      y2 = currentBrush.extents.y2;
+    }
 
-  const brushOverlay = (
+    currentBrush.extents = { x1, x2, y1, y2 };
+    brushes[activeBrushId] = currentBrush;
+    if (JSON.stringify(brushes) !== JSON.stringify(baseBrushes))
+      setBrushes(brushes);
+  }
+
+  function handleMouseUpResize(event: MouseEvent) {
+    if (!activeBrushId) return;
+
+    onBrushUpdate(brushes, brushes[activeBrushId], "Change");
+    setMouseDownResize(false);
+    setActiveBrushId(null);
+    setResizeDirection(null);
+  }
+
+  // Add/Remove Events
+  function addEvents() {
+    if (mouseDown) {
+      window.addEventListener("mouseup", handleMouseUp);
+      window.addEventListener("mousemove", handleMouseMove);
+    } else if (mouseDownResize) {
+      window.addEventListener("mouseup", handleMouseUpResize);
+      window.addEventListener("mousemove", handleMouseMoveResize);
+    }
+  }
+
+  function removeEvents() {
+    if (mouseDown) {
+      window.removeEventListener("mouseup", handleMouseUp);
+      window.removeEventListener("mousemove", handleMouseMove);
+    } else if (mouseDownResize) {
+      window.removeEventListener("mouseup", handleMouseUpResize);
+      window.removeEventListener("mousemove", handleMouseMoveResize);
+    }
+  }
+
+  // Components
+  const overlay = (
     <rect
-      ref={layerRef}
+      ref={overlayRef}
       height={height}
       width={width}
       fill="none"
       cursor="crosshair"
-      stroke={showBrushBorder ? "black" : "none"}
-      pointerEvents={switchOff ? "none" : "all"}
-      onMouseDown={handleMouseDownWhenCreating}
-      onMouseMove={event => {
-        if (isCreatingNewBrush) {
-          handleMouseMoveWhenCreating(event);
-        }
-        if (movingBrush) {
-          handleOnDrag(event, currentBrush);
-        }
-        if (mouseDownForResize) {
-          handleOnResize(event, currentBrush);
-        }
-      }}
-      onMouseUp={event => {
-        if (isCreatingNewBrush) handleMouseUpWhenCreating(event);
-        if (movingBrush) handleDragStop(event);
-        if (mouseDownForResize) handleOnResizeEnd(event);
-      }}
-      onMouseLeave={event => {
-        if (isCreatingNewBrush) handleMouseUpWhenCreating(event);
-        if (movingBrush) handleDragStop(event);
-        if (mouseDownForResize) handleOnResizeEnd(event);
-      }}
+      pointerEvents="all"
+      onMouseDown={handleMouseDown}
     />
   );
 
-  let brushKeys = Object.keys(brushes);
-  if (currentBrush && currentBrush.id) {
-    brushKeys = [
-      ...brushKeys.filter(b => b !== currentBrush.id),
-      currentBrush.id
-    ];
+  const brs = Object.values(brushes).map(brush => {
+    let { x1, y1, x2, y2 } = correctBrushExtents(brush.extents);
+    [x1, y1, x2, y2] = [x1 * width, y1 * height, x2 * width, y2 * height];
+    return (
+      <SingleBrushComponent
+        key={brush.id}
+        brushId={brush.id}
+        x={x1}
+        y={y1}
+        width={x2 - x1}
+        height={y2 - y1}
+        extentHeight={height}
+        extentWidth={width}
+        overlayRef={overlayRef}
+        onBrushUpdate={onBrushUpdate}
+        brushes={brushes}
+        onResizeStart={(brushId: string, resizeDirection: ResizeDirection) => {
+          handleMouseDownResize({} as any, brushId, resizeDirection);
+        }}
+        removeBrush={removeBrush}
+      />
+    );
+  });
+
+  const [first, second] = mouseDown ? [brs, overlay] : [overlay, brs];
+
+  function removeBrush(brushId: string) {
+    const br = JSON.parse(JSON.stringify(brushes[brushId]));
+    delete brushes[brushId];
+    setBrushes(brushes);
+    onBrushUpdate(brushes, br, "Remove");
   }
 
-  const brushGroup = (
-    <g ref={brushGroupRef} className="brushGroup">
-      {brushKeys.map(brushKey => {
-        const brush = brushes[brushKey];
-        let { x1, y1, x2, y2 } = brush.extents;
-        x1 = x1 * width;
-        x2 = x2 * width;
-        y1 *= height;
-        y2 *= height;
-        if (x2 < x1 && y2 < y1)
-          return (
-            <SingleBrushComponent
-              key={brush.id}
-              x1={x2}
-              y1={y2}
-              x2={x1}
-              y2={y1}
-              brush={brush}
-              onDragStart={handleDragStart}
-              removeBrush={removeBrush}
-              onResizeStart={handleOnResizeStart}
-              onResize={handleOnResize}
-              onResizeEnd={handleOnResizeEnd}
-            />
-          );
-        if (x2 < x1)
-          return (
-            <SingleBrushComponent
-              key={brush.id}
-              x1={x2}
-              y1={y1}
-              x2={x1}
-              y2={y2}
-              brush={brush}
-              onDragStart={handleDragStart}
-              removeBrush={removeBrush}
-              onResizeStart={handleOnResizeStart}
-              onResize={handleOnResize}
-              onResizeEnd={handleOnResizeEnd}
-            />
-          );
-        if (y2 < y1)
-          return (
-            <SingleBrushComponent
-              key={brush.id}
-              x1={x1}
-              y1={y2}
-              x2={x2}
-              y2={y1}
-              brush={brush}
-              onDragStart={handleDragStart}
-              removeBrush={removeBrush}
-              onResizeStart={handleOnResizeStart}
-              onResize={handleOnResize}
-              onResizeEnd={handleOnResizeEnd}
-            />
-          );
-        return (
-          <SingleBrushComponent
-            key={brush.id}
-            x1={x1}
-            y1={y1}
-            x2={x2}
-            y2={y2}
-            brush={brush}
-            onDragStart={handleDragStart}
-            removeBrush={removeBrush}
-            onResizeStart={handleOnResizeStart}
-            onResize={handleOnResize}
-            onResizeEnd={handleOnResizeEnd}
-          />
-        );
-      })}
-    </g>
-  );
-
-  const [first, second] =
-    isCreatingNewBrush || movingBrush || mouseDownForResize
-      ? [brushGroup, brushOverlay]
-      : [brushOverlay, brushGroup];
-
   return (
-    <g transform={`translate(${left - extentPadding}, ${top - extentPadding})`}>
+    <g
+      id="brush-component"
+      transform={`translate(${left - extentPadding}, ${top - extentPadding})`}
+    >
       {first}
       {second}
     </g>
   );
 };
 
-export default BrushComponent;
+(BrushComponent as any).whyDidYouRender = true;
+export default memo(BrushComponent);
+
+export function correctBrushExtents(input: {
+  x1: number;
+  x2: number;
+  y1: number;
+  y2: number;
+}) {
+  let { x1, x2, y1, y2 } = input;
+
+  if (x2 < x1) {
+    [x1, x2] = [x2, x1];
+  }
+
+  if (y2 < y1) {
+    [y1, y2] = [y2, y1];
+  }
+
+  return { x1, x2, y1, y2 };
+}

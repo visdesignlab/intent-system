@@ -1,9 +1,10 @@
 import { inject, observer } from 'mobx-react';
 import React, { memo, useContext, useEffect, useState } from 'react';
-import { Button, Container, Dropdown, Icon, Menu, Radio } from 'semantic-ui-react';
+import { Button, Container, Dropdown, Header, Icon, Menu, Radio } from 'semantic-ui-react';
 import { style } from 'typestyle';
 
 import { ActionContext, TaskConfigContext } from '../Contexts';
+import { TaskTypeDescription } from '../Study/TaskList';
 import { Data, Dataset } from '../Utils/Dataset';
 import AddPlotMenu from './AddPlotMenu';
 import { getAllSelections } from './Predictions/PredictionRowType';
@@ -32,6 +33,7 @@ function Navbar({ store, data, datasets, setDataset }: NavbarProps) {
 
   const actions = useContext(ActionContext);
   const task = useContext(TaskConfigContext);
+  const { isManual = false } = task || {};
 
   const [addingPlot, setAddingPlot] = useState(false);
 
@@ -210,6 +212,10 @@ function Navbar({ store, data, datasets, setDataset }: NavbarProps) {
     </Menu.Item>
   );
 
+  const taskTypeDesc: TaskTypeDescription = isManual
+    ? "User Driven"
+    : "Computer Supported";
+
   return (
     <div className={`${menuStyle} ${navStyle}`}>
       <Container fluid textAlign="center">
@@ -226,6 +232,11 @@ function Navbar({ store, data, datasets, setDataset }: NavbarProps) {
               {brushSelection}
               {invertSelectionButton}
               {clearSelectionButton}
+              {task && (
+                <Menu.Item>
+                  <Header as="h2">{taskTypeDesc}</Header>
+                </Menu.Item>
+              )}
             </>
           )}
         </Menu>

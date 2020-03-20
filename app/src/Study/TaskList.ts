@@ -2,6 +2,7 @@ import { url } from '..';
 import { getTaskFromString } from './TaskString';
 
 export type TaskType = "manual" | "supported";
+export type TaskTypeDescription = "User Driven" | "Computer Supported";
 
 type DatasetType =
   | "cluster"
@@ -50,6 +51,7 @@ const taskList = getTaskFromString();
 
 export function getAllTasks(isCoding: boolean = false) {
   const urlCategory = url.get("taskCategory");
+  const predMode = url.get("pred");
 
   let task: DatasetType = "none";
   let countString = url.get("count");
@@ -73,6 +75,10 @@ export function getAllTasks(isCoding: boolean = false) {
     tl = tl.filter(d => d.type === task);
   }
 
+  if (predMode === "supported" || predMode === "manual") {
+    tl = tl.map(d => ({ ...d, manual: predMode } as TaskDescription));
+  }
+
   let trainingTasks = tl.filter(d => d.training === "yes").slice(0, count);
 
   let tasks = tl
@@ -91,38 +97,3 @@ export function getAllTasks(isCoding: boolean = false) {
 
   return { trainingTasks, tasks };
 }
-
-// const taskList: TaskDescription[] = [
-//   {
-//     id: "0",
-//     task:
-//       "Select the points which show a strong correlation in Physics and CS.",
-//     dataset: "cluster",
-//     plots: [{ x: "Physics", y: "CS" }],
-//     category: {
-//       show: false,
-//       column: "Profession"
-//     },
-//     taskType: "manual",
-//     type: "linear regression",
-//     difficulty: "easy",
-//     training: "yes",
-//     center: { x: 19, y: 23 }
-//   },
-//   {
-//     id: "1",
-//     task:
-//       "Select the points which belong to the cluster centered on the cross [SYMBOL].",
-//     dataset: "cluster",
-//     plots: [{ x: "Physics", y: "CS" }],
-//     category: {
-//       show: false,
-//       column: "Profession"
-//     },
-//     taskType: "supported",
-//     type: "cluster",
-//     difficulty: "easy",
-//     training: "no",
-//     center: null
-//   }
-// ];

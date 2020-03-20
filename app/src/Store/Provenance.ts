@@ -17,9 +17,11 @@ import {
 import IntentStore from './IntentStore';
 import {
   addDummyInteraction,
+  addInvertSelectionInteraction,
   addPlotInteraction,
   addPointSelectionInteraction,
   brushInteraction,
+  clearSelectionInteraction,
   removeBrushInteraction,
   removePlotInteraction,
   removePointSelectionInteraction,
@@ -280,6 +282,7 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
           state.plots[i].selectedPoints = [];
           state.plots[i].brushes = {};
         }
+        clearSelectionInteraction(state);
         return state;
       },
       undefined,
@@ -332,19 +335,17 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
     provenance.applyAction(
       `Invert current selection`,
       (state: IntentState) => {
-        const basePlot = state.plots[0];
-
         const newSelection = all.filter(a => !currentSelected.includes(a));
         for (let i = 0; i < state.plots.length; ++i) {
-          state.plots[i].selectedPoints = [];
           if (i === 0) {
             state.plots[i].selectedPoints = newSelection;
+          } else {
+            state.plots[i].selectedPoints = [];
           }
           state.plots[i].brushes = {};
         }
 
-        removePointSelectionInteraction(state, basePlot, currentSelected);
-        addPointSelectionInteraction(state, basePlot, newSelection);
+        addInvertSelectionInteraction(state, newSelection);
         return state;
       },
       undefined,

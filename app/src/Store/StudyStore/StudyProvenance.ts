@@ -88,6 +88,7 @@ export function setupStudy(
         return state;
       }
     );
+    store.loading = true;
   }
 
   function completeStudy() {
@@ -112,9 +113,13 @@ export function setupStudy(
     return studyProvenance.current().state.phase;
   }
 
+  function setLoading(isLoading: boolean) {
+    store.loading = isLoading;
+  }
+
   return {
     studyProvenance,
-    studyActions: { startTask, endTask, completeStudy, nextPhase },
+    studyActions: { startTask, endTask, completeStudy, nextPhase, setLoading },
     phase
   };
 }
@@ -137,4 +142,5 @@ export interface StudyActions {
     feedback: string
   ) => void;
   completeStudy: () => void;
+  setLoading: (isLoading: boolean) => void;
 }

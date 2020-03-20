@@ -1,14 +1,11 @@
-import React, {FC, useContext, SVGProps} from 'react';
-import {inject, observer} from 'mobx-react';
+import { inject, observer } from 'mobx-react';
+import React, { FC, SVGProps, useContext } from 'react';
+
 import IntentStore from '../../Store/IntentStore';
-import MarkType from './MarkType';
-import {SymbolContext} from './Visualization';
 import translate from '../../Utils/Translate';
-import {
-  REGULAR_MARK_STYLE,
-  UNION_MARK_STYLE,
-  INTERSECTION_MARK_STYLE,
-} from '../Styles/MarkStyle';
+import { INTERSECTION_MARK_STYLE, REGULAR_MARK_STYLE, UNION_MARK_STYLE } from '../Styles/MarkStyle';
+import MarkType from './MarkType';
+import { SymbolContext } from './Visualization';
 
 type Props = SVGProps<SVGElement> & {
   store?: IntentStore;
@@ -26,21 +23,21 @@ const Mark: FC<Props> = ({
   category,
   type,
   extraClass,
-  id,
+  id
 }: Props) => {
-  const {showCategories} = store!;
+  const { showCategories } = store!;
 
   const symbolMap = useContext(SymbolContext);
   let className = REGULAR_MARK_STYLE;
 
   switch (type) {
-    case 'Union':
+    case "Union":
       className = UNION_MARK_STYLE;
       break;
-    case 'Intersection':
+    case "Intersection":
       className = INTERSECTION_MARK_STYLE;
       break;
-    case 'Regular':
+    case "Regular":
     default:
       className = REGULAR_MARK_STYLE;
       break;
@@ -53,6 +50,7 @@ const Mark: FC<Props> = ({
       cy={y}
       r="5"
       className={`${className} ${extraClass}`}
+      onClick={() => console.log({ x, y })}
     />
   );
 
@@ -71,4 +69,4 @@ const Mark: FC<Props> = ({
   return <>{mark}</>;
 };
 
-export default inject('store')(observer(Mark));
+export default inject("store")(observer(Mark));
