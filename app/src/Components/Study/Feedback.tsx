@@ -55,7 +55,7 @@ const Feedback: FC<Props> = ({ selections, graph, trigger }: Props) => {
           with you answers?
         </Form.Field>
         <Form.Group>
-          <Form.Field as="h3">Easy</Form.Field>
+          <Form.Field as="h3">Not confident</Form.Field>
           {scores.map(score => (
             <Form.Radio
               key={score}
@@ -67,7 +67,7 @@ const Feedback: FC<Props> = ({ selections, graph, trigger }: Props) => {
               }}
             />
           ))}
-          <Form.Field as="h3">Hard</Form.Field>
+          <Form.Field as="h3">Confident</Form.Field>
         </Form.Group>
       </Modal.Content>
       <Modal.Content as={Form}>
