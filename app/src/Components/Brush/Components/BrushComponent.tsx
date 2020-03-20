@@ -226,8 +226,6 @@ const BrushComponent: FC<Props> = ({
   function handleMouseUpResize(event: MouseEvent) {
     if (!activeBrushId) return;
 
-    console.log("Yay");
-
     onBrushUpdate(brushes, brushes[activeBrushId], "Change");
     setMouseDownResize(false);
     setActiveBrushId(null);
