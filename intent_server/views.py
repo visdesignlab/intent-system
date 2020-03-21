@@ -85,7 +85,7 @@ datasets = {
     'sky_easy_task_1': Dataset.load_sky_easy_task_1(),
     'sky_easy_task_2': Dataset.load_sky_easy_task_2(),
     'sky_med_training_1': Dataset.load_sky_med_training_1(),
-    'sky_med_task_2': Dataset.load_sky_med_task_1(),
+    'sky_med_task_1': Dataset.load_sky_med_task_1(),
     'sky_med_task_2': Dataset.load_sky_med_task_2(),
     'sky_hard_training_1': Dataset.load_sky_hard_training_1(),
     'sky_hard_task_1': Dataset.load_sky_hard_task_1(),
