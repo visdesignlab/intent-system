@@ -29,7 +29,7 @@ const TaskComponent: FC<Props> = ({ taskDesc, store }: Props) => {
   const data = useContext(DataContext);
 
   const successMessage = (selected: number = 0, actual: number = 0) =>
-    `Well done, you correctly selected ${selected}/${actual} points. The points you missed are highlighted`;
+    `Well done, we have highlighted the ideal solution.`;
 
   const failMessage =
     "You have wrongly selected or have missed a lot of points. Please refine your selection and try again.";
@@ -62,12 +62,13 @@ const TaskComponent: FC<Props> = ({ taskDesc, store }: Props) => {
   }
 
   function isSelectionAcceptable(): boolean {
+    const base = reference.length > 0 ? reference : ground;
     const selectedPoints = selections?.values || [];
 
     const selArr = data.values.map((_, i) =>
       selectedPoints.includes(i) ? 1 : 0
     );
-    const refArr = data.values.map((_, i) => (reference.includes(i) ? 1 : 0));
+    const refArr = data.values.map((_, i) => (base.includes(i) ? 1 : 0));
 
     if (selArr.length === 0 && refArr.length === 0) return false;
 
@@ -77,7 +78,7 @@ const TaskComponent: FC<Props> = ({ taskDesc, store }: Props) => {
       intersection.length /
       (selArr.length + refArr.length - intersection.length);
 
-    return ji >= 0.1;
+    return ji >= 0.95;
   }
 
   function formatTask(taskDesc: TaskDescription) {
@@ -116,7 +117,10 @@ const TaskComponent: FC<Props> = ({ taskDesc, store }: Props) => {
             >
               {messageSubmitted === "success" && (
                 <Message.Content>
-                  {successMessage(selections?.values?.length || 0, 10)}
+                  {successMessage(
+                    selections?.values?.length || 0,
+                    reference.length > 0 ? reference.length : ground.length
+                  )}
                 </Message.Content>
               )}
               {messageSubmitted === "error" && (

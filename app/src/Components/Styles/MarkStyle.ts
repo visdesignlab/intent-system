@@ -87,5 +87,7 @@ export const COLOR = style({
 
 export const REFERENCE_MARK = style({
   stroke: "black",
-  strokeWidth: "2px"
+  strokeWidth: "2px",
+  fill: "green",
+  opacity: "0.5"
 });
