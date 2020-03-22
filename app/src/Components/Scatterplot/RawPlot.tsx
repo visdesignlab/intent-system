@@ -2,6 +2,7 @@ import { axisBottom, axisLeft, quadtree, ScaleLinear, select, selectAll } from '
 import _ from 'lodash';
 import { inject, observer } from 'mobx-react';
 import React, { FC, memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { BehaviorSubject } from 'rxjs';
 import { Header, Label, Popup, Table } from 'semantic-ui-react';
 
 import { ActionContext, DataContext, TaskConfigContext } from '../../Contexts';
@@ -37,6 +38,8 @@ export type MousePosition = {
 };
 
 const emptyFreeform: number[] = [];
+
+export const hide$ = new BehaviorSubject(null);
 
 const RawPlot: FC<Props> = ({
   store,
@@ -83,6 +86,15 @@ const RawPlot: FC<Props> = ({
   }));
 
   const scaledDataString = JSON.stringify(scaledData);
+
+  useEffect(() => {
+    const subscription = hide$.subscribe(() => {
+      setMousePos(null);
+    });
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
 
   const mappedData = useMemo(() => {
     const scaledData: {
@@ -516,12 +528,13 @@ const RawPlot: FC<Props> = ({
                     ]}
                     key={pred.intent}
                     onClick={() => {
-                      setMousePos(null);
                       selectAll(".base-mark").classed(FADE_OUT, false);
+                      selectAll(".base-mark").classed(FADE_COMP_IN, false);
                       actions.turnPredictionInSelection(
                         pred,
                         selections.values
                       );
+                      hide$.next(null);
                     }}
                   >
                     {pred.type}

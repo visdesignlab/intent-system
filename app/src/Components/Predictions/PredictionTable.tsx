@@ -4,6 +4,7 @@ import { Button, Header, Label, Popup, Table } from 'semantic-ui-react';
 
 import { ActionContext } from '../../Contexts';
 import IntentStore from '../../Store/IntentStore';
+import { hide$ } from '../Scatterplot/RawPlot';
 import { FADE_COMP_IN, FADE_OUT } from '../Styles/MarkStyle';
 import hoverable from '../UtilComponent/hoverable';
 import JaccardBar from './JaccardBar';
@@ -141,6 +142,7 @@ const PredictionTable: FC<Props> = ({
                 multiBrushBehaviour === "Union"
               ).values;
               actions.turnPredictionInSelection(pred, curr);
+              hide$.next(null);
             }}
           />
         </Table.Cell>
@@ -183,7 +185,6 @@ const PredictionTable: FC<Props> = ({
           {!isTask && <Table.HeaderCell>Dims</Table.HeaderCell>}
           {!isTask && (
             <>
-              {" "}
               <Popup
                 trigger={<Table.HeaderCell>M</Table.HeaderCell>}
                 content={"Matches"}

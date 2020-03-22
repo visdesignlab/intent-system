@@ -18,6 +18,7 @@
     "react-move": "^6.1.0",
     "react-scripts": "3.1.2",
     "recompose": "^0.30.0",
+    "rxjs": "^6.5.4",
     "semantic-ui-css": "^2.4.1",
     "semantic-ui-react": "^0.88.1",
     "serialize-javascript": "^2.1.1",
