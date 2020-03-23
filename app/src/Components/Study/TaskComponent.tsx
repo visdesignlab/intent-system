@@ -8,6 +8,7 @@ import { DataContext, ProvenanceContext, StudyActionContext, TaskConfigContext }
 import IntentStore from '../../Store/IntentStore';
 import { TaskDescription, TaskTypeDescription } from '../../Study/TaskList';
 import { getAllSelections, UserSelections } from '../Predictions/PredictionRowType';
+import { hide$ } from '../Scatterplot/RawPlot';
 import { FADE_OUT, REFERENCE_MARK } from '../Styles/MarkStyle';
 import Feedback from './Feedback';
 
@@ -165,6 +166,7 @@ const TaskComponent: FC<Props> = ({ taskDesc, store }: Props) => {
                   disabled={!selections || selections.values.length === 0}
                   primary
                   content="Submit"
+                  onClick={() => hide$.next(null)}
                 />
               }
               graph={graph()}
