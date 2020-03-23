@@ -100,11 +100,6 @@ datasets = {
     'quad_hard_training_1': Dataset.load_quad_hard_training_1(),
     'quad_hard_task_1': Dataset.load_quad_hard_task_1(),
     'quad_hard_task_2': Dataset.load_quad_hard_task_2()
-
-
-
-
-
 }
 
 views = Blueprint('views', __name__)

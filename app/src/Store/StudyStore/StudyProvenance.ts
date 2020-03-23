@@ -9,7 +9,7 @@ import { getDefaultStudyState, Phase, stringifyGraph, StudyState } from './Study
 import StudyStore from './StudyStore';
 
 const PROVENANCE_UPLOAD =
-  "https://us-central1-intent-system-prolific.cloudfunctions.net/api/provenance";
+  "https://us-central1-intent-system-prolific.cloudfunctions.net/api/provenance/";
 
 export function setupStudy(
   config: AppConfig,
