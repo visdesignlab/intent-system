@@ -95,7 +95,7 @@ datasets = {
     'quad_easy_task_1': Dataset.load_quad_easy_task_1(),
     'quad_easy_task_2': Dataset.load_quad_easy_task_2(),
     'quad_med_training_1': Dataset.load_quad_med_training_1(),
-    'quad_med_task_2': Dataset.load_quad_med_task_1(),
+    'quad_med_task_1': Dataset.load_quad_med_task_1(),
     'quad_med_task_2': Dataset.load_quad_med_task_2(),
     'quad_hard_training_1': Dataset.load_quad_hard_training_1(),
     'quad_hard_task_1': Dataset.load_quad_hard_task_1(),
