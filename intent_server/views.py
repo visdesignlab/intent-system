@@ -75,7 +75,7 @@ datasets = {
     'cluster_easy_task_1': Dataset.load_cluster_easy_task_1(),
     'cluster_easy_task_2': Dataset.load_cluster_easy_task_2(),
     'cluster_med_training_1': Dataset.load_cluster_med_training_1(),
-    'cluster_med_task_2': Dataset.load_cluster_med_task_1(),
+    'cluster_med_task_1': Dataset.load_cluster_med_task_1(),
     'cluster_med_task_2': Dataset.load_cluster_med_task_2(),
     'cluster_hard_training_1': Dataset.load_cluster_hard_training_1(),
     'cluster_hard_task_1': Dataset.load_cluster_hard_task_1(),
