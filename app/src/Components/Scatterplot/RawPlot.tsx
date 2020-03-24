@@ -511,7 +511,7 @@ const RawPlot: FC<Props> = ({
           }
           content={
             <Label.Group>
-              {topThree.map(pred => {
+              {topThree.map((pred, pred_idx) => {
                 const idx = (pred.dataIds || [])
                   .map(d => `#mark-${d}`)
                   .join(",");
@@ -537,7 +537,7 @@ const RawPlot: FC<Props> = ({
                       hide$.next(null);
                     }}
                   >
-                    {pred.type}
+                    Pattern {pred_idx + 1}
                   </SelectionLabel>
                 );
               })}

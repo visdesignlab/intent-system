@@ -28,7 +28,7 @@ const PredictionTable: FC<Props> = ({
 
   const HoverTableCell = hoverable(Table.Cell);
 
-  function predRowRender(pred: PredictionRowType) {
+  function predRowRender(pred: PredictionRowType, idx: number) {
     const { matches, isnp, ipns, similarity, type, probability } = pred;
 
     function rowClick() {
@@ -110,7 +110,11 @@ const PredictionTable: FC<Props> = ({
           </>
         )}
         <Table.Cell onClick={rowClick}>
-          <JaccardBar height={barHeight} score={similarity} label={type} />
+          <JaccardBar
+            height={barHeight}
+            score={similarity}
+            label={isTask ? `Pattern ${idx + 1}` : type}
+          />
         </Table.Cell>
         {!isTask && (
           <Table.Cell onClick={rowClick}>

@@ -79,7 +79,7 @@ const TaskComponent: FC<Props> = ({ taskDesc, store }: Props) => {
       intersection.length /
       (selArr.length + refArr.length - intersection.length);
 
-    return ji >= 0.95;
+    return ji >= 0.7;
   }
 
   function formatTask(taskDesc: TaskDescription) {
