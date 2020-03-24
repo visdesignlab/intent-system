@@ -11,9 +11,9 @@ export function setupStudy(
   config: AppConfig,
   store: StudyStore
 ): StudyProvenanceControl {
-  const studyProvenance = initProvenance<StudyState, any, any>(
-    getDefaultStudyState(config)
-  );
+  const defState = getDefaultStudyState(config);
+  store.phase = defState.phase;
+  const studyProvenance = initProvenance<StudyState, any, any>(defState);
 
   studyProvenance.addGlobalObserver((state?: StudyState) => {
     if (state) {

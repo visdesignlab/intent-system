@@ -1,6 +1,7 @@
 import { ProvenanceGraph } from '@visdesignlab/provenance-lib-core';
 import { createContext } from 'react';
 
+import { AppConfig } from './AppConfig';
 import { ProvenanceActions } from './Store/Provenance';
 import { TaskDescription } from './Study/TaskList';
 import { EndTaskFunction } from './StudyMode';
@@ -18,6 +19,7 @@ export type TaskConfig = {
   isTraining: boolean;
   hasCenter: boolean;
   hasCategory: boolean;
+  isCoding: boolean;
 };
 
 const DataContext = createContext<Data>(null as any);
@@ -27,11 +29,13 @@ const StudyActionContext = createContext<StudyCommands>(null as any);
 const ProvenanceContext = createContext<() => ProvenanceGraph<any, any, any>>(
   null as any
 );
+const ConfigContext = createContext<AppConfig>(null as any);
 
 export {
   DataContext,
   ActionContext,
   TaskConfigContext,
   StudyActionContext,
-  ProvenanceContext
+  ProvenanceContext,
+  ConfigContext
 };

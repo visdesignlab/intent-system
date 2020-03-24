@@ -1,13 +1,13 @@
 import Axios from 'axios';
 import { Provider } from 'mobx-react';
-import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { memo, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { style } from 'typestyle';
 
 import Navbar from './Components/Navbar';
 import Predictions from './Components/Predictions/Predictions';
 import Visualization from './Components/Scatterplot/Visualization';
 import TaskComponent from './Components/Study/TaskComponent';
-import { ActionContext, DataContext, ProvenanceContext, TaskConfigContext } from './Contexts';
+import { ActionContext, ConfigContext, DataContext, ProvenanceContext, TaskConfigContext } from './Contexts';
 import IntentStore from './Store/IntentStore';
 import { setupProvenance } from './Store/Provenance';
 import { StudyActions } from './Store/StudyStore/StudyProvenance';
@@ -23,6 +23,7 @@ type Props = {
 const StudyApp = ({ task: t, studyActions }: Props) => {
   const [data, setData] = useState<Data>(null as any);
   const [task, setTask] = useState(t);
+  const { coding = "no" } = useContext(ConfigContext);
 
   if (JSON.stringify(task) !== JSON.stringify(t)) setTask(t);
 
@@ -64,6 +65,7 @@ const StudyApp = ({ task: t, studyActions }: Props) => {
     task.center !== null &&
     task.center !== undefined;
   const hasCategory = task.type === "category" && task.symbol !== "None";
+  const isCoding = coding === "yes";
 
   const emptyFunction = useCallback(() => {}, []);
 
@@ -72,7 +74,14 @@ const StudyApp = ({ task: t, studyActions }: Props) => {
       <DataContext.Provider value={data}>
         <ActionContext.Provider value={actions}>
           <TaskConfigContext.Provider
-            value={{ task, isManual, isTraining, hasCenter, hasCategory }}
+            value={{
+              task,
+              isManual,
+              isTraining,
+              hasCenter,
+              hasCategory,
+              isCoding
+            }}
           >
             <ProvenanceContext.Provider value={() => provenance.graph()}>
               <div className={layoutStyle(!isManual)}>

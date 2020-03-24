@@ -20,7 +20,9 @@ type Props = {
 const TaskComponent: FC<Props> = ({ taskDesc, store }: Props) => {
   const { plots, multiBrushBehaviour } = store!;
   const { reference = [], ground = [] } = taskDesc;
-  const { isManual = false, isTraining } = useContext(TaskConfigContext);
+  const { isManual = false, isTraining, isCoding } = useContext(
+    TaskConfigContext
+  );
   const [selections, setSelections] = useState<UserSelections | null>(null);
   const [trainingSubmitted, setTrainingSubmitted] = useState(false);
   const [messageSubmitted, setMessageSubmitted] = useState<
@@ -98,6 +100,62 @@ const TaskComponent: FC<Props> = ({ taskDesc, store }: Props) => {
     ? "User Driven"
     : "Computer Supported";
 
+  const submitButtonCodingMode = (
+    <Button
+      content="Submit"
+      primary
+      disabled={!selections || selections.values.length === 0}
+      onClick={() => {
+        if (!selections || selections.values.length === 0)
+          throw new Error("Something went wrong");
+        endTask(selections.values, graph(), 0, 0, "Coding");
+      }}
+    />
+  );
+
+  const submitButtonTaskMode = isTraining ? (
+    !trainingSubmitted ? (
+      <Button
+        content="Submit"
+        // disabled={!selections || selections.values.length === 0}
+        primary
+        onClick={() => {
+          if (isSelectionAcceptable()) {
+            setMessageSubmitted("success");
+            highlightMissing();
+          } else {
+            setMessageSubmitted("error");
+          }
+        }}
+      />
+    ) : (
+      <Button
+        icon
+        labelPosition="right"
+        primary
+        onClick={() => {
+          endTask(selections?.values || [], graph(), 0, 0, "Training");
+        }}
+      >
+        Next
+        <Icon name="triangle right" />
+      </Button>
+    )
+  ) : (
+    <Feedback
+      trigger={
+        <Button
+          disabled={!selections || selections.values.length === 0}
+          primary
+          content="Submit"
+          onClick={() => hide$.next(null)}
+        />
+      }
+      graph={graph()}
+      selections={selections ? selections.values : []}
+    />
+  );
+
   return (
     <div className={taskStyle}>
       <Card>
@@ -131,48 +189,7 @@ const TaskComponent: FC<Props> = ({ taskDesc, store }: Props) => {
           </Card.Content>
         )}
         <Card.Content textAlign="center">
-          {isTraining ? (
-            !trainingSubmitted ? (
-              <Button
-                content="Submit"
-                // disabled={!selections || selections.values.length === 0}
-                primary
-                onClick={() => {
-                  if (isSelectionAcceptable()) {
-                    setMessageSubmitted("success");
-                    highlightMissing();
-                  } else {
-                    setMessageSubmitted("error");
-                  }
-                }}
-              />
-            ) : (
-              <Button
-                icon
-                labelPosition="right"
-                primary
-                onClick={() => {
-                  endTask(selections?.values || [], graph(), 0, 0, "Training");
-                }}
-              >
-                Next
-                <Icon name="triangle right" />
-              </Button>
-            )
-          ) : (
-            <Feedback
-              trigger={
-                <Button
-                  disabled={!selections || selections.values.length === 0}
-                  primary
-                  content="Submit"
-                  onClick={() => hide$.next(null)}
-                />
-              }
-              graph={graph()}
-              selections={selections ? selections.values : []}
-            />
-          )}
+          {isCoding ? submitButtonCodingMode : submitButtonTaskMode}
         </Card.Content>
         <Card.Content extra>
           <Progress

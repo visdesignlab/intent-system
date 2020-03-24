@@ -1,4 +1,5 @@
 import { url } from '..';
+import { AppConfig } from '../AppConfig';
 import { getTaskFromString } from './TaskString';
 
 export type TaskType = "manual" | "supported";
@@ -49,9 +50,12 @@ export type TaskDescription = {
 
 const taskList = getTaskFromString();
 
-export function getAllTasks(isCoding: boolean = false) {
+export function getAllTasks(config: AppConfig) {
+  const { coding, pred: predMode } = config;
+
+  const isCoding = coding === "yes";
+
   const urlCategory = url.get("taskCategory");
-  const predMode = url.get("pred");
 
   let task: DatasetType = "none";
   let countString = url.get("count");
@@ -90,9 +94,11 @@ export function getAllTasks(isCoding: boolean = false) {
 
   if (isCoding) {
     trainingTasks = trainingTasks.map(
-      d => ({ ...d, taskType: "manual" } as TaskDescription)
+      d => ({ ...d, training: "no" } as TaskDescription)
     );
     tasks = tasks.map(d => ({ ...d, taskType: "manual" } as TaskDescription));
+    tasks = [...trainingTasks, ...tasks];
+    trainingTasks = [];
   }
 
   return { trainingTasks, tasks };

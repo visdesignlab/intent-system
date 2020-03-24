@@ -44,8 +44,12 @@ export function stringifyGraph(
 }
 
 export function getDefaultStudyState(config: AppConfig): StudyState {
-  const { participantId, studyId, sessionId } = config;
-  return { ...defaultStudyState, participantId, studyId, sessionId };
+  const { participantId, studyId, sessionId, coding } = config;
+  let phase: Phase = "Passive Training";
+  if (coding === "yes") {
+    phase = "Tasks";
+  }
+  return { ...defaultStudyState, participantId, studyId, sessionId, phase };
 }
 
 export const temp: StudyState = null as any;

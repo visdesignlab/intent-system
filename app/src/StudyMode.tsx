@@ -3,6 +3,7 @@ import { Provider } from 'mobx-react';
 import React, { FC, useState } from 'react';
 
 import { AppConfig } from './AppConfig';
+import { ConfigContext } from './Contexts';
 import { setupStudy, StudyProvenanceControl } from './Store/StudyStore/StudyProvenance';
 import StudyStore from './Store/StudyStore/StudyStore';
 import StudyParent from './Study/StudyParent';
@@ -31,11 +32,13 @@ const StudyMode: FC<Props> = ({ trainingTasks, tasks, config }: Props) => {
 
   return (
     <Provider studyStore={store}>
-      <StudyParent
-        actions={studyActions}
-        trainingTasks={trainingTasks}
-        tasks={tasks}
-      />
+      <ConfigContext.Provider value={config}>
+        <StudyParent
+          actions={studyActions}
+          trainingTasks={trainingTasks}
+          tasks={tasks}
+        />
+      </ConfigContext.Provider>
     </Provider>
   );
 };
