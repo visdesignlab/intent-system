@@ -1,15 +1,11 @@
 import { initProvenance, Provenance, ProvenanceGraph } from '@visdesignlab/provenance-lib-core';
-import Axios from 'axios';
 
 import { AppConfig } from '../../AppConfig';
 import { IntentState } from '../IntentState';
 import { Annotation, IntentEvents } from '../Provenance';
-import { initializeFirebase } from './Firebase';
+import logToFirebase from './FirebaseHandler';
 import { getDefaultStudyState, Phase, stringifyGraph, StudyState } from './StudyState';
 import StudyStore from './StudyStore';
-
-const PROVENANCE_UPLOAD =
-  "https://us-central1-intent-system-prolific.cloudfunctions.net/api/provenance/";
 
 export function setupStudy(
   config: AppConfig,
@@ -19,24 +15,15 @@ export function setupStudy(
     getDefaultStudyState(config)
   );
 
-  const { firestore } = initializeFirebase();
-
   studyProvenance.addGlobalObserver((state?: StudyState) => {
     if (state) {
       const { participantId, sessionId, studyId } = state;
-      Axios.post(PROVENANCE_UPLOAD, {
+      logToFirebase({
         participantId,
         sessionId,
         studyId,
-        provenance: JSON.stringify(studyProvenance.graph())
-      })
-        .then(({ data }: any) => {
-          console.log(data);
-        })
-        .catch(err => {
-          console.error(err);
-          throw new Error("Provenance upload failed");
-        });
+        graph: studyProvenance.graph()
+      });
     }
   });
 

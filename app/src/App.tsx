@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { Provider } from 'mobx-react';
 import React, { FC, useEffect, useMemo, useState } from 'react';
-import { ajax } from 'rxjs/ajax';
 import { style } from 'typestyle';
 
 import Navbar from './Components/Navbar';
@@ -30,12 +29,6 @@ const App: FC<Props> = (_: Props) => {
   const selectedDatasetString = JSON.stringify(selectedDataset);
 
   const datasetString = JSON.stringify(datasets);
-
-  const getName = (dataset: string) => `${dataset}`;
-
-  useEffect(() => {
-    const names$ = ajax("./dataset");
-  });
 
   const { provenance, actions } = useMemo(() => {
     const { provenance, actions } = setupProvenance(store);
