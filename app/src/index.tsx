@@ -27,14 +27,18 @@ let config: AppConfig = {
   pred: "auto"
 };
 
+const currTime = Date.now();
+
 export const url = new URLSearchParams(window.location.search);
 if (url.toString().length > 0) {
   const mode = url.get("mode");
   const participantId = url.get(PROLIFIC_PID) || config.participantId;
-  const sessionId = url.get(SESSION_ID) || config.sessionId;
+  let sessionId = url.get(SESSION_ID) || config.sessionId;
   const studyId = url.get(STUDY_ID) || config.studyId;
   const coding: any = url.get("coding") || config.coding;
   let pred: any = url.get("pred") || config.pred;
+
+  sessionId = `${sessionId}_${currTime}`;
 
   if (coding === "yes") pred = "manual";
 
