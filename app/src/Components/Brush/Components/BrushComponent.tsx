@@ -34,7 +34,8 @@ const BrushComponent: FC<Props> = ({
   switchOff = true
 }: Props) => {
   const { left, right, top, bottom } = extents;
-  const [height, width] = [
+  const [height, width] = [Math.abs(bottom - top), Math.abs(left - right)];
+  const [adjustedHeight, adjustedWidth] = [
     Math.abs(bottom + extentPadding - (top - extentPadding)),
     Math.abs(left - extentPadding - (right + extentPadding))
   ];
@@ -76,10 +77,10 @@ const BrushComponent: FC<Props> = ({
     const brush: Brush = {
       id: getBrushId(),
       extents: {
-        x1: (event.clientX - currentTarget.left) / width,
-        x2: (event.clientX - currentTarget.left) / width,
-        y1: (event.clientY - currentTarget.top) / height,
-        y2: (event.clientY - currentTarget.top) / height
+        x1: (event.clientX - currentTarget.left - extentPadding) / width,
+        x2: (event.clientX - currentTarget.left - extentPadding) / width,
+        y1: (event.clientY - currentTarget.top - extentPadding) / height,
+        y2: (event.clientY - currentTarget.top - extentPadding) / height
       }
     };
     brushes[brush.id] = brush;
@@ -98,13 +99,16 @@ const BrushComponent: FC<Props> = ({
 
     let x1 = currentBrush.extents.x1;
     let y1 = currentBrush.extents.y1;
-    let x2 = (event.clientX - left) / width;
-    let y2 = (event.clientY - top) / height;
+    let x2 = (event.clientX - left - extentPadding) / width;
+    let y2 = (event.clientY - top - extentPadding) / height;
 
-    if (x2 * width < 0 || x2 * width > width) {
+    if (x2 * width < 0 - extentPadding || x2 * width > width + extentPadding) {
       x2 = currentBrush.extents.x2;
     }
-    if (y2 * height < 0 || y2 * height > height) {
+    if (
+      y2 * height < 0 - extentPadding ||
+      y2 * height > height + extentPadding
+    ) {
       y2 = currentBrush.extents.y2;
     }
 
@@ -201,19 +205,25 @@ const BrushComponent: FC<Props> = ({
         return;
     }
 
-    if (x1 * width < 0 || x1 * width > width) {
+    if (x1 * width < 0 - extentPadding || x1 * width > width + extentPadding) {
       x1 = currentBrush.extents.x1;
     }
 
-    if (x2 * width < 0 || x2 * width > width) {
+    if (x2 * width < 0 - extentPadding || x2 * width > width + extentPadding) {
       x2 = currentBrush.extents.x2;
     }
 
-    if (y1 * height < 0 || y1 * height > height) {
+    if (
+      y1 * height < 0 - extentPadding ||
+      y1 * height > height + extentPadding
+    ) {
       y1 = currentBrush.extents.y1;
     }
 
-    if (y2 * height < 0 || y2 * height > height) {
+    if (
+      y2 * height < 0 - extentPadding ||
+      y2 * height > height + extentPadding
+    ) {
       y2 = currentBrush.extents.y2;
     }
 
@@ -257,12 +267,13 @@ const BrushComponent: FC<Props> = ({
   const overlay = (
     <rect
       ref={overlayRef}
-      height={height}
-      width={width}
+      height={adjustedHeight}
+      width={adjustedWidth}
       fill="none"
       cursor="crosshair"
       pointerEvents="all"
       onMouseDown={handleMouseDown}
+      transform={`translate(${left - extentPadding}, ${top - extentPadding})`}
     />
   );
 
@@ -279,6 +290,7 @@ const BrushComponent: FC<Props> = ({
         height={y2 - y1}
         extentHeight={height}
         extentWidth={width}
+        extentPadding={extentPadding}
         overlayRef={overlayRef}
         onBrushUpdate={onBrushUpdate}
         brushes={brushes}
@@ -300,10 +312,7 @@ const BrushComponent: FC<Props> = ({
   }
 
   return (
-    <g
-      id="brush-component"
-      transform={`translate(${left - extentPadding}, ${top - extentPadding})`}
-    >
+    <g id="brush-component">
       {first}
       {second}
     </g>

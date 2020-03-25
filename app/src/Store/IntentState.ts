@@ -43,7 +43,7 @@ export const defaultState: IntentState = {
   categoryColumn: "",
   plots: [],
   interactionHistory: [],
-  brushType: "Freeform",
+  brushType: "Rectangular",
   lockedPrediction: null as any,
   brushSize: "20"
 };

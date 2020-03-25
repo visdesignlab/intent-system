@@ -14,6 +14,7 @@ interface Props {
   brushId: string;
   extentHeight: number;
   extentWidth: number;
+  extentPadding: number;
   resizeControlSize?: number;
   overlayRef: React.RefObject<SVGRectElement>;
   onBrushUpdate: BrushUpdateFunction;
@@ -44,7 +45,8 @@ function SingleBrushComponent({
   brushes,
   brushId,
   onResizeStart,
-  removeBrush
+  removeBrush,
+  extentPadding
 }: Props) {
   // States
   const [mouseDown, setMouseDown] = useState(false);
@@ -109,11 +111,17 @@ function SingleBrushComponent({
       event.clientY - top - diffY
     ];
 
-    if (newX < 0 || newX + width > extentWidth) {
+    if (
+      newX < 0 - extentPadding ||
+      newX + width > extentWidth + extentPadding
+    ) {
       newX = x;
     }
 
-    if (newY < 0 || newY + height > extentHeight) {
+    if (
+      newY < 0 - extentPadding ||
+      newY + height > extentHeight + extentPadding
+    ) {
       newY = y;
     }
     const pos = { x: newX, y: newY };

@@ -465,6 +465,7 @@ const RawPlot: FC<Props> = ({
       key={brushKey}
       extents={extents}
       onBrushUpdate={brushHandler}
+      extentPadding={20}
       initialBrushes={initBrushCounts === 0 ? null : initialBrushes}
       switchOff={brushType !== "Rectangular"}
     />
