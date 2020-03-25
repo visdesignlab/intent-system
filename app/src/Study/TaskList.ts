@@ -101,5 +101,6 @@ export function getAllTasks(config: AppConfig) {
     trainingTasks = [];
   }
 
+  console.log(trainingTasks.length, tasks.length);
   return { trainingTasks, tasks };
 }
