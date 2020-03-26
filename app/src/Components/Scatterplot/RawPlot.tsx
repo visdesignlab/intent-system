@@ -372,8 +372,13 @@ const RawPlot: FC<Props> = ({
     );
   }
 
+  let pe = mouseDown ? "none" : "all";
+  if (brushType === "Freeform") {
+    pe = "none";
+  }
+
   const plotComponent = (
-    <g style={{ pointerEvents: mouseDown ? "none" : "all" }}>
+    <g style={{ pointerEvents: pe as any }}>
       {center && (
         <g transform={translate(xScale(center.x), yScale(center.y))}>
           <line stroke="red" strokeWidth="4" x1="-15" x2="15" />
