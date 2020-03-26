@@ -396,7 +396,7 @@ const RawPlot: FC<Props> = ({
   );
 
   function radius(x: number, y: number, x1: number, y1: number) {
-    return Math.pow(Math.pow(x - x1, 2) + Math.pow(y - y1, 2), 0.5);
+    return Math.pow(Math.pow(x - x1, 2) + Math.pow(y - y1, 2), 0.5) + 2.5;
   }
 
   const parentFunc = useCallback(
@@ -416,11 +416,11 @@ const RawPlot: FC<Props> = ({
         const intery2 = y + r < y2 && y + r > y1;
 
         if (!((interx1 || interx2) && (intery1 || intery2)) && !(ctnx || ctny))
-          return;
+          return true;
         const { data } = node!;
         if (data) {
           const { x: x1, y: y1 } = data;
-          const ptr = radius(x, y, x1, y1);
+          const ptr = radius(x, y, x1 + 10, y1 + 10);
           if (ptr <= r) {
             const idx = mappedData[`${x1}-${y1}`];
             if (idx >= 0) {
