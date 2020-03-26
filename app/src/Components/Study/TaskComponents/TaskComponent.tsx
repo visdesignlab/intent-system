@@ -1,21 +1,25 @@
 import { selectAll } from 'd3';
 import { inject, observer } from 'mobx-react';
-import React, { FC, useContext, useState } from 'react';
-import { Button, Card, Icon, Message, Progress } from 'semantic-ui-react';
+import React, { FC, useContext, useEffect, useState } from 'react';
+import { Subject } from 'rxjs';
+import { Card, Message, Progress } from 'semantic-ui-react';
 import { style } from 'typestyle';
 
-import { DataContext, ProvenanceContext, StudyActionContext, TaskConfigContext } from '../../Contexts';
-import IntentStore from '../../Store/IntentStore';
-import { TaskDescription, TaskTypeDescription } from '../../Study/TaskList';
-import { getAllSelections, UserSelections } from '../Predictions/PredictionRowType';
-import { hide$ } from '../Scatterplot/RawPlot';
-import { FADE_OUT, REFERENCE_MARK } from '../Styles/MarkStyle';
-import Feedback from './Feedback';
+import { DataContext, StudyActionContext, TaskConfigContext } from '../../../Contexts';
+import IntentStore from '../../../Store/IntentStore';
+import { TaskDescription, TaskTypeDescription } from '../../../Study/TaskList';
+import { getAllSelections, UserSelections } from '../../Predictions/PredictionRowType';
+import { FADE_OUT, REFERENCE_MARK } from '../../Styles/MarkStyle';
+import ButtonCoding from './ButtonCoding';
+import ButtonTask from './ButtonTask';
 
 type Props = {
   store?: IntentStore;
   taskDesc: TaskDescription;
 };
+
+export const $hideError = new Subject();
+export const $showHint = new Subject<boolean>();
 
 const TaskComponent: FC<Props> = ({ taskDesc, store }: Props) => {
   const { plots, multiBrushBehaviour } = store!;
@@ -42,6 +46,27 @@ const TaskComponent: FC<Props> = ({ taskDesc, store }: Props) => {
     multiBrushBehaviour === "Union"
   );
 
+  let marks = "";
+  if (reference.length > 0) marks = reference.map(d => `#mark-${d}`).join(",");
+  else if (ground.length > 0) marks = ground.map(d => `#mark-${d}`).join(",");
+
+  useEffect(() => {
+    const sub2 = $hideError.subscribe(() => setMessageSubmitted("none"));
+    const hintSub = $showHint.subscribe(show => {
+      if (show) {
+        selectAll(".base-mark").classed(FADE_OUT, true);
+        selectAll(marks).classed(REFERENCE_MARK, true);
+      } else {
+        selectAll(".base-mark").classed(FADE_OUT, false);
+        selectAll(marks).classed(REFERENCE_MARK, false);
+      }
+    });
+    return () => {
+      sub2.unsubscribe();
+      hintSub.unsubscribe();
+    };
+  }, [marks]);
+
   if (JSON.stringify(selections) !== JSON.stringify(computedSelections))
     setSelections(computedSelections);
 
@@ -49,14 +74,7 @@ const TaskComponent: FC<Props> = ({ taskDesc, store }: Props) => {
     StudyActionContext
   );
 
-  const graph = useContext(ProvenanceContext);
-
   function highlightMissing() {
-    let marks = "";
-    if (reference.length > 0)
-      marks = reference.map(d => `#mark-${d}`).join(",");
-    else if (ground.length > 0) marks = ground.map(d => `#mark-${d}`).join(",");
-
     selectAll(".base-mark").classed(FADE_OUT, true);
     selectAll(marks)
       .classed(FADE_OUT, false)
@@ -100,62 +118,6 @@ const TaskComponent: FC<Props> = ({ taskDesc, store }: Props) => {
     ? "User Driven"
     : "Computer Supported";
 
-  const submitButtonCodingMode = (
-    <Button
-      content="Submit"
-      primary
-      disabled={!selections || selections.values.length === 0}
-      onClick={() => {
-        if (!selections || selections.values.length === 0)
-          throw new Error("Something went wrong");
-        endTask(selections.values, graph(), 0, 0, "Coding");
-      }}
-    />
-  );
-
-  const submitButtonTaskMode = isTraining ? (
-    !trainingSubmitted ? (
-      <Button
-        content="Submit"
-        // disabled={!selections || selections.values.length === 0}
-        primary
-        onClick={() => {
-          if (isSelectionAcceptable()) {
-            setMessageSubmitted("success");
-            highlightMissing();
-          } else {
-            setMessageSubmitted("error");
-          }
-        }}
-      />
-    ) : (
-      <Button
-        icon
-        labelPosition="right"
-        primary
-        onClick={() => {
-          endTask(selections?.values || [], graph(), 0, 0, "Training");
-        }}
-      >
-        Next
-        <Icon name="triangle right" />
-      </Button>
-    )
-  ) : (
-    <Feedback
-      trigger={
-        <Button
-          disabled={!selections || selections.values.length === 0}
-          primary
-          content="Submit"
-          onClick={() => hide$.next(null)}
-        />
-      }
-      graph={graph()}
-      selections={selections ? selections.values : []}
-    />
-  );
-
   return (
     <div className={taskStyle}>
       <Card>
@@ -189,7 +151,21 @@ const TaskComponent: FC<Props> = ({ taskDesc, store }: Props) => {
           </Card.Content>
         )}
         <Card.Content textAlign="center">
-          {isCoding ? submitButtonCodingMode : submitButtonTaskMode}
+          {isCoding ? (
+            <ButtonCoding
+              disabled={!selections || selections.values.length === 0}
+              values={selections?.values || []}
+            />
+          ) : (
+            <ButtonTask
+              isTraining={isTraining}
+              isTrainingSubmitted={trainingSubmitted}
+              isSelectionAcceptable={isSelectionAcceptable()}
+              setMessageSubmitted={setMessageSubmitted}
+              highlightMissing={highlightMissing}
+              values={selections?.values || []}
+            />
+          )}
         </Card.Content>
         <Card.Content extra>
           <Progress

@@ -28,6 +28,7 @@ let config: AppConfig = {
 };
 
 const currTime = Date.now();
+console.log(currTime);
 
 export const url = new URLSearchParams(window.location.search);
 if (url.toString().length > 0) {

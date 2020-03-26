@@ -6,7 +6,7 @@ import { style } from 'typestyle';
 import Navbar from './Components/Navbar';
 import Predictions from './Components/Predictions/Predictions';
 import Visualization from './Components/Scatterplot/Visualization';
-import TaskComponent from './Components/Study/TaskComponent';
+import TaskComponent from './Components/Study/TaskComponents/TaskComponent';
 import { ActionContext, ConfigContext, DataContext, ProvenanceContext, TaskConfigContext } from './Contexts';
 import IntentStore from './Store/IntentStore';
 import { setupProvenance } from './Store/Provenance';

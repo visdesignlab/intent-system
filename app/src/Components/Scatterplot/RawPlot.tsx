@@ -12,6 +12,7 @@ import translate from '../../Utils/Translate';
 import BrushComponent from '../Brush/Components/BrushComponent';
 import { Brush, BrushAffectType, BrushCollection } from '../Brush/Types/Brush';
 import { extendPrediction, PredictionRowType, UserSelections } from '../Predictions/PredictionRowType';
+import { $hideError } from '../Study/TaskComponents/TaskComponent';
 import { COLOR, FADE_COMP_IN, FADE_OUT, FADE_OUT_PRED_SELECTION, REGULAR_MARK_STYLE } from '../Styles/MarkStyle';
 import hoverable from '../UtilComponent/hoverable';
 import FreeFormBrush from './Freeform/FreeFormBrush';
@@ -156,6 +157,7 @@ const RawPlot: FC<Props> = ({
       affectType: BrushAffectType,
       mousePosition?: MousePosition
     ) => {
+      $hideError.next(null);
       let { x1, x2, y1, y2 } = affectedBrush.extents;
       [x1, x2, y1, y2] = [x1 * width, x2 * width, y1 * height, y2 * height];
 
@@ -433,6 +435,7 @@ const RawPlot: FC<Props> = ({
 
   const onBrushStart = useCallback(
     (x: number, y: number, radius: number) => {
+      $hideError.next(null);
       freeFromRef.current = [...emptyFreeform];
       const func = parentFunc(x, y, radius);
       quad.visit(func);
