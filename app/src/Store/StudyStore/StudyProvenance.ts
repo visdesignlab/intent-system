@@ -118,9 +118,21 @@ export function setupStudy(
     store.loading = isLoading;
   }
 
+  function addHintLookedAt(taskId: string) {
+    if (!store.hintUsedForTasks.includes(taskId))
+      store.hintUsedForTasks.push(taskId);
+  }
+
   return {
     studyProvenance,
-    studyActions: { startTask, endTask, completeStudy, nextPhase, setLoading },
+    studyActions: {
+      startTask,
+      endTask,
+      completeStudy,
+      nextPhase,
+      setLoading,
+      addHintLookedAt
+    },
     phase
   };
 }
@@ -144,4 +156,5 @@ export interface StudyActions {
   ) => void;
   completeStudy: () => void;
   setLoading: (isLoading: boolean) => void;
+  addHintLookedAt: (taskId: string) => void;
 }

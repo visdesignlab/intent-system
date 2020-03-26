@@ -3,6 +3,7 @@ import { createContext } from 'react';
 
 import { AppConfig } from './AppConfig';
 import { ProvenanceActions } from './Store/Provenance';
+import { StudyActions } from './Store/StudyStore/StudyProvenance';
 import { TaskDescription } from './Study/TaskList';
 import { EndTaskFunction } from './StudyMode';
 import { Data } from './Utils/Dataset';
@@ -11,6 +12,7 @@ export type StudyCommands = {
   endTask: EndTaskFunction;
   currentTaskNumber: number;
   totalTasks: number;
+  actions: StudyActions;
 };
 
 export type TaskConfig = {

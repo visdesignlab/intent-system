@@ -15,6 +15,7 @@ import ButtonTask from './ButtonTask';
 
 type Props = {
   store?: IntentStore;
+
   taskDesc: TaskDescription;
 };
 
@@ -33,6 +34,7 @@ const TaskComponent: FC<Props> = ({ taskDesc, store }: Props) => {
     "success" | "error" | "none"
   >("none");
 
+  const { actions } = useContext(StudyActionContext);
   const data = useContext(DataContext);
 
   const successMessage = (selected: number = 0, actual: number = 0) =>
@@ -54,6 +56,7 @@ const TaskComponent: FC<Props> = ({ taskDesc, store }: Props) => {
     const sub2 = $hideError.subscribe(() => setMessageSubmitted("none"));
     const hintSub = $showHint.subscribe(show => {
       if (show) {
+        actions.addHintLookedAt(taskDesc.id);
         selectAll(".base-mark").classed(FADE_OUT, true);
         selectAll(marks).classed(REFERENCE_MARK, true);
       } else {
@@ -85,6 +88,8 @@ const TaskComponent: FC<Props> = ({ taskDesc, store }: Props) => {
   function isSelectionAcceptable(): boolean {
     const base = reference.length > 0 ? reference : ground;
     const selectedPoints = selections?.values || [];
+
+    if (selectedPoints.length === 0) return false;
 
     const selArr = data.values.map((_, i) =>
       selectedPoints.includes(i) ? 1 : 0

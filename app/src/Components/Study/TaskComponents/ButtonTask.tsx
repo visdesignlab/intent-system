@@ -6,8 +6,10 @@ import { ProvenanceContext, StudyActionContext } from '../../../Contexts';
 import { hide$ } from '../../Scatterplot/RawPlot';
 import Feedback from '../Feedback';
 import { $showHint } from './TaskComponent';
+import StudyStore from '../../../Store/StudyStore/StudyStore'
 
 type Props = {
+  studyStore?: StudyStore;
   isTraining: boolean;
   isTrainingSubmitted: boolean;
   isSelectionAcceptable: boolean;
@@ -22,12 +24,15 @@ const ButtonTask: FC<Props> = ({
   isSelectionAcceptable,
   setMessageSubmitted,
   highlightMissing,
-  values
+  values,
+  studyStore
 }: Props) => {
   const { endTask } = useContext(StudyActionContext);
   const graph = useContext(ProvenanceContext);
   const [trial, setTrial] = useState(0);
   const [showHintButton, setShowHintButton] = useState(false);
+
+  const {hintUsedForTasks} = studyStore!;
 
   if (trial === 2) {
     if (!showHintButton) setShowHintButton(true);
@@ -98,11 +103,11 @@ const ButtonTask: FC<Props> = ({
       {showHintButton && (
         <>
           {showHint}
-          <Message content="You can hover on show hint to peek at the solution. You can use the hint at most for three tasks to qualify for the study." />
+          <Message content={`You can hover on 'Show Hint' to peek at the solution. You can use hints for at most three training tasks to qualify for the study. You have currently used ${hintUsedForTasks.length}/3 hints`} />
         </>
       )}
     </>
   );
 };
 
-export default inject("store")(observer(ButtonTask));
+export default inject("store", 'studyStore')(observer(ButtonTask));

@@ -56,7 +56,8 @@ const Training: FC<Props> = ({ studyStore, tasks, actions }: Props) => {
       value={{
         endTask,
         currentTaskNumber: taskId + 1,
-        totalTasks: tasks.length
+        totalTasks: tasks.length,
+        actions
       }}
     >
       <StudyApp key={taskId} task={tasks[taskId]} studyActions={actions} />
