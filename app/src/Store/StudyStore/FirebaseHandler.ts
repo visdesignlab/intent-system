@@ -1,4 +1,4 @@
-import { ProvenanceGraph } from '@visdesignlab/provenance-lib-core';
+import { isStateNode, ProvenanceGraph } from '@visdesignlab/provenance-lib-core';
 
 import { initializeFirebase } from './Firebase';
 import { StudyState } from './StudyState';
@@ -40,6 +40,9 @@ export default async function logToFirebase({
 
   nodeKeys.forEach(key => {
     const node = nodes[key];
+    if (isStateNode(node)) {
+      node.artifacts.diffs = [];
+    }
     const p = nodeCollectionRef.doc(key).set(node);
     allDocsAdded.push(p);
   });
