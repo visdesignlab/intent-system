@@ -3,7 +3,7 @@ import React, { FC } from 'react';
 import { Form } from 'semantic-ui-react';
 import { style } from 'typestyle';
 
-import FinalFeedback from '../Components/Study/FinalFeedback';
+import FinalFeedback from '../Components/Study/FinalFeedback/FinalFeedback';
 import { StudyActions } from '../Store/StudyStore/StudyProvenance';
 import StudyStore from '../Store/StudyStore/StudyStore';
 import PassiveTraining from './PassiveTraining';
