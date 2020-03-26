@@ -42,6 +42,7 @@ export default async function logToFirebase({
     const node = nodes[key];
     if (isStateNode(node)) {
       node.artifacts.diffs = [];
+      node.state.graph = "";
     }
     const p = nodeCollectionRef.doc(key).set(node);
     allDocsAdded.push(p);
