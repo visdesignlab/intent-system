@@ -101,12 +101,12 @@ const ButtonTask: FC<Props> = ({
           : trainingSubmittedButton
         : feedbackButton}
       {showHintButton && (
-        <>
+        <div>
           {showHint}
           <Message
             content={`You can hover on 'Show Hint' to peek at the solution. You can use hints for at most three training tasks to qualify for the study. You have currently used ${hintUsedForTasks.length}/3 hints`}
           />
-        </>
+        </div>
       )}
     </>
   );
