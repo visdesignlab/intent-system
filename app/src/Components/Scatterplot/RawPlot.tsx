@@ -265,6 +265,7 @@ const RawPlot: FC<Props> = ({
     const isInSelectedPred = dataIds.includes(idx);
 
     let type: MarkType = "Regular";
+
     const isClickSelected = clickSelectedPoints.includes(idx);
     if (!isClickSelected) {
       const isUnion = multiBrushBehaviour === "Union";
@@ -293,9 +294,15 @@ const RawPlot: FC<Props> = ({
     markClass = `${markClass} base-mark`;
 
     if (selectedPred) {
-      markClass = `${markClass} ${
-        isInSelectedPred ? "" : FADE_OUT_PRED_SELECTION
-      }`;
+      if (taskConfig) {
+        markClass = `${markClass} ${
+          isInSelectedPred ? FADE_COMP_IN : FADE_OUT
+        }`;
+      } else {
+        markClass = `${markClass} ${
+          isInSelectedPred ? "" : FADE_OUT_PRED_SELECTION
+        }`;
+      }
     }
 
     const mark = (
