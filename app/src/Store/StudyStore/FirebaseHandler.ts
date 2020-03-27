@@ -1,5 +1,6 @@
 import { isStateNode, ProvenanceGraph } from '@visdesignlab/provenance-lib-core';
 
+import { IntentState } from '../IntentState';
 import { initializeFirebase } from './Firebase';
 import { StudyState } from './StudyState';
 
@@ -42,7 +43,14 @@ export default async function logToFirebase({
     const node = nodes[key];
     if (isStateNode(node)) {
       node.artifacts.diffs = [];
-      node.state.graph = "";
+      if (node.state.graph !== "None") {
+        const g = JSON.parse(node.state.graph) as ProvenanceGraph<
+          IntentState,
+          any,
+          any
+        >;
+        node.state.graph = g.nodes[g.current].state.dataset.key;
+      }
     }
     const p = nodeCollectionRef.doc(key).set(node);
     allDocsAdded.push(p);
