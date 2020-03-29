@@ -3,6 +3,7 @@ import { ProvenanceGraph } from '@visdesignlab/provenance-lib-core';
 import { AppConfig } from '../../AppConfig';
 import { IntentState } from '../IntentState';
 import { Annotation, IntentEvents } from '../Provenance';
+import { Questions } from './../../Components/Study/FinalFeedback/FeedbackQuestions';
 
 export type StudyState = typeof defaultStudyState;
 
@@ -33,7 +34,9 @@ export const defaultStudyState = {
   confidenceScore: -1,
   difficultyScore: -1,
   feedback: "",
-  phase: "Training Tasks" as Phase
+  phase: "Training Tasks" as Phase,
+  finalFeedbackArr: new Array(Questions.length).fill(-1) as number[],
+  finalFeedbackComment: ""
 };
 
 export function stringifyGraph(

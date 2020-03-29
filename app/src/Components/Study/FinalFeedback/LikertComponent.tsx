@@ -1,15 +1,26 @@
 import * as crypto from 'crypto';
 import React, { useEffect, useMemo } from 'react';
-import { Form } from 'semantic-ui-react';
+import { Divider, Form, Label } from 'semantic-ui-react';
 
 type Props = {
+  id: number;
   question: string;
   leftText: string;
   rightText: string;
   count: number;
+  val: number;
+  setFeedback: (id: number, val: number) => void;
 };
 
-const LikertComponent = ({ question, leftText, rightText, count }: Props) => {
+const LikertComponent = ({
+  question,
+  leftText,
+  rightText,
+  count,
+  val,
+  id,
+  setFeedback
+}: Props) => {
   const scores: number[] = useMemo(() => {
     const scores: number[] = [];
     let input = 0;
@@ -30,14 +41,30 @@ const LikertComponent = ({ question, leftText, rightText, count }: Props) => {
 
   return (
     <>
-      <Form.Field as="h1">{question}</Form.Field>
+      <Form.Field as="h1" required>
+        {question}
+      </Form.Field>
       <Form.Group inline>
-        <Form.Field as="h3">{leftText}</Form.Field>
+        <Form.Field as="h3">
+          <Label>{leftText}</Label>
+        </Form.Field>
         {scores.map(score => (
-          <Form.Radio key={score} value={score} name={groupName} />
+          <Form.Radio
+            key={score}
+            value={score}
+            name={groupName}
+            checked={score === val}
+            onChange={(_, { value }) => {
+              if (typeof value !== "number") return;
+              setFeedback(id, value);
+            }}
+          />
         ))}
-        <Form.Field as="h3">{rightText}</Form.Field>
+        <Form.Field as="h3">
+          <Label>{rightText}</Label>
+        </Form.Field>
       </Form.Group>
+      <Divider />
     </>
   );
 };

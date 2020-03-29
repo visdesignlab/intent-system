@@ -18,6 +18,7 @@ export function setupStudy(
   studyProvenance.addGlobalObserver((state?: StudyState) => {
     if (state) {
       const { participantId, sessionId, studyId } = state;
+      console.log(state);
       logToFirebase({
         participantId,
         sessionId,
@@ -123,6 +124,14 @@ export function setupStudy(
       store.hintUsedForTasks.push(taskId);
   }
 
+  function submitFinalFeedback(feedback: number[], feedbackText: string = "") {
+    studyProvenance.applyAction("Final Feedback", (state: StudyState) => {
+      state.finalFeedbackArr = feedback;
+      state.finalFeedbackComment = feedbackText;
+      return state;
+    });
+  }
+
   return {
     studyProvenance,
     studyActions: {
@@ -131,7 +140,8 @@ export function setupStudy(
       completeStudy,
       nextPhase,
       setLoading,
-      addHintLookedAt
+      addHintLookedAt,
+      submitFinalFeedback
     },
     phase
   };
@@ -157,4 +167,5 @@ export interface StudyActions {
   completeStudy: () => void;
   setLoading: (isLoading: boolean) => void;
   addHintLookedAt: (taskId: string) => void;
+  submitFinalFeedback: (feedbackArr: number[], feedbackText?: string) => void;
 }

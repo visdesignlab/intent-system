@@ -48,7 +48,7 @@ const StudyParent: FC<Props> = ({
       case "Tasks":
         return <Tasks actions={actions} tasks={tasks} />;
       case "Final Feedback":
-        return <FinalFeedback />;
+        return <FinalFeedback actions={actions} />;
       default:
         return <div>Test</div>;
     }
