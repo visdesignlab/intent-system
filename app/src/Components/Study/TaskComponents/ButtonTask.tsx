@@ -1,6 +1,6 @@
 import { inject, observer } from 'mobx-react';
 import React, { FC, useContext, useState } from 'react';
-import { Button, Icon, Label, Message } from 'semantic-ui-react';
+import { Button, Card, Divider, Icon, Message } from 'semantic-ui-react';
 
 import { ProvenanceContext, StudyActionContext } from '../../../Contexts';
 import StudyStore from '../../../Store/StudyStore/StudyStore';
@@ -39,11 +39,11 @@ const ButtonTask: FC<Props> = ({
   }
 
   const showHint = (
-    <Label
+    <Button
       content="Show Hint"
-      color="green"
-      onMouseOver={() => $showHint.next(true)}
-      onMouseOut={() => $showHint.next(false)}
+      positive
+      onClick={() => $showHint.next(true)}
+      onMouseOut={() => setTimeout(() => $showHint.next(false), 250)}
     />
   );
 
@@ -101,12 +101,13 @@ const ButtonTask: FC<Props> = ({
           : trainingSubmittedButton
         : feedbackButton}
       {showHintButton && (
-        <div>
-          {showHint}
+        <Card.Content>
+          <Divider />
           <Message
             content={`You can hover on 'Show Hint' to peek at the solution. You can use hints for at most three training tasks to qualify for the study. You have currently used ${hintUsedForTasks.length}/3 hints`}
           />
-        </div>
+          {showHint}
+        </Card.Content>
       )}
     </>
   );
