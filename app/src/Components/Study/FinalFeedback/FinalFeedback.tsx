@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useState } from 'react';
-import { Container, Form } from 'semantic-ui-react';
+import { Container, Form, Modal } from 'semantic-ui-react';
 import { style } from 'typestyle';
 
 import { ConfigContext } from '../../../Contexts';
@@ -11,12 +11,15 @@ type Props = {
   actions: StudyActions;
 };
 
+const redirectUrl = "https://app.prolific.co/submissions/complete?cc=6623E474";
+
 const FinalFeedback = ({ actions }: Props) => {
   const config = useContext(ConfigContext);
 
   const arr = new Array(Questions.length).fill(-1);
   const [finalFeedback, setFinalFeedback] = useState<number[]>(arr);
   const [feedbackText, setFeedbackText] = useState("");
+  const [openModal, setOpenModal] = useState(false);
 
   const setFeedback = useCallback((id: number, val: number) => {
     setFinalFeedback(feed => {
@@ -69,12 +72,26 @@ const FinalFeedback = ({ actions }: Props) => {
             disabled={finalFeedback.includes(-1)}
             onClick={() => {
               actions.submitFinalFeedback(finalFeedback, feedbackText);
+              window.onbeforeunload = function() {
+                return;
+              };
+              setOpenModal(true);
             }}
           >
             Submit
           </Form.Button>
         </Form>
       </Container>
+      <Modal open={openModal}>
+        <Modal.Header>Congratulations!</Modal.Header>
+        <Modal.Content>
+          Click on the following link to go back to Prolific and complete the
+          study.
+          <p>
+            <a href={redirectUrl}>{redirectUrl}</a>
+          </p>
+        </Modal.Content>
+      </Modal>
     </div>
   );
 };

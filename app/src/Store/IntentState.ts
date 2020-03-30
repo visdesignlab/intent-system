@@ -45,5 +45,5 @@ export const defaultState: IntentState = {
   interactionHistory: [],
   brushType: "Freeform",
   lockedPrediction: null as any,
-  brushSize: "20"
+  brushSize: "50"
 };

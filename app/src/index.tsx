@@ -58,8 +58,9 @@ if (url.toString().length > 0) {
 }
 
 window.onbeforeunload = function() {
-  if (!config.debugMode) return "This ";
-  return;
+  if (config.debugMode) return;
+  if (config.mode !== "study") return;
+  return "If you go back or refresh, you will have to start the study again from the beginning. Are you sure you want to proceed?";
 };
 
 const isStudy = config.mode === "study";
