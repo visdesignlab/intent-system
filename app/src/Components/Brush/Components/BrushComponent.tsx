@@ -270,8 +270,8 @@ const BrushComponent: FC<Props> = ({
       height={adjustedHeight}
       width={adjustedWidth}
       fill="none"
-      cursor="crosshair"
-      pointerEvents="all"
+      cursor={switchOff ? "crosshair" : "default"}
+      pointerEvents={switchOff ? "none" : "all"}
       onMouseDown={handleMouseDown}
       transform={`translate(${left - extentPadding}, ${top - extentPadding})`}
     />
