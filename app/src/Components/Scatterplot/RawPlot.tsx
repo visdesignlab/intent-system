@@ -517,6 +517,7 @@ const RawPlot: FC<Props> = ({
       {!isManual && topThree.length > 0 && (
         <Popup
           basic
+          wide
           open={mousePos !== null}
           trigger={
             <g transform={translate(mousePos?.x || 0, mousePos?.y || 0)}>
