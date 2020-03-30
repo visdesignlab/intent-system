@@ -24,7 +24,8 @@ let config: AppConfig = {
   sessionId: "NULL",
   studyId: "NULL",
   coding: "no",
-  pred: "auto"
+  pred: "auto",
+  debugMode: false
 };
 
 const currTime = Date.now();
@@ -38,6 +39,7 @@ if (url.toString().length > 0) {
   const studyId = url.get(STUDY_ID) || config.studyId;
   const coding: any = url.get("coding") || config.coding;
   let pred: any = url.get("pred") || config.pred;
+  let debug: boolean = url.get("debug") ? true : config.debugMode;
 
   sessionId = `${sessionId}_${currTime}`;
 
@@ -50,9 +52,16 @@ if (url.toString().length > 0) {
     sessionId,
     studyId,
     coding,
-    pred
+    pred,
+    debugMode: debug
   };
 }
+
+window.onbeforeunload = function() {
+  if (!config.debugMode) return "This ";
+  return;
+};
+
 const isStudy = config.mode === "study";
 
 const { trainingTasks, tasks } = getAllTasks(config);

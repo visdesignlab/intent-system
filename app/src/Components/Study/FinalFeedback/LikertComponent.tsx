@@ -1,5 +1,5 @@
 import * as crypto from 'crypto';
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { Divider, Form, Label } from 'semantic-ui-react';
 
 type Props = {

@@ -10,4 +10,5 @@ export type AppConfig = {
   studyId: string;
   coding: Coding;
   pred: Pred;
+  debugMode: boolean;
 };

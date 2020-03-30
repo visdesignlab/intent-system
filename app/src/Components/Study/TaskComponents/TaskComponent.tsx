@@ -52,11 +52,13 @@ const TaskComponent: FC<Props> = ({ taskDesc, store }: Props) => {
   if (reference.length > 0) marks = reference.map(d => `#mark-${d}`).join(",");
   else if (ground.length > 0) marks = ground.map(d => `#mark-${d}`).join(",");
 
+  const taskId = taskDesc.id;
+
   useEffect(() => {
     const sub2 = $hideError.subscribe(() => setMessageSubmitted("none"));
     const hintSub = $showHint.subscribe(show => {
       if (show) {
-        actions.addHintLookedAt(taskDesc.id);
+        actions.addHintLookedAt(taskId);
         selectAll(".base-mark").classed(FADE_OUT, true);
         selectAll(marks).classed(REFERENCE_MARK, true);
       } else {
@@ -68,14 +70,12 @@ const TaskComponent: FC<Props> = ({ taskDesc, store }: Props) => {
       sub2.unsubscribe();
       hintSub.unsubscribe();
     };
-  }, [marks]);
+  }, [marks, actions, taskId]);
 
   if (JSON.stringify(selections) !== JSON.stringify(computedSelections))
     setSelections(computedSelections);
 
-  const { currentTaskNumber, totalTasks, endTask } = useContext(
-    StudyActionContext
-  );
+  const { currentTaskNumber, totalTasks } = useContext(StudyActionContext);
 
   function highlightMissing() {
     selectAll(".base-mark").classed(FADE_OUT, true);
