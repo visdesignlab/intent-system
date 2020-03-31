@@ -1,5 +1,5 @@
+import { selectAll } from 'd3';
 import React from 'react';
-import {selectAll} from 'd3';
 
 export type HoverConfig = {
   selector: string;
@@ -12,13 +12,13 @@ export interface Props {
 
 function hoverable<P>(BaseComponent: React.ComponentType<P>) {
   return function(props: P & Props) {
-    const {configs = []} = props;
+    const { configs = [] } = props;
 
     const addClasses: any[] = [];
     const removeClasses: any[] = [];
 
     configs.forEach(config => {
-      const {selector, classToApply} = config;
+      const { selector, classToApply } = config;
 
       const selectNodes = () => selectAll(selector);
 
@@ -35,7 +35,10 @@ function hoverable<P>(BaseComponent: React.ComponentType<P>) {
     return (
       <>
         <BaseComponent
-          onMouseEnter={addClass}
+          onMouseEnter={() => {
+            console.log("Test");
+            addClass();
+          }}
           onMouseLeave={removeClass}
           {...props}
         />

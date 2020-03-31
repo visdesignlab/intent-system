@@ -1,3 +1,4 @@
+import { selectAll } from 'd3';
 import { inject, observer } from 'mobx-react';
 import React, { FC, memo, useContext } from 'react';
 import { Button, Header, Label, Popup, Table } from 'semantic-ui-react';
@@ -32,12 +33,24 @@ const PredictionTable: FC<Props> = ({
     const { matches, isnp, ipns, similarity, type, probability } = pred;
 
     function rowClick() {
-      if (pred.intent === selectedPrediction) {
-        actions.selectPrediction("none");
+      if (isTask) {
+        selectAll(".base-mark")
+          .classed(FADE_COMP_IN, false)
+          .classed(FADE_OUT, false);
+        const curr = getAllSelections(plots, multiBrushBehaviour === "Union")
+          .values;
+        actions.turnPredictionInSelection(pred, curr);
+        hide$.next(null);
       } else {
-        actions.selectPrediction(pred.intent);
+        if (pred.intent === selectedPrediction) {
+          actions.selectPrediction("none");
+        } else {
+          actions.selectPrediction(pred.intent);
+        }
       }
     }
+
+    const marks = (pred.dataIds || []).map(d => `#mark-${d}`).join(",");
 
     return (
       <Table.Row key={pred.intent} active={pred.intent === selectedPrediction}>
@@ -106,10 +119,20 @@ const PredictionTable: FC<Props> = ({
               }
             >
               {ipns.length}
-            </HoverTableCell>{" "}
+            </HoverTableCell>
           </>
         )}
-        <Table.Cell onClick={rowClick}>
+        <Table.Cell
+          onClick={rowClick}
+          onMouseOver={() => {
+            selectAll(".base-mark").classed(FADE_OUT, true);
+            selectAll(marks).classed(FADE_COMP_IN, true);
+          }}
+          onMouseOut={() => {
+            selectAll(".base-mark").classed(FADE_OUT, false);
+            selectAll(marks).classed(FADE_COMP_IN, false);
+          }}
+        >
           <JaccardBar
             height={barHeight}
             score={similarity}

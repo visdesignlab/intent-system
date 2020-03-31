@@ -18,7 +18,6 @@ export function setupStudy(
   studyProvenance.addGlobalObserver((state?: StudyState) => {
     if (state) {
       const { participantId, sessionId, studyId } = state;
-      console.log(state);
       logToFirebase({
         participantId,
         sessionId,
