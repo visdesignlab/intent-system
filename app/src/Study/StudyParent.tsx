@@ -3,6 +3,7 @@ import React, { FC } from 'react';
 import { Form } from 'semantic-ui-react';
 import { style } from 'typestyle';
 
+import Consent from '../Components/Study/Consent';
 import FinalFeedback from '../Components/Study/FinalFeedback/FinalFeedback';
 import { StudyActions } from '../Store/StudyStore/StudyProvenance';
 import StudyStore from '../Store/StudyStore/StudyStore';
@@ -41,6 +42,8 @@ const StudyParent: FC<Props> = ({
 
   const component = function() {
     switch (phase) {
+      case "Consent":
+        return <Consent actions={actions} />;
       case "Passive Training":
         return <PassiveTraining actions={actions} />;
       case "Training Tasks":

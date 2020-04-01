@@ -8,6 +8,7 @@ import { Questions } from './../../Components/Study/FinalFeedback/FeedbackQuesti
 export type StudyState = typeof defaultStudyState;
 
 export type Phase =
+  | "Consent"
   | "Passive Training"
   | "Training Tasks"
   | "Tasks"
@@ -48,7 +49,7 @@ export function stringifyGraph(
 
 export function getDefaultStudyState(config: AppConfig): StudyState {
   const { participantId, studyId, sessionId, coding } = config;
-  let phase: Phase = "Passive Training";
+  let phase: Phase = "Consent";
   if (coding === "yes") {
     phase = "Tasks";
   }

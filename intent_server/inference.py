@@ -12,6 +12,8 @@ from typing import List, Set
 import pandas as pd
 import numpy as np
 
+import sys
+
 
 def is_point_selection(interaction: Interaction) -> bool:
     return interaction.interaction_type.kind is InteractionTypeKind.SELECTION
@@ -165,6 +167,7 @@ class Inference:
             clf.classes_.flatten().tolist(),
             clf.predict_proba(sel_array.transpose()).flatten().tolist()))
 
+        
         for p in unique_predictions:
             if p.intent in probs:
                 if p.info is None:
@@ -176,6 +179,25 @@ class Inference:
             sel_array, relevant_data), self.special_intents))
         flat_list = [item for sublist in special_predictions for item in sublist]
         unique_predictions.extend(flat_list)
+
+        newMetricDict = {}
+        for p in unique_predictions:
+            newMetricDict[p.intent] = p.data_ids
+
+        selections = set(relevant_ids(interactions, op))
+
+        for pred in unique_predictions:
+            intent = pred.intent
+            predIds = set(pred.data_ids)
+            itx = list(predIds.intersection(selections))
+            print([len(itx), len(selections)], file=sys.stderr)
+            met = 0
+            if (len(itx) > 0):
+                met = len(selections)/len(itx)
+
+            pred.info['probability'] = met
+
+            
 
         return PredictionSet(
             predictions=unique_predictions,
