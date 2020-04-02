@@ -49,7 +49,7 @@ export function stringifyGraph(
 
 export function getDefaultStudyState(config: AppConfig): StudyState {
   const { participantId, studyId, sessionId, coding } = config;
-  let phase: Phase = "Consent";
+  let phase: Phase = "Passive Training";
   if (coding === "yes") {
     phase = "Tasks";
   }

@@ -14,7 +14,7 @@ const Consent: FC<Props> = ({ studyStore, actions }: Props) => {
   return (
     <Container>
       <Header textAlign="center" as="h1">
-        Consent Cover Letter
+        Consent
       </Header>
       <Header>
         Enabling Reproducibility of Interactive Visual Data Analysis: Annotation
@@ -48,7 +48,7 @@ const Consent: FC<Props> = ({ studyStore, actions }: Props) => {
       </p>
       <p>
         If you have any questions complaints or if you feel you have been harmed
-        by this research please contact
+        by this research please contact{" "}
         <em>
           Alexander Lex, School of Computing, University of Utah, 72 South
           Central Campus Drive, Room 3887 or by phone at +1 801 585 6513.
@@ -59,7 +59,7 @@ const Consent: FC<Props> = ({ studyStore, actions }: Props) => {
         regarding your rights as a research participant. Also, contact the IRB
         if you have questions, complaints or concerns which you do not feel you
         can discuss with the investigator. The University of Utah IRB may be
-        reached by phone at +1 (801) 581-3655 or by e-mail at{" "}
+        reached by phone at +1 (801) 581-3655 or by e-mail at
         <a href="mailto:irb@hsc.utah.edu">irb@hsc.utah.edu</a>.
       </p>
       <p>
@@ -77,7 +77,6 @@ const Consent: FC<Props> = ({ studyStore, actions }: Props) => {
         positive
         onClick={() => actions.nextPhase("Passive Training")}
       />
-      <Button content="I do not consent" negative />
     </Container>
   );
 };

@@ -38,7 +38,7 @@ const TaskComponent: FC<Props> = ({ taskDesc, store }: Props) => {
   const data = useContext(DataContext);
 
   const successMessage = (selected: number = 0, actual: number = 0) =>
-    `Well done, we have highlighted the ideal solution.`;
+    `Well done! Take a look at the highlight showing the correct solution.`;
 
   const failMessage =
     "You have wrongly selected or have missed a lot of points. Please refine your selection and try again.";
@@ -193,7 +193,7 @@ const taskStyle = style({
 
 const questionTextSize = style({
   fontSize: "1.5em !important",
-  textAlign: "justify"
+  textAlign: "left"
 });
 
 const metaSize = style({

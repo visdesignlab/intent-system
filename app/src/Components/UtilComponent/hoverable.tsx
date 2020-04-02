@@ -36,7 +36,6 @@ function hoverable<P>(BaseComponent: React.ComponentType<P>) {
       <>
         <BaseComponent
           onMouseEnter={() => {
-            console.log("Test");
             addClass();
           }}
           onMouseLeave={removeClass}

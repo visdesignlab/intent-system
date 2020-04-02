@@ -1,6 +1,6 @@
 import Vimeo from '@u-wave/react-vimeo';
 import React, { FC, useContext, useState } from 'react';
-import { Button } from 'semantic-ui-react';
+import { Button, Container, Message } from 'semantic-ui-react';
 import { style } from 'typestyle';
 
 import { ConfigContext } from '../Contexts';
@@ -29,6 +29,13 @@ const PassiveTraining: FC<Props> = ({ actions }: Props) => {
           }}
         />
       </div>
+      <Container textAlign="center">
+        <Message compact>
+          Please watch this video as part of the study. You will be able to
+          proceed once you have completed watching the video.
+        </Message>
+      </Container>
+      <br />
       <div className={centerThings}>
         <Button
           onClick={() => actions.nextPhase("Training Tasks")}
