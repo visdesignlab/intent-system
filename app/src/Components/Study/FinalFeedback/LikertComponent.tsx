@@ -41,7 +41,7 @@ const LikertComponent = ({
 
   return (
     <>
-      <Form.Field as="h1" required>
+      <Form.Field as="h2" required>
         {question}
       </Form.Field>
       <Form.Group inline>
@@ -64,7 +64,7 @@ const LikertComponent = ({
           <Label>{rightText}</Label>
         </Form.Field>
       </Form.Group>
-      <Divider />
+      <Divider hidden />
     </>
   );
 };

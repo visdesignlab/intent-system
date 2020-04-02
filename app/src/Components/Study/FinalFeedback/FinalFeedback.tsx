@@ -1,10 +1,10 @@
 import React, { useCallback, useContext, useState } from 'react';
-import { Container, Form, Modal } from 'semantic-ui-react';
+import { Container, Divider, Form, Header, Modal } from 'semantic-ui-react';
 import { style } from 'typestyle';
 
 import { ConfigContext } from '../../../Contexts';
 import { StudyActions } from '../../../Store/StudyStore/StudyProvenance';
-import { Questions } from './FeedbackQuestions';
+import { FeedbackQuestionStructure, Questions, SectionHeader } from './FeedbackQuestions';
 import LikertComponent from './LikertComponent';
 
 type Props = {
@@ -45,18 +45,41 @@ const FinalFeedback = ({ actions }: Props) => {
     <div className={finalFeedbackStyle}>
       <Container>
         <Form>
-          {Questions.map(({ question, lowText, highText, id }) => (
-            <LikertComponent
-              key={question}
-              question={question}
-              leftText={lowText}
-              rightText={highText}
-              count={5}
-              val={finalFeedback[id]}
-              id={id}
-              setFeedback={setFeedback}
-            />
-          ))}
+          {Questions.map(comp => {
+            if (comp.type === "Question") {
+              const {
+                question,
+                lowText,
+                highText,
+                id
+              } = comp as FeedbackQuestionStructure;
+              return (
+                <LikertComponent
+                  key={question}
+                  question={question}
+                  leftText={lowText}
+                  rightText={highText}
+                  count={5}
+                  val={finalFeedback[id]}
+                  id={id}
+                  setFeedback={setFeedback}
+                />
+              );
+            } else {
+              const { header } = comp as SectionHeader;
+
+              return (
+                <Form.Field key={header}>
+                  <Divider />
+                  <Header as="h1" floated="left">
+                    {header}
+                  </Header>
+                  <Divider clearing />
+                </Form.Field>
+              );
+            }
+          })}
+          <Divider />
           <Form.Field as="h1">
             Please enter any other comments below.
           </Form.Field>
