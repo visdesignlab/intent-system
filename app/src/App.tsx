@@ -62,7 +62,7 @@ const App: FC<Props> = (_: Props) => {
       const datasets: any[] = response.data;
       if (datasetString !== JSON.stringify(datasets)) {
         setDatasets(datasets);
-        let datasetIdx = 2;
+        let datasetIdx = 21;
         setSelectedDataset(datasets[datasetIdx]);
         actions.setDataset(datasets[datasetIdx]);
       }

@@ -75,6 +75,8 @@ class Inference:
         self.dataset = dataset
         self.intents = [
             Outlier(),
+            Outlier(contamination=0.1),
+            Outlier(contamination=0.05),
             Inverse(Outlier()),
             Skyline(),
             KMeansCluster(2),

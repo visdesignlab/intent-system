@@ -56,16 +56,17 @@ const PredictionTable: FC<Props> = ({
       <Table.Row key={pred.intent} active={pred.intent === selectedPrediction}>
         {!isTask && (
           <Table.Cell>
-            {pred.dims.map(dim => (
-              <Label size="mini" circular key={dim}>
-                {dim}
-              </Label>
-            ))}
+            {pred.dims.length > 0
+              ? pred.dims.map(dim => (
+                  <Label size="mini" circular key={dim}>
+                    {dim}
+                  </Label>
+                ))
+              : "-"}
           </Table.Cell>
         )}
         {!isTask && (
           <>
-            {" "}
             <HoverTableCell
               configs={
                 matches.length === 0
@@ -126,11 +127,11 @@ const PredictionTable: FC<Props> = ({
           onClick={rowClick}
           onMouseOver={() => {
             selectAll(".base-mark").classed(FADE_OUT, true);
-            selectAll(marks).classed(FADE_COMP_IN, true);
+            if (marks.length > 0) selectAll(marks).classed(FADE_COMP_IN, true);
           }}
           onMouseOut={() => {
             selectAll(".base-mark").classed(FADE_OUT, false);
-            selectAll(marks).classed(FADE_COMP_IN, false);
+            if (marks.length > 0) selectAll(marks).classed(FADE_COMP_IN, false);
           }}
         >
           <JaccardBar
