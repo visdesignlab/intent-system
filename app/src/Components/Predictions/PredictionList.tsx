@@ -17,7 +17,6 @@ const PredictionList: FC<Props> = ({ store, selections }: Props) => {
   const { isLoadingPredictions, predictionSet } = store!;
 
   const { columnMap } = useContext(DataContext);
-  console.log(JSON.parse(JSON.stringify(predictionSet)), selections);
   const { predictions } = predictionSet;
 
   const task = useContext(TaskConfigContext);
@@ -25,13 +24,13 @@ const PredictionList: FC<Props> = ({ store, selections }: Props) => {
   const [preds, setPreds] = useState<PredictionRowType[]>([]);
 
   let computedPreds = predictions
-    .map(pred => extendPrediction(pred, selections, columnMap))
+    .map((pred) => extendPrediction(pred, selections, columnMap))
     .sort((a, b) => b.similarity - a.similarity);
 
   if (task) {
     computedPreds = computedPreds
       .filter(
-        d =>
+        (d) =>
           !task ||
           (d.type !== "Range" &&
             d.type !== "Simplified Range" &&
@@ -78,5 +77,5 @@ export default memo(inject("store")(observer(PredictionList)));
 
 const listStyle = style({
   gridArea: "predictions",
-  overflow: "auto"
+  overflow: "auto",
 });
