@@ -37,7 +37,7 @@ export const defaultStudyState = {
   feedback: "",
   phase: "Training Tasks" as Phase,
   finalFeedbackArr: new Array(Questions.length).fill(-1) as number[],
-  finalFeedbackComment: ""
+  finalFeedbackComment: "",
 };
 
 export function stringifyGraph(
@@ -49,7 +49,8 @@ export function stringifyGraph(
 
 export function getDefaultStudyState(config: AppConfig): StudyState {
   const { participantId, studyId, sessionId, coding } = config;
-  let phase: Phase = "Training Tasks";
+  let phase: Phase = "Consent";
+  // phase = "Training Tasks";
   if (coding === "yes") {
     phase = "Tasks";
   }
