@@ -16,13 +16,15 @@ const redirectUrl = "https://app.prolific.co/submissions/complete?cc=6623E474";
 const FinalFeedback = ({ actions }: Props) => {
   const config = useContext(ConfigContext);
 
-  const arr = new Array(Questions.length).fill(-1);
+  const arr = new Array(
+    Questions.filter((d) => d.type === "Question").length
+  ).fill(-1);
   const [finalFeedback, setFinalFeedback] = useState<number[]>(arr);
   const [feedbackText, setFeedbackText] = useState("");
   const [openModal, setOpenModal] = useState(false);
 
   const setFeedback = useCallback((id: number, val: number) => {
-    setFinalFeedback(feed => {
+    setFinalFeedback((feed) => {
       const newFeedback = [...feed];
       newFeedback[id] = val;
       return newFeedback;
@@ -43,15 +45,15 @@ const FinalFeedback = ({ actions }: Props) => {
 
   return (
     <div className={finalFeedbackStyle}>
-      <Container>
+      <Container style={{ paddingBottom: "2em" }}>
         <Form>
-          {Questions.map(comp => {
+          {Questions.map((comp) => {
             if (comp.type === "Question") {
               const {
                 question,
                 lowText,
                 highText,
-                id
+                id,
               } = comp as FeedbackQuestionStructure;
               return (
                 <LikertComponent
