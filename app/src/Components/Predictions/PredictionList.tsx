@@ -17,7 +17,7 @@ const PredictionList: FC<Props> = ({ store, selections }: Props) => {
   const { isLoadingPredictions, predictionSet } = store!;
 
   const { columnMap } = useContext(DataContext);
-
+  console.log(JSON.parse(JSON.stringify(predictionSet)), selections);
   const { predictions } = predictionSet;
 
   const task = useContext(TaskConfigContext);

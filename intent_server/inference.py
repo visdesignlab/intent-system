@@ -182,22 +182,22 @@ class Inference:
         flat_list = [item for sublist in special_predictions for item in sublist]
         unique_predictions.extend(flat_list)
 
-        newMetricDict = {}
-        for p in unique_predictions:
-            newMetricDict[p.intent] = p.data_ids
+        # newMetricDict = {}
+        # for p in unique_predictions:
+        #     newMetricDict[p.intent] = p.data_ids
 
-        selections = set(relevant_ids(interactions, op))
+        # selections = set(relevant_ids(interactions, op))
 
-        for pred in unique_predictions:
-            intent = pred.intent
-            predIds = set(pred.data_ids)
-            itx = list(predIds.intersection(selections))
-            print([len(itx), len(selections)], file=sys.stderr)
-            met = 0
-            if (len(itx) > 0):
-                met = len(selections)/len(itx)
+        # for pred in unique_predictions:
+        #     intent = pred.intent
+        #     predIds = set(pred.data_ids)
+        #     itx = list(predIds.intersection(selections))
+        #     print([len(itx), len(selections)], file=sys.stderr)
+        #     met = 0
+        #     if (len(itx) > 0):
+        #         met = len(selections)/len(itx)
 
-            pred.info['probability'] = met
+        #     pred.info['probability'] = met
 
             
 

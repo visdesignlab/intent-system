@@ -7,12 +7,28 @@ import uuid
 import hashlib
 import typing
 
-from scipy.spatial.distance import jaccard
+import sys
+
+from scipy.spatial.distance import jaccard, dice, rogerstanimoto
 from typing import Optional, Dict, Any, List
 
+def custom_jaccard(intent: pd.DataFrame, selection: pd.DataFrame) -> float:
+    intent = intent.values.reshape(-1,1)
+    selection = selection.reshape(-1,1)
+    carr = np.column_stack((intent,selection)).astype(int)
+
+    ctt = carr[(carr[:,0] == 1) & (carr[:,1] == 1)]
+    ctf = carr[(carr[:,0] == 1) & (carr[:,1] == 0)]
+    cft = carr[(carr[:,0] == 0) & (carr[:,1] == 1)]
+
+    index =  len(ctt) / ( len(cft) +  len(ctt) + 0.2 * len(ctf) + 3)
+
+    return  index
 
 def rank_jaccard(intent: pd.DataFrame, selection: pd.DataFrame) -> float:
-    return float(1-jaccard(intent, selection))
+    temp = custom_jaccard(intent, selection)
+    return float(temp)
+    # return float(1-jaccard(intent, selection))
 
 
 class Intent(ABC):
