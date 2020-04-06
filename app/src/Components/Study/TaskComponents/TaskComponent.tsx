@@ -49,14 +49,15 @@ const TaskComponent: FC<Props> = ({ taskDesc, store }: Props) => {
   );
 
   let marks = "";
-  if (reference.length > 0) marks = reference.map(d => `#mark-${d}`).join(",");
-  else if (ground.length > 0) marks = ground.map(d => `#mark-${d}`).join(",");
+  if (reference.length > 0)
+    marks = reference.map((d) => `#mark-${d}`).join(",");
+  else if (ground.length > 0) marks = ground.map((d) => `#mark-${d}`).join(",");
 
   const taskId = taskDesc.id;
 
   useEffect(() => {
     const sub2 = $hideError.subscribe(() => setMessageSubmitted("none"));
-    const hintSub = $showHint.subscribe(show => {
+    const hintSub = $showHint.subscribe((show) => {
       if (show) {
         actions.addHintLookedAt(taskId);
         selectAll(".base-mark").classed(FADE_OUT, true);
@@ -107,11 +108,28 @@ const TaskComponent: FC<Props> = ({ taskDesc, store }: Props) => {
     return ji >= 0.7;
   }
 
+  const taskNameDict: { [key: string]: string } = {
+    cluster: "Cluster",
+    outlier: "Outlier",
+    "linear regression": "Linear Relationship",
+    "quadratic regression": "Curve",
+    skyline: "Best Trade-Off",
+  };
+
   function formatTask(taskDesc: TaskDescription) {
-    if (taskDesc.type !== "skyline") return taskDesc.task;
+    if (taskDesc.type !== "skyline")
+      return (
+        <>
+          <p>{taskNameDict[(taskDesc.type as any) as string]}</p>
+          <br />
+          {taskDesc.task}
+        </>
+      );
     const taskList = taskDesc.task.split("||");
     return (
       <>
+        <p>{taskNameDict[(taskDesc.type as any) as string]}</p>
+        <br />
         {taskList.map((d, i) => (
           <p key={i}>{d}</p>
         ))}
@@ -188,23 +206,23 @@ const TaskComponent: FC<Props> = ({ taskDesc, store }: Props) => {
 export default inject("store")(observer(TaskComponent));
 
 const taskStyle = style({
-  gridArea: "question"
+  gridArea: "question",
 });
 
 const questionTextSize = style({
   fontSize: "1.5em !important",
-  textAlign: "left"
+  textAlign: "left",
 });
 
 const metaSize = style({
-  fontSize: "0.8em !important"
+  fontSize: "0.8em !important",
 });
 
 const whiteText = style({
-  color: "whitesmoke !important"
+  color: "whitesmoke !important",
 });
 
 const headerStyle = style({
   fontSize: "1.3em !important",
-  backgroundColor: "#2185d0 !important"
+  backgroundColor: "#2185d0 !important",
 });
