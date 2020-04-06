@@ -120,16 +120,18 @@ const TaskComponent: FC<Props> = ({ taskDesc, store }: Props) => {
     if (taskDesc.type !== "skyline")
       return (
         <>
-          <p>{taskNameDict[(taskDesc.type as any) as string]}</p>
-          <br />
+          <p style={{ paddingBottom: "10px", fontWeight: "bold" }}>
+            {taskNameDict[(taskDesc.type as any) as string]}
+          </p>
           {taskDesc.task}
         </>
       );
     const taskList = taskDesc.task.split("||");
     return (
       <>
-        <p>{taskNameDict[(taskDesc.type as any) as string]}</p>
-        <br />
+        <p style={{ paddingBottom: "2px", fontWeight: "bold" }}>
+          {taskNameDict[(taskDesc.type as any) as string]}
+        </p>
         {taskList.map((d, i) => (
           <p key={i}>{d}</p>
         ))}
