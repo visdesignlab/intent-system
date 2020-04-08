@@ -83,10 +83,6 @@ export function getAllTasks(config: AppConfig) {
     tl = tl.filter((d) => d.type === task);
   }
 
-  if (predMode === "supported" || predMode === "manual") {
-    tl = tl.map((d) => ({ ...d, manual: predMode } as TaskDescription));
-  }
-
   let trainingTasks = tl.filter((d) => d.training === "yes").slice(0, count);
 
   let tasks = tl.filter((d) => d.training === "no");
@@ -100,6 +96,10 @@ export function getAllTasks(config: AppConfig) {
   }
 
   tasks = assignSupportedOrNot(tasks, count);
+
+  if (predMode === "supported" || predMode === "manual") {
+    tasks = tasks.map((d) => ({ ...d, manual: predMode } as TaskDescription));
+  }
 
   if (config.debugMode) {
     console.log({
@@ -117,10 +117,6 @@ export function getAllTasks(config: AppConfig) {
     tasks = tasks.map((d) => ({ ...d, taskType: "manual" } as TaskDescription));
     tasks = [...trainingTasks, ...tasks];
     trainingTasks = [];
-  }
-
-  if (config.taskId) {
-    tasks = tasks.map((d) => ({ ...d, training: "no" } as TaskDescription));
   }
 
   return { trainingTasks, tasks };
