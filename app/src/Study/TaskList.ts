@@ -119,6 +119,10 @@ export function getAllTasks(config: AppConfig) {
     trainingTasks = [];
   }
 
+  if (config.taskId) {
+    tasks = tasks.map((d) => ({ ...d, training: "no" } as TaskDescription));
+  }
+
   return { trainingTasks, tasks };
 }
 
