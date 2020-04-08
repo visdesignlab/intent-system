@@ -15,8 +15,12 @@ const STUDY_ID = "STUDY_ID";
 const SESSION_ID = "SESSION_ID";
 
 whyDidYouRender(React, {
-  trackHooks: true
+  trackHooks: true,
 });
+
+const userAgent = navigator.userAgent.toLocaleLowerCase();
+const isCompatible =
+  userAgent.includes("chrome") || userAgent.includes("firefox");
 
 let config: AppConfig = {
   mode: "default",
@@ -25,7 +29,7 @@ let config: AppConfig = {
   studyId: "NULL",
   coding: "no",
   pred: "auto",
-  debugMode: false
+  debugMode: false,
 };
 
 const currTime = Date.now();
@@ -53,7 +57,7 @@ if (url.toString().length > 0) {
     studyId,
     coding,
     pred,
-    debugMode: debug
+    debugMode: debug,
   };
 }
 
@@ -67,14 +71,24 @@ const isStudy = config.mode === "study";
 
 const { trainingTasks, tasks } = getAllTasks(config);
 
-ReactDOM.render(
-  isStudy ? (
-    <StudyMode tasks={tasks} trainingTasks={trainingTasks} config={config} />
-  ) : (
-    <App />
-  ),
-  document.getElementById("root")
-);
+if (!isCompatible) {
+  ReactDOM.render(
+    <div>
+      Please use latest version of either Chrome (recommended) or Firefox to
+      complete this study.
+    </div>,
+    document.getElementById("root")
+  );
+} else {
+  ReactDOM.render(
+    isStudy ? (
+      <StudyMode tasks={tasks} trainingTasks={trainingTasks} config={config} />
+    ) : (
+      <App />
+    ),
+    document.getElementById("root")
+  );
+}
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
