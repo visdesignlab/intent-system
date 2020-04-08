@@ -110,7 +110,7 @@ export function getAllTasks(config: AppConfig) {
     console.table(tasks.sort(), ["id", "type", "difficulty", "manual"]);
   }
 
-  if (isCoding) {
+  if (isCoding && !config.taskId) {
     trainingTasks = trainingTasks.map(
       (d) => ({ ...d, training: "no" } as TaskDescription)
     );

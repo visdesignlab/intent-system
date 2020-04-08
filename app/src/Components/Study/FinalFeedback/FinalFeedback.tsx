@@ -110,11 +110,13 @@ const FinalFeedback = ({ actions }: Props) => {
       <Modal open={openModal}>
         <Modal.Header>Congratulations!</Modal.Header>
         <Modal.Content>
-          Click on the following link to go back to Prolific and complete the
+          {/* Click on the following link to go back to Prolific and complete the
           study.
           <p>
             <a href={redirectUrl}>{redirectUrl}</a>
-          </p>
+          </p> */}
+          Thank you for participating. Please share this code with the
+          experimenter: {config.sessionId}
         </Modal.Content>
       </Modal>
     </div>
