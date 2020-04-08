@@ -30,6 +30,7 @@ let config: AppConfig = {
   coding: "no",
   pred: "auto",
   debugMode: false,
+  taskId: "",
 };
 
 const currTime = Date.now();
@@ -44,6 +45,7 @@ if (url.toString().length > 0) {
   const coding: any = url.get("coding") || config.coding;
   let pred: any = url.get("pred") || config.pred;
   let debug: boolean = url.get("debug") ? true : config.debugMode;
+  let taskId: string = url.get("taskId") || config.taskId;
 
   sessionId = `${sessionId}_${currTime}`;
 
@@ -57,6 +59,7 @@ if (url.toString().length > 0) {
     studyId,
     coding,
     pred,
+    taskId,
     debugMode: debug,
   };
 }

@@ -11,4 +11,5 @@ export type AppConfig = {
   coding: Coding;
   pred: Pred;
   debugMode: boolean;
+  taskId: string;
 };

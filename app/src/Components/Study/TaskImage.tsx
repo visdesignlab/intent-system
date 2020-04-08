@@ -22,7 +22,7 @@ const TaskImage = (props: Props) => {
       imagePath = getImagePath("QR");
       break;
     case "outlier":
-      imagePath = getImagePath("outlier");
+      imagePath = getImagePath("Outlier");
       break;
     case "skyline":
       imagePath = getImagePath("Skyline");

@@ -95,6 +95,10 @@ export function getAllTasks(config: AppConfig) {
   // .map((d) => d.value)
   // .slice(0, count);
 
+  if (config.taskId) {
+    tasks = tasks.filter((d) => d.id === config.taskId);
+  }
+
   tasks = assignSupportedOrNot(tasks, count);
 
   if (config.debugMode) {
