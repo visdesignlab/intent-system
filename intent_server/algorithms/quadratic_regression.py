@@ -30,15 +30,54 @@ class QuadraticRegression(Intent):
         X_scaled = self.min_max_scaler_x.fit_transform(X)
         y_scaled = self.min_max_scaler_y.fit_transform(y).flatten()
 
-        self.reg.fit(X_scaled, y_scaled)
+        ndf = df.copy(deep=True)
+        ndf['X'] = X_scaled
+        ndf['Y'] = y_scaled
 
-        ts = self.reg.predict(X_scaled)
-        sqdist = pd.DataFrame(data=np.square(ts - y_scaled), index=df.index)
-        within = sqdist < (self.threshold * self.threshold)
+        ndf['Filter'] = True
+        old_length = 0
+        for i in range(10):
+            curr_idx = ndf.index[ndf.loc[:, 'Filter']]
+            curr = ndf.iloc[curr_idx, :]
+            if old_length == curr.shape[0]:
+                break
+            old_length = curr.shape[0]
+
+            x,y = curr['X'].values.reshape(-1,1), curr['Y'].values
+            self.reg.fit(x, y)
+            ts = self.reg.predict(X_scaled)
+
+            # compute residuals
+            rs = ts - y_scaled
+            rs = np.absolute(rs)
+
+            m = np.median(rs)
+
+            within = rs < (3 * m)
+            ndf['Filter'] = within
+
+
+        # self.reg.fit(X_scaled, y_scaled)
+        self.dimCount = X_scaled.shape[1]
+        # ts = self.reg.predict(X_scaled)
+        # sqdist = pd.DataFrame(data=np.square(ts - y_scaled), index=df.index)
+        # within = sqdist < (self.threshold * self.threshold)
+        within = pd.DataFrame(data=within)
+
         result = pd.concat([within, within ^ 1], axis=1)
         result.columns = [self.to_string() + ":within_threshold",
                           self.to_string() + ":outside_threshold"]
         return result
+
+        # self.reg.fit(X_scaled, y_scaled)
+
+        # ts = self.reg.predict(X_scaled)
+        # sqdist = pd.DataFrame(data=np.square(ts - y_scaled), index=df.index)
+        # within = sqdist < (self.threshold * self.threshold)
+        # result = pd.concat([within, within ^ 1], axis=1)
+        # result.columns = [self.to_string() + ":within_threshold",
+        #                   self.to_string() + ":outside_threshold"]
+        # return result
 
     def to_string(self) -> str:
         return "QuadraticRegression"
