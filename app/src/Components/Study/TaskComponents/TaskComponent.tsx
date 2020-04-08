@@ -10,6 +10,7 @@ import IntentStore from '../../../Store/IntentStore';
 import { TaskDescription, TaskTypeDescription } from '../../../Study/TaskList';
 import { getAllSelections, UserSelections } from '../../Predictions/PredictionRowType';
 import { FADE_OUT, REFERENCE_MARK } from '../../Styles/MarkStyle';
+import TaskImage from '../TaskImage';
 import ButtonCoding from './ButtonCoding';
 import ButtonTask from './ButtonTask';
 
@@ -121,15 +122,17 @@ const TaskComponent: FC<Props> = ({ taskDesc, store }: Props) => {
       return (
         <>
           <p style={{ paddingBottom: "10px", fontWeight: "bold" }}>
+            <TaskImage type={taskDesc.type} />
             {taskNameDict[(taskDesc.type as any) as string]}
           </p>
-          {taskDesc.task}
+          <p>{taskDesc.task}</p>
         </>
       );
     const taskList = taskDesc.task.split("||");
     return (
       <>
         <p style={{ paddingBottom: "2px", fontWeight: "bold" }}>
+          <TaskImage type={taskDesc.type} />
           {taskNameDict[(taskDesc.type as any) as string]}
         </p>
         {taskList.map((d, i) => (

@@ -5,7 +5,7 @@ import { getTaskFromString } from './TaskString';
 export type TaskType = "manual" | "supported";
 export type TaskTypeDescription = "User Driven" | "Computer Supported";
 
-type DatasetType =
+export type DatasetType =
   | "cluster"
   | "outlier"
   | "linear regression"
@@ -72,31 +72,31 @@ export function getAllTasks(config: AppConfig) {
     else task = urlCategory as any;
   }
 
-  let tl = taskList.filter(d => d.type !== "category");
+  let tl = taskList.filter((d) => d.type !== "category");
   // .map(d => ({ ...d, manual: "supported" } as TaskDescription));
 
   if (task !== "none") {
-    tl = tl.filter(d => d.type === task);
+    tl = tl.filter((d) => d.type === task);
   }
 
   if (predMode === "supported" || predMode === "manual") {
-    tl = tl.map(d => ({ ...d, manual: predMode } as TaskDescription));
+    tl = tl.map((d) => ({ ...d, manual: predMode } as TaskDescription));
   }
 
-  let trainingTasks = tl.filter(d => d.training === "yes").slice(0, count);
+  let trainingTasks = tl.filter((d) => d.training === "yes").slice(0, count);
 
   let tasks = tl
-    .filter(d => d.training === "no")
-    .map(d => ({ sort: Math.random(), value: d }))
+    .filter((d) => d.training === "no")
+    .map((d) => ({ sort: Math.random(), value: d }))
     .sort((a, b) => a.sort - b.sort)
-    .map(d => d.value)
+    .map((d) => d.value)
     .slice(0, count);
 
   if (isCoding) {
     trainingTasks = trainingTasks.map(
-      d => ({ ...d, training: "no" } as TaskDescription)
+      (d) => ({ ...d, training: "no" } as TaskDescription)
     );
-    tasks = tasks.map(d => ({ ...d, taskType: "manual" } as TaskDescription));
+    tasks = tasks.map((d) => ({ ...d, taskType: "manual" } as TaskDescription));
     tasks = [...trainingTasks, ...tasks];
     trainingTasks = [];
   }

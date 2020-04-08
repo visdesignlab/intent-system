@@ -25,7 +25,7 @@ function Navbar({ store, data, datasets, setDataset }: NavbarProps) {
     isAnythingSelected,
     plots,
     brushType,
-    brushSize
+    brushSize,
   } = store!;
 
   const selections = getAllSelections(plots, multiBrushBehaviour === "Union")
@@ -60,7 +60,7 @@ function Navbar({ store, data, datasets, setDataset }: NavbarProps) {
         scrolling
       >
         <Dropdown.Menu>
-          {datasets.map(d => (
+          {datasets.map((d) => (
             <Dropdown.Item
               key={d.key}
               active={d.key === dataset}
@@ -108,7 +108,7 @@ function Navbar({ store, data, datasets, setDataset }: NavbarProps) {
           disabled={categoricalColumns.length === 1}
         >
           <Dropdown.Menu>
-            {categoricalColumns.map(cat => (
+            {categoricalColumns.map((cat) => (
               <Dropdown.Item
                 active={categoryColumn === cat}
                 key={cat}
@@ -249,9 +249,9 @@ function Navbar({ store, data, datasets, setDataset }: NavbarProps) {
 export default memo(inject("store")(observer(Navbar)));
 
 const menuStyle = style({
-  margin: "1em"
+  margin: "1em",
 });
 
 const navStyle = style({
-  gridArea: "nav"
+  gridArea: "nav",
 });
