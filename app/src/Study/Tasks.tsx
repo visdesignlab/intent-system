@@ -20,7 +20,7 @@ const Tasks: FC<Props> = ({ studyStore, tasks, actions }: Props) => {
   const { loading = false } = studyStore!;
 
   useEffect(() => {
-    if (taskId !== -1) actions.startTask(tasks[taskId].id);
+    if (taskId !== -1) actions.startTask(tasks[taskId].id, tasks[taskId]);
     else actions.nextPhase("Final Feedback");
   }, [actions, taskId, tasks]);
 

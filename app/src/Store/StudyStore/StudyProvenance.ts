@@ -3,6 +3,7 @@ import { initProvenance, Provenance, ProvenanceGraph } from '@visdesignlab/prove
 import { AppConfig } from '../../AppConfig';
 import { IntentState } from '../IntentState';
 import { Annotation, IntentEvents } from '../Provenance';
+import { TaskDescription } from './../../Study/TaskList';
 import logToFirebase from './FirebaseHandler';
 import { getDefaultStudyState, Phase, stringifyGraph, StudyState } from './StudyState';
 import StudyStore from './StudyStore';
@@ -55,12 +56,13 @@ export function setupStudy(
     console.log(studyProvenance.graph());
   };
 
-  function startTask(taskId: string) {
+  function startTask(taskId: string, task: TaskDescription) {
     studyProvenance.applyAction(
       `Start task: ${taskId}`,
       (state: StudyState) => {
         state.taskId = taskId;
         state.event = "StartTask";
+        state.task = task;
         state.eventTime = Date.now().toString();
         return state;
       }
@@ -119,14 +121,25 @@ export function setupStudy(
   }
 
   function addHintLookedAt(taskId: string) {
-    if (!store.hintUsedForTasks.includes(taskId))
+    if (!store.hintUsedForTasks.includes(taskId)) {
       store.hintUsedForTasks.push(taskId);
+      hintUsed(taskId);
+    }
   }
 
   function submitFinalFeedback(feedback: number[], feedbackText: string = "") {
     studyProvenance.applyAction("Final Feedback", (state: StudyState) => {
       state.finalFeedbackArr = feedback;
       state.finalFeedbackComment = feedbackText;
+      return state;
+    });
+  }
+
+  function hintUsed(taskId: string) {
+    studyProvenance.applyAction(`Hint used`, (state: StudyState) => {
+      if (!state.hintTasks.includes(taskId)) {
+        state.hintTasks.push(taskId);
+      }
       return state;
     });
   }
@@ -140,7 +153,8 @@ export function setupStudy(
       nextPhase,
       setLoading,
       addHintLookedAt,
-      submitFinalFeedback
+      submitFinalFeedback,
+      hintUsed
     },
     phase
   };
@@ -153,7 +167,7 @@ export interface StudyProvenanceControl {
 }
 
 export interface StudyActions {
-  startTask: (taskId: string) => void;
+  startTask: (taskId: string, task: TaskDescription) => void;
   nextPhase: (phase: Phase) => void;
   endTask: (
     taskId: string,
@@ -167,4 +181,5 @@ export interface StudyActions {
   setLoading: (isLoading: boolean) => void;
   addHintLookedAt: (taskId: string) => void;
   submitFinalFeedback: (feedbackArr: number[], feedbackText?: string) => void;
+  hintUsed: (taskId: string) => void;
 }

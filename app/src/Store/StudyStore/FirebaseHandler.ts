@@ -4,7 +4,7 @@ import { IntentState } from '../IntentState';
 import { initializeFirebase } from './Firebase';
 import { StudyState } from './StudyState';
 
-const { firestore: db } = initializeFirebase();
+const { firestore: db, rtd } = initializeFirebase();
 
 type LoggingParams = {
   participantId: string;
@@ -39,6 +39,9 @@ export default async function logToFirebase({
 
   const nodeKeys = Object.keys(nodes);
 
+  const getGraphRef = (nodeId: string) =>
+    `${participantId}_${studyId}/${sessionId}/${nodeId}`;
+
   nodeKeys.forEach(key => {
     const node = nodes[key];
     if (isStateNode(node)) {
@@ -49,7 +52,15 @@ export default async function logToFirebase({
           any,
           any
         >;
-        node.state.graph = g.nodes[g.current].state.dataset.key;
+        const graphRef = getGraphRef(node.id);
+        rtd
+          .ref(graphRef)
+          .set(g)
+          .catch(err => {
+            console.error(err);
+            throw new Error("Error pushing graph");
+          });
+        node.state.graph = graphRef;
       }
     }
     const p = nodeCollectionRef.doc(key).set(node);

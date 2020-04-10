@@ -16,6 +16,7 @@ type Props = {
   setMessageSubmitted: (message: "success" | "error" | "none") => void;
   highlightMissing: () => void;
   values: number[];
+  taskId: string;
 };
 
 const ButtonTask: FC<Props> = ({
@@ -27,7 +28,7 @@ const ButtonTask: FC<Props> = ({
   values,
   studyStore
 }: Props) => {
-  const { endTask } = useContext(StudyActionContext);
+  const { endTask, actions } = useContext(StudyActionContext);
   const graph = useContext(ProvenanceContext);
   const [trial, setTrial] = useState(0);
   const [showHintButton, setShowHintButton] = useState(false);
@@ -42,7 +43,9 @@ const ButtonTask: FC<Props> = ({
     <Button
       content="Show Hint"
       positive
-      onClick={() => $showHint.next(true)}
+      onClick={() => {
+        $showHint.next(true);
+      }}
       onMouseOut={() => setTimeout(() => $showHint.next(false), 250)}
     />
   );

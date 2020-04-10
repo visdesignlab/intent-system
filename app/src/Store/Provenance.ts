@@ -371,6 +371,8 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
 
         removePointSelectionInteraction(state, basePlot, currentSelections);
         addPointSelectionInteraction(state, basePlot, newSelection);
+
+        state.turnedPrediction = pred.intent;
         return state;
       }
     );

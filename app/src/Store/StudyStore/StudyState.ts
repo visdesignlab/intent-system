@@ -4,6 +4,7 @@ import { AppConfig } from '../../AppConfig';
 import { IntentState } from '../IntentState';
 import { Annotation, IntentEvents } from '../Provenance';
 import { Questions } from './../../Components/Study/FinalFeedback/FeedbackQuestions';
+import { TaskDescription } from './../../Study/TaskList';
 
 export type StudyState = typeof defaultStudyState;
 
@@ -29,15 +30,17 @@ export const defaultStudyState = {
   studyId: "",
   event: "StudyStart" as TaskEvents,
   taskId: "-1",
+  task: {} as TaskDescription,
   eventTime: Date.now().toString(),
   selections: [] as number[],
+  hintTasks: [] as string[],
   graph: "None",
   confidenceScore: -1,
   difficultyScore: -1,
   feedback: "",
   phase: "Training Tasks" as Phase,
   finalFeedbackArr: new Array(Questions.length).fill(-1) as number[],
-  finalFeedbackComment: "",
+  finalFeedbackComment: ""
 };
 
 export function stringifyGraph(
