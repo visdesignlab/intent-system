@@ -1,5 +1,6 @@
 import { inject, observer } from 'mobx-react';
-import React, { FC } from 'react';
+import React, { FC, useEffect, useState } from 'react';
+import { MemoryRouter, Redirect, Route, Switch, useRouteMatch } from 'react-router-dom';
 import { Form } from 'semantic-ui-react';
 import { style } from 'typestyle';
 
@@ -15,19 +16,31 @@ import Video from './Video';
 type Props = {
   actions: StudyActions;
   studyStore?: StudyStore;
-  trainingTasks: TaskDescription[];
-  tasks: TaskDescription[];
+  trainingCS: TaskDescription[];
+  trainingManual: TaskDescription[];
+  taskManual: TaskDescription[];
+  taskCS: TaskDescription[];
 };
 
 const StudyParent: FC<Props> = ({
   actions,
   studyStore,
-  tasks,
-  trainingTasks
+  taskCS,
+  taskManual,
+  trainingCS,
+  trainingManual
 }: Props) => {
   const { phase, hintUsedForTasks } = studyStore!;
+  const [stopStudy, setStopStudy] = useState(false);
+  const { path, url } = useRouteMatch();
 
-  if (phase === "Tasks - CS" && hintUsedForTasks.length > 3) {
+  const hintCount = hintUsedForTasks.length;
+
+  useEffect(() => {
+    if (hintCount > 6) setStopStudy(true);
+  }, [hintCount]);
+
+  if (stopStudy) {
     return (
       <div className={finalFeedbackStyle}>
         <Form>
@@ -46,14 +59,14 @@ const StudyParent: FC<Props> = ({
         return <Consent actions={actions} />;
       case "Video":
         return <Video actions={actions} />;
-      case "Training - CS":
-        return <Training actions={actions} tasks={trainingTasks} />;
-      case "Training - Manual":
-        return <Training actions={actions} tasks={trainingTasks} />;
-      case "Tasks - CS":
-        return <Tasks actions={actions} tasks={tasks} />;
-      case "Tasks - Manual":
-        return <Tasks actions={actions} tasks={tasks} />;
+      // case "Training - CS":
+      //   return <Training actions={actions} tasks={trainingCS} />;
+      // case "Training - Manual":
+      //   return <Training actions={actions} tasks={trainingManual} />;
+      // case "Tasks - CS":
+      //   return <Tasks actions={actions} tasks={taskCS} />;
+      // case "Tasks - Manual":
+      //   return <Tasks actions={actions} tasks={taskManual} />;
       case "Final Feedback":
         return <FinalFeedback actions={actions} />;
       default:
@@ -61,7 +74,60 @@ const StudyParent: FC<Props> = ({
     }
   };
 
-  return component();
+  return (
+    <MemoryRouter>
+      <Switch>
+        <Route path={`/consent`}>
+          <Consent actions={actions} />
+        </Route>
+        <Route path={`/video`}>
+          <Video actions={actions} />
+        </Route>
+        <Route path={"/trainingm"}>
+          <Training
+            key={"Manual"}
+            actions={actions}
+            tasks={trainingManual}
+            nextPhase="Training - CS"
+            nextUrl="/trainingcs"
+          />
+        </Route>
+        <Route path={"/trainingcs"}>
+          <Training
+            key={"Supported"}
+            actions={actions}
+            tasks={trainingCS}
+            nextPhase="Tasks - Manual"
+            nextUrl="/taskm"
+          />
+        </Route>
+        <Route path={"/taskm"}>
+          <Tasks
+            key={"Manual"}
+            actions={actions}
+            tasks={taskManual}
+            nextPhase="Final Feedback"
+            nextUrl="/taskcs"
+          />
+        </Route>
+        <Route path={"/taskcs"}>
+          <Tasks
+            key={"Supported"}
+            actions={actions}
+            tasks={taskCS}
+            nextPhase="Tasks - CS"
+            nextUrl="/finalfeedback"
+          />
+        </Route>
+        <Route path="/finalfeedback">
+          <FinalFeedback actions={actions} />;
+        </Route>
+        <Route exact path="/">
+          <Redirect to="/consent" />
+        </Route>
+      </Switch>
+    </MemoryRouter>
+  );
 };
 
 export default inject("studyStore")(observer(StudyParent));

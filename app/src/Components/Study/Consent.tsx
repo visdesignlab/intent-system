@@ -1,5 +1,6 @@
 import { inject, observer } from 'mobx-react';
 import React, { FC } from 'react';
+import { Link, useRouteMatch } from 'react-router-dom';
 import { Button, Container, Header } from 'semantic-ui-react';
 
 import { StudyActions } from '../../Store/StudyStore/StudyProvenance';
@@ -11,6 +12,8 @@ type Props = {
 };
 
 const Consent: FC<Props> = ({ studyStore, actions }: Props) => {
+  const { path, url } = useRouteMatch();
+
   return (
     <Container>
       <Header textAlign="center" as="h1">
@@ -72,11 +75,15 @@ const Consent: FC<Props> = ({ studyStore, actions }: Props) => {
         By returning this questionnaire, you are giving your consent to
         participate. We appreciate your participation.
       </p>
-      <Button
-        content="I consent"
-        positive
-        onClick={() => actions.nextPhase("Video")}
-      />
+      <Link to={`/video`}>
+        <Button
+          content="I consent"
+          positive
+          onClick={() => {
+            actions.nextPhase("Video");
+          }}
+        />
+      </Link>
     </Container>
   );
 };

@@ -107,7 +107,15 @@ const ButtonTask: FC<Props> = ({
         <Card.Content>
           <Divider />
           <Message
-            content={`You can hover on 'Show Hint' to peek at the solution. You can use hints for at most three training tasks to qualify for the study. You have currently used ${hintUsedForTasks.length}/3 hints`}
+            content={
+              <>
+                <p>{`You can hover on 'Show Hint' to peek at the solution. You can use hints for at most three training tasks to qualify for the study.`}</p>
+                <p>
+                  You have currently used{" "}
+                  <strong>{hintUsedForTasks.length}/6</strong> hints
+                </p>
+              </>
+            }
           />
           {showHint}
         </Card.Content>

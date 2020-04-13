@@ -1,10 +1,12 @@
 import { ProvenanceGraph } from '@visdesignlab/provenance-lib-core';
 import { inject, observer } from 'mobx-react';
 import React, { FC, useEffect, useState } from 'react';
+import { Redirect } from 'react-router-dom';
 import { Dimmer, Loader } from 'semantic-ui-react';
 
 import { StudyActionContext } from '../Contexts';
 import { StudyActions } from '../Store/StudyStore/StudyProvenance';
+import { Phase } from '../Store/StudyStore/StudyState';
 import StudyStore from '../Store/StudyStore/StudyStore';
 import StudyApp from '../StudyApp';
 import { TaskDescription } from './TaskList';
@@ -13,16 +15,28 @@ type Props = {
   studyStore?: StudyStore;
   tasks: TaskDescription[];
   actions: StudyActions;
+  nextPhase: Phase;
+  nextUrl: string;
 };
 
-const Tasks: FC<Props> = ({ studyStore, tasks, actions }: Props) => {
+const Tasks: FC<Props> = ({
+  studyStore,
+  tasks,
+  actions,
+  nextPhase,
+  nextUrl
+}: Props) => {
   const [taskId, setTaskId] = useState<number>(0);
   const { loading = false } = studyStore!;
 
   useEffect(() => {
     if (taskId !== -1) actions.startTask(tasks[taskId].id, tasks[taskId]);
-    else actions.nextPhase("Final Feedback");
-  }, [actions, taskId, tasks]);
+    else actions.nextPhase(nextPhase);
+  }, [actions, taskId, tasks, nextPhase]);
+
+  if (taskId === -1) {
+    return <Redirect to={nextUrl} />;
+  }
 
   function advanceTask() {
     const isLast = taskId === tasks.length - 1;
@@ -48,7 +62,11 @@ const Tasks: FC<Props> = ({ studyStore, tasks, actions }: Props) => {
     advanceTask();
   }
 
-  if (taskId === -1) return null;
+  if (tasks.length === 0) {
+    actions.nextPhase(nextPhase);
+
+    return <Redirect to={nextUrl} />;
+  }
 
   return (
     <StudyActionContext.Provider

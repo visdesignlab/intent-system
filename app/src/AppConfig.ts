@@ -1,3 +1,5 @@
+import { DatasetType } from './Study/TaskList';
+
 export type Mode = "default" | "study";
 export type ShowCategories = "show" | "hide";
 export type Coding = "yes" | "no";
@@ -12,4 +14,6 @@ export type AppConfig = {
   pred: Pred;
   debugMode: boolean;
   taskId: string;
+  count: number;
+  task: DatasetType;
 };

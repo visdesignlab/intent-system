@@ -1,4 +1,3 @@
-import { url } from '..';
 import { AppConfig } from '../AppConfig';
 import { getTaskFromString } from './TaskString';
 
@@ -50,82 +49,81 @@ export type TaskDescription = {
 
 const taskList = getTaskFromString();
 
-export function getAllTasks(config: AppConfig) {
-  const { coding, pred: predMode } = config;
+export type TaskConfiguration = {
+  trainingManual: TaskDescription[];
+  trainingCS: TaskDescription[];
+  taskManual: TaskDescription[];
+  taskCS: TaskDescription[];
+};
+
+export function getAllTasks(config: AppConfig): TaskConfiguration {
+  const { coding, pred: predMode, task, count } = config;
 
   const isCoding = coding === "yes";
 
-  const urlCategory = url.get("taskCategory");
-
-  let task: DatasetType = "none";
-  let countString = url.get("count");
-
-  let count = 1000;
-  if (countString) {
-    count = parseInt(countString);
-    if (count === 0) count = count + 1;
-  }
-
-  if (urlCategory) {
-    if (urlCategory === "lr") task = "linear regression";
-    else if (urlCategory === "qr") task = "quadratic regression";
-    else task = urlCategory as any;
-  }
-
   // Filter out all category tasks
-  let tl = taskList.filter((d) => d.type !== "category");
-
+  let tl = taskList.filter(d => d.type !== "category");
   // Filter out training medium
-  tl = tl.filter((d) => !(d.training === "yes" && d.difficulty === "medium"));
-  // tl = tl.filter((d) => d.training !== "yes" && d.difficulty !== "medium");
+  tl = tl.filter(d => !(d.training === "yes" && d.difficulty === "medium"));
 
   if (task !== "none") {
-    tl = tl.filter((d) => d.type === task);
+    tl = tl.filter(d => d.type === task);
   }
 
-  let trainingTasks = tl.filter((d) => d.training === "yes").slice(0, count);
+  let trainingTasks = tl.filter(d => d.training === "yes");
+  let tasks = tl.filter(d => d.training === "no");
 
-  let tasks = tl.filter((d) => d.training === "no");
-  // .map((d) => ({ sort: Math.random(), value: d }))
-  // .sort((a, b) => a.sort - b.sort)
-  // .map((d) => d.value)
-  // .slice(0, count);
+  // if (config.taskId) {
+  //   tasks = tasks.filter(d => d.id === config.taskId);
+  // }
 
-  if (config.taskId) {
-    tasks = tasks.filter((d) => d.id === config.taskId);
-  }
-
-  tasks = assignSupportedOrNot(tasks, count);
+  tasks = assignSupportedOrNot(tasks);
 
   if (predMode === "supported" || predMode === "manual") {
-    tasks = tasks.map((d) => ({ ...d, manual: predMode } as TaskDescription));
+    trainingTasks = trainingTasks.map(
+      d => ({ ...d, manual: predMode } as TaskDescription)
+    );
+    tasks = tasks.map(d => ({ ...d, manual: predMode } as TaskDescription));
   }
 
   if (config.debugMode) {
     console.log({
-      "Manual tasks": tasks.filter((d) => d.manual === "manual").length,
+      "Manual tasks": tasks.filter(d => d.manual === "manual").length,
       "Supported tasks":
-        tasks.length - tasks.filter((d) => d.manual === "manual").length,
+        tasks.length - tasks.filter(d => d.manual === "manual").length
     });
     console.table(tasks.sort(), ["id", "type", "difficulty", "manual"]);
   }
 
   if (isCoding && !config.taskId) {
     trainingTasks = trainingTasks.map(
-      (d) => ({ ...d, training: "no" } as TaskDescription)
+      d => ({ ...d, training: "no" } as TaskDescription)
     );
-    tasks = tasks.map((d) => ({ ...d, taskType: "manual" } as TaskDescription));
+    tasks = tasks.map(d => ({ ...d, taskType: "manual" } as TaskDescription));
     tasks = [...trainingTasks, ...tasks];
     trainingTasks = [];
   }
 
-  return { trainingTasks, tasks };
+  const trainingCS = trainingTasks
+    .filter(d => d.manual === "supported")
+    .slice(0, count);
+  const trainingManual = trainingTasks
+    .filter(d => d.manual !== "supported")
+    .slice(0, count);
+  const taskCS = tasks.filter(d => d.manual === "supported").slice(0, count);
+  const taskManual = tasks
+    .filter(d => d.manual !== "supported")
+    .slice(0, count);
+
+  return {
+    trainingCS,
+    trainingManual,
+    taskCS,
+    taskManual
+  };
 }
 
-function assignSupportedOrNot(
-  ogTasks: TaskDescription[],
-  count: number
-): TaskDescription[] {
+function assignSupportedOrNot(ogTasks: TaskDescription[]): TaskDescription[] {
   const tasks: TaskDescription[] = [];
 
   const types: DatasetType[] = [
@@ -133,15 +131,15 @@ function assignSupportedOrNot(
     "outlier",
     "linear regression",
     "quadratic regression",
-    "skyline",
+    "skyline"
   ];
 
   const difficulties: Difficulty[] = ["easy", "medium", "hard"];
 
   for (let type of types) {
-    const subTasks = ogTasks.filter((d) => d.type === type);
+    const subTasks = ogTasks.filter(d => d.type === type);
     for (let diff of difficulties) {
-      const subSubTasks = subTasks.filter((d) => d.difficulty === diff);
+      const subSubTasks = subTasks.filter(d => d.difficulty === diff);
 
       for (let i = 0; i < subSubTasks.length; ++i) {
         const task = subSubTasks[i];
@@ -157,8 +155,7 @@ function assignSupportedOrNot(
   }
 
   return tasks
-    .map((d) => ({ sort: Math.random(), value: d }))
+    .map(d => ({ sort: Math.random(), value: d }))
     .sort((a, b) => a.sort - b.sort)
-    .map((d) => d.value)
-    .slice(0, count);
+    .map(d => d.value);
 }

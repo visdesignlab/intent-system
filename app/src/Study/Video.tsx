@@ -1,5 +1,6 @@
 import Vimeo from '@u-wave/react-vimeo';
 import React, { FC, useContext, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Button, Container, Message } from 'semantic-ui-react';
 import { style } from 'typestyle';
 
@@ -37,13 +38,14 @@ const Video: FC<Props> = ({ actions }: Props) => {
       </Container>
       <br />
       <div className={centerThings}>
-        <Button
-          onClick={() => actions.nextPhase("Training - CS")}
-          disabled={!enableButton && !debugMode}
-          primary
-        >
-          Next
-        </Button>
+        <Link to="/trainingm/">
+          <Button
+            onClick={() => actions.nextPhase("Training - CS")}
+            disabled={!enableButton && !debugMode}
+            primary
+            content="Next"
+          />
+        </Link>
       </div>
     </>
   );
