@@ -10,9 +10,11 @@ export type StudyState = typeof defaultStudyState;
 
 export type Phase =
   | "Consent"
-  | "Passive Training"
-  | "Training Tasks"
-  | "Tasks"
+  | "Video"
+  | "Training - Manual"
+  | "Training - CS"
+  | "Tasks - Manual"
+  | "Tasks - CS"
   | "Final Feedback"
   | "Complete";
 
@@ -53,9 +55,9 @@ export function stringifyGraph(
 export function getDefaultStudyState(config: AppConfig): StudyState {
   const { participantId, studyId, sessionId, coding } = config;
   let phase: Phase = "Consent";
-  if (config.debugMode) phase = "Training Tasks";
+  if (config.debugMode) phase = "Training - Manual";
   if (coding === "yes") {
-    phase = "Tasks";
+    phase = "Tasks - Manual";
   }
   return { ...defaultStudyState, participantId, studyId, sessionId, phase };
 }

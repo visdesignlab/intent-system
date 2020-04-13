@@ -7,10 +7,10 @@ import Consent from '../Components/Study/Consent';
 import FinalFeedback from '../Components/Study/FinalFeedback/FinalFeedback';
 import { StudyActions } from '../Store/StudyStore/StudyProvenance';
 import StudyStore from '../Store/StudyStore/StudyStore';
-import PassiveTraining from './PassiveTraining';
 import { TaskDescription } from './TaskList';
 import Tasks from './Tasks';
 import Training from './Training';
+import Video from './Video';
 
 type Props = {
   actions: StudyActions;
@@ -27,7 +27,7 @@ const StudyParent: FC<Props> = ({
 }: Props) => {
   const { phase, hintUsedForTasks } = studyStore!;
 
-  if (phase === "Tasks" && hintUsedForTasks.length > 3) {
+  if (phase === "Tasks - CS" && hintUsedForTasks.length > 3) {
     return (
       <div className={finalFeedbackStyle}>
         <Form>
@@ -44,11 +44,15 @@ const StudyParent: FC<Props> = ({
     switch (phase) {
       case "Consent":
         return <Consent actions={actions} />;
-      case "Passive Training":
-        return <PassiveTraining actions={actions} />;
-      case "Training Tasks":
+      case "Video":
+        return <Video actions={actions} />;
+      case "Training - CS":
         return <Training actions={actions} tasks={trainingTasks} />;
-      case "Tasks":
+      case "Training - Manual":
+        return <Training actions={actions} tasks={trainingTasks} />;
+      case "Tasks - CS":
+        return <Tasks actions={actions} tasks={tasks} />;
+      case "Tasks - Manual":
         return <Tasks actions={actions} tasks={tasks} />;
       case "Final Feedback":
         return <FinalFeedback actions={actions} />;

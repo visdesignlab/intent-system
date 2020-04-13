@@ -22,7 +22,7 @@ const Training: FC<Props> = ({ studyStore, tasks, actions }: Props) => {
 
   useEffect(() => {
     if (taskId !== -1) actions.startTask(tasks[taskId].id, tasks[taskId]);
-    else actions.nextPhase("Tasks");
+    else actions.nextPhase("Tasks - CS");
   }, [actions, taskId, tasks]);
 
   function advanceTask() {

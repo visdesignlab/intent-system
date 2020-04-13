@@ -17,14 +17,14 @@ const FinalFeedback = ({ actions }: Props) => {
   const config = useContext(ConfigContext);
 
   const arr = new Array(
-    Questions.filter((d) => d.type === "Question").length
+    Questions.filter(d => d.type === "Question").length
   ).fill(-1);
   const [finalFeedback, setFinalFeedback] = useState<number[]>(arr);
   const [feedbackText, setFeedbackText] = useState("");
   const [openModal, setOpenModal] = useState(false);
 
   const setFeedback = useCallback((id: number, val: number) => {
-    setFinalFeedback((feed) => {
+    setFinalFeedback(feed => {
       const newFeedback = [...feed];
       newFeedback[id] = val;
       return newFeedback;
@@ -47,13 +47,13 @@ const FinalFeedback = ({ actions }: Props) => {
     <div className={finalFeedbackStyle}>
       <Container style={{ paddingBottom: "2em" }}>
         <Form>
-          {Questions.map((comp) => {
+          {Questions.map(comp => {
             if (comp.type === "Question") {
               const {
                 question,
                 lowText,
                 highText,
-                id,
+                id
               } = comp as FeedbackQuestionStructure;
               return (
                 <LikertComponent
@@ -110,13 +110,13 @@ const FinalFeedback = ({ actions }: Props) => {
       <Modal open={openModal}>
         <Modal.Header>Congratulations!</Modal.Header>
         <Modal.Content>
-          {/* Click on the following link to go back to Prolific and complete the
+          Click on the following link to go back to Prolific and complete the
           study.
           <p>
             <a href={redirectUrl}>{redirectUrl}</a>
-          </p> */}
-          Thank you for participating. Please share this code with the
-          experimenter: {config.sessionId}
+          </p>
+          {/* Thank you for participating. Please share this code with the
+          experimenter: {config.sessionId} */}
         </Modal.Content>
       </Modal>
     </div>

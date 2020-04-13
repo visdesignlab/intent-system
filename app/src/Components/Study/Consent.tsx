@@ -75,7 +75,7 @@ const Consent: FC<Props> = ({ studyStore, actions }: Props) => {
       <Button
         content="I consent"
         positive
-        onClick={() => actions.nextPhase("Passive Training")}
+        onClick={() => actions.nextPhase("Video")}
       />
     </Container>
   );
