@@ -23,7 +23,7 @@ const userAgent = navigator.userAgent.toLocaleLowerCase();
 const isCompatible =
   userAgent.includes("chrome") || userAgent.includes("firefox");
 
-const currTime = Date.now();
+export const currTime = Date.now();
 console.log(currTime);
 
 export const url = new URLSearchParams(window.location.search);

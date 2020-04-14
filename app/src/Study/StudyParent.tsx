@@ -4,9 +4,11 @@ import { MemoryRouter, Redirect, Route, Switch } from 'react-router-dom';
 import { Form } from 'semantic-ui-react';
 import { style } from 'typestyle';
 
+import { currTime } from '..';
 import Consent from '../Components/Study/Consent';
 import FinalFeedback from '../Components/Study/FinalFeedback/FinalFeedback';
 import { StudyActions } from '../Store/StudyStore/StudyProvenance';
+import { Phase } from '../Store/StudyStore/StudyState';
 import StudyStore from '../Store/StudyStore/StudyStore';
 import { TaskDescription } from './TaskList';
 import Tasks from './Tasks';
@@ -32,8 +34,9 @@ const StudyParent: FC<Props> = ({
 }: Props) => {
   const { hintUsedForTasks } = studyStore!;
   const [stopStudy, setStopStudy] = useState(false);
-
   const hintCount = hintUsedForTasks.length;
+
+  const manualFirst = (currTime % 10) % 2 === 0;
 
   useEffect(() => {
     if (hintCount > 4) setStopStudy(true);
@@ -52,8 +55,18 @@ const StudyParent: FC<Props> = ({
     );
   }
 
+  const manual = {
+    phase: "Tasks - Manual" as Phase,
+    url: "/taskm"
+  };
+
+  const supported = {
+    phase: "Tasks - CS" as Phase,
+    url: "/taskcs"
+  };
+
   return (
-    <MemoryRouter initialEntries={["/finalfeedback"]}>
+    <MemoryRouter initialEntries={["/consent"]}>
       <Switch>
         <Route path={`/consent`}>
           <Consent actions={actions} />
@@ -75,8 +88,8 @@ const StudyParent: FC<Props> = ({
             key={"Supported"}
             actions={actions}
             tasks={trainingCS}
-            nextPhase="Tasks - Manual"
-            nextUrl="/taskm"
+            nextPhase={manualFirst ? manual.phase : supported.phase}
+            nextUrl={manualFirst ? manual.url : supported.url}
           />
         </Route>
         <Route path={"/taskm"}>
@@ -84,8 +97,8 @@ const StudyParent: FC<Props> = ({
             key={"Manual"}
             actions={actions}
             tasks={taskManual}
-            nextPhase="Final Feedback"
-            nextUrl="/taskcs"
+            nextPhase={manualFirst ? supported.phase : "Final Feedback"}
+            nextUrl={manualFirst ? supported.url : "/finalfeedback"}
           />
         </Route>
         <Route path={"/taskcs"}>
@@ -93,8 +106,8 @@ const StudyParent: FC<Props> = ({
             key={"Supported"}
             actions={actions}
             tasks={taskCS}
-            nextPhase="Tasks - CS"
-            nextUrl="/finalfeedback"
+            nextPhase={manualFirst ? "Final Feedback" : manual.phase}
+            nextUrl={manualFirst ? "/finalfeedback" : manual.url}
           />
         </Route>
         <Route path="/finalfeedback">
