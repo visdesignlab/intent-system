@@ -64,7 +64,6 @@ const Tasks: FC<Props> = ({
 
   if (tasks.length === 0) {
     actions.nextPhase(nextPhase);
-
     return <Redirect to={nextUrl} />;
   }
 

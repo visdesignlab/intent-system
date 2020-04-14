@@ -4,6 +4,7 @@ import React, { FC, useEffect, useState } from 'react';
 import { Redirect } from 'react-router-dom';
 import { Dimmer, Loader } from 'semantic-ui-react';
 
+import Instructions from '../Components/Study/Instructions';
 import { StudyActionContext } from '../Contexts';
 import { StudyActions } from '../Store/StudyStore/StudyProvenance';
 import { Phase } from '../Store/StudyStore/StudyState';
@@ -87,6 +88,7 @@ const Training: FC<Props> = ({
           </Loader>
         </Dimmer>
       )}
+      <Instructions manual={tasks[0].manual === "manual"} />
     </StudyActionContext.Provider>
   );
 };

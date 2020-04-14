@@ -1,7 +1,7 @@
 import { inject, observer } from 'mobx-react';
 import React, { FC } from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
-import { Button, Container, Header } from 'semantic-ui-react';
+import { Button, Container, Header, Modal } from 'semantic-ui-react';
 
 import { StudyActions } from '../../Store/StudyStore/StudyProvenance';
 import StudyStore from '../../Store/StudyStore/StudyStore';
@@ -75,15 +75,39 @@ const Consent: FC<Props> = ({ studyStore, actions }: Props) => {
         By returning this questionnaire, you are giving your consent to
         participate. We appreciate your participation.
       </p>
-      <Link to={`/video`}>
-        <Button
-          content="I consent"
-          positive
-          onClick={() => {
-            actions.nextPhase("Video");
-          }}
-        />
-      </Link>
+      <Modal trigger={<Button content="I Consent" positive />}>
+        <Modal.Header>Conditions for Participation and Payment</Modal.Header>
+        <Modal.Content>
+          <p>We estimate that this study will take about 30 minutes.</p>
+          <p>
+            A desktop or notebook computer with a mouse or a touch-pad is
+            required to participate. You cannot participate on a mobile device
+            of any kind.
+          </p>
+          <p>
+            The study consists of watching an 8 minute instructional video, a
+            short training period, and the study in two conditions, followed by
+            a one-page survey.
+          </p>
+          <p>
+            Your payment is conditional on you fully and attentively watching
+            the video, passing a set of trial tasks, and making an honest effort
+            to complete the study.
+          </p>
+          <p>Thank you for your participation!</p>
+        </Modal.Content>
+        <Modal.Actions>
+          <Link to={`/video`}>
+            <Button
+              content="Proceed to study"
+              positive
+              onClick={() => {
+                actions.nextPhase("Video");
+              }}
+            />
+          </Link>
+        </Modal.Actions>
+      </Modal>
     </Container>
   );
 };

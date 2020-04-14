@@ -92,6 +92,7 @@ export function getAllTasks(config: AppConfig): TaskConfiguration {
       "Supported tasks":
         tasks.length - tasks.filter(d => d.manual === "manual").length
     });
+    console.table(trainingTasks.sort(), ["id", "type", "difficulty", "manual"]);
     console.table(tasks.sort(), ["id", "type", "difficulty", "manual"]);
   }
 

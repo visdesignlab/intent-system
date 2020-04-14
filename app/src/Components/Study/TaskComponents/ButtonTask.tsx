@@ -109,10 +109,10 @@ const ButtonTask: FC<Props> = ({
           <Message
             content={
               <>
-                <p>{`You can hover on 'Show Hint' to peek at the solution. You can use hints for at most three training tasks to qualify for the study.`}</p>
+                <p>{`You can hover on 'Show Hint' to peek at the solution. You can use hints for at most four training tasks to qualify for the study.`}</p>
                 <p>
                   You have currently used{" "}
-                  <strong>{hintUsedForTasks.length}/6</strong> hints
+                  <strong>{hintUsedForTasks.length}/4</strong> hints
                 </p>
               </>
             }

@@ -1,6 +1,6 @@
 import { inject, observer } from 'mobx-react';
 import React, { FC, useEffect, useState } from 'react';
-import { MemoryRouter, Redirect, Route, Switch, useRouteMatch } from 'react-router-dom';
+import { MemoryRouter, Redirect, Route, Switch } from 'react-router-dom';
 import { Form } from 'semantic-ui-react';
 import { style } from 'typestyle';
 
@@ -30,14 +30,13 @@ const StudyParent: FC<Props> = ({
   trainingCS,
   trainingManual
 }: Props) => {
-  const { phase, hintUsedForTasks } = studyStore!;
+  const { hintUsedForTasks } = studyStore!;
   const [stopStudy, setStopStudy] = useState(false);
-  const { path, url } = useRouteMatch();
 
   const hintCount = hintUsedForTasks.length;
 
   useEffect(() => {
-    if (hintCount > 6) setStopStudy(true);
+    if (hintCount > 4) setStopStudy(true);
   }, [hintCount]);
 
   if (stopStudy) {
@@ -53,29 +52,8 @@ const StudyParent: FC<Props> = ({
     );
   }
 
-  const component = function() {
-    switch (phase) {
-      case "Consent":
-        return <Consent actions={actions} />;
-      case "Video":
-        return <Video actions={actions} />;
-      // case "Training - CS":
-      //   return <Training actions={actions} tasks={trainingCS} />;
-      // case "Training - Manual":
-      //   return <Training actions={actions} tasks={trainingManual} />;
-      // case "Tasks - CS":
-      //   return <Tasks actions={actions} tasks={taskCS} />;
-      // case "Tasks - Manual":
-      //   return <Tasks actions={actions} tasks={taskManual} />;
-      case "Final Feedback":
-        return <FinalFeedback actions={actions} />;
-      default:
-        return <div>Test</div>;
-    }
-  };
-
   return (
-    <MemoryRouter>
+    <MemoryRouter initialEntries={["/finalfeedback"]}>
       <Switch>
         <Route path={`/consent`}>
           <Consent actions={actions} />

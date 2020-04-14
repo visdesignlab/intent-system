@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request, redirect
+from flask import Blueprint, jsonify, request, redirect, render_template
 import sys
 from .dataset import Dataset
 from .dimensions import Dimensions
@@ -104,11 +104,13 @@ datasets = {
 
 views = Blueprint('views', __name__)
 
-
 @views.route('/')
 def index():  # type: ignore
     return redirect('index.html')
 
+@views.route('/study')
+def study():
+    return redirect('index.html')
 
 @views.route('/dataset', methods=['GET'])
 def route_dataset_list():  # type: ignore

@@ -3,7 +3,7 @@ import 'semantic-ui-css/semantic.min.css';
 import whyDidYouRender from '@welldone-software/why-did-you-render';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter, Route, Switch, useLocation } from 'react-router-dom';
+import { HashRouter, Route, Switch, useLocation } from 'react-router-dom';
 
 import App from './App';
 import { AppConfig, Mode } from './AppConfig';
@@ -86,18 +86,17 @@ export function useConfig(): AppConfig {
 }
 
 const render = (
-  <BrowserRouter>
+  <HashRouter>
     <Switch>
       <Route path="/study">
         <StudyMode />
-        <Route exact path="/">
-          <App />
-        </Route>
       </Route>
+      <Route component={App} />
     </Switch>
-  </BrowserRouter>
+  </HashRouter>
 );
 
+console.log("Test");
 if (!isCompatible) {
   ReactDOM.render(
     <div>
