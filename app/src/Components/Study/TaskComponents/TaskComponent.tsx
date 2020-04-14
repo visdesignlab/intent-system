@@ -200,6 +200,7 @@ const TaskComponent: FC<Props> = ({ taskDesc, store }: Props) => {
             value={currentTaskNumber - 1}
             total={totalTasks}
             progress="percent"
+            precision={0}
             color="blue"
           />
         </Card.Content>

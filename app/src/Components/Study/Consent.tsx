@@ -20,17 +20,12 @@ const Consent: FC<Props> = ({ studyStore, actions }: Props) => {
         Consent
       </Header>
       <Header>
-        Enabling Reproducibility of Interactive Visual Data Analysis: Annotation
-        and Documentation Preferences; Pattern Classification
+        Enabling Reproducibility of Interactive Visual Data Analysis
       </Header>
       <p>
-        The purpose of this research study is to learn about your workflow for
-        data analysis, and specifically how you annotate and document your
-        findings. We also want to study which kind of patterns are “of interest”
-        to you when using a visual data analysis tool. We are doing this study
-        because we want to understand your practices in saving, annotating and
-        communicating findings, and we want to characterize types and classes of
-        patterns seen in data.
+        The purpose of this research study is to learn about preferences for
+        data analysis using user-driven selections and computer supported
+        selections.
       </p>
       <p>
         This study will consist of three parts: (1) an interview, (2) you
@@ -66,10 +61,11 @@ const Consent: FC<Props> = ({ studyStore, actions }: Props) => {
         <a href="mailto:irb@hsc.utah.edu">irb@hsc.utah.edu</a>.
       </p>
       <p>
-        It should take two hours to complete the study. Participation in this
-        study is voluntary. You can choose not to take part in all or any part
-        of the study. You can choose not to finish the study or omit any
-        question you prefer not to answer without penalty or loss of benefits.
+        It should take 20 minutes to one hour to complete the study.
+        Participation in this study is voluntary. You can choose not to take
+        part in all or any part of the study. You can choose not to finish the
+        study or omit any question you prefer not to answer without penalty or
+        loss of benefits.
       </p>
       <p>
         By returning this questionnaire, you are giving your consent to

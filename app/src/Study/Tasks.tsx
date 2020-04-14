@@ -85,7 +85,7 @@ const Tasks: FC<Props> = ({
           </Loader>
         </Dimmer>
       )}
-      <Instructions manual={tasks[0].manual === "manual"} />
+      <Instructions manual={tasks[0].manual === "manual"} secondTime={true} />
     </StudyActionContext.Provider>
   );
 };

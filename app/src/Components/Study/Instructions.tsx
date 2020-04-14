@@ -1,17 +1,26 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useContext, useState } from 'react';
 import { Button, Image, List, Modal } from 'semantic-ui-react';
+
+import { StudyActionContext } from '../../Contexts';
 
 type Props = {
   manual?: boolean;
+  secondTime?: boolean;
 };
 
-const Instructions: FC<Props> = ({ manual = false }: Props) => {
+const Instructions: FC<Props> = ({
+  manual = false,
+  secondTime = false
+}: Props) => {
   const [showModal, setShowModal] = useState(true);
+  const { actions } = useContext(StudyActionContext);
 
   const supportedContent = (
     <>
       <Modal.Header>
-        You are doing tasks in computer supported mode now.
+        {secondTime
+          ? "We are ready to begin the study with COMPUTER SUPPORTED MODE."
+          : "We will now train for tasks in COMPUTER SUPPORTED MODE."}
       </Modal.Header>
       <Modal.Content>
         <List bulleted>
@@ -20,15 +29,21 @@ const Instructions: FC<Props> = ({ manual = false }: Props) => {
             below.
           </List.Item>
           <List.Item>
-            The top three predictions pop-up near your mouse cursor on the
-            scatterplot; on the left of the scatterplot, there is a complete
-            list of predictions.
+            After the first selection, predictions appear on the screen as show
+            below. The top three predictions pop-up near your mouse cursor on
+            the scatterplot; on the right of the scatterplot, there is a
+            complete list of predictions.
           </List.Item>
           <List.Item>
             Hovering on the prediction highlights the points which are part of
-            the prediction; clicking on the prediction selected them. You can
-            use the predictions to improve your selection or directly submit if
-            you feel your original selection is a better fit for the answer.
+            the prediction; clicking on the prediction selects them. You can use
+            the predictions to speed up or improve your selection.
+          </List.Item>
+          <List.Item>
+            Hovering on the prediction highlights the points which are part of
+            the prediction; clicking on the prediction selects them. You can use
+            the predictions to improve your selection or directly submit if you
+            feel your original selection is a better fit for the answer.
           </List.Item>
         </List>
       </Modal.Content>
@@ -43,7 +58,9 @@ const Instructions: FC<Props> = ({ manual = false }: Props) => {
   const manualContent = (
     <>
       <Modal.Header>
-        You are doing tasks without computer support now.
+        {secondTime
+          ? "We are ready to begin the study with USER DRIVEN MODE."
+          : "We will now train for tasks in USER DRIVEN MODE."}{" "}
       </Modal.Header>
       <Modal.Content>
         <List bulleted>
@@ -62,7 +79,13 @@ const Instructions: FC<Props> = ({ manual = false }: Props) => {
     <Modal open={showModal} dimmer="blurring">
       {manual ? manualContent : supportedContent}
       <Modal.Actions>
-        <Button positive onClick={() => setShowModal(false)}>
+        <Button
+          positive
+          onClick={() => {
+            actions.acceptedInstructions(manual ? "Manual" : "Supported");
+            setShowModal(false);
+          }}
+        >
           Proceed to task
         </Button>
       </Modal.Actions>

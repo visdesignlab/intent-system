@@ -26,7 +26,8 @@ const ButtonTask: FC<Props> = ({
   setMessageSubmitted,
   highlightMissing,
   values,
-  studyStore
+  studyStore,
+  taskId
 }: Props) => {
   const { endTask, actions } = useContext(StudyActionContext);
   const graph = useContext(ProvenanceContext);
@@ -88,7 +89,10 @@ const ButtonTask: FC<Props> = ({
           disabled={values.length === 0}
           primary
           content="Submit"
-          onClick={() => hide$.next(null)}
+          onClick={() => {
+            actions.feedbackStarted(taskId);
+            hide$.next(null);
+          }}
         />
       }
       graph={graph()}

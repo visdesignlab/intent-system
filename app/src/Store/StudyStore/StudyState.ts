@@ -24,7 +24,9 @@ export type TaskEvents =
   | "StartTask"
   | "EndTask"
   | "FocusOut"
-  | "FocusIn";
+  | "FocusIn"
+  | "InstructionsAccepted"
+  | "FeedbackStarted";
 
 export const defaultStudyState = {
   participantId: "",

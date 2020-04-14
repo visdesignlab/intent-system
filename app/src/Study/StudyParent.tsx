@@ -66,7 +66,7 @@ const StudyParent: FC<Props> = ({
   };
 
   return (
-    <MemoryRouter initialEntries={["/consent"]}>
+    <MemoryRouter initialEntries={["/taskm"]}>
       <Switch>
         <Route path={`/consent`}>
           <Consent actions={actions} />

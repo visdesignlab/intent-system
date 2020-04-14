@@ -102,6 +102,17 @@ export function setupStudy(
     });
   }
 
+  function acceptedInstructions(mode: string) {
+    studyProvenance.applyAction(
+      `Instructions accepted for: ${mode}`,
+      (state: StudyState) => {
+        state.event = "InstructionsAccepted";
+        state.eventTime = Date.now().toString();
+        return state;
+      }
+    );
+  }
+
   function nextPhase(phase: Phase) {
     studyProvenance.applyAction(
       `Start phase: ${phase}`,
@@ -144,6 +155,17 @@ export function setupStudy(
     });
   }
 
+  function feedbackStarted(taskId: string) {
+    studyProvenance.applyAction(
+      `Feedback started for: ${taskId}`,
+      (state: StudyState) => {
+        state.event = "FeedbackStarted";
+        state.eventTime = Date.now().toString();
+        return state;
+      }
+    );
+  }
+
   return {
     studyProvenance,
     studyActions: {
@@ -154,7 +176,9 @@ export function setupStudy(
       setLoading,
       addHintLookedAt,
       submitFinalFeedback,
-      hintUsed
+      hintUsed,
+      acceptedInstructions,
+      feedbackStarted
     },
     phase
   };
@@ -182,4 +206,6 @@ export interface StudyActions {
   addHintLookedAt: (taskId: string) => void;
   submitFinalFeedback: (feedbackArr: number[], feedbackText?: string) => void;
   hintUsed: (taskId: string) => void;
+  acceptedInstructions: (mode: string) => void;
+  feedbackStarted: (id: string) => void;
 }
