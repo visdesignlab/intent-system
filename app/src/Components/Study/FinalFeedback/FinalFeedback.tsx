@@ -11,7 +11,7 @@ type Props = {
   actions: StudyActions;
 };
 
-const redirectUrl = "https://app.prolific.co/submissions/complete?cc=6623E474";
+const redirectUrl = "https://app.prolific.co/submissions/complete?cc=34AE75B1";
 
 const FinalFeedback = ({ actions }: Props) => {
   const config = useContext(ConfigContext);
