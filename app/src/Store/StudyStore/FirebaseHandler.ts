@@ -1,6 +1,5 @@
-import { isStateNode, ProvenanceGraph } from '@visdesignlab/provenance-lib-core';
+import { ProvenanceGraph } from '@visdesignlab/provenance-lib-core';
 
-import { IntentState } from '../IntentState';
 import { initializeFirebase } from './Firebase';
 import { StudyState } from './StudyState';
 
@@ -19,56 +18,69 @@ export default async function logToFirebase({
   sessionId,
   graph
 }: LoggingParams) {
-  const mainCollectionId = `${participantId}_${studyId}`;
-  const mainDocId = sessionId;
-  const { current, root, nodes } = graph;
+  const path = `${participantId}/${studyId}/${sessionId}`;
 
-  const mainDocRef = db.collection(mainCollectionId).doc(mainDocId);
-  const nodeCollectionRef = mainDocRef.collection("nodes");
-  const allDocsAdded: Promise<any>[] = [];
-
-  mainDocRef
-    .set({
-      current,
-      root
-    })
+  rtd
+    .ref(path)
+    .set(graph)
     .catch(err => {
       console.error(err);
-      throw new Error("Error setting main document");
+      throw new Error("Something went wrong while logging.");
     });
 
-  const nodeKeys = Object.keys(nodes);
+  // const mainCollectionId = `${participantId}/${studyId}`;
+  // const mainDocId = sessionId;
 
-  const getGraphRef = (nodeId: string) =>
-    `${participantId}_${studyId}/${sessionId}/${nodeId}`;
+  // const graphNode = `${mainCollectionId}`
 
-  nodeKeys.forEach(key => {
-    const node = nodes[key];
-    if (isStateNode(node)) {
-      node.artifacts.diffs = [];
-      if (node.state.graph !== "None") {
-        const g = JSON.parse(node.state.graph) as ProvenanceGraph<
-          IntentState,
-          any,
-          any
-        >;
-        const graphRef = getGraphRef(node.id);
-        rtd
-          .ref(graphRef)
-          .set(g)
-          .catch(err => {
-            console.error(err);
-            throw new Error("Error pushing graph");
-          });
-        node.state.graph = graphRef;
-      }
-    }
-    const p = nodeCollectionRef.doc(key).set(node);
-    allDocsAdded.push(p);
-  });
+  // const { current, root, nodes } = graph;
 
-  Promise.all(allDocsAdded).catch(err => {
-    console.error(err);
-    throw new Error("Error pushing nodes");
-  });
+  // const mainDocRef = db.collection(mainCollectionId).doc(mainDocId);
+  // const nodeCollectionRef = mainDocRef.collection("nodes");
+  // const allDocsAdded: Promise<any>[] = [];
+
+  // mainDocRef
+  //   .set({
+  //     current,
+  //     root
+  //   })
+  //   .catch(err => {
+  //     console.error(err);
+  //     throw new Error("Error setting main document");
+  //   });
+
+  // const nodeKeys = Object.keys(nodes);
+
+  // const getGraphRef = (nodeId: string) =>
+  //   `${participantId}_${studyId}/${sessionId}/${nodeId}`;
+
+  // nodeKeys.forEach(key => {
+  //   const node = nodes[key];
+  //   if (isStateNode(node)) {
+  //     node.artifacts.diffs = [];
+  //     if (node.state.graph !== "None") {
+  //       const g = JSON.parse(node.state.graph as any) as ProvenanceGraph<
+  //         IntentState,
+  //         any,
+  //         any
+  //       >;
+  //       const graphRef = getGraphRef(node.id);
+  //       rtd
+  //         .ref(graphRef)
+  //         .set(g)
+  //         .catch(err => {
+  //           console.error(err);
+  //           throw new Error("Error pushing graph");
+  //         });
+  //       node.state.graph = graphRef;
+  //     }
+  //   }
+  //   const p = nodeCollectionRef.doc(key).set(node);
+  //   allDocsAdded.push(p);
+  // });
+
+  // Promise.all(allDocsAdded).catch(err => {
+  //   console.error(err);
+  //   throw new Error("Error pushing nodes");
+  // });
 }

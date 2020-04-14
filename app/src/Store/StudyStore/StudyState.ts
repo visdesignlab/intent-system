@@ -38,7 +38,7 @@ export const defaultStudyState = {
   eventTime: Date.now().toString(),
   selections: [] as number[],
   hintTasks: [] as string[],
-  graph: "None",
+  graph: {} as {} | ProvenanceGraph<any, any, any>,
   confidenceScore: -1,
   difficultyScore: -1,
   feedback: "",

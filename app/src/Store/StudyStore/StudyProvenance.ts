@@ -5,7 +5,7 @@ import { IntentState } from '../IntentState';
 import { Annotation, IntentEvents } from '../Provenance';
 import { TaskDescription } from './../../Study/TaskList';
 import logToFirebase from './FirebaseHandler';
-import { getDefaultStudyState, Phase, stringifyGraph, StudyState } from './StudyState';
+import { getDefaultStudyState, Phase, StudyState } from './StudyState';
 import StudyStore from './StudyStore';
 
 export function setupStudy(
@@ -64,6 +64,10 @@ export function setupStudy(
         state.event = "StartTask";
         state.task = task;
         state.eventTime = Date.now().toString();
+        state.graph = {};
+        state.confidenceScore = -1;
+        state.difficultyScore = -1;
+        state.feedback = "";
         return state;
       }
     );
@@ -84,7 +88,7 @@ export function setupStudy(
         state.event = "EndTask";
         state.selections = points;
         state.eventTime = Date.now().toString();
-        state.graph = stringifyGraph(graph);
+        state.graph = graph;
         state.confidenceScore = confidenceScore;
         state.difficultyScore = difficultyScore;
         state.feedback = feedback;
