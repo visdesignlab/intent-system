@@ -12,75 +12,68 @@ type LoggingParams = {
   graph: ProvenanceGraph<StudyState, any, any>;
 };
 
+type LogStatus = "success" | "error";
+
+type LogData = {
+  time: number;
+  status: LogStatus;
+  participantId: string;
+  studyId: string;
+  sessionId: string;
+  currentNodeId: string;
+  err?: any;
+};
+
+function getLogData(
+  status: LogStatus,
+  participantId: string,
+  studyId: string,
+  sessionId: string,
+  currentNodeId: string,
+  err: string = ""
+): LogData {
+  return {
+    time: Date.now(),
+    status,
+    participantId,
+    studyId,
+    sessionId,
+    currentNodeId,
+    err,
+  };
+}
+
 export default async function logToFirebase({
   participantId,
   studyId,
   sessionId,
-  graph
+  graph,
 }: LoggingParams) {
   const path = `${participantId}/${studyId}/${sessionId}`;
 
   rtd
     .ref(path)
     .set(graph)
-    .catch(err => {
+    .then(() => {
+      const log = getLogData(
+        "success",
+        participantId,
+        studyId,
+        sessionId,
+        graph.current
+      );
+      rtd.ref(`logging/${log.time}`).set(log);
+    })
+    .catch((err) => {
       console.error(err);
+      const log = getLogData(
+        "error",
+        participantId,
+        studyId,
+        sessionId,
+        graph.current
+      );
+      rtd.ref(`logging/${log.time}`).set(log);
       throw new Error("Something went wrong while logging.");
     });
-
-  // const mainCollectionId = `${participantId}/${studyId}`;
-  // const mainDocId = sessionId;
-
-  // const graphNode = `${mainCollectionId}`
-
-  // const { current, root, nodes } = graph;
-
-  // const mainDocRef = db.collection(mainCollectionId).doc(mainDocId);
-  // const nodeCollectionRef = mainDocRef.collection("nodes");
-  // const allDocsAdded: Promise<any>[] = [];
-
-  // mainDocRef
-  //   .set({
-  //     current,
-  //     root
-  //   })
-  //   .catch(err => {
-  //     console.error(err);
-  //     throw new Error("Error setting main document");
-  //   });
-
-  // const nodeKeys = Object.keys(nodes);
-
-  // const getGraphRef = (nodeId: string) =>
-  //   `${participantId}_${studyId}/${sessionId}/${nodeId}`;
-
-  // nodeKeys.forEach(key => {
-  //   const node = nodes[key];
-  //   if (isStateNode(node)) {
-  //     node.artifacts.diffs = [];
-  //     if (node.state.graph !== "None") {
-  //       const g = JSON.parse(node.state.graph as any) as ProvenanceGraph<
-  //         IntentState,
-  //         any,
-  //         any
-  //       >;
-  //       const graphRef = getGraphRef(node.id);
-  //       rtd
-  //         .ref(graphRef)
-  //         .set(g)
-  //         .catch(err => {
-  //           console.error(err);
-  //           throw new Error("Error pushing graph");
-  //         });
-  //       node.state.graph = graphRef;
-  //     }
-  //   }
-  //   const p = nodeCollectionRef.doc(key).set(node);
-  //   allDocsAdded.push(p);
-  // });
-
-  // Promise.all(allDocsAdded).catch(err => {
-  //   console.error(err);
-  //   throw new Error("Error pushing nodes");
-  // });
 }
