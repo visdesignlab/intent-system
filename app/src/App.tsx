@@ -9,7 +9,7 @@ import ProvenanceVisualization from './Components/ProvenanceVisualization';
 import Visualization from './Components/Scatterplot/Visualization';
 import { ActionContext, DataContext } from './Contexts';
 import IntentStore from './Store/IntentStore';
-import { setupProvenance, loadGraphFromUrl } from './Store/Provenance';
+import { setupProvenance } from './Store/Provenance';
 import { Data, Dataset, Datasets, loadData } from './Utils/Dataset';
 import getPlotId from './Utils/PlotIDGen';
 
@@ -25,8 +25,6 @@ const App: FC<Props> = (_: Props) => {
   });
 
   console.log("loading graph");
-
-  loadGraphFromUrl("empty");
 
   const [data, setData] = useState<Data>(null as any);
 

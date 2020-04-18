@@ -1,6 +1,6 @@
 import { Extra, initProvenance, isStateNode, NodeID, Provenance, StateNode } from '@visdesignlab/provenance-lib-core';
 import axios from 'axios';
-import {db} from './StudyStore/FirebaseHandler'
+import {graphRTD} from './StudyStore/FirebaseHandler'
 import { MultiBrushBehavior, Prediction, PredictionRequest, PredictionSet } from '../contract';
 import { Dataset } from '../Utils/Dataset';
 import {
@@ -55,6 +55,33 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
     defaultState,
     true
   );
+
+  const url = new URLSearchParams(window.location.search);
+  const participantId = url.get("graphPath");
+
+  graphRTD
+    .ref(`5e98a75534f61a0ae874e519/5e98a8719cd41a0c5251e3b7/5e98a98a90f8c10ce5fda629_1587063196468/0395b1d9-d6c5-4c31-a2e7-0d024beb79e4`)
+    .once('value')
+    .then(function(dataSnapshot)
+    {
+      let dataJson:any = dataSnapshot.toJSON();
+      // console.log(dataSnapshot.toJSON());
+      // console.log(JSON.stringify(dataSnapshot.toJSON()));
+      if(!dataJson['nodes'] || !dataJson["current"] || !dataJson["root"])
+      {
+        return;
+      }
+
+      for( let j in dataJson.nodes)
+      {
+        if(!dataJson.nodes[j].children)
+        {
+          dataJson.nodes[j].children = [];
+        }
+      }
+
+      provenance.importProvenanceGraph(JSON.stringify(dataJson));
+    });
 
   store.graph = provenance.graph();
 
@@ -600,26 +627,6 @@ export function getPathTo(nodes: any, from: string, to: string): string[] {
   search(nodes, from, to, path);
 
   return [from, ...path.reverse()];
-}
-
-
-export function loadGraphFromUrl(graphString: string): void {
-  console.log(db);
-  const url = new URLSearchParams(window.location.search);
-  const participantId = url.get("participantId");
-
-  let docRef = db.collection("5e98a75534f61a0ae874e519").doc("5e98a8719cd41a0c5251e3b7");
-  // 
-  docRef.get().then(function(doc) {
-      if (doc.exists) {
-          console.log("Document data:", doc.data());
-      } else {
-          // doc.data() will be undefined in this case
-          console.log("No such document!");
-      }
-  }).catch(function(error) {
-      console.log("Error getting document:", error);
-  });
 }
 
 function search(nodes: any, node: string, final: string, path: string[]) {
