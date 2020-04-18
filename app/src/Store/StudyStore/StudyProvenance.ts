@@ -3,8 +3,9 @@ import { initProvenance, Provenance, ProvenanceGraph } from '@visdesignlab/prove
 import { AppConfig } from '../../AppConfig';
 import { IntentState } from '../IntentState';
 import { Annotation, IntentEvents } from '../Provenance';
+import { TaskDescription } from './../../Study/TaskList';
 import logToFirebase from './FirebaseHandler';
-import { getDefaultStudyState, Phase, stringifyGraph, StudyState } from './StudyState';
+import { getDefaultStudyState, Phase, StudyState } from './StudyState';
 import StudyStore from './StudyStore';
 
 export function setupStudy(
@@ -55,13 +56,18 @@ export function setupStudy(
     console.log(studyProvenance.graph());
   };
 
-  function startTask(taskId: string) {
+  function startTask(taskId: string, task: TaskDescription) {
     studyProvenance.applyAction(
       `Start task: ${taskId}`,
       (state: StudyState) => {
         state.taskId = taskId;
         state.event = "StartTask";
+        state.task = task;
         state.eventTime = Date.now().toString();
+        state.graph = {};
+        state.confidenceScore = -1;
+        state.difficultyScore = -1;
+        state.feedback = "";
         return state;
       }
     );
@@ -82,7 +88,7 @@ export function setupStudy(
         state.event = "EndTask";
         state.selections = points;
         state.eventTime = Date.now().toString();
-        state.graph = stringifyGraph(graph);
+        state.graph = graph;
         state.confidenceScore = confidenceScore;
         state.difficultyScore = difficultyScore;
         state.feedback = feedback;
@@ -98,6 +104,17 @@ export function setupStudy(
       state.eventTime = Date.now().toString();
       return state;
     });
+  }
+
+  function acceptedInstructions(mode: string) {
+    studyProvenance.applyAction(
+      `Instructions accepted for: ${mode}`,
+      (state: StudyState) => {
+        state.event = "InstructionsAccepted";
+        state.eventTime = Date.now().toString();
+        return state;
+      }
+    );
   }
 
   function nextPhase(phase: Phase) {
@@ -119,8 +136,10 @@ export function setupStudy(
   }
 
   function addHintLookedAt(taskId: string) {
-    if (!store.hintUsedForTasks.includes(taskId))
+    if (!store.hintUsedForTasks.includes(taskId)) {
       store.hintUsedForTasks.push(taskId);
+      hintUsed(taskId);
+    }
   }
 
   function submitFinalFeedback(feedback: number[], feedbackText: string = "") {
@@ -129,6 +148,26 @@ export function setupStudy(
       state.finalFeedbackComment = feedbackText;
       return state;
     });
+  }
+
+  function hintUsed(taskId: string) {
+    studyProvenance.applyAction(`Hint used`, (state: StudyState) => {
+      if (!state.hintTasks.includes(taskId)) {
+        state.hintTasks.push(taskId);
+      }
+      return state;
+    });
+  }
+
+  function feedbackStarted(taskId: string) {
+    studyProvenance.applyAction(
+      `Feedback started for: ${taskId}`,
+      (state: StudyState) => {
+        state.event = "FeedbackStarted";
+        state.eventTime = Date.now().toString();
+        return state;
+      }
+    );
   }
 
   return {
@@ -140,7 +179,10 @@ export function setupStudy(
       nextPhase,
       setLoading,
       addHintLookedAt,
-      submitFinalFeedback
+      submitFinalFeedback,
+      hintUsed,
+      acceptedInstructions,
+      feedbackStarted
     },
     phase
   };
@@ -153,7 +195,7 @@ export interface StudyProvenanceControl {
 }
 
 export interface StudyActions {
-  startTask: (taskId: string) => void;
+  startTask: (taskId: string, task: TaskDescription) => void;
   nextPhase: (phase: Phase) => void;
   endTask: (
     taskId: string,
@@ -167,4 +209,7 @@ export interface StudyActions {
   setLoading: (isLoading: boolean) => void;
   addHintLookedAt: (taskId: string) => void;
   submitFinalFeedback: (feedbackArr: number[], feedbackText?: string) => void;
+  hintUsed: (taskId: string) => void;
+  acceptedInstructions: (mode: string) => void;
+  feedbackStarted: (id: string) => void;
 }

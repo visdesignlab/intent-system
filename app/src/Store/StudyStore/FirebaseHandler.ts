@@ -1,10 +1,9 @@
-import { isStateNode, ProvenanceGraph } from '@visdesignlab/provenance-lib-core';
+import { ProvenanceGraph } from '@visdesignlab/provenance-lib-core';
 
-import { IntentState } from '../IntentState';
 import { initializeFirebase } from './Firebase';
 import { StudyState } from './StudyState';
 
-export const { firestore: db } = initializeFirebase();
+export const { firestore: db, rtd } = initializeFirebase();
 
 type LoggingParams = {
   participantId: string;
@@ -13,51 +12,68 @@ type LoggingParams = {
   graph: ProvenanceGraph<StudyState, any, any>;
 };
 
+type LogStatus = "success" | "error";
+
+type LogData = {
+  time: number;
+  status: LogStatus;
+  participantId: string;
+  studyId: string;
+  sessionId: string;
+  currentNodeId: string;
+  err?: any;
+};
+
+function getLogData(
+  status: LogStatus,
+  participantId: string,
+  studyId: string,
+  sessionId: string,
+  currentNodeId: string,
+  err: string = ""
+): LogData {
+  return {
+    time: Date.now(),
+    status,
+    participantId,
+    studyId,
+    sessionId,
+    currentNodeId,
+    err,
+  };
+}
+
 export default async function logToFirebase({
   participantId,
   studyId,
   sessionId,
-  graph
+  graph,
 }: LoggingParams) {
-  const mainCollectionId = `${participantId}_${studyId}`;
-  const mainDocId = sessionId;
-  const { current, root, nodes } = graph;
+  const path = `${participantId}/${studyId}/${sessionId}`;
 
-  const mainDocRef = db.collection(mainCollectionId).doc(mainDocId);
-  const nodeCollectionRef = mainDocRef.collection("nodes");
-  const allDocsAdded: Promise<any>[] = [];
-
-  mainDocRef
-    .set({
-      current,
-      root
+  rtd
+    .ref(path)
+    .set(graph)
+    .then(() => {
+      const log = getLogData(
+        "success",
+        participantId,
+        studyId,
+        sessionId,
+        graph.current
+      );
+      rtd.ref(`logging/${log.time}`).set(log);
     })
-    .catch(err => {
+    .catch((err) => {
       console.error(err);
-      throw new Error("Error setting main document");
+      const log = getLogData(
+        "error",
+        participantId,
+        studyId,
+        sessionId,
+        graph.current
+      );
+      rtd.ref(`logging/${log.time}`).set(log);
+      throw new Error("Something went wrong while logging.");
     });
-
-  const nodeKeys = Object.keys(nodes);
-
-  nodeKeys.forEach(key => {
-    const node = nodes[key];
-    if (isStateNode(node)) {
-      node.artifacts.diffs = [];
-      if (node.state.graph !== "None") {
-        const g = JSON.parse(node.state.graph) as ProvenanceGraph<
-          IntentState,
-          any,
-          any
-        >;
-        node.state.graph = g.nodes[g.current].state.dataset.key;
-      }
-    }
-    const p = nodeCollectionRef.doc(key).set(node);
-    allDocsAdded.push(p);
-  });
-
-  Promise.all(allDocsAdded).catch(err => {
-    console.error(err);
-    throw new Error("Error pushing nodes");
-  });
 }

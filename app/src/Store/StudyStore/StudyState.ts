@@ -4,14 +4,17 @@ import { AppConfig } from '../../AppConfig';
 import { IntentState } from '../IntentState';
 import { Annotation, IntentEvents } from '../Provenance';
 import { Questions } from './../../Components/Study/FinalFeedback/FeedbackQuestions';
+import { TaskDescription } from './../../Study/TaskList';
 
 export type StudyState = typeof defaultStudyState;
 
 export type Phase =
   | "Consent"
-  | "Passive Training"
-  | "Training Tasks"
-  | "Tasks"
+  | "Video"
+  | "Training - Manual"
+  | "Training - CS"
+  | "Tasks - Manual"
+  | "Tasks - CS"
   | "Final Feedback"
   | "Complete";
 
@@ -21,7 +24,9 @@ export type TaskEvents =
   | "StartTask"
   | "EndTask"
   | "FocusOut"
-  | "FocusIn";
+  | "FocusIn"
+  | "InstructionsAccepted"
+  | "FeedbackStarted";
 
 export const defaultStudyState = {
   participantId: "",
@@ -29,15 +34,17 @@ export const defaultStudyState = {
   studyId: "",
   event: "StudyStart" as TaskEvents,
   taskId: "-1",
+  task: {} as TaskDescription,
   eventTime: Date.now().toString(),
   selections: [] as number[],
-  graph: "None",
+  hintTasks: [] as string[],
+  graph: {} as {} | ProvenanceGraph<any, any, any>,
   confidenceScore: -1,
   difficultyScore: -1,
   feedback: "",
   phase: "Training Tasks" as Phase,
   finalFeedbackArr: new Array(Questions.length).fill(-1) as number[],
-  finalFeedbackComment: "",
+  finalFeedbackComment: ""
 };
 
 export function stringifyGraph(
@@ -50,9 +57,9 @@ export function stringifyGraph(
 export function getDefaultStudyState(config: AppConfig): StudyState {
   const { participantId, studyId, sessionId, coding } = config;
   let phase: Phase = "Consent";
-  phase = "Training Tasks";
+  if (config.debugMode) phase = "Training - Manual";
   if (coding === "yes") {
-    phase = "Tasks";
+    phase = "Tasks - Manual";
   }
   return { ...defaultStudyState, participantId, studyId, sessionId, phase };
 }

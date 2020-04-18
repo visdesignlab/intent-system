@@ -17,7 +17,7 @@ const Feedback: FC<Props> = ({ selections, graph, trigger }: Props) => {
 
   const { endTask, currentTaskNumber } = useContext(StudyActionContext);
 
-  const scores = [1, 2, 3, 4, 5, 6, 7];
+  const scores = [1, 2, 3, 4, 5];
 
   return (
     <Modal
@@ -31,7 +31,7 @@ const Feedback: FC<Props> = ({ selections, graph, trigger }: Props) => {
       </Modal.Header>
       <Modal.Content as={Form}>
         <Form.Field as="h2">
-          On scale of 1 (easy) to 7 (hard), how hard was this task?
+          On scale of 1 (easy) to 5 (hard), how hard was this task?
         </Form.Field>
         <Form.Group>
           <Form.Field as="h3">Easy</Form.Field>
@@ -51,11 +51,11 @@ const Feedback: FC<Props> = ({ selections, graph, trigger }: Props) => {
       </Modal.Content>
       <Modal.Content as={Form}>
         <Form.Field as="h2">
-          On scale of 1 (not confident) to 7 (confident), how confident are you
+          On scale of 1 (confident) to 5 (not confident), how confident are you
           with you answers?
         </Form.Field>
         <Form.Group>
-          <Form.Field as="h3">Not confident</Form.Field>
+          <Form.Field as="h3">Confident</Form.Field>
           {scores.map(score => (
             <Form.Radio
               key={score}
@@ -67,12 +67,12 @@ const Feedback: FC<Props> = ({ selections, graph, trigger }: Props) => {
               }}
             />
           ))}
-          <Form.Field as="h3">Confident</Form.Field>
+          <Form.Field as="h3">Not confident</Form.Field>
         </Form.Group>
       </Modal.Content>
       <Modal.Content as={Form}>
         <Form.Field as="h2">
-          Enter any additional feedback you may here below:
+          Enter any additional feedback you may have below:
         </Form.Field>
         <Form.Field>
           <TextArea

@@ -16,6 +16,7 @@ type Props = {
   setMessageSubmitted: (message: "success" | "error" | "none") => void;
   highlightMissing: () => void;
   values: number[];
+  taskId: string;
 };
 
 const ButtonTask: FC<Props> = ({
@@ -25,9 +26,10 @@ const ButtonTask: FC<Props> = ({
   setMessageSubmitted,
   highlightMissing,
   values,
-  studyStore
+  studyStore,
+  taskId
 }: Props) => {
-  const { endTask } = useContext(StudyActionContext);
+  const { endTask, actions } = useContext(StudyActionContext);
   const graph = useContext(ProvenanceContext);
   const [trial, setTrial] = useState(0);
   const [showHintButton, setShowHintButton] = useState(false);
@@ -42,7 +44,9 @@ const ButtonTask: FC<Props> = ({
     <Button
       content="Show Hint"
       positive
-      onClick={() => $showHint.next(true)}
+      onClick={() => {
+        $showHint.next(true);
+      }}
       onMouseOut={() => setTimeout(() => $showHint.next(false), 250)}
     />
   );
@@ -85,7 +89,10 @@ const ButtonTask: FC<Props> = ({
           disabled={values.length === 0}
           primary
           content="Submit"
-          onClick={() => hide$.next(null)}
+          onClick={() => {
+            actions.feedbackStarted(taskId);
+            hide$.next(null);
+          }}
         />
       }
       graph={graph()}
@@ -104,7 +111,15 @@ const ButtonTask: FC<Props> = ({
         <Card.Content>
           <Divider />
           <Message
-            content={`You can hover on 'Show Hint' to peek at the solution. You can use hints for at most three training tasks to qualify for the study. You have currently used ${hintUsedForTasks.length}/3 hints`}
+            content={
+              <>
+                <p>{`You can hover on 'Show Hint' to peek at the solution. You can use hints for at most four training tasks to qualify for the study.`}</p>
+                <p>
+                  You have currently used{" "}
+                  <strong>{hintUsedForTasks.length}/4</strong> hints
+                </p>
+              </>
+            }
           />
           {showHint}
         </Card.Content>

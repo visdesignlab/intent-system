@@ -1,6 +1,7 @@
 import { inject, observer } from 'mobx-react';
 import React, { FC } from 'react';
-import { Button, Container, Header } from 'semantic-ui-react';
+import { Link, useRouteMatch } from 'react-router-dom';
+import { Button, Container, Header, Modal } from 'semantic-ui-react';
 
 import { StudyActions } from '../../Store/StudyStore/StudyProvenance';
 import StudyStore from '../../Store/StudyStore/StudyStore';
@@ -11,23 +12,20 @@ type Props = {
 };
 
 const Consent: FC<Props> = ({ studyStore, actions }: Props) => {
+  const { path, url } = useRouteMatch();
+
   return (
     <Container>
       <Header textAlign="center" as="h1">
         Consent
       </Header>
       <Header>
-        Enabling Reproducibility of Interactive Visual Data Analysis: Annotation
-        and Documentation Preferences; Pattern Classification
+        Enabling Reproducibility of Interactive Visual Data Analysis
       </Header>
       <p>
-        The purpose of this research study is to learn about your workflow for
-        data analysis, and specifically how you annotate and document your
-        findings. We also want to study which kind of patterns are “of interest”
-        to you when using a visual data analysis tool. We are doing this study
-        because we want to understand your practices in saving, annotating and
-        communicating findings, and we want to characterize types and classes of
-        patterns seen in data.
+        The purpose of this research study is to learn about preferences for
+        data analysis using user-driven selections and computer supported
+        selections.
       </p>
       <p>
         This study will consist of three parts: (1) an interview, (2) you
@@ -63,20 +61,49 @@ const Consent: FC<Props> = ({ studyStore, actions }: Props) => {
         <a href="mailto:irb@hsc.utah.edu">irb@hsc.utah.edu</a>.
       </p>
       <p>
-        It should take two hours to complete the study. Participation in this
-        study is voluntary. You can choose not to take part in all or any part
-        of the study. You can choose not to finish the study or omit any
-        question you prefer not to answer without penalty or loss of benefits.
+        It should take 20 minutes to one hour to complete the study.
+        Participation in this study is voluntary. You can choose not to take
+        part in all or any part of the study. You can choose not to finish the
+        study or omit any question you prefer not to answer without penalty or
+        loss of benefits.
       </p>
       <p>
         By returning this questionnaire, you are giving your consent to
         participate. We appreciate your participation.
       </p>
-      <Button
-        content="I consent"
-        positive
-        onClick={() => actions.nextPhase("Passive Training")}
-      />
+      <Modal trigger={<Button content="I Consent" positive />}>
+        <Modal.Header>Conditions for Participation and Payment</Modal.Header>
+        <Modal.Content>
+          <p>We estimate that this study will take about 30 minutes.</p>
+          <p>
+            A desktop or notebook computer with a mouse or a touch-pad is
+            required to participate. You cannot participate on a mobile device
+            of any kind.
+          </p>
+          <p>
+            The study consists of watching an 8 minute instructional video, a
+            short training period, and the study in two conditions, followed by
+            a one-page survey.
+          </p>
+          <p>
+            Your payment is conditional on you fully and attentively watching
+            the video, passing a set of trial tasks, and making an honest effort
+            to complete the study.
+          </p>
+          <p>Thank you for your participation!</p>
+        </Modal.Content>
+        <Modal.Actions>
+          <Link to={`/video`}>
+            <Button
+              content="Proceed to study"
+              positive
+              onClick={() => {
+                actions.nextPhase("Video");
+              }}
+            />
+          </Link>
+        </Modal.Actions>
+      </Modal>
     </Container>
   );
 };

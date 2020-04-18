@@ -1,15 +1,10 @@
-import { observable, action, computed } from "mobx";
-import {
-  defaultState,
-  IntentState,
-  MultiBrushBehaviour,
-  BrushType,
-  BrushSize
-} from "./IntentState";
-import { ProvenanceGraph } from "@visdesignlab/provenance-lib-core";
-import { IntentEvents, Annotation } from "./Provenance";
-import { Dataset } from "../Utils/Dataset";
-import { PredictionSet, InteractionHistory, Prediction } from "../contract";
+import { ProvenanceGraph } from '@visdesignlab/provenance-lib-core';
+import { action, computed, observable } from 'mobx';
+
+import { InteractionHistory, Prediction, PredictionSet } from '../contract';
+import { Dataset } from '../Utils/Dataset';
+import { BrushSize, BrushType, defaultState, IntentState, MultiBrushBehaviour } from './IntentState';
+import { Annotation, IntentEvents } from './Provenance';
 
 export const predSet: PredictionSet = {
   dimensions: [],
@@ -39,6 +34,7 @@ export default class IntentStore implements IntentState {
   @observable brushType: BrushType = defaultState.brushType;
   @observable brushSize: BrushSize = defaultState.brushSize;
   @observable lockedPrediction: Prediction = defaultState.lockedPrediction;
+  @observable turnedPrediction: string | null = defaultState.turnedPrediction;
 
   // Artifact Properties
   @observable predictionSet = predSet;
