@@ -26,7 +26,8 @@ export type TaskEvents =
   | "FocusOut"
   | "FocusIn"
   | "InstructionsAccepted"
-  | "FeedbackStarted";
+  | "FeedbackStarted"
+  | string;
 
 export const defaultStudyState = {
   participantId: "",
@@ -44,7 +45,7 @@ export const defaultStudyState = {
   feedback: "",
   phase: "Training Tasks" as Phase,
   finalFeedbackArr: new Array(Questions.length).fill(-1) as number[],
-  finalFeedbackComment: ""
+  finalFeedbackComment: "",
 };
 
 export function stringifyGraph(

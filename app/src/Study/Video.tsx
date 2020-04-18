@@ -38,9 +38,14 @@ const Video: FC<Props> = ({ actions }: Props) => {
       </Container>
       <br />
       <div className={centerThings}>
-        <Link to="/trainingm/">
+        <Link
+          to="/trainingm/"
+          style={{
+            pointerEvents: enableButton ? "all" : "none",
+          }}
+        >
           <Button
-            onClick={() => actions.nextPhase("Training - CS")}
+            onClick={() => actions.nextPhase("Training - Manual")}
             disabled={!enableButton && !debugMode}
             primary
             content="Next"
@@ -55,5 +60,5 @@ export default Video;
 
 const centerThings = style({
   display: "flex",
-  justifyContent: "center"
+  justifyContent: "center",
 });
