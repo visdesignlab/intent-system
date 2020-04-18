@@ -22,6 +22,16 @@ export interface Plot {
   selectedPoints: number[];
 }
 
+export function getDefaultPlot(): Plot {
+  return {
+    id: "",
+    x: "",
+    y: "",
+    brushes: {},
+    selectedPoints: [],
+  };
+}
+
 export type Plots = Plot[];
 
 export interface IntentState {
@@ -47,5 +57,5 @@ export const defaultState: IntentState = {
   brushType: "Freeform",
   lockedPrediction: null as any,
   brushSize: "50",
-  turnedPrediction: null
+  turnedPrediction: null,
 };
