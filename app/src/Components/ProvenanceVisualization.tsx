@@ -12,8 +12,28 @@ import { style } from "typestyle";
 import { NodeID, isStateNode } from "@visdesignlab/provenance-lib-core";
 import ProvVis from "../ProvVis/components/ProvVis";
 import translate from "../ProvVis/Utils/translate";
+import { EventConfig } from '../ProvVis/Utils/EventConfig';
+import { IntentEvents } from '../Store/Provenance';
 import { ActionContext } from "../Contexts";
 import { BundleMap, Bundle } from "../ProvVis/Utils/BundleMap";
+import { ChangeBrushSize,
+  ChangeBrushType,
+  ClearAll,
+  RemoveBrush,
+  ChangeBrush,
+  Invert,
+  TurnPrediction,
+  LockPrediction,
+  AddBrush,
+  PointDeselection,
+  PointSelection,
+  AddPlot,
+  LoadDataset,
+  MultiBrush,
+  SwitchCategoryVisibility,
+  ChangeCategory
+} from './Icons';
+
 
 interface Props {
   store?: IntentStore;
@@ -42,6 +62,105 @@ const ProvenanceVisualization: FC<Props> = ({ store }: Props) => {
     d.label.includes("Load Dataset")
   );
 
+  const eventConfig: EventConfig<IntentEvents> = {
+    'Load Dataset': {
+      backboneGlyph: <LoadDataset size={22}/>,
+      currentGlyph: <LoadDataset size={22}fill={"cornflowerblue"}/>,
+      regularGlyph: <LoadDataset size={16}/>,
+      bundleGlyph:  <LoadDataset size={22}fill={"cornflowerblue"}/>
+    },
+    'MultiBrush': {
+      backboneGlyph: <MultiBrush size={22}/>,
+      currentGlyph: <MultiBrush size={22}fill={"cornflowerblue"}/>,
+      regularGlyph: <MultiBrush size={16}/>,
+      bundleGlyph: <MultiBrush size={22}fill={"cornflowerblue"}/>
+    },
+    'Switch Category Visibility': {
+      backboneGlyph: <SwitchCategoryVisibility size={22}/>,
+      currentGlyph: <SwitchCategoryVisibility size={22}fill={"cornflowerblue"}/>,
+      regularGlyph: <SwitchCategoryVisibility size={16}/>,
+      bundleGlyph: <SwitchCategoryVisibility size={22}fill={"cornflowerblue"}/>
+    },
+    'Change Category': {
+      backboneGlyph: <ChangeCategory size={22}/>,
+      currentGlyph: <ChangeCategory size={22}fill={"cornflowerblue"}/>,
+      regularGlyph: <ChangeCategory size={16}/>,
+      bundleGlyph: <ChangeCategory size={22}fill={"cornflowerblue"}/>
+    },
+    'Add Plot': {
+      backboneGlyph: <AddPlot size={22}/>,
+      currentGlyph: <AddPlot size={22}fill={"cornflowerblue"}/>,
+      regularGlyph: <AddPlot size={16}/>,
+      bundleGlyph: <AddPlot size={22}fill={"cornflowerblue"}/>
+    },
+    'Point Selection': {
+      backboneGlyph: <PointSelection size={22}/>,
+      currentGlyph: <PointSelection size={22}fill={"cornflowerblue"}/>,
+      regularGlyph: <PointSelection size={16}/>,
+      bundleGlyph: <PointSelection size={22}fill={"cornflowerblue"}/>
+    },
+    'Point Deselection': {
+      backboneGlyph: <PointDeselection size={22}/>,
+      currentGlyph: <PointDeselection size={22}fill={"cornflowerblue"}/>,
+      regularGlyph: <PointDeselection size={16}/>,
+      bundleGlyph: <PointDeselection size={22}fill={"cornflowerblue"}/>
+    },
+    'Add Brush': {
+      backboneGlyph: <AddBrush size={22}/>,
+      currentGlyph: <AddBrush size={22}fill={"cornflowerblue"}/>,
+      regularGlyph: <AddBrush size={16}/>,
+      bundleGlyph: <AddBrush size={22}fill={"cornflowerblue"}/>
+    },
+    'Lock Prediction': {
+      backboneGlyph: <LockPrediction size={22}/>,
+      currentGlyph: <LockPrediction size={22}fill={"cornflowerblue"}/>,
+      regularGlyph: <LockPrediction size={16}/>,
+      bundleGlyph: <LockPrediction size={22}fill={"#39CCCC"}/>
+    },
+    'Turn Prediction': {
+      backboneGlyph: <TurnPrediction size={22}/>,
+      currentGlyph: <TurnPrediction size={22}fill={"cornflowerblue"}/>,
+      regularGlyph: <TurnPrediction size={16}/>,
+      bundleGlyph: <TurnPrediction size={22}fill={"cornflowerblue"}/>
+    },
+    'Invert': {
+      backboneGlyph: <Invert size={22}/>,
+      currentGlyph: <Invert size={22}fill={"cornflowerblue"}/>,
+      regularGlyph: <Invert size={16}/>,
+      bundleGlyph: <Invert size={22}fill={"cornflowerblue"}/>
+    },
+    'Change Brush': {
+      backboneGlyph: <ChangeBrush size={22}/>,
+      currentGlyph: <ChangeBrush size={22}fill={"cornflowerblue"}/>,
+      regularGlyph: <ChangeBrush size={16}/>,
+      bundleGlyph: <ChangeBrush size={22}fill={"cornflowerblue"}/>
+    },
+    'Remove Brush': {
+      backboneGlyph: <RemoveBrush size={22}/>,
+      currentGlyph: <RemoveBrush size={22}fill={"cornflowerblue"}/>,
+      regularGlyph: <RemoveBrush size={16}/>,
+      bundleGlyph: <RemoveBrush size={22}fill={"cornflowerblue"}/>
+    },
+    'Clear All': {
+      backboneGlyph: <ClearAll size={22}/>,
+      currentGlyph: <ClearAll size={22}fill={"cornflowerblue"}/>,
+      regularGlyph: <ClearAll size={16}/>,
+      bundleGlyph: <ClearAll size={22}fill={"cornflowerblue"}/>
+    },
+    'Change Brush Type': {
+      backboneGlyph: <ChangeBrushType size={22}/>,
+      currentGlyph: <ChangeBrushType size={22}fill={"cornflowerblue"}/>,
+      regularGlyph: <ChangeBrushType size={16}/>,
+      bundleGlyph: <ChangeBrushType size={22}fill={"cornflowerblue"}/>
+    },
+    'Change Brush Size': {
+      backboneGlyph: <ChangeBrushSize size={22}/>,
+      currentGlyph: <ChangeBrushSize size={22}fill={"cornflowerblue"}/>,
+      regularGlyph: <ChangeBrushSize size={16}/>,
+      bundleGlyph: <ChangeBrushSize size={22}fill={"steelgrey"}/>
+    }
+  };
+
   const annotationNode = (node: any) => {
     const { extra } = node.data.artifacts;
     let annotation = "";
@@ -55,6 +174,18 @@ const ProvenanceVisualization: FC<Props> = ({ store }: Props) => {
       </g>
     );
   };
+
+  const popupNode = (node: any) => {
+    // let annotation = "";
+    // if (extra.length > 0) {
+    //   annotation = extra[extra.length - 1].e.annotation;
+    // }
+
+    return (
+      <h4>{node.label}</h4>
+    );
+  };
+
 
   const lockedNodes = Object.values(graph.nodes)
     .filter(d => d.label.includes("Lock"))
@@ -95,17 +226,23 @@ const ProvenanceVisualization: FC<Props> = ({ store }: Props) => {
       {dimensions.width && dimensions.height && (
         <ProvVis
           graph={graph}
+          iconOnly={true}
           root={fauxRoot ? fauxRoot.id : graph.root}
           current={graph.current}
           nodeMap={graph.nodes}
           width={width}
+          gutter={20}
+          backboneGutter={25}
+          sideOffset={width/4}
           height={height * 0.9}
-          verticalSpace={20}
+          verticalSpace={45}
           textSize={12}
           changeCurrent={(id: NodeID) => actions.goToNode(id)}
           annotationHeight={50}
           annotationContent={annotationNode}
+          popupContent={popupNode}
           bundleMap={map}
+          eventConfig={eventConfig}
         />
       )}
     </div>

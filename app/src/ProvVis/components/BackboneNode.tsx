@@ -9,6 +9,7 @@ import { Popup } from "semantic-ui-react";
 
 interface BackboneNodeProps<T, S extends string, A> {
   first: boolean;
+  iconOnly:boolean;
   current: boolean;
   duration: number;
   node: StateNode<T, S, A>;
@@ -29,6 +30,7 @@ interface BackboneNodeProps<T, S extends string, A> {
 
 function BackboneNode<T, S extends string, A>({
   first,
+  iconOnly,
   current,
   node,
   duration,
@@ -124,14 +126,19 @@ function BackboneNode<T, S extends string, A>({
             style={{ opacity: state.opacity }}
             transform={translate(padding, 0)}
           >
-            <Label
+            {!iconOnly ?
+              (<Label
               label={label}
               dominantBaseline="middle"
               textAnchor="start"
               fontSize={textSize}
               fontWeight={current ? "bold" : "regular"}
               onClick={() => labelClicked(node)}
-            />
+            />) :
+            (<g></g>)
+
+            }
+
             {annotationOpen !== -1 &&
             nodeMap[node.id].depth === annotationOpen &&
             annotationContent ? (

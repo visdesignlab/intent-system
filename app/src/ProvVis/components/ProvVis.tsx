@@ -30,6 +30,7 @@ interface ProvVisProps<T, S extends string, A> {
   graph: ProvenanceGraph<T, S, A>;
   root: NodeID;
   sideOffset?: number;
+  iconOnly?:boolean;
   current: NodeID;
   nodeMap: Nodes<T, S, A>;
   changeCurrent?: (id: NodeID) => void;
@@ -67,6 +68,7 @@ function ProvVis<T, S extends string, A>({
   root,
   current,
   changeCurrent,
+  iconOnly=false,
   gutter = 15,
   backboneGutter = 20,
   verticalSpace = 50,
@@ -257,7 +259,7 @@ function ProvVis<T, S extends string, A>({
                     <g
                       key={key}
                       transform={translate(
-                        state.x - gutter,
+                        state.x - gutter - 3,
                         state.y - clusterVerticalSpace / 2
                       )}
                     >
@@ -266,7 +268,7 @@ function ProvVis<T, S extends string, A>({
                         height={state.height}
                         rx="10"
                         ry="10"
-                        fill="#F0F0F0"
+                        fill="none"
                         stroke="none"
                       ></rect>
                     </g>
@@ -347,6 +349,7 @@ function ProvVis<T, S extends string, A>({
                         {d.width === 0 ? (
                           <BackboneNode
                             textSize={textSize}
+                            iconOnly={iconOnly}
                             radius={backboneCircleRadius}
                             strokeWidth={backboneCircleStroke}
                             duration={duration}

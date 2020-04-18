@@ -57,7 +57,7 @@ export default function bundleTransitions(
     }
 
     let height = 0;
-    height = clusterOffset * (bundleMap![data].bunchedNodes.length + 1);
+    height = clusterOffset * (bundleMap![data].bunchedNodes.length);
 
     if (!expandedClusterList.includes(data)) {
       height = clusterOffset;
@@ -118,7 +118,7 @@ export default function bundleTransitions(
     }
 
     let height = 0;
-    height = clusterOffset * (bundleMap![data].bunchedNodes.length + 1);
+    height = clusterOffset * (bundleMap![data].bunchedNodes.length);
 
     if (!expandedClusterList.includes(data)) {
       height = clusterOffset;

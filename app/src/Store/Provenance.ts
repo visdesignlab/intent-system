@@ -1,6 +1,6 @@
 import { Extra, initProvenance, isStateNode, NodeID, Provenance, StateNode } from '@visdesignlab/provenance-lib-core';
 import axios from 'axios';
-
+import {db} from './StudyStore/FirebaseHandler'
 import { MultiBrushBehavior, Prediction, PredictionRequest, PredictionSet } from '../contract';
 import { Dataset } from '../Utils/Dataset';
 import {
@@ -598,6 +598,26 @@ export function getPathTo(nodes: any, from: string, to: string): string[] {
   search(nodes, from, to, path);
 
   return [from, ...path.reverse()];
+}
+
+
+export function loadGraphFromUrl(graphString: string): void {
+  console.log(db);
+  const url = new URLSearchParams(window.location.search);
+  const participantId = url.get("participantId");
+
+  let docRef = db.collection("5e98a75534f61a0ae874e519").doc("5e98a8719cd41a0c5251e3b7");
+  // 
+  docRef.get().then(function(doc) {
+      if (doc.exists) {
+          console.log("Document data:", doc.data());
+      } else {
+          // doc.data() will be undefined in this case
+          console.log("No such document!");
+      }
+  }).catch(function(error) {
+      console.log("Error getting document:", error);
+  });
 }
 
 function search(nodes: any, node: string, final: string, path: string[]) {

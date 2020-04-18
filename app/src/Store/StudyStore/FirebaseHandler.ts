@@ -4,7 +4,7 @@ import { IntentState } from '../IntentState';
 import { initializeFirebase } from './Firebase';
 import { StudyState } from './StudyState';
 
-const { firestore: db } = initializeFirebase();
+export const { firestore: db } = initializeFirebase();
 
 type LoggingParams = {
   participantId: string;
