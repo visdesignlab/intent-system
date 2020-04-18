@@ -11,7 +11,7 @@ const config = {
   storageBucket: "intent-system-prolific.appspot.com",
   messagingSenderId: "393407031419",
   appId: "1:393407031419:web:bd3c2216c601d011ee1ade",
-  measurementId: "G-RQ8LS8DWT9"
+  measurementId: "G-RQ8LS8DWT9",
 };
 
 export function initializeFirebase() {
@@ -22,11 +22,15 @@ export function initializeFirebase() {
 
   const firestore = firebase.firestore(app);
   const rtd = firebase.database(app);
+  const graphRTD = app.database(
+    "https://task-provenance-database.firebaseio.com/"
+  );
 
   return {
     config,
     app,
     firestore,
-    rtd
+    rtd,
+    graphRTD,
   };
 }

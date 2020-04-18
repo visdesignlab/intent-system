@@ -10,7 +10,7 @@ type Props = {
 
 const Instructions: FC<Props> = ({
   manual = false,
-  secondTime = false
+  secondTime = false,
 }: Props) => {
   const [showModal, setShowModal] = useState(true);
   const { actions } = useContext(StudyActionContext);
@@ -38,12 +38,6 @@ const Instructions: FC<Props> = ({
             Hovering on the prediction highlights the points which are part of
             the prediction; clicking on the prediction selects them. You can use
             the predictions to speed up or improve your selection.
-          </List.Item>
-          <List.Item>
-            Hovering on the prediction highlights the points which are part of
-            the prediction; clicking on the prediction selects them. You can use
-            the predictions to improve your selection or directly submit if you
-            feel your original selection is a better fit for the answer.
           </List.Item>
         </List>
       </Modal.Content>

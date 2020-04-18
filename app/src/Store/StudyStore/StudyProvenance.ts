@@ -15,15 +15,15 @@ export function setupStudy(
   const defState = getDefaultStudyState(config);
   store.phase = defState.phase;
   const studyProvenance = initProvenance<StudyState, any, any>(defState);
-
+  const log = logToFirebase();
   studyProvenance.addGlobalObserver((state?: StudyState) => {
     if (state) {
       const { participantId, sessionId, studyId } = state;
-      logToFirebase({
+      log({
         participantId,
         sessionId,
         studyId,
-        graph: studyProvenance.graph()
+        graph: studyProvenance.graph(),
       });
     }
   });
@@ -67,6 +67,7 @@ export function setupStudy(
         state.graph = {};
         state.confidenceScore = -1;
         state.difficultyScore = -1;
+        state.selections = [];
         state.feedback = "";
         return state;
       }
@@ -122,6 +123,13 @@ export function setupStudy(
       `Start phase: ${phase}`,
       (state: StudyState) => {
         state.phase = phase;
+        state.graph = {};
+        state.task = null as any;
+        state.taskId = "-1";
+        state.feedback = "";
+        state.confidenceScore = -1;
+        state.difficultyScore = -1;
+        state.event = `Go to Phase: ${phase}`;
         return state;
       }
     );
@@ -182,9 +190,9 @@ export function setupStudy(
       submitFinalFeedback,
       hintUsed,
       acceptedInstructions,
-      feedbackStarted
+      feedbackStarted,
     },
-    phase
+    phase,
   };
 }
 

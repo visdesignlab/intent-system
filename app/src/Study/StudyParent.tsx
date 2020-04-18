@@ -30,7 +30,7 @@ const StudyParent: FC<Props> = ({
   taskCS,
   taskManual,
   trainingCS,
-  trainingManual
+  trainingManual,
 }: Props) => {
   const { hintUsedForTasks } = studyStore!;
   const [stopStudy, setStopStudy] = useState(false);
@@ -57,12 +57,12 @@ const StudyParent: FC<Props> = ({
 
   const manual = {
     phase: "Tasks - Manual" as Phase,
-    url: "/taskm"
+    url: "/taskm",
   };
 
   const supported = {
     phase: "Tasks - CS" as Phase,
-    url: "/taskcs"
+    url: "/taskcs",
   };
 
   return (
@@ -128,5 +128,5 @@ const finalFeedbackStyle = style({
   width: "100vw",
   display: "flex",
   alignItems: "center",
-  justifyContent: "center"
+  justifyContent: "center",
 });
