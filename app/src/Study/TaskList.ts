@@ -62,16 +62,25 @@ export function getAllTasks(config: AppConfig): TaskConfiguration {
   const isCoding = coding === "yes";
 
   // Filter out all category tasks
-  let tl = taskList.filter(d => d.type !== "category");
+  let tl = taskList.filter((d) => d.type !== "category");
+  tl = tl.filter((d) => {
+    if (
+      ["out_easy_task_5", "out_med_task_5", "out_hard_task_5"].includes(
+        d.dataset
+      )
+    )
+      return false;
+    return true;
+  });
   // Filter out training medium
-  tl = tl.filter(d => !(d.training === "yes" && d.difficulty === "medium"));
+  tl = tl.filter((d) => !(d.training === "yes" && d.difficulty === "medium"));
 
   if (task !== "none") {
-    tl = tl.filter(d => d.type === task);
+    tl = tl.filter((d) => d.type === task);
   }
 
-  let trainingTasks = tl.filter(d => d.training === "yes");
-  let tasks = tl.filter(d => d.training === "no");
+  let trainingTasks = tl.filter((d) => d.training === "yes");
+  let tasks = tl.filter((d) => d.training === "no");
 
   // if (config.taskId) {
   //   tasks = tasks.filter(d => d.id === config.taskId);
@@ -81,16 +90,16 @@ export function getAllTasks(config: AppConfig): TaskConfiguration {
 
   if (predMode === "supported" || predMode === "manual") {
     trainingTasks = trainingTasks.map(
-      d => ({ ...d, manual: predMode } as TaskDescription)
+      (d) => ({ ...d, manual: predMode } as TaskDescription)
     );
-    tasks = tasks.map(d => ({ ...d, manual: predMode } as TaskDescription));
+    tasks = tasks.map((d) => ({ ...d, manual: predMode } as TaskDescription));
   }
 
   if (config.debugMode) {
     console.log({
-      "Manual tasks": tasks.filter(d => d.manual === "manual").length,
+      "Manual tasks": tasks.filter((d) => d.manual === "manual").length,
       "Supported tasks":
-        tasks.length - tasks.filter(d => d.manual === "manual").length
+        tasks.length - tasks.filter((d) => d.manual === "manual").length,
     });
     console.table(trainingTasks.sort(), ["id", "type", "difficulty", "manual"]);
     console.table(tasks.sort(), ["id", "type", "difficulty", "manual"]);
@@ -98,29 +107,29 @@ export function getAllTasks(config: AppConfig): TaskConfiguration {
 
   if (isCoding && !config.taskId) {
     trainingTasks = trainingTasks.map(
-      d => ({ ...d, training: "no" } as TaskDescription)
+      (d) => ({ ...d, training: "no" } as TaskDescription)
     );
-    tasks = tasks.map(d => ({ ...d, taskType: "manual" } as TaskDescription));
+    tasks = tasks.map((d) => ({ ...d, taskType: "manual" } as TaskDescription));
     tasks = [...trainingTasks, ...tasks];
     trainingTasks = [];
   }
 
   const trainingCS = trainingTasks
-    .filter(d => d.manual === "supported")
+    .filter((d) => d.manual === "supported")
     .slice(0, count);
   const trainingManual = trainingTasks
-    .filter(d => d.manual !== "supported")
+    .filter((d) => d.manual !== "supported")
     .slice(0, count);
-  const taskCS = tasks.filter(d => d.manual === "supported").slice(0, count);
+  const taskCS = tasks.filter((d) => d.manual === "supported").slice(0, count);
   const taskManual = tasks
-    .filter(d => d.manual !== "supported")
+    .filter((d) => d.manual !== "supported")
     .slice(0, count);
 
   return {
     trainingCS,
     trainingManual,
     taskCS,
-    taskManual
+    taskManual,
   };
 }
 
@@ -132,15 +141,15 @@ function assignSupportedOrNot(ogTasks: TaskDescription[]): TaskDescription[] {
     "outlier",
     "linear regression",
     "quadratic regression",
-    "skyline"
+    "skyline",
   ];
 
   const difficulties: Difficulty[] = ["easy", "medium", "hard"];
 
   for (let type of types) {
-    const subTasks = ogTasks.filter(d => d.type === type);
+    const subTasks = ogTasks.filter((d) => d.type === type);
     for (let diff of difficulties) {
-      const subSubTasks = subTasks.filter(d => d.difficulty === diff);
+      const subSubTasks = subTasks.filter((d) => d.difficulty === diff);
 
       for (let i = 0; i < subSubTasks.length; ++i) {
         const task = subSubTasks[i];
@@ -156,7 +165,7 @@ function assignSupportedOrNot(ogTasks: TaskDescription[]): TaskDescription[] {
   }
 
   return tasks
-    .map(d => ({ sort: Math.random(), value: d }))
+    .map((d) => ({ sort: Math.random(), value: d }))
     .sort((a, b) => a.sort - b.sort)
-    .map(d => d.value);
+    .map((d) => d.value);
 }
