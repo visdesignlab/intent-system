@@ -1,6 +1,14 @@
-import { Extra, initProvenance, isStateNode, NodeID, Provenance, StateNode } from '@visdesignlab/provenance-lib-core';
+import {
+  Extra,
+  initProvenance,
+  isStateNode,
+  NodeID,
+  Provenance,
+  ProvenanceNode,
+  StateNode,
+} from '@visdesignlab/provenance-lib-core';
 import axios from 'axios';
-import {graphRTD} from './StudyStore/FirebaseHandler'
+
 import { MultiBrushBehavior, Prediction, PredictionRequest, PredictionSet } from '../contract';
 import { Dataset } from '../Utils/Dataset';
 import {
@@ -9,6 +17,7 @@ import {
   defaultState,
   ExtendedBrush,
   ExtendedBrushCollection,
+  getDefaultPlot,
   IntentState,
   MultiBrushBehaviour,
   Plot,
@@ -26,6 +35,7 @@ import {
   removePlotInteraction,
   removePointSelectionInteraction,
 } from './ProvenanceHelpers';
+import { graphRTD } from './StudyStore/FirebaseHandler';
 
 export type IntentEvents =
   | "Load Dataset"
@@ -50,6 +60,12 @@ export type Annotation = {
   predictionSet: PredictionSet;
 };
 
+function convertObjToArray(obj: object) {
+  return Object.entries(obj)
+    .sort((a, b) => parseInt(a[0]) - parseInt(b[0]))
+    .map((d) => d[1]);
+}
+
 export function setupProvenance(store: IntentStore): ProvenanceControl {
   const provenance = initProvenance<IntentState, IntentEvents, Annotation>(
     defaultState,
@@ -59,29 +75,28 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
   const url = new URLSearchParams(window.location.search);
   const participantId = url.get("graphPath");
 
-  graphRTD
-    .ref(`5e98a75534f61a0ae874e519/5e98a8719cd41a0c5251e3b7/5e98a98a90f8c10ce5fda629_1587063196468/0395b1d9-d6c5-4c31-a2e7-0d024beb79e4`)
-    .once('value')
-    .then(function(dataSnapshot)
-    {
-      let dataJson:any = dataSnapshot.toJSON();
-      // console.log(dataSnapshot.toJSON());
-      // console.log(JSON.stringify(dataSnapshot.toJSON()));
-      if(!dataJson['nodes'] || !dataJson["current"] || !dataJson["root"])
-      {
-        return;
-      }
+  function importProvenance() {
+    graphRTD
+      .ref(
+        `5e98a75534f61a0ae874e519/5e98a8719cd41a0c5251e3b7/5e98a98a90f8c10ce5fda629_1587063196468/0395b1d9-d6c5-4c31-a2e7-0d024beb79e4`
+      )
+      .once("value")
+      .then(function(dataSnapshot) {
+        let dataJson: any = dataSnapshot.val();
+        console.log(dataJson);
 
-      for( let j in dataJson.nodes)
-      {
-        if(!dataJson.nodes[j].children)
-        {
-          dataJson.nodes[j].children = [];
+        if (!dataJson["nodes"] || !dataJson["current"] || !dataJson["root"]) {
+          return;
         }
-      }
 
-      provenance.importProvenanceGraph(JSON.stringify(dataJson));
-    });
+        for (let j in dataJson.nodes) {
+          if (!dataJson.nodes[j].children) {
+            dataJson.nodes[j].children = [];
+          }
+        }
+        provenance.importProvenanceGraph(JSON.stringify(dataJson));
+      });
+  }
 
   store.graph = provenance.graph();
 
@@ -90,6 +105,7 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
   }
 
   setupObservers(provenance, store);
+  importProvenance();
 
   function setDataset(dataset: Dataset) {
     store.resetStore(defaultState);
@@ -215,7 +231,7 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
         for (let i = 0; i < state.plots.length; ++i) {
           if (plot.id === state.plots[i].id) {
             const pts = state.plots[i].selectedPoints.filter(
-              p => !points.includes(p)
+              (p) => !points.includes(p)
             );
             state.plots[i].selectedPoints = [...pts];
             break;
@@ -320,7 +336,7 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
   function annotateNode(annotate: string) {
     provenance.addExtraToNodeArtifact(current().id, {
       annotation: annotate,
-      predictionSet: JSON.parse(JSON.stringify(store.predictionSet))
+      predictionSet: JSON.parse(JSON.stringify(store.predictionSet)),
     });
   }
 
@@ -362,7 +378,7 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
     provenance.applyAction(
       `Invert current selection`,
       (state: IntentState) => {
-        const newSelection = all.filter(a => !currentSelected.includes(a));
+        const newSelection = all.filter((a) => !currentSelected.includes(a));
         for (let i = 0; i < state.plots.length; ++i) {
           if (i === 0) {
             state.plots[i].selectedPoints = newSelection;
@@ -460,8 +476,8 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
       changeBrushType,
       changeBrushSize,
       lockPrediction,
-      invertSelection
-    }
+      invertSelection,
+    },
   };
 }
 
@@ -547,11 +563,11 @@ function setupObservers(
       const lastInteractionIsNull =
         state.interactionHistory[state.interactionHistory.length - 1] === null;
 
-      const interactionHistory = state.interactionHistory.filter(d => d);
+      const interactionHistory = state.interactionHistory.filter((d) => d);
 
       const request: PredictionRequest = {
         multiBrushBehavior,
-        interactionHistory
+        interactionHistory,
       };
 
       if (isStateNode(current)) {
@@ -562,19 +578,19 @@ function setupObservers(
             store.isLoadingPredictions = true;
             axios
               .post(`/dataset/${store.dataset.key}/predict`, request)
-              .then(response => {
+              .then((response) => {
                 if (isStateNode(current)) {
                   const predictionSet: PredictionSet = response.data;
 
                   const annotate: Annotation = {
                     annotation: "",
-                    predictionSet: predictionSet
+                    predictionSet: predictionSet,
                   };
 
                   provenance.addExtraToNodeArtifact(current.id, annotate);
                 }
               })
-              .catch(err => console.error(err))
+              .catch((err) => console.error(err))
               .finally(() => {
                 store.isLoadingPredictions = false;
               });
@@ -589,7 +605,7 @@ function setupObservers(
               const extra = extraList[extraList.length - 1].e;
               provenance.addExtraToNodeArtifact(currentNode.id, {
                 annotation: "",
-                predictionSet: extra.predictionSet
+                predictionSet: extra.predictionSet,
               });
             }
           }
@@ -605,10 +621,10 @@ function setupObservers(
     "categoryColumn",
     "plots",
     "brushType",
-    "brushSize"
+    "brushSize",
   ];
 
-  arrs.forEach(key => {
+  arrs.forEach((key) => {
     provenance.addObserver([key], (state?: IntentState) => {
       observerFunction(state, store, key);
     });
