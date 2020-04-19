@@ -84,7 +84,6 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
       .then(function(dataSnapshot) {
         let dataJson: any = dataSnapshot.val();
         console.log(dataJson);
-
         if (!dataJson["nodes"] || !dataJson["current"] || !dataJson["root"]) {
           return;
         }

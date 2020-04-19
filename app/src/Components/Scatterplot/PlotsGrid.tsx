@@ -48,9 +48,11 @@ const PlotsGrid: FC<Props> = ({ store, height, width }: Props) => {
   let dimension = dividedWidth < dividedHeight ? dividedWidth : dividedHeight;
   dimension -= 8;
 
+  console.log(JSON.parse(JSON.stringify(plots)));
+
   return (
     <div className={flexStyle}>
-      {plots.map(plot => (
+      {plots.map((plot) => (
         <Scatterplot
           key={`${plot.id}${dimension}`}
           plot={plot}
@@ -72,5 +74,5 @@ const flexStyle = style({
   display: "flex",
   flexWrap: "wrap",
   alignItems: "center",
-  justifyContent: "center"
+  justifyContent: "center",
 });
