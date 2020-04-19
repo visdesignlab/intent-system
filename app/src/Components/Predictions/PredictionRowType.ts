@@ -111,6 +111,11 @@ export function getAllSelections(
   const brushSelections: number[] = [];
   let brushCount: number = 0;
 
+  if(plots === undefined)
+  {
+    plots = [];
+  }
+
   for (let i = 0; i < plots.length; ++i) {
     const plot = plots[i];
     selections.push(...plot.selectedPoints);

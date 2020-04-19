@@ -24,6 +24,7 @@ const App: FC<Props> = (_: Props) => {
     name: ""
   });
 
+
   console.log("loading graph");
 
   const [data, setData] = useState<Data>(null as any);
@@ -62,9 +63,24 @@ const App: FC<Props> = (_: Props) => {
   useEffect(() => {
     axios.get("./dataset").then(response => {
       const datasets: any[] = response.data;
+      console.log(datasets)
       if (datasetString !== JSON.stringify(datasets)) {
+        const url = new URLSearchParams(window.location.search);
+        const datasetName = url.get("datasetName");
+        let datasetNum = 21;
         setDatasets(datasets);
-        let datasetIdx = 21;
+
+        for(let j in datasets)
+        {
+          console.log(j)
+
+          if(datasets[j].key == datasetName)
+          {
+            datasetNum = +j;
+          }
+        }
+
+        let datasetIdx = datasetNum;
         setSelectedDataset(datasets[datasetIdx]);
         actions.setDataset(datasets[datasetIdx]);
       }

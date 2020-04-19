@@ -13,7 +13,12 @@ interface Props {
 }
 
 const PlotsGrid: FC<Props> = ({ store, height, width }: Props) => {
-  const { plots, multiBrushBehaviour } = store!;
+  let { plots, multiBrushBehaviour } = store!;
+
+  if(plots === undefined)
+  {
+    plots = [];
+  }
 
   const plotCount = plots.length < 5 ? plots.length : 4;
   const breakCount = 2;

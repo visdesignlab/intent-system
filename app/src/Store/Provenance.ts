@@ -66,7 +66,9 @@ function convertObjToArray(obj: object) {
     .map((d) => d[1]);
 }
 
-export function setupProvenance(store: IntentStore): ProvenanceControl {
+export function setupProvenance(
+  store: IntentStore
+): ProvenanceControl {
   const provenance = initProvenance<IntentState, IntentEvents, Annotation>(
     defaultState,
     true
@@ -79,7 +81,7 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
   function importProvenance() {
     graphRTD
       .ref(
-        `5e98a75534f61a0ae874e519/5e98a8719cd41a0c5251e3b7/5e98a98a90f8c10ce5fda629_1587063196468/206d2dc7-758a-4da3-8560-195bb16e50eb`
+        String(graphPath)
       )
       .once("value")
       .then(function(dataSnapshot) {
@@ -93,6 +95,7 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
             dataJson.nodes[j].children = [];
           }
         }
+
         provenance.importProvenanceGraph(JSON.stringify(dataJson));
       });
   }
@@ -104,7 +107,12 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
   }
 
   setupObservers(provenance, store);
-  importProvenance();
+
+  if(graphPath != undefined)
+  {
+    importProvenance();
+
+  }
 
   function setDataset(dataset: Dataset) {
     store.resetStore(defaultState);
@@ -416,7 +424,9 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
 
         state.turnedPrediction = pred.intent;
         return state;
-      }
+      },
+      undefined,
+      { type: "Turn Prediction" }
     );
   }
 
@@ -559,6 +569,11 @@ function setupObservers(
           ? MultiBrushBehavior.UNION
           : MultiBrushBehavior.INTERSECTION;
 
+      if(state.interactionHistory === undefined)
+      {
+        state.interactionHistory = [];
+      }
+
       const lastInteractionIsNull =
         state.interactionHistory[state.interactionHistory.length - 1] === null;
 
@@ -579,7 +594,7 @@ function setupObservers(
               .post(`/dataset/${store.dataset.key}/predict`, request)
               .then((response) => {
                 if (isStateNode(current)) {
-                  const predictionSet: PredictionSet = response.data;
+                  let predictionSet: PredictionSet = response.data;
 
                   const annotate: Annotation = {
                     annotation: "",

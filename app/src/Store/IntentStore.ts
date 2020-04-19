@@ -60,8 +60,16 @@ export default class IntentStore implements IntentState {
     console.log(JSON.parse(JSON.stringify(this)));
   }
   @computed get isAnythingSelected() {
+    if(this.plots === undefined)
+    {
+      return false;;
+    }
+
     for (let i = 0; i < this.plots.length; ++i) {
       const plot = this.plots[i];
+      if(!plot.selectedPoints) plot.selectedPoints = [];
+      if(!plot.brushes) plot.brushes = {};
+
       if (plot.selectedPoints.length > 0) return true;
       if (Object.keys(plot.brushes).length > 0) return true;
     }

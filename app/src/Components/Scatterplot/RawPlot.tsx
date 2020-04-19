@@ -244,8 +244,12 @@ const RawPlot: FC<Props> = ({
 
   const { columnMap } = useContext(DataContext);
 
-  const { predictions } = predictionSet;
+  let { predictions } = predictionSet;
 
+  if(predictions===undefined)
+  {
+    predictions = [];
+  }
   const topThreeMemoized = predictions
     .map(p => extendPrediction(p, selections.values, columnMap))
     .filter(

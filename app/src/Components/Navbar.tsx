@@ -51,6 +51,8 @@ function Navbar({ store, data, datasets, setDataset }: NavbarProps) {
 
   const datasetDropdown = (
     <Menu.Item>
+
+
       <Dropdown
         icon="table"
         className="icon"
