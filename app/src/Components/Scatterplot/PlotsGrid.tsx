@@ -15,8 +15,6 @@ interface Props {
 const PlotsGrid: FC<Props> = ({ store, height, width }: Props) => {
   const { plots, multiBrushBehaviour } = store!;
 
-  console.log(JSON.parse(JSON.stringify(plots)));
-
   const plotCount = plots.length < 5 ? plots.length : 4;
   const breakCount = 2;
 
@@ -47,8 +45,6 @@ const PlotsGrid: FC<Props> = ({ store, height, width }: Props) => {
 
   let dimension = dividedWidth < dividedHeight ? dividedWidth : dividedHeight;
   dimension -= 8;
-
-  console.log(JSON.parse(JSON.stringify(plots)));
 
   return (
     <div className={flexStyle}>

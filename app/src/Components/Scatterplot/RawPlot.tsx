@@ -63,7 +63,11 @@ const RawPlot: FC<Props> = ({
     brushType
   } = store!;
   const plot: Plot = plots.find(d => d.id === plotId) as any;
-  const { selectedPoints, brushes } = plot;
+  let { selectedPoints, brushes } = plot;
+
+  //Doing this to account for empty list from firebase
+  brushes = brushes === undefined ? {} : brushes;
+
   const initialBrushesString = JSON.stringify(brushes);
 
   const [topThree, setTopThree] = useState<PredictionRowType[]>([]);
@@ -212,6 +216,13 @@ const RawPlot: FC<Props> = ({
 
   for (let plt of plots) {
     clickSelectedPoints.push(...plt.selectedPoints);
+
+    //Accounting for empty list from firebase
+    if(!plt.brushes)
+    {
+      plt.brushes = {};
+    }
+
     const allBrushes = Object.values(plt.brushes);
     const brushedPoints = allBrushes.map(d => d.points);
     brushSelectedPoints.push(...brushedPoints.flatMap(d => d));

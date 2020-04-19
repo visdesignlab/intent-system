@@ -52,7 +52,7 @@ export function extendPrediction(
   const ipns = _.difference(dataIds, selections);
   const isnp = _.difference(selections, dataIds);
   const dims = getDimensions(pred.intent)
-    .map(dim => columnMap[dim].short)
+    .map(dim => {return columnMap[dim].short})
     .sort();
 
   return {
@@ -115,7 +115,15 @@ export function getAllSelections(
     const plot = plots[i];
     selections.push(...plot.selectedPoints);
     individualArr.push(...plot.selectedPoints);
+
+    // Doing this to account for empty brush arrays from firebase
+    if(!plot.brushes)
+    {
+      plot.brushes = {};
+    }
+
     const brushes = Object.values(plot.brushes);
+
     for (let y = 0; y < brushes.length; ++y) {
       brushCount += 1;
       const brush = brushes[y];

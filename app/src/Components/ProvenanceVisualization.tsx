@@ -191,8 +191,6 @@ const ProvenanceVisualization: FC<Props> = ({ store }: Props) => {
     .filter(d => d.label.includes("Lock"))
     .map(d => d.id);
 
-  console.log(lockedNodes);
-
   const map: BundleMap = {};
 
   lockedNodes.forEach(node => {
@@ -218,8 +216,6 @@ const ProvenanceVisualization: FC<Props> = ({ store }: Props) => {
     bundle.bunchedNodes = toBunch.reverse();
     map[node] = bundle;
   });
-
-  console.log(map);
 
   return (
     <div ref={ref} className={provStyle}>

@@ -73,17 +73,17 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
   );
 
   const url = new URLSearchParams(window.location.search);
-  const participantId = url.get("graphPath");
+  const graphPath = url.get("graphPath");
+  console.log(graphPath);
 
   function importProvenance() {
     graphRTD
       .ref(
-        `5e98a75534f61a0ae874e519/5e98a8719cd41a0c5251e3b7/5e98a98a90f8c10ce5fda629_1587063196468/0395b1d9-d6c5-4c31-a2e7-0d024beb79e4`
+        `5e98a75534f61a0ae874e519/5e98a8719cd41a0c5251e3b7/5e98a98a90f8c10ce5fda629_1587063196468/206d2dc7-758a-4da3-8560-195bb16e50eb`
       )
       .once("value")
       .then(function(dataSnapshot) {
         let dataJson: any = dataSnapshot.val();
-        console.log(dataJson);
         if (!dataJson["nodes"] || !dataJson["current"] || !dataJson["root"]) {
           return;
         }
