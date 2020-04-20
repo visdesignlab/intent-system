@@ -90,7 +90,7 @@ export function LockPrediction({ size = 15, fill = '#ccc' }: AddTaskGlyphProps) 
     <g>
       <circle fill="white" r={size - size/4} />
       <g transform={translate(-size / 2, -size / 2)}>
-        <text fontSize={size} fill={fill} textAnchor="middle" alignmentBaseline="middle" x={size/2} y={size/2} fontFamily="FontAwesome">&#xf023;</text>
+        <text fontSize={size} fill={fill} textAnchor="middle" alignmentBaseline="middle" x={size/2} y={size/2} fontFamily="FontAwesome">&#xf0eb;</text>
       </g>
     </g>
   );
