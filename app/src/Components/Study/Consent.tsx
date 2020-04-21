@@ -27,13 +27,10 @@ const Consent: FC<Props> = ({ studyStore, actions }: Props) => {
         data analysis using user-driven selections and computer supported
         selections.
       </p>
-      <p>
-        This study will consist of three parts: (1) an interview, (2) you
-        sharing documentation of your (non-sensitive) research findings for us
-        to analyze, (3) you using a visualization tool and ‘’thinking aloud”
-        while conducting an analysis, i.e., comment on what you are doing and
-        thinking.
-      </p>
+      {/* <p>
+        This study will consist of you using a visualization tool and completing
+        the tasks.
+      </p> */}
       <p>
         The potential risks to participants are minimal. There may be minor risk
         of discomfort for participants as they are observed and surveyed. There
@@ -57,7 +54,7 @@ const Consent: FC<Props> = ({ studyStore, actions }: Props) => {
         regarding your rights as a research participant. Also, contact the IRB
         if you have questions, complaints or concerns which you do not feel you
         can discuss with the investigator. The University of Utah IRB may be
-        reached by phone at +1 (801) 581-3655 or by e-mail at
+        reached by phone at +1 (801) 581-3655 or by e-mail at{" "}
         <a href="mailto:irb@hsc.utah.edu">irb@hsc.utah.edu</a>.
       </p>
       <p>
