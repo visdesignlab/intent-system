@@ -21,11 +21,8 @@ const App: FC<Props> = (_: Props) => {
   const [datasets, setDatasets] = useState<Datasets>([]);
   const [selectedDataset, setSelectedDataset] = useState<Dataset>({
     key: "",
-    name: ""
+    name: "",
   });
-
-
-  console.log("loading graph");
 
   const [data, setData] = useState<Data>(null as any);
 
@@ -44,7 +41,7 @@ const App: FC<Props> = (_: Props) => {
 
   useEffect(() => {
     if (selectedDataset.key.length > 0) {
-      axios.get(`/dataset/${selectedDataset.key}`).then(d => {
+      axios.get(`/dataset/${selectedDataset.key}`).then((d) => {
         const data = loadData(d.data);
         if (data.numericColumns.length >= 2) {
           actions.addPlot({
@@ -52,7 +49,7 @@ const App: FC<Props> = (_: Props) => {
             x: data.numericColumns[0],
             y: data.numericColumns[1],
             selectedPoints: [],
-            brushes: {}
+            brushes: {},
           });
         }
         setData(data);
@@ -61,21 +58,17 @@ const App: FC<Props> = (_: Props) => {
   }, [selectedDataset, actions]);
 
   useEffect(() => {
-    axios.get("./dataset").then(response => {
+    axios.get("./dataset").then((response) => {
       const datasets: any[] = response.data;
-      console.log(datasets)
+
       if (datasetString !== JSON.stringify(datasets)) {
         const url = new URLSearchParams(window.location.search);
         const datasetName = url.get("datasetName");
         let datasetNum = 21;
         setDatasets(datasets);
 
-        for(let j in datasets)
-        {
-          console.log(j)
-
-          if(datasets[j].key == datasetName)
-          {
+        for (let j in datasets) {
+          if (datasets[j].key === datasetName) {
             datasetNum = +j;
           }
         }
@@ -123,7 +116,7 @@ const layoutStyle = style({
   gridTemplateColumns: "5fr 2fr 1fr",
   gridTemplateAreas: `
   "vis pred prov"
-  `
+  `,
 });
 
 const visStyle = style({
@@ -134,5 +127,5 @@ const visStyle = style({
   gridTemplateAreas: `
   "nav"
   "vis"
-  `
+  `,
 });

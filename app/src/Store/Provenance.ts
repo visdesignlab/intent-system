@@ -1,12 +1,4 @@
-import {
-  Extra,
-  initProvenance,
-  isStateNode,
-  NodeID,
-  Provenance,
-  ProvenanceNode,
-  StateNode,
-} from '@visdesignlab/provenance-lib-core';
+import { Extra, initProvenance, isStateNode, NodeID, Provenance, StateNode } from '@visdesignlab/provenance-lib-core';
 import axios from 'axios';
 
 import { MultiBrushBehavior, Prediction, PredictionRequest, PredictionSet } from '../contract';
@@ -17,7 +9,6 @@ import {
   defaultState,
   ExtendedBrush,
   ExtendedBrushCollection,
-  getDefaultPlot,
   IntentState,
   MultiBrushBehaviour,
   Plot,
@@ -60,15 +51,7 @@ export type Annotation = {
   predictionSet: PredictionSet;
 };
 
-function convertObjToArray(obj: object) {
-  return Object.entries(obj)
-    .sort((a, b) => parseInt(a[0]) - parseInt(b[0]))
-    .map((d) => d[1]);
-}
-
-export function setupProvenance(
-  store: IntentStore
-): ProvenanceControl {
+export function setupProvenance(store: IntentStore): ProvenanceControl {
   const provenance = initProvenance<IntentState, IntentEvents, Annotation>(
     defaultState,
     true
@@ -76,17 +59,19 @@ export function setupProvenance(
 
   const url = new URLSearchParams(window.location.search);
   const graphPath = url.get("graphPath");
-  console.log(graphPath);
 
   function importProvenance() {
     graphRTD
-      .ref(
-        String(graphPath)
-      )
+      .ref(String(graphPath))
       .once("value")
       .then(function(dataSnapshot) {
         let dataJson: any = dataSnapshot.val();
-        if (!dataJson["nodes"] || !dataJson["current"] || !dataJson["root"]) {
+        if (
+          !dataJson ||
+          !dataJson["nodes"] ||
+          !dataJson["current"] ||
+          !dataJson["root"]
+        ) {
           return;
         }
 
@@ -108,10 +93,8 @@ export function setupProvenance(
 
   setupObservers(provenance, store);
 
-  if(graphPath != undefined)
-  {
+  if (graphPath !== undefined) {
     importProvenance();
-
   }
 
   function setDataset(dataset: Dataset) {
@@ -569,8 +552,7 @@ function setupObservers(
           ? MultiBrushBehavior.UNION
           : MultiBrushBehavior.INTERSECTION;
 
-      if(state.interactionHistory === undefined)
-      {
+      if (state.interactionHistory === undefined) {
         state.interactionHistory = [];
       }
 

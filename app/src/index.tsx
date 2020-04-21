@@ -16,7 +16,7 @@ const STUDY_ID = "STUDY_ID";
 const SESSION_ID = "SESSION_ID";
 
 whyDidYouRender(React, {
-  trackHooks: true
+  trackHooks: true,
 });
 
 const userAgent = navigator.userAgent.toLocaleLowerCase();
@@ -39,7 +39,8 @@ export function useConfig(): AppConfig {
     debugMode: false,
     taskId: "",
     count: 10000,
-    task: "none"
+    task: "none",
+    logMode: false,
   };
 
   const { search = "" } = useLocation();
@@ -57,6 +58,7 @@ export function useConfig(): AppConfig {
   let taskId: string = url.get("taskId") || config.taskId;
   let count: number = parseInt(url.get("count") || config.count.toString());
   let task: DatasetType = "none";
+  let logMode: boolean = url.get("log") ? true : config.logMode;
   if (count === 0) count += 1;
 
   const urlCategory = url.get("taskCategory");
@@ -81,7 +83,8 @@ export function useConfig(): AppConfig {
     taskId,
     count,
     task,
-    debugMode: debug
+    logMode,
+    debugMode: debug,
   };
 }
 
@@ -96,7 +99,6 @@ const render = (
   </HashRouter>
 );
 
-console.log("Test");
 if (!isCompatible) {
   ReactDOM.render(
     <div>
