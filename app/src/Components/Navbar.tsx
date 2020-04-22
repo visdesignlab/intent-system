@@ -1,5 +1,5 @@
 import { inject, observer } from 'mobx-react';
-import React, { memo, useContext, useEffect, useState } from 'react';
+import React, { memo, useContext, useEffect, useMemo, useState } from 'react';
 import { Button, Container, Dropdown, Header, Icon, Menu, Radio } from 'semantic-ui-react';
 import { style } from 'typestyle';
 
@@ -31,6 +31,17 @@ function Navbar({ store, data, datasets, setDataset }: NavbarProps) {
   const selections = getAllSelections(plots, multiBrushBehaviour === "Union")
     .values;
 
+  const datasetsList = useMemo(() => {
+    return datasets.map(
+      (d) =>
+        ({
+          ...d,
+          value: d.key,
+          text: d.name,
+        } as any)
+    );
+  }, [datasets]);
+
   const actions = useContext(ActionContext);
   const task = useContext(TaskConfigContext);
   const { isManual = false } = task || {};
@@ -51,8 +62,6 @@ function Navbar({ store, data, datasets, setDataset }: NavbarProps) {
 
   const datasetDropdown = (
     <Menu.Item>
-
-
       <Dropdown
         icon="table"
         className="icon"
@@ -60,8 +69,13 @@ function Navbar({ store, data, datasets, setDataset }: NavbarProps) {
         button
         text={dataset.name}
         scrolling
+        search
+        options={datasetsList}
+        onChange={(_, data) => {
+          setDataset(datasets.filter((d) => d.key === data.value)[0]);
+        }}
       >
-        <Dropdown.Menu>
+        {/* <Dropdown.Menu>
           {datasets.map((d) => (
             <Dropdown.Item
               key={d.key}
@@ -73,7 +87,7 @@ function Navbar({ store, data, datasets, setDataset }: NavbarProps) {
               {d.name}
             </Dropdown.Item>
           ))}
-        </Dropdown.Menu>
+        </Dropdown.Menu> */}
       </Dropdown>
     </Menu.Item>
   );

@@ -17,6 +17,17 @@ type Props = {};
 
 const store = new IntentStore();
 
+function getRandomNumber(num: number): number {
+  const floor = Math.random() > 0.5;
+
+  let randomNumber = Math.random();
+
+  randomNumber = randomNumber * num;
+
+  if (floor) return Math.floor(randomNumber);
+  return Math.ceil(randomNumber);
+}
+
 const App: FC<Props> = (_: Props) => {
   const [datasets, setDatasets] = useState<Datasets>([]);
   const [selectedDataset, setSelectedDataset] = useState<Dataset>({
@@ -64,7 +75,7 @@ const App: FC<Props> = (_: Props) => {
       if (datasetString !== JSON.stringify(datasets)) {
         const url = new URLSearchParams(window.location.search);
         const datasetName = url.get("datasetName");
-        let datasetNum = 21;
+        let datasetNum = getRandomNumber(datasets.length - 1);
         setDatasets(datasets);
 
         for (let j in datasets) {

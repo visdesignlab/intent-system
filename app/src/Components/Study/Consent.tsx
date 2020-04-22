@@ -1,6 +1,6 @@
 import { inject, observer } from 'mobx-react';
 import React, { FC } from 'react';
-import { Link, useRouteMatch } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Button, Container, Header, Modal } from 'semantic-ui-react';
 
 import { StudyActions } from '../../Store/StudyStore/StudyProvenance';
@@ -12,8 +12,6 @@ type Props = {
 };
 
 const Consent: FC<Props> = ({ studyStore, actions }: Props) => {
-  const { path, url } = useRouteMatch();
-
   return (
     <Container>
       <Header textAlign="center" as="h1">

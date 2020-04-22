@@ -190,7 +190,7 @@ class Dataset:
         df['Label'] = df['Label'].apply(str)
 
         return Dataset('Label', df,
-                       'quad_easy_training_1', {
+                       'Quadratic Easy Training', {
 
             'Label': {
                 'text': 'Label',
@@ -241,7 +241,7 @@ class Dataset:
         df['Label'] = df['Label'].apply(str)
 
         return Dataset('Label', df,
-                       'quad_easy_task_1', {
+                       'Quadratic Easy 1', {
 
             'Label': {
                 'text': 'Label',
@@ -292,7 +292,7 @@ class Dataset:
         df['Label'] = df['Label'].apply(str)
 
         return Dataset('Label', df,
-                       'quad_easy_task_2', {
+                       'Quadratic Easy 2', {
 
             'Label': {
                 'text': 'Label',
@@ -343,7 +343,7 @@ class Dataset:
         df['Label'] = df['Label'].apply(str)
 
         return Dataset('Label', df,
-                       'quad_med_training_1', {
+                       'Quadratic Medium Training', {
 
             'Label': {
                 'text': 'Label',
@@ -394,7 +394,7 @@ class Dataset:
         df['Label'] = df['Label'].apply(str)
 
         return Dataset('Label', df,
-                       'quad_med_task_1', {
+                       'Quadratic Medium 1', {
 
             'Label': {
                 'text': 'Label',
@@ -445,7 +445,7 @@ class Dataset:
         df['Label'] = df['Label'].apply(str)
 
         return Dataset('Label', df,
-                       'quad_med_task_2', {
+                       'Quadratic Medium 2', {
 
             'Label': {
                 'text': 'Label',
@@ -496,7 +496,7 @@ class Dataset:
         df['Label'] = df['Label'].apply(str)
 
         return Dataset('Label', df,
-                       'quad_hard_training_1', {
+                       'Quadratic Hard Training', {
 
             'Label': {
                 'text': 'Label',
@@ -547,7 +547,7 @@ class Dataset:
         df['Label'] = df['Label'].apply(str)
 
         return Dataset('Label', df,
-                       'quad_hard_task_1', {
+                       'Quadratic Hard 1', {
 
             'Label': {
                 'text': 'Label',
@@ -599,7 +599,7 @@ class Dataset:
         df['Label'] = df['Label'].apply(str)
 
         return Dataset('Label', df,
-                       'quad_hard_task_2', {
+                       'Quadratic Hard 2', {
 
             'Label': {
                 'text': 'Label',
@@ -647,7 +647,7 @@ class Dataset:
         df['Label'] = df['Label'].apply(str)
 
         return Dataset('Label', df,
-                       'sky_easy_training_1', {
+                       'MVO Easy Training', {
 
             'Label': {
                 'text': 'Label',
@@ -694,7 +694,7 @@ class Dataset:
         df['Label'] = df['Label'].apply(str)
 
         return Dataset('Label', df,
-                       'sky_easy_task_1', {
+                       'MVO Easy 1', {
 
             'Label': {
                 'text': 'Label',
@@ -742,7 +742,7 @@ class Dataset:
         df['Label'] = df['Label'].apply(str)
 
         return Dataset('Label', df,
-                       'sky_easy_task_2', {
+                       'MVO Easy 2', {
 
             'Label': {
                 'text': 'Label',
@@ -790,7 +790,7 @@ class Dataset:
         df['Label'] = df['Label'].apply(str)
 
         return Dataset('Label', df,
-                       'sky_med_training_1', {
+                       'MVO Medium Training', {
 
             'Label': {
                 'text': 'Label',
@@ -837,7 +837,7 @@ class Dataset:
         df['Label'] = df['Label'].apply(str)
 
         return Dataset('Label', df,
-                       'sky_med_task_1', {
+                       'MVO Medium 1', {
 
             'Label': {
                 'text': 'Label',
@@ -885,7 +885,7 @@ class Dataset:
         df['Label'] = df['Label'].apply(str)
 
         return Dataset('Label', df,
-                       'sky_med_task_2', {
+                       'MVO Medium 2', {
 
             'Label': {
                 'text': 'Label',
@@ -933,7 +933,7 @@ class Dataset:
         df['Label'] = df['Label'].apply(str)
 
         return Dataset('Label', df,
-                       'sky_hard_training_1', {
+                       'MVO Hard Training', {
 
             'Label': {
                 'text': 'Label',
@@ -981,7 +981,7 @@ class Dataset:
         df['Label'] = df['Label'].apply(str)
 
         return Dataset('Label', df,
-                       'sky_hard_task_1', {
+                       'MVO Hard 1', {
 
             'Label': {
                 'text': 'Label',
@@ -1029,7 +1029,7 @@ class Dataset:
         df['Label'] = df['Label'].apply(str)
 
         return Dataset('Label', df,
-                       'sky_hard_task_2', {
+                       'MVO Hard 2', {
 
             'Label': {
                 'text': 'Label',
@@ -1081,7 +1081,7 @@ class Dataset:
         df['Cluster'] = df['Cluster'].apply(str)
 
         return Dataset('Label', df,
-                       'cluster_easy_training_1', {
+                       'Cluster Easy Training', {
 
             'Label': {
                 'text': 'Label',
@@ -1132,7 +1132,7 @@ class Dataset:
         df['Cluster'] = df['Cluster'].apply(str)
 
         return Dataset('Label', df,
-                       'cluster_easy_task_1', {
+                       'Cluster Easy 1', {
 
             'Label': {
                 'text': 'Label',
@@ -1183,7 +1183,7 @@ class Dataset:
         df['Cluster'] = df['Cluster'].apply(str)
 
         return Dataset('Label', df,
-                       'cluster_easy_task_2', {
+                       'Cluster Easy 2', {
 
             'Label': {
                 'text': 'Label',
@@ -1234,7 +1234,7 @@ class Dataset:
         df['Cluster'] = df['Cluster'].apply(str)
 
         return Dataset('Label', df,
-                       'cluster_med_training_1', {
+                       'Cluster Medium Training', {
 
             'Label': {
                 'text': 'Label',
@@ -1285,7 +1285,7 @@ class Dataset:
         df['Cluster'] = df['Cluster'].apply(str)
 
         return Dataset('Label', df,
-                       'cluster_med_task_1', {
+                       'Cluster Medium 1', {
 
             'Label': {
                 'text': 'Label',
@@ -1336,7 +1336,7 @@ class Dataset:
         df['Cluster'] = df['Cluster'].apply(str)
 
         return Dataset('Label', df,
-                       'cluster_med_task_2', {
+                       'Cluster Medium 2', {
 
             'Label': {
                 'text': 'Label',
@@ -1387,7 +1387,7 @@ class Dataset:
         df['Cluster'] = df['Cluster'].apply(str)
 
         return Dataset('Label', df,
-                       'cluster_hard_training_1', {
+                       'Cluster Hard Training', {
 
             'Label': {
                 'text': 'Label',
@@ -1438,7 +1438,7 @@ class Dataset:
         df['Cluster'] = df['Cluster'].apply(str)
 
         return Dataset('Label', df,
-                       'cluster_hard_task_1', {
+                       'Cluster Hard 1', {
 
             'Label': {
                 'text': 'Label',
@@ -1489,7 +1489,7 @@ class Dataset:
         df['Cluster'] = df['Cluster'].apply(str)
 
         return Dataset('Label', df,
-                       'cluster_hard_task_2', {
+                       'Cluster Hard 2', {
 
             'Label': {
                 'text': 'Label',
@@ -1540,7 +1540,7 @@ class Dataset:
         df['Cluster'] = df['Cluster'].apply(str)
 
         return Dataset('Label', df,
-                       'cat_easy_task_1', {
+                       'Category Easy 1', {
 
             'Label': {
                 'text': 'Label',
@@ -1590,7 +1590,7 @@ class Dataset:
         df['Cluster'] = df['Cluster'].apply(str)
 
         return Dataset('Label', df,
-                       'cat_easy_task_2', {
+                       'Category Easy 2', {
 
             'Label': {
                 'text': 'Label',
@@ -1641,7 +1641,7 @@ class Dataset:
         df['Cluster'] = df['Cluster'].apply(str)
 
         return Dataset('Label', df,
-                       'cat_easy_training_1', {
+                       'Category Easy Training', {
 
             'Label': {
                 'text': 'Label',
@@ -1692,7 +1692,7 @@ class Dataset:
         df['Cluster'] = df['Cluster'].apply(str)
 
         return Dataset('Label', df,
-                       'cat_hard_task_1', {
+                       'Category Hard 1', {
 
             'Label': {
                 'text': 'Label',
@@ -1743,7 +1743,7 @@ class Dataset:
         df['Cluster'] = df['Cluster'].apply(str)
 
         return Dataset('Label', df,
-                       'cat_hard_task_2', {
+                       'Category Hard 2', {
 
             'Label': {
                 'text': 'Label',
@@ -1794,7 +1794,7 @@ class Dataset:
         df['Cluster'] = df['Cluster'].apply(str)
 
         return Dataset('Label', df,
-                       'cat_hard_task_3', {
+                       'Category Hard 3', {
 
             'Label': {
                 'text': 'Label',
@@ -1845,7 +1845,7 @@ class Dataset:
         df['Cluster'] = df['Cluster'].apply(str)
 
         return Dataset('Label', df,
-                       'cat_hard_task_4', {
+                       'Category Hard 4', {
 
             'Label': {
                 'text': 'Label',
@@ -1896,7 +1896,7 @@ class Dataset:
         df['Cluster'] = df['Cluster'].apply(str)
 
         return Dataset('Label', df,
-                       'cat_hard_training_1', {
+                       'Category Hard Training', {
 
             'Label': {
                 'text': 'Label',
@@ -1947,7 +1947,7 @@ class Dataset:
         df['Cluster'] = df['Cluster'].apply(str)
 
         return Dataset('Label', df,
-                       'cat_med_task_1', {
+                       'Category Medium 1', {
 
             'Label': {
                 'text': 'Label',
@@ -1997,7 +1997,7 @@ class Dataset:
         df['Cluster'] = df['Cluster'].apply(str)
 
         return Dataset('Label', df,
-                       'cat_med_task_2', {
+                       'Category Medium 2', {
 
             'Label': {
                 'text': 'Label',
@@ -2048,7 +2048,7 @@ class Dataset:
         df['Cluster'] = df['Cluster'].apply(str)
 
         return Dataset('Label', df,
-                       'cat_med_task_3', {
+                       'Category Medium 3', {
 
             'Label': {
                 'text': 'Label',
@@ -2099,7 +2099,7 @@ class Dataset:
         df['Cluster'] = df['Cluster'].apply(str)
 
         return Dataset('Label', df,
-                       'cat_med_task_4', {
+                       'Category Medium 4', {
 
             'Label': {
                 'text': 'Label',
@@ -2150,7 +2150,7 @@ class Dataset:
         df['Cluster'] = df['Cluster'].apply(str)
 
         return Dataset('Label', df,
-                       'cat_med_training_1', {
+                       'Category Medium Training', {
 
             'Label': {
                 'text': 'Label',
@@ -2200,7 +2200,7 @@ class Dataset:
         df['Label'] = df['Label'].apply(str)
 
         return Dataset('Label', df,
-                       'lin_easy_task_1', {
+                       'Linear Easy 1', {
 
             'Label': {
                 'text': 'Label',
@@ -2250,7 +2250,7 @@ class Dataset:
         df['Label'] = df['Label'].apply(str)
 
         return Dataset('Label', df,
-                       'lin_easy_training_1', {
+                       'Linear Easy Training', {
 
             'Label': {
                 'text': 'Label',
@@ -2301,7 +2301,7 @@ class Dataset:
         df['Label'] = df['Label'].apply(str)
 
         return Dataset('Label', df,
-                       'lin_easy_task_2', {
+                       'Linear Easy 2', {
 
             'Label': {
                 'text': 'Label',
@@ -2351,7 +2351,7 @@ class Dataset:
         df['Label'] = df['Label'].apply(str)
 
         return Dataset('Label', df,
-                       'lin_hard_task_1', {
+                       'Linear Hard 1', {
 
             'Label': {
                 'text': 'Label',
@@ -2401,7 +2401,7 @@ class Dataset:
         df['Label'] = df['Label'].apply(str)
 
         return Dataset('Label', df,
-                       'lin_hard_task_2', {
+                       'Linear Hard 2', {
 
             'Label': {
                 'text': 'Label',
@@ -2451,7 +2451,7 @@ class Dataset:
         df['Label'] = df['Label'].apply(str)
 
         return Dataset('Label', df,
-                       'lin_hard_training_1', {
+                       'Linear Hard Training', {
 
             'Label': {
                 'text': 'Label',
@@ -2501,7 +2501,7 @@ class Dataset:
         df['Label'] = df['Label'].apply(str)
 
         return Dataset('Label', df,
-                       'lin_med_task_1', {
+                       'Linear Medium 1', {
 
             'Label': {
                 'text': 'Label',
@@ -2551,7 +2551,7 @@ class Dataset:
         df['Label'] = df['Label'].apply(str)
 
         return Dataset('Label', df,
-                       'lin_med_task_2', {
+                       'Linear Medium 2', {
 
             'Label': {
                 'text': 'Label',
@@ -2601,7 +2601,7 @@ class Dataset:
         df['Label'] = df['Label'].apply(str)
 
         return Dataset('Label', df,
-                       'lin_med_training_1', {
+                       'Linear Medium Training', {
 
             'Label': {
                 'text': 'Label',
@@ -2650,7 +2650,7 @@ class Dataset:
         df['Label'] = df['Label'].apply(str)
 
         return Dataset('Label', df,
-                       'out_easy_training_1', {
+                       'Outlier (Cluster) Easy Training', {
 
             'Label': {
                 'text': 'Label',
@@ -2699,7 +2699,7 @@ class Dataset:
         df['Label'] = df['Label'].apply(str)
 
         return Dataset('Label', df,
-                       'out_easy_task_1', {
+                       'Outlier (Cluster) Easy 1', {
 
             'Label': {
                 'text': 'Label',
@@ -2748,7 +2748,7 @@ class Dataset:
         df['Label'] = df['Label'].apply(str)
 
         return Dataset('Label', df,
-                       'out_easy_task_2', {
+                       'Outlier (Cluster) Easy 2', {
 
             'Label': {
                 'text': 'Label',
@@ -2796,7 +2796,7 @@ class Dataset:
         df['Label'] = df['Label'].apply(str)
 
         return Dataset('Label', df,
-                       'out_easy_task_3', {
+                       'Outlier (Linear) Easy 1', {
 
             'Label': {
                 'text': 'Label',
@@ -2845,7 +2845,7 @@ class Dataset:
         df['Label'] = df['Label'].apply(str)
 
         return Dataset('Label', df,
-                       'out_easy_task_4', {
+                       'Outlier (Linear) Easy 2', {
 
             'Label': {
                 'text': 'Label',
@@ -2894,7 +2894,7 @@ class Dataset:
         df['Label'] = df['Label'].apply(str)
 
         return Dataset('Label', df,
-                       'out_easy_task_5', {
+                       'Outlier (Quadratic) Easy', {
 
             'Label': {
                 'text': 'Label',
@@ -2945,7 +2945,7 @@ class Dataset:
         df['Label'] = df['Label'].apply(str)
 
         return Dataset('Label', df,
-                       'out_med_training_1', {
+                       'Outlier (Cluster) Medium Training', {
 
             'Label': {
                 'text': 'Label',
@@ -2994,7 +2994,7 @@ class Dataset:
         df['Label'] = df['Label'].apply(str)
 
         return Dataset('Label', df,
-                       'out_med_task_1', {
+                       'Outlier (Cluster) Medium 1', {
 
             'Label': {
                 'text': 'Label',
@@ -3043,7 +3043,7 @@ class Dataset:
         df['Label'] = df['Label'].apply(str)
 
         return Dataset('Label', df,
-                       'out_med_task_2', {
+                       'Outlier (Cluster) Medium 2', {
 
             'Label': {
                 'text': 'Label',
@@ -3091,7 +3091,7 @@ class Dataset:
         df['Label'] = df['Label'].apply(str)
 
         return Dataset('Label', df,
-                       'out_med_task_3', {
+                       'Outlier (Linear) Medium 1', {
 
             'Label': {
                 'text': 'Label',
@@ -3140,7 +3140,7 @@ class Dataset:
         df['Label'] = df['Label'].apply(str)
 
         return Dataset('Label', df,
-                       'out_med_task_4', {
+                       'Outlier (Linear) Medium 2', {
 
             'Label': {
                 'text': 'Label',
@@ -3189,7 +3189,7 @@ class Dataset:
         df['Label'] = df['Label'].apply(str)
 
         return Dataset('Label', df,
-                       'out_med_task_5', {
+                       'Outlier (Quadratic) Medium', {
 
             'Label': {
                 'text': 'Label',
@@ -3240,7 +3240,7 @@ class Dataset:
         df['Label'] = df['Label'].apply(str)
 
         return Dataset('Label', df,
-                       'out_hard_training_1', {
+                       'Outlier (Cluster) Hard Training', {
 
             'Label': {
                 'text': 'Label',
@@ -3289,7 +3289,7 @@ class Dataset:
         df['Label'] = df['Label'].apply(str)
 
         return Dataset('Label', df,
-                       'out_hard_task_1', {
+                       'Outlier (Cluster) Hard 1', {
 
             'Label': {
                 'text': 'Label',
@@ -3338,7 +3338,7 @@ class Dataset:
         df['Label'] = df['Label'].apply(str)
 
         return Dataset('Label', df,
-                       'out_hard_task_2', {
+                       'Outlier (Cluster) Hard 2', {
 
             'Label': {
                 'text': 'Label',
@@ -3386,7 +3386,7 @@ class Dataset:
         df['Label'] = df['Label'].apply(str)
 
         return Dataset('Label', df,
-                       'out_hard_task_3', {
+                       'Outlier (Linear) Hard 1', {
 
             'Label': {
                 'text': 'Label',
@@ -3435,7 +3435,7 @@ class Dataset:
         df['Label'] = df['Label'].apply(str)
 
         return Dataset('Label', df,
-                       'out_hard_task_4', {
+                       'Outlier (Linear) Hard 2', {
 
             'Label': {
                 'text': 'Label',
@@ -3484,7 +3484,7 @@ class Dataset:
         df['Label'] = df['Label'].apply(str)
 
         return Dataset('Label', df,
-                       'out_hard_task_5', {
+                       'Outlier (Curve) Hard', {
 
             'Label': {
                 'text': 'Label',
