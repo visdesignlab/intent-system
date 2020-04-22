@@ -486,7 +486,7 @@ const RawPlot: FC<Props> = ({
   const onBrushEnd = useCallback(
     (mousePos?: MousePosition) => {
       if (freeFromRef.current.length === 0) return;
-      actions.addPointSelection(plot, freeFromRef.current);
+      actions.addPointSelection(plot, freeFromRef.current, true);
       freeFromRef.current = [...emptyFreeform];
       if (mousePos) {
         setMousePos(mousePos);

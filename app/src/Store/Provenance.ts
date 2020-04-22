@@ -194,10 +194,14 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
     );
   }
 
-  function addPointSelection(plot: Plot, points: number[]) {
+  function addPointSelection(
+    plot: Plot,
+    points: number[],
+    isPaintBrush: boolean = false
+  ) {
     if (points.length === 0) return;
     provenance.applyAction(
-      `Add Point Selection`,
+      isPaintBrush ? `P. Brush: ${points.length}` : `Add Point Selection`,
       (state: IntentState) => {
         for (let i = 0; i < state.plots.length; ++i) {
           if (plot.id === state.plots[i].id) {
@@ -240,8 +244,9 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
     brushCollection: ExtendedBrushCollection,
     affectedBrush: ExtendedBrush
   ) {
+    const pointCount = affectedBrush.points.length;
     provenance.applyAction(
-      `Add brush to plot`,
+      `Add R. Brush: ${pointCount} points`,
       (state: IntentState) => {
         for (let i = 0; i < state.plots.length; ++i) {
           if (plot.id === state.plots[i].id) {
@@ -263,8 +268,9 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
     brushCollection: ExtendedBrushCollection,
     affectedBrush: ExtendedBrush
   ) {
+    const pointCount = affectedBrush.points.length;
     provenance.applyAction(
-      `Change Brush`,
+      `Change R. Brush: ${pointCount}`,
       (state: IntentState) => {
         let i = 0;
         for (i = 0; i < state.plots.length; ++i) {
@@ -289,7 +295,7 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
     affectedBrush: ExtendedBrush
   ) {
     provenance.applyAction(
-      `Remove Brush`,
+      `Remove R. Brush`,
       (state: IntentState) => {
         for (let i = 0; i < state.plots.length; ++i) {
           if (plot.id === state.plots[i].id) {
@@ -486,7 +492,11 @@ export interface ProvenanceActions {
   goToNode: (id: NodeID) => void;
   addPlot: (plot: Plot) => void;
   removePlot: (plot: Plot) => void;
-  addPointSelection: (plot: Plot, points: number[]) => void;
+  addPointSelection: (
+    plot: Plot,
+    points: number[],
+    isPaintBrush?: boolean
+  ) => void;
   removePointSelection: (plot: Plot, points: number[]) => void;
   addBrush: (
     plot: Plot,
