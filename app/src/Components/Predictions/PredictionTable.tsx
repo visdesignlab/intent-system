@@ -8,6 +8,7 @@ import IntentStore from '../../Store/IntentStore';
 import { hide$ } from '../Scatterplot/RawPlot';
 import { FADE_COMP_IN, FADE_OUT } from '../Styles/MarkStyle';
 import hoverable from '../UtilComponent/hoverable';
+import { topPred$ } from './AnnotationBox';
 import JaccardBar from './JaccardBar';
 import { getAllSelections, PredictionRowType } from './PredictionRowType';
 import ProbabilityBar from './ProbabilityBar';
@@ -53,6 +54,10 @@ const PredictionTable: FC<Props> = ({
       (a, b) => b[sortColumn] - a[sortColumn]
     );
 
+  useEffect(() => {
+    if (predictions.length > 0) topPred$.next(predictions[0]);
+  }, [predictions]);
+
   const barHeight = 30;
   const actions = useContext(ActionContext);
 
@@ -73,8 +78,10 @@ const PredictionTable: FC<Props> = ({
       } else {
         if (pred.intent === selectedPrediction) {
           actions.selectPrediction("none");
+          topPred$.next(predictions[0]);
         } else {
           actions.selectPrediction(pred.intent);
+          topPred$.next(pred);
         }
       }
     }

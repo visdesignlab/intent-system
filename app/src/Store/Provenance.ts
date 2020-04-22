@@ -419,11 +419,19 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
     );
   }
 
-  function lockPrediction(pred: Prediction) {
+  function lockPrediction(pred: Prediction | string) {
+    let predName = "";
+
+    if (typeof pred === "string") {
+      predName = pred;
+    } else {
+      predName = (pred as any).type;
+    }
+
     provenance.applyAction(
-      "Lock prediction",
+      predName,
       (state: IntentState) => {
-        state.lockedPrediction = pred;
+        state.lockedPrediction = pred as any;
         addDummyInteraction(state);
         return state;
       },
@@ -519,7 +527,7 @@ export interface ProvenanceActions {
   changeBrushType: (brushType: BrushType) => void;
   changeBrushSize: (size: BrushSize) => void;
   invertSelection: (currentSelected: number[], all: number[]) => void;
-  lockPrediction: (pred: Prediction) => void;
+  lockPrediction: (pred: Prediction | string) => void;
   turnPredictionInSelection: (
     pred: Prediction,
     currentSelection: number[]
