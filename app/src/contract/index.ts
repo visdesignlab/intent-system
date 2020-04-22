@@ -1,9 +1,9 @@
 export enum VisualizationType {
-  Grid = 'Grid',
-  Scatterplot = 'Scatterplot',
-  ScatterplotMatrix = 'ScatterplotMatrix',
-  ParallelCoordinatePlot = 'ParallelCoordinatePlot',
-  None = 'None',
+  Grid = "Grid",
+  Scatterplot = "Scatterplot",
+  ScatterplotMatrix = "ScatterplotMatrix",
+  ParallelCoordinatePlot = "ParallelCoordinatePlot",
+  None = "None",
 }
 
 interface Selection {
@@ -13,11 +13,11 @@ interface Selection {
 }
 
 export interface PointSelection extends Selection {
-  kind: 'selection';
+  kind: "selection";
 }
 
 export interface PointDeselection extends Selection {
-  kind: 'deselection';
+  kind: "deselection";
 }
 
 export interface RectangularSelection extends Selection {
@@ -33,12 +33,12 @@ export interface ChangeAxis {
 }
 
 export interface ClearAllSelections extends Selection {
-  kind: 'clearall';
+  kind: "clearall";
 }
 
 export enum MultiBrushBehavior {
-  INTERSECTION = 'INTERSECTION',
-  UNION = 'UNION',
+  INTERSECTION = "INTERSECTION",
+  UNION = "UNION",
 }
 
 export interface Plot {
@@ -58,15 +58,15 @@ interface PlotsInteraction {
 }
 
 export interface AddPlotInteraction extends PlotsInteraction {
-  kind: 'ADD';
+  kind: "ADD";
 }
 
 export interface RemovePlotInteraction extends PlotsInteraction {
-  kind: 'REMOVE';
+  kind: "REMOVE";
 }
 
 export interface UpdatePlotInteraction extends PlotsInteraction {
-  kind: 'UPDATE';
+  kind: "UPDATE";
 }
 
 export type InteractionType =
@@ -88,6 +88,7 @@ export type InteractionHistory = Array<Interaction>;
 
 export interface Prediction {
   rank: number;
+  rankAc: number;
   intent: string;
   dataIds?: Array<number>;
   info?: object;

@@ -1,6 +1,6 @@
 import { selectAll } from 'd3';
 import { inject, observer } from 'mobx-react';
-import React, { FC, memo, useContext } from 'react';
+import React, { FC, memo, useContext, useEffect, useState } from 'react';
 import { Button, Header, Label, Popup, Table } from 'semantic-ui-react';
 
 import { ActionContext } from '../../Contexts';
@@ -20,17 +20,46 @@ type Props = {
 
 const PredictionTable: FC<Props> = ({
   store,
-  predictions,
+  predictions: basePredictions,
   isTask = false,
 }: Props) => {
   const { selectedPrediction, plots, multiBrushBehaviour } = store!;
+  const [predictionsInput, setPredictionsInput] = useState<PredictionRowType[]>(
+    []
+  );
+  const [sortColumn, setSortColumn] = useState<SortableColumns>("similarity");
+  const [direction, setDirection] = useState<
+    "ascending" | "descending" | "undefined"
+  >("descending");
+
+  type SortableColumns = "similarity" | "probability" | "rankAc";
+
+  const predString = JSON.stringify(basePredictions);
+
+  useEffect(() => {
+    if (predString === JSON.stringify(predictionsInput)) return;
+    let preds = JSON.parse(predString) as PredictionRowType[];
+    setPredictionsInput(preds);
+  }, [predString, predictionsInput]);
+
+  let predictions: PredictionRowType[] = [];
+
+  if (direction === "ascending")
+    predictions = predictionsInput.sort(
+      (a, b) => a[sortColumn] - b[sortColumn]
+    );
+  else
+    predictions = predictionsInput.sort(
+      (a, b) => b[sortColumn] - a[sortColumn]
+    );
+
   const barHeight = 30;
   const actions = useContext(ActionContext);
 
   const HoverTableCell = hoverable(Table.Cell);
 
   function predRowRender(pred: PredictionRowType, idx: number) {
-    const { matches, isnp, ipns, similarity, type, probability } = pred;
+    const { matches, isnp, ipns, similarity, type, probability, rankAc } = pred;
 
     function rowClick() {
       if (isTask) {
@@ -140,6 +169,23 @@ const PredictionTable: FC<Props> = ({
             label={isTask ? `Pattern ${idx + 1}` : type}
           />
         </Table.Cell>
+        <Table.Cell
+          onClick={rowClick}
+          onMouseOver={() => {
+            selectAll(".base-mark").classed(FADE_OUT, true);
+            if (marks.length > 0) selectAll(marks).classed(FADE_COMP_IN, true);
+          }}
+          onMouseOut={() => {
+            selectAll(".base-mark").classed(FADE_OUT, false);
+            if (marks.length > 0) selectAll(marks).classed(FADE_COMP_IN, false);
+          }}
+        >
+          <JaccardBar
+            height={barHeight}
+            score={rankAc}
+            label={rankAc.toFixed(2)}
+          />
+        </Table.Cell>
         {!isTask && (
           <Table.Cell onClick={rowClick}>
             <ProbabilityBar
@@ -195,6 +241,18 @@ const PredictionTable: FC<Props> = ({
     );
   }
 
+  function sortHandler(column: SortableColumns) {
+    const isAlreadyCurrent = column === sortColumn;
+
+    if (isAlreadyCurrent) {
+      setDirection((dir) => (dir === "ascending" ? "descending" : "ascending"));
+      return;
+    }
+
+    setSortColumn(column);
+    setDirection("descending");
+  }
+
   return (
     <Table sortable textAlign="center" compact>
       <Table.Header>
@@ -216,8 +274,28 @@ const PredictionTable: FC<Props> = ({
               />
             </>
           )}
-          <Table.HeaderCell>Similarity</Table.HeaderCell>
-          {!isTask && <Table.HeaderCell>Probability</Table.HeaderCell>}
+          {!isTask && (
+            <Table.HeaderCell
+              sorted={sortColumn === "similarity" ? direction : (null as any)}
+              onClick={() => sortHandler("similarity")}
+            >
+              Intent Rank
+            </Table.HeaderCell>
+          )}
+          <Table.HeaderCell
+            sorted={sortColumn === "rankAc" ? direction : (null as any)}
+            onClick={() => sortHandler("rankAc")}
+          >
+            Auto Complete Rank
+          </Table.HeaderCell>
+          {!isTask && (
+            <Table.HeaderCell
+              sorted={sortColumn === "probability" ? direction : (null as any)}
+              onClick={() => sortHandler("probability")}
+            >
+              Probability
+            </Table.HeaderCell>
+          )}
           <Table.HeaderCell colSpan={isTask ? 1 : 2}></Table.HeaderCell>
         </Table.Row>
       </Table.Header>

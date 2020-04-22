@@ -520,13 +520,15 @@ class Prediction:
     info: Optional[Dict[str, Any]]
     intent: str
     rank: float
+    rank_ac: float
     suggestion: Optional[List['Prediction']]
 
-    def __init__(self, data_ids: Optional[List[float]], info: Optional[Dict[str, Any]], intent: str, rank: float, suggestion: Optional[List['Prediction']]) -> None:
+    def __init__(self, data_ids: Optional[List[float]], info: Optional[Dict[str, Any]], intent: str, rank: float, rank_ac: float, suggestion: Optional[List['Prediction']]) -> None:
         self.data_ids = data_ids
         self.info = info
         self.intent = intent
         self.rank = rank
+        self.rank_ac = rank_ac
         self.suggestion = suggestion
 
     @staticmethod
@@ -536,8 +538,9 @@ class Prediction:
         info = from_union([lambda x: from_dict(lambda x: x, x), from_none], obj.get("info"))
         intent = from_str(obj.get("intent"))
         rank = from_float(obj.get("rank"))
+        rank_ac = from_float(obj.get("rankAc"))
         suggestion = from_union([lambda x: from_list(Prediction.from_dict, x), from_none], obj.get("suggestion"))
-        return Prediction(data_ids, info, intent, rank, suggestion)
+        return Prediction(data_ids, info, intent, rank, rank_ac, suggestion)
 
     def to_dict(self) -> dict:
         result: dict = {}
@@ -545,6 +548,7 @@ class Prediction:
         result["info"] = from_union([lambda x: from_dict(lambda x: x, x), from_none], self.info)
         result["intent"] = from_str(self.intent)
         result["rank"] = to_float(self.rank)
+        result["rankAc"] = to_float(self.rank_ac)
         result["suggestion"] = from_union([lambda x: from_list(lambda x: to_class(Prediction, x), x), from_none], self.suggestion)
         return result
 
