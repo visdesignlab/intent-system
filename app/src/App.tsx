@@ -75,7 +75,7 @@ const App: FC<Props> = (_: Props) => {
       if (datasetString !== JSON.stringify(datasets)) {
         const url = new URLSearchParams(window.location.search);
         const datasetName = url.get("datasetName");
-        let datasetNum = getRandomNumber(datasets.length - 1);
+        let datasetNum = getRandomNumber(datasets.length - 1) * 0 + 1;
         setDatasets(datasets);
 
         for (let j in datasets) {
