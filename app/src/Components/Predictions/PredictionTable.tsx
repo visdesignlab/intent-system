@@ -21,7 +21,7 @@ type Props = {
 const PredictionTable: FC<Props> = ({
   store,
   predictions,
-  isTask = false
+  isTask = false,
 }: Props) => {
   const { selectedPrediction, plots, multiBrushBehaviour } = store!;
   const barHeight = 30;
@@ -50,14 +50,14 @@ const PredictionTable: FC<Props> = ({
       }
     }
 
-    const marks = (pred.dataIds || []).map(d => `#mark-${d}`).join(",");
+    const marks = (pred.dataIds || []).map((d) => `#mark-${d}`).join(",");
 
     return (
       <Table.Row key={pred.intent} active={pred.intent === selectedPrediction}>
         {!isTask && (
           <Table.Cell>
             {pred.dims.length > 0
-              ? pred.dims.map(dim => (
+              ? pred.dims.map((dim) => (
                   <Label size="mini" circular key={dim}>
                     {dim}
                   </Label>
@@ -74,12 +74,12 @@ const PredictionTable: FC<Props> = ({
                   : [
                       {
                         selector: ".base-mark",
-                        classToApply: FADE_OUT
+                        classToApply: FADE_OUT,
                       },
                       {
-                        selector: matches.map(m => `#mark-${m}`).join(","),
-                        classToApply: FADE_COMP_IN
-                      }
+                        selector: matches.map((m) => `#mark-${m}`).join(","),
+                        classToApply: FADE_COMP_IN,
+                      },
                     ]
               }
             >
@@ -92,12 +92,12 @@ const PredictionTable: FC<Props> = ({
                   : [
                       {
                         selector: ".base-mark",
-                        classToApply: FADE_OUT
+                        classToApply: FADE_OUT,
                       },
                       {
-                        selector: isnp.map(m => `#mark-${m}`).join(","),
-                        classToApply: FADE_COMP_IN
-                      }
+                        selector: isnp.map((m) => `#mark-${m}`).join(","),
+                        classToApply: FADE_COMP_IN,
+                      },
                     ]
               }
             >
@@ -110,12 +110,12 @@ const PredictionTable: FC<Props> = ({
                   : [
                       {
                         selector: ".base-mark",
-                        classToApply: FADE_OUT
+                        classToApply: FADE_OUT,
                       },
                       {
-                        selector: ipns.map(m => `#mark-${m}`).join(","),
-                        classToApply: FADE_COMP_IN
-                      }
+                        selector: ipns.map((m) => `#mark-${m}`).join(","),
+                        classToApply: FADE_COMP_IN,
+                      },
                     ]
               }
             >
@@ -146,17 +146,6 @@ const PredictionTable: FC<Props> = ({
               height={barHeight}
               score={probability}
               label={probability.toFixed(2)}
-            />
-          </Table.Cell>
-        )}
-        {!isTask && (
-          <Table.Cell>
-            <Button
-              icon="check"
-              positive
-              onClick={() => {
-                actions.lockPrediction(pred);
-              }}
             />
           </Table.Cell>
         )}
@@ -229,7 +218,7 @@ const PredictionTable: FC<Props> = ({
           )}
           <Table.HeaderCell>Similarity</Table.HeaderCell>
           {!isTask && <Table.HeaderCell>Probability</Table.HeaderCell>}
-          <Table.HeaderCell colSpan={isTask ? 2 : 3}></Table.HeaderCell>
+          <Table.HeaderCell colSpan={isTask ? 1 : 2}></Table.HeaderCell>
         </Table.Row>
       </Table.Header>
       <Table.Body>{predictions.map(predRowRender)}</Table.Body>

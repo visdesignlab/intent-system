@@ -338,7 +338,7 @@ const RawPlot: FC<Props> = ({
         />
       </g>
     ) : (
-      <g key={idx} pointerEvents="none">
+      <g key={idx} pointerEvents={taskConfig ? "none" : "default"}>
         <Mark
           id={`mark-${idx}`}
           extraClass={markClass}

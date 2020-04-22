@@ -1,17 +1,25 @@
-import React, { FC, useState, useContext } from 'react';
 import { inject, observer } from 'mobx-react';
-import IntentStore from '../../Store/IntentStore';
-import { Form, TextArea, Button, Card } from 'semantic-ui-react';
+import React, { FC, useContext, useEffect, useState } from 'react';
+import { Button, Card, Form, TextArea } from 'semantic-ui-react';
 import { style } from 'typestyle';
+
 import { ActionContext } from '../../Contexts';
+import IntentStore from '../../Store/IntentStore';
 
 interface Props {
   store?: IntentStore;
-  annotation: string;
 }
 
-const AnnotationBox: FC<Props> = ({ store, annotation }: Props) => {
+const AnnotationBox: FC<Props> = ({ store }: Props) => {
+  const { annotation = "" } = store!;
   const [annotationText, setAnnotationText] = useState(annotation);
+
+  useEffect(() => {
+    setAnnotationText((text) => {
+      if (text !== annotation) return annotation;
+      return text;
+    });
+  }, [annotation]);
 
   const actions = useContext(ActionContext);
 
@@ -34,6 +42,12 @@ const AnnotationBox: FC<Props> = ({ store, annotation }: Props) => {
             >
               Annotate
             </Button>
+            <Button basic color="green" disabled>
+              Annotate & lock prediction
+            </Button>
+            <Button basic color="green">
+              Annotate & lock other
+            </Button>
           </Form.Field>
         </Form>
       </Card.Content>
@@ -41,9 +55,9 @@ const AnnotationBox: FC<Props> = ({ store, annotation }: Props) => {
   );
 };
 
-export default inject('store')(observer(AnnotationBox));
+export default inject("store")(observer(AnnotationBox));
 
 const centerButton = style({
-  display: 'flex',
-  justifyContent: 'center'
+  display: "flex",
+  justifyContent: "center",
 });
