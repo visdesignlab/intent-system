@@ -217,8 +217,12 @@ const ProvenanceVisualization: FC<Props> = ({ store }: Props) => {
     map[node] = bundle;
   });
 
+  let divStyle = {
+    overflowY: 'auto',
+  } as React.CSSProperties;
+
   return (
-    <div ref={ref} className={provStyle}>
+    <div style={divStyle} ref={ref} className={provStyle}>
       {dimensions.width && dimensions.height && (
         <ProvVis
           graph={graph}

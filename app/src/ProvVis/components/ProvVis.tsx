@@ -158,6 +158,7 @@ function ProvVis<T, S extends string, A>({
       }
     });
 
+
   for (let i = 0; i < nodeList.length; i++) {
     if (
       bundledNodes.includes(nodeList[i].id) &&
@@ -221,9 +222,10 @@ function ProvVis<T, S extends string, A>({
     );
   }
 
+  let maxHeight = (stratifiedList[0].height * verticalSpace)
   return (
     <div className={container} id="prov-vis">
-      <svg height={height} width={width}>
+      <svg height={(maxHeight < height) ? height : maxHeight} width={width}>
         <rect height={height} width={width} fill="none" stroke="black" />
         <g transform={translate(width - sideOffset, topOffset)}>
           <NodeGroup
