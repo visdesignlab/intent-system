@@ -423,9 +423,9 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
     let predName = "";
 
     if (typeof pred === "string") {
-      predName = pred;
+      predName = "Insight: " + pred;
     } else {
-      predName = (pred as any).type;
+      predName = "Insight: " + (pred as any).type;
     }
 
     provenance.applyAction(

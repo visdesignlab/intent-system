@@ -108,11 +108,7 @@ function BackboneNode<T, S extends string, A>({
   }
 
 
-  if (bundleMap && Object.keys(bundleMap).includes(node.id) && clusterLabels) {
-    label = bundleMap[node.id].bundleLabel;
-  } else {
-    label = node.label;
-  }
+  label = node.label;
   // else if(!backboneBundleNodes.includes(node.id) || !clusterLabels)
   // {
   //   label = node.label;
