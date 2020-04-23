@@ -128,7 +128,7 @@ function ProvVis<T, S extends string, A>({
           let curr = d;
 
           while (true) {
-            if (!bundledNodes.includes(curr.parent)) {
+            if (!bundledNodes.includes(curr.parent) || Object.keys(bundleMap).includes(curr.parent)) {
               return curr.parent;
             }
 

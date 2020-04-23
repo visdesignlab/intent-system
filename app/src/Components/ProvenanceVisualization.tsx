@@ -230,8 +230,7 @@ const ProvenanceVisualization: FC<Props> = ({ store }: Props) => {
       const currNode = graph.nodes[testNode];
       if (isStateNode(currNode)) {
         const parent = graph.nodes[currNode.parent];
-
-        if (parent.label.includes("Add plot") || parent.children.length > 1)
+        if (parent.metadata.type === "Add Plot" || parent.metadata.type === "Lock Prediction" || parent.children.length > 1)
         {
           break;
         }
