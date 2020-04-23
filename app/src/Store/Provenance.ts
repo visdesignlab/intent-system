@@ -556,6 +556,7 @@ function setupObservers(
       const latest = extra[extra.length - 1];
       store.predictionSet = latest.e.predictionSet;
       store.annotation = latest.e.annotation;
+      store.graph = provenance.graph();
     } else {
       store.resetPredAndAnnotation();
     }
@@ -611,7 +612,8 @@ function setupObservers(
           }
         } else {
           const currentNode = provenance.current();
-          if (isStateNode(currentNode)) {
+          const extraList = getExtra(provenance, current);
+          if (isStateNode(currentNode) && extraList.length === 0) {
             const parentNode = provenance.graph().nodes[currentNode.parent];
             if (isStateNode(parentNode)) {
               const extraList = provenance.getExtraFromArtifact(parentNode.id);
