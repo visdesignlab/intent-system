@@ -176,7 +176,9 @@ const ProvenanceVisualization: FC<Props> = ({ store }: Props) => {
   };
 
   const popupNode = (node: any) => {
-    // let annotation = "";
+
+    //
+    // // let annotation = "";
     if (node.artifacts.extra.length > 0) {
 
     let styles4 = {
@@ -241,7 +243,6 @@ const ProvenanceVisualization: FC<Props> = ({ store }: Props) => {
     overflowY: 'auto',
   } as React.CSSProperties;
 
-  console.log(map);
 
   return (
     <div style={divStyle} ref={ref} className={provStyle}>
@@ -258,6 +259,7 @@ const ProvenanceVisualization: FC<Props> = ({ store }: Props) => {
           sideOffset={200}
           height={height * 0.9}
           verticalSpace={45}
+          clusterVerticalSpace={45}
           textSize={12}
           changeCurrent={(id: NodeID) => actions.goToNode(id)}
           popupContent={popupNode}

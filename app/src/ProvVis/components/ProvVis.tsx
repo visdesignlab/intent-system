@@ -222,8 +222,6 @@ function ProvVis<T, S extends string, A>({
     );
   }
 
-  console.log(bundleMap);
-
   let maxHeight = (stratifiedList[0].height * verticalSpace)
   return (
     <div className={container} id="prov-vis">
@@ -273,7 +271,8 @@ function ProvVis<T, S extends string, A>({
                         rx="10"
                         ry="10"
                         fill="none"
-                        stroke="none"
+                        strokeWidth="2px"
+                        stroke="#39CCCC"
                       ></rect>
                     </g>
                   );
@@ -373,7 +372,7 @@ function ProvVis<T, S extends string, A>({
                           />
                         ) : popupContent !== undefined ? (
                           <Popup
-                            content={popupContent(d)}
+                            content={popupContent(d.data)}
                             trigger={
                               <g
                                 onClick={() => {
