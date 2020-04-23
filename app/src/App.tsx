@@ -1,8 +1,6 @@
 import axios from 'axios';
 import { Provider } from 'mobx-react';
 import React, { FC, useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Button, Icon, Image, Menu, Modal } from 'semantic-ui-react';
 import { style } from 'typestyle';
 
 import Navbar from './Components/Navbar';
@@ -102,40 +100,17 @@ const App: FC<Props> = (_: Props) => {
     <Provider store={store}>
       <DataContext.Provider value={data}>
         <ActionContext.Provider value={actions}>
-          <div className={higherLayout}>
-            <Menu>
-              <Menu.Item>
-                <Image src="/imgs/vdl-logo-icon.svg" size="mini" />
-              </Menu.Item>
-              <Menu.Item>
-                <Link to="/study">
-                  <Button content="Study Mode" size="tiny" primary />
-                </Link>
-              </Menu.Item>
-              <Menu.Menu position="right">
-                <Modal
-                  trigger={
-                    <Menu.Item>
-                      <Icon name="info circle" size="large" />
-                    </Menu.Item>
-                  }
-                >
-                  <Modal.Header>Intent Inference System</Modal.Header>
-                </Modal>
-              </Menu.Menu>
-            </Menu>
-            <div className={layoutStyle}>
-              <div className={visStyle}>
-                <Navbar
-                  data={data}
-                  datasets={datasets}
-                  setDataset={setSelectedDataset}
-                />
-                <Visualization />
-              </div>
-              <Predictions />
-              <ProvenanceVisualization />
+          <div className={layoutStyle}>
+            <div className={visStyle}>
+              <Navbar
+                data={data}
+                datasets={datasets}
+                setDataset={setSelectedDataset}
+              />
+              <Visualization />
             </div>
+            <Predictions />
+            <ProvenanceVisualization />
           </div>
         </ActionContext.Provider>
       </DataContext.Provider>
@@ -145,17 +120,10 @@ const App: FC<Props> = (_: Props) => {
 
 export default App;
 
-const higherLayout = style({
+const layoutStyle = style({
   display: "grid",
   height: "100vh",
   width: "100vw",
-  gridTemplateRows: "min-content auto",
-});
-
-const layoutStyle = style({
-  display: "grid",
-  // height: "100%",
-  width: "100%",
   gridTemplateColumns: "5fr 2fr 1fr",
   gridTemplateAreas: `
   "vis pred prov"

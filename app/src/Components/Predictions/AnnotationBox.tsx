@@ -52,7 +52,7 @@ const AnnotationBox: FC<Props> = ({ store }: Props) => {
             />
           </Form.Field>
           <Form.Field className={centerButton}>
-            <Button
+            {/* <Button
               basic
               color="green"
               onClick={() => {
@@ -65,41 +65,32 @@ const AnnotationBox: FC<Props> = ({ store }: Props) => {
               }}
             >
               Annotate
-            </Button>
+            </Button> */}
             <Button
               basic
               color="green"
               disabled={topPrediction === null}
               onClick={() => {
-                if (annotationText.length === 0) {
-                  setHideError(false);
-                  setErrorMessage(
-                    "Please describe how well the prediction you are locking matches your intent."
-                  );
-                  return;
-                }
                 if (topPrediction) {
-                  actions.annotateNode(annotationText);
                   actions.lockPrediction(topPrediction);
+                }
+                if (annotationText.length > 0) {
+                  actions.annotateNode(annotationText);
                 }
               }}
             >
-              Annotate & lock {topPrediction?.type || "...."}
+              Save Insight: {topPrediction?.type || "...."}
             </Button>
             <Button
               basic
               color="green"
               onClick={() => {
-                if (annotationText.length === 0) {
-                  setHideError(false);
-                  setErrorMessage("Please describe your intent.");
-                  return;
-                }
-                actions.annotateNode(annotationText);
                 actions.lockPrediction("Other");
+                if (annotationText.length > 0)
+                  actions.annotateNode(annotationText);
               }}
             >
-              Annotate & lock other
+              Save Insight: Custom
             </Button>
           </Form.Field>
           {!hideError && errorMessage.length > 0 && (

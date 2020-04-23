@@ -1,6 +1,7 @@
 import { inject, observer } from 'mobx-react';
 import React, { memo, useContext, useEffect, useMemo, useState } from 'react';
-import { Button, Container, Dropdown, Header, Icon, Menu, Radio } from 'semantic-ui-react';
+import { Link } from 'react-router-dom';
+import { Button, Container, Dropdown, Header, Icon, Image, Menu, Modal, Radio } from 'semantic-ui-react';
 import { style } from 'typestyle';
 
 import { ActionContext, TaskConfigContext } from '../Contexts';
@@ -106,7 +107,7 @@ function Navbar({ store, data, datasets, setDataset }: NavbarProps) {
       <Radio
         toggle
         disabled={categoricalColumns.length === 0}
-        label="Show Categories"
+        label="Categories"
         checked={showCategories}
         onChange={() =>
           actions.toggleCategories(!showCategories, categoricalColumns)
@@ -236,6 +237,18 @@ function Navbar({ store, data, datasets, setDataset }: NavbarProps) {
     <div className={`${menuStyle} ${navStyle}`}>
       <Container fluid textAlign="center">
         <Menu compact size="mini">
+          {!task && (
+            <>
+              <Menu.Item>
+                <Image src="/imgs/vdl-logo-icon.svg" size="mini" />
+              </Menu.Item>
+              <Menu.Item>
+                <Link to="/study">
+                  <Button content="Study Mode" size="tiny" primary />
+                </Link>
+              </Menu.Item>
+            </>
+          )}
           {addingPlot ? (
             <AddPlotMenu closeMenu={setAddingPlot} />
           ) : (
@@ -248,10 +261,20 @@ function Navbar({ store, data, datasets, setDataset }: NavbarProps) {
               {brushSelection}
               {invertSelectionButton}
               {clearSelectionButton}
-              {task && (
+              {task ? (
                 <Menu.Item>
                   <Header as="h2">{taskTypeDesc}</Header>
                 </Menu.Item>
+              ) : (
+                <Modal
+                  trigger={
+                    <Menu.Item>
+                      <Icon name="info circle" size="large" />
+                    </Menu.Item>
+                  }
+                >
+                  <Modal.Header>Intent Inference System</Modal.Header>
+                </Modal>
               )}
             </>
           )}
