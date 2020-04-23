@@ -145,7 +145,7 @@ const ProvenanceVisualization: FC<Props> = ({ store }: Props) => {
       backboneGlyph: <ClearAll size={22}/>,
       currentGlyph: <ClearAll size={22}fill={"cornflowerblue"}/>,
       regularGlyph: <ClearAll size={16}/>,
-      bundleGlyph: <ClearAll size={22}fill={"cornflowerblue"}/>
+      bundleGlyph: <ClearAll size={22}fill={"#39CCCC"}/>
     },
     'Change Brush Type': {
       backboneGlyph: <ChangeBrushType size={22}/>,
@@ -210,7 +210,7 @@ const ProvenanceVisualization: FC<Props> = ({ store }: Props) => {
 
 
   const lockedNodes = Object.values(graph.nodes)
-    .filter(d => d.metadata.type === "Lock Prediction")
+    .filter(d => d.metadata.type === "Lock Prediction" || d.metadata.type === "Clear All")
     .map(d => d.id);
 
   const map: BundleMap = {};
@@ -230,9 +230,14 @@ const ProvenanceVisualization: FC<Props> = ({ store }: Props) => {
       const currNode = graph.nodes[testNode];
       if (isStateNode(currNode)) {
         const parent = graph.nodes[currNode.parent];
+
+        if (parent.label.includes("Add plot") || parent.children.length > 1)
+        {
+          break;
+        }
+
         toBunch.push(parent.id);
         testNode = parent.id;
-        if (parent.label.includes("Add plot")) break;
       } else break;
     }
     bundle.bunchedNodes = toBunch.reverse();

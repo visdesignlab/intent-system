@@ -228,58 +228,7 @@ function ProvVis<T, S extends string, A>({
       <svg height={(maxHeight < height) ? height : maxHeight} width={width}>
         <rect height={height} width={width} fill="none" stroke="black" />
         <g transform={translate(width - sideOffset, topOffset)}>
-          <NodeGroup
-            data={keys}
-            keyAccessor={key => `${key}`}
-            {...bundleTransitions(
-              xOffset,
-              verticalSpace,
-              clusterVerticalSpace,
-              backboneGutter - gutter,
-              duration,
-              expandedClusterList,
-              stratifiedMap,
-              stratifiedList,
-              annotationOpen,
-              annotationHeight,
-              bundleMap
-            )}
-          >
-            {bundle => (
-              <>
-                {bundle.map(b => {
-                  const { key, state } = b;
-                  if (
-                    bundleMap === undefined ||
-                    (stratifiedMap[b.key] as any).width !== 0 ||
-                    state.validity === false
-                  ) {
-                    return null;
-                  }
 
-                  return (
-                    <g
-                      key={key}
-                      transform={translate(
-                        state.x - gutter - 3,
-                        state.y - clusterVerticalSpace / 2
-                      )}
-                    >
-                      <rect
-                        width={sideOffset}
-                        height={state.height}
-                        rx="10"
-                        ry="10"
-                        fill="none"
-                        strokeWidth="2px"
-                        stroke="#39CCCC"
-                      ></rect>
-                    </g>
-                  );
-                })}
-              </>
-            )}
-          </NodeGroup>
           <NodeGroup
             data={links}
             keyAccessor={link => `${link.source.id}${link.target.id}`}
@@ -369,6 +318,7 @@ function ProvVis<T, S extends string, A>({
                             eventConfig={eventConfig}
                             annotationContent={annotationContent}
                             popupContent={popupContent}
+                            expandedClusterList={expandedClusterList}
                           />
                         ) : popupContent !== undefined ? (
                           <Popup
@@ -402,6 +352,58 @@ function ProvVis<T, S extends string, A>({
                 </>
               );
             }}
+          </NodeGroup>
+          <NodeGroup
+            data={keys}
+            keyAccessor={key => `${key}`}
+            {...bundleTransitions(
+              xOffset,
+              verticalSpace,
+              clusterVerticalSpace,
+              backboneGutter - gutter,
+              duration,
+              expandedClusterList,
+              stratifiedMap,
+              stratifiedList,
+              annotationOpen,
+              annotationHeight,
+              bundleMap
+            )}
+          >
+            {bundle => (
+              <>
+                {bundle.map(b => {
+                  const { key, state } = b;
+                  if (
+                    bundleMap === undefined ||
+                    (stratifiedMap[b.key] as any).width !== 0 ||
+                    state.validity === false
+                  ) {
+                    return null;
+                  }
+
+                  return (
+                    <g
+                      key={key}
+                      transform={translate(
+                        state.x - gutter + 5,
+                        state.y - clusterVerticalSpace / 2
+                      )}
+                    >
+                      <rect
+                        width={iconOnly ? 42 : sideOffset - 15}
+                        height={state.height}
+                        rx="10"
+                        ry="10"
+                        fill="none"
+                        strokeWidth="2px"
+                        stroke="#39CCCC"
+                      ></rect>
+                    </g>
+                  );
+                })}
+              </>
+            )}
           </NodeGroup>
         </g>
       </svg>

@@ -26,6 +26,7 @@ interface BackboneNodeProps<T, S extends string, A> {
   eventConfig?: EventConfig<S>;
   popupContent?: (nodeId: StateNode<T, S, A>) => ReactChild;
   annotationContent?: (nodeId: StateNode<T, S, A>) => ReactChild;
+  expandedClusterList?: string[];
 }
 
 function BackboneNode<T, S extends string, A>({
@@ -46,13 +47,19 @@ function BackboneNode<T, S extends string, A>({
   clusterLabels,
   eventConfig,
   popupContent,
-  annotationContent
+  annotationContent,
+  expandedClusterList
 }: BackboneNodeProps<T, S, A>) {
   const padding = 15;
+
+  let cursorStyle = {
+    cursor:"pointer"
+  } as React.CSSProperties;
 
   // console.log(JSON.parse(JSON.stringify(node)));
   let glyph = (
     <circle
+      style={cursorStyle}
       onClick={() => nodeClicked(node)}
       className={treeColor(current)}
       r={radius}
@@ -62,6 +69,8 @@ function BackboneNode<T, S extends string, A>({
 
   // let backboneBundleNodes = findBackboneBundleNodes(nodeMap, bundleMap)
 
+  let dropDownAdded = false;
+
   if (eventConfig) {
     const eventType = node.metadata.type;
     if (eventType && eventType in eventConfig && eventType !== "Root") {
@@ -69,20 +78,21 @@ function BackboneNode<T, S extends string, A>({
         eventType
       ];
       if (bundleMap && Object.keys(bundleMap).includes(node.id)) {
+        dropDownAdded = true;
         glyph = (
-          <g onClick={() => nodeClicked(node)} fontWeight={"none"}>
+          <g style={cursorStyle} onClick={() => nodeClicked(node)} fontWeight={"none"}>
             {bundleGlyph}
           </g>
         );
       } else if (current) {
         glyph = (
-          <g onClick={() => nodeClicked(node)} fontWeight={"bold"}>
+          <g style={cursorStyle} onClick={() => nodeClicked(node)} fontWeight={"bold"}>
             {currentGlyph}
           </g>
         );
       } else {
         glyph = (
-          <g onClick={() => nodeClicked(node)} fontWeight={"none"}>
+          <g style={cursorStyle} onClick={() => nodeClicked(node)} fontWeight={"none"}>
             {backboneGlyph}
           </g>
         );
@@ -98,8 +108,6 @@ function BackboneNode<T, S extends string, A>({
   }
 
 
-
-
   if (bundleMap && Object.keys(bundleMap).includes(node.id) && clusterLabels) {
     label = bundleMap[node.id].bundleLabel;
   } else {
@@ -113,6 +121,8 @@ function BackboneNode<T, S extends string, A>({
   if (!nodeMap[node.id]) {
     return null;
   }
+
+
 
   if(annotate.length > 23)
     annotate = annotate.substr(0, 23) + "..";
@@ -141,8 +151,15 @@ function BackboneNode<T, S extends string, A>({
             transform={translate(padding, 0)}
           >
             {!iconOnly ?
-              [<text
-                y={-7}
+              (<g>
+
+              { dropDownAdded ?
+                (<text style={cursorStyle} onClick={() => nodeClicked(node)} fontSize={10} fill={"#39CCCC"} textAnchor="middle" alignmentBaseline="middle" x={1} y={0} fontFamily="FontAwesome">{(expandedClusterList && expandedClusterList.includes(node.id)) ? "\uf0d8" :"\uf0d7"}</text>)
+                : (<g></g>)
+              }
+              <text
+              y={-7}
+              x={dropDownAdded ? 10 : 0}
               dominantBaseline="middle"
               textAnchor="start"
               fontSize={textSize}
@@ -152,13 +169,19 @@ function BackboneNode<T, S extends string, A>({
 
             <text
             y={7}
+            x={dropDownAdded ? 10 : 0}
             dominantBaseline="middle"
             textAnchor="start"
             fontSize={textSize}
             fontWeight={"regular"}
             onClick={() => labelClicked(node)}
-          >{annotate}</text>] :
-            (<g></g>)
+          >{annotate}</text></g>) :
+            (<g>
+              { dropDownAdded ?
+                (<text style={cursorStyle} onClick={() => nodeClicked(node)} fontSize={10} fill={"#39CCCC"} textAnchor="middle" alignmentBaseline="middle" x={1} y={0} fontFamily="FontAwesome">{(expandedClusterList && expandedClusterList.includes(node.id)) ? "\uf0d8" :"\uf0d7"}</text>)
+                : (<g></g>)
+              }
+            </g>)
 
             }
 
