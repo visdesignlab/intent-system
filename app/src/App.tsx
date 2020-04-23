@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { Provider } from 'mobx-react';
 import React, { FC, useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Button, Icon, Image, Menu, Modal } from 'semantic-ui-react';
 import { style } from 'typestyle';
 
 import Navbar from './Components/Navbar';
@@ -17,15 +19,23 @@ type Props = {};
 
 const store = new IntentStore();
 
+function getRandomNumber(num: number): number {
+  const floor = Math.random() > 0.5;
+
+  let randomNumber = Math.random();
+
+  randomNumber = randomNumber * num;
+
+  if (floor) return Math.floor(randomNumber);
+  return Math.ceil(randomNumber);
+}
+
 const App: FC<Props> = (_: Props) => {
   const [datasets, setDatasets] = useState<Datasets>([]);
   const [selectedDataset, setSelectedDataset] = useState<Dataset>({
     key: "",
-    name: ""
+    name: "",
   });
-
-
-  console.log("loading graph");
 
   const [data, setData] = useState<Data>(null as any);
 
@@ -44,7 +54,7 @@ const App: FC<Props> = (_: Props) => {
 
   useEffect(() => {
     if (selectedDataset.key.length > 0) {
-      axios.get(`/dataset/${selectedDataset.key}`).then(d => {
+      axios.get(`/dataset/${selectedDataset.key}`).then((d) => {
         const data = loadData(d.data);
         if (data.numericColumns.length >= 2) {
           actions.addPlot({
@@ -52,7 +62,7 @@ const App: FC<Props> = (_: Props) => {
             x: data.numericColumns[0],
             y: data.numericColumns[1],
             selectedPoints: [],
-            brushes: {}
+            brushes: {},
           });
         }
         setData(data);
@@ -61,21 +71,17 @@ const App: FC<Props> = (_: Props) => {
   }, [selectedDataset, actions]);
 
   useEffect(() => {
-    axios.get("./dataset").then(response => {
+    axios.get("./dataset").then((response) => {
       const datasets: any[] = response.data;
-      console.log(datasets)
+
       if (datasetString !== JSON.stringify(datasets)) {
         const url = new URLSearchParams(window.location.search);
         const datasetName = url.get("datasetName");
-        let datasetNum = 21;
+        let datasetNum = getRandomNumber(datasets.length - 1) * 0 + 1;
         setDatasets(datasets);
 
-        for(let j in datasets)
-        {
-          console.log(j)
-
-          if(datasets[j].key == datasetName)
-          {
+        for (let j in datasets) {
+          if (datasets[j].key === datasetName) {
             datasetNum = +j;
           }
         }
@@ -96,17 +102,40 @@ const App: FC<Props> = (_: Props) => {
     <Provider store={store}>
       <DataContext.Provider value={data}>
         <ActionContext.Provider value={actions}>
-          <div className={layoutStyle}>
-            <div className={visStyle}>
-              <Navbar
-                data={data}
-                datasets={datasets}
-                setDataset={setSelectedDataset}
-              />
-              <Visualization />
+          <div className={higherLayout}>
+            <Menu>
+              <Menu.Item>
+                <Image src="/imgs/vdl-logo-icon.svg" size="mini" />
+              </Menu.Item>
+              <Menu.Item>
+                <Link to="/study">
+                  <Button content="Study Mode" size="tiny" primary />
+                </Link>
+              </Menu.Item>
+              <Menu.Menu position="right">
+                <Modal
+                  trigger={
+                    <Menu.Item>
+                      <Icon name="info circle" size="large" />
+                    </Menu.Item>
+                  }
+                >
+                  <Modal.Header>Intent Inference System</Modal.Header>
+                </Modal>
+              </Menu.Menu>
+            </Menu>
+            <div className={layoutStyle}>
+              <div className={visStyle}>
+                <Navbar
+                  data={data}
+                  datasets={datasets}
+                  setDataset={setSelectedDataset}
+                />
+                <Visualization />
+              </div>
+              <Predictions />
+              <ProvenanceVisualization />
             </div>
-            <Predictions />
-            <ProvenanceVisualization />
           </div>
         </ActionContext.Provider>
       </DataContext.Provider>
@@ -116,14 +145,21 @@ const App: FC<Props> = (_: Props) => {
 
 export default App;
 
-const layoutStyle = style({
+const higherLayout = style({
   display: "grid",
   height: "100vh",
   width: "100vw",
+  gridTemplateRows: "min-content auto",
+});
+
+const layoutStyle = style({
+  display: "grid",
+  // height: "100%",
+  width: "100%",
   gridTemplateColumns: "5fr 2fr 1fr",
   gridTemplateAreas: `
   "vis pred prov"
-  `
+  `,
 });
 
 const visStyle = style({
@@ -134,5 +170,5 @@ const visStyle = style({
   gridTemplateAreas: `
   "nav"
   "vis"
-  `
+  `,
 });

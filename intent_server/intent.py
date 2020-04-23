@@ -27,7 +27,7 @@ def custom_jaccard(intent: pd.DataFrame, selection: pd.DataFrame) -> float:
 
 def rank_jaccard(intent: pd.DataFrame, selection: pd.DataFrame) -> float:
     temp = custom_jaccard(intent, selection)
-    return float(temp)
+    return float(1 - jaccard(intent, selection)), float(temp)
     # return float(1-jaccard(intent, selection))
 
 
@@ -51,11 +51,12 @@ class Intent(ABC):
 
         predictions = []
         for column in computed:
-            rank = rank_jaccard(computed[column].T, selection.T)
+            rank, rank_ac = rank_jaccard(computed[column].T, selection.T)
             ids = computed.loc[computed.loc[:, column] == 1].index.values
             predictions.append(Prediction(
                 intent=column,
                 rank=rank,
+                rank_ac=rank_ac,
                 info=self.info(),
                 data_ids=list(map(float, ids)),
                 suggestion=None))

@@ -16,4 +16,5 @@ export type AppConfig = {
   taskId: string;
   count: number;
   task: DatasetType;
+  logMode: boolean;
 };

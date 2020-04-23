@@ -14,7 +14,7 @@ interface Props {
 }
 
 const Predictions: FC<Props> = ({ store }: Props) => {
-  const { annotation, plots, multiBrushBehaviour } = store!;
+  const { plots, multiBrushBehaviour } = store!;
 
   const taskConfig = useContext(TaskConfigContext);
 
@@ -35,7 +35,7 @@ const Predictions: FC<Props> = ({ store }: Props) => {
 
   return (
     <div className={predictionColumnStyle(!isManual)}>
-      {!task && <AnnotationBox annotation={annotation} />}
+      {!task && <AnnotationBox />}
       {!isManual && <PredictionList selections={selections.values} />}
       {!task && <Selections selections={selections} />}
     </div>
@@ -64,6 +64,6 @@ const predictionColumnStyle = (predictionSupport: boolean) => {
     height: "100vh",
     display: "grid",
     gridTemplateRows,
-    gridTemplateAreas
+    gridTemplateAreas,
   });
 };

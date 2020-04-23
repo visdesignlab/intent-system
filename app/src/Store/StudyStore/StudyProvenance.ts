@@ -13,9 +13,13 @@ export function setupStudy(
   store: StudyStore
 ): StudyProvenanceControl {
   const defState = getDefaultStudyState(config);
+
   store.phase = defState.phase;
+
   const studyProvenance = initProvenance<StudyState, any, any>(defState);
+
   const log = logToFirebase();
+
   studyProvenance.addGlobalObserver((state?: StudyState) => {
     if (state) {
       const { participantId, sessionId, studyId } = state;

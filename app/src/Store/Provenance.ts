@@ -1,12 +1,4 @@
-import {
-  Extra,
-  initProvenance,
-  isStateNode,
-  NodeID,
-  Provenance,
-  ProvenanceNode,
-  StateNode,
-} from '@visdesignlab/provenance-lib-core';
+import { Extra, initProvenance, isStateNode, NodeID, Provenance, StateNode } from '@visdesignlab/provenance-lib-core';
 import axios from 'axios';
 
 import { MultiBrushBehavior, Prediction, PredictionRequest, PredictionSet } from '../contract';
@@ -17,7 +9,6 @@ import {
   defaultState,
   ExtendedBrush,
   ExtendedBrushCollection,
-  getDefaultPlot,
   IntentState,
   MultiBrushBehaviour,
   Plot,
@@ -60,15 +51,7 @@ export type Annotation = {
   predictionSet: PredictionSet;
 };
 
-function convertObjToArray(obj: object) {
-  return Object.entries(obj)
-    .sort((a, b) => parseInt(a[0]) - parseInt(b[0]))
-    .map((d) => d[1]);
-}
-
-export function setupProvenance(
-  store: IntentStore
-): ProvenanceControl {
+export function setupProvenance(store: IntentStore): ProvenanceControl {
   const provenance = initProvenance<IntentState, IntentEvents, Annotation>(
     defaultState,
     true
@@ -76,17 +59,19 @@ export function setupProvenance(
 
   const url = new URLSearchParams(window.location.search);
   const graphPath = url.get("graphPath");
-  console.log(graphPath);
 
   function importProvenance() {
     graphRTD
-      .ref(
-        String(graphPath)
-      )
+      .ref(String(graphPath))
       .once("value")
       .then(function(dataSnapshot) {
         let dataJson: any = dataSnapshot.val();
-        if (!dataJson["nodes"] || !dataJson["current"] || !dataJson["root"]) {
+        if (
+          !dataJson ||
+          !dataJson["nodes"] ||
+          !dataJson["current"] ||
+          !dataJson["root"]
+        ) {
           return;
         }
 
@@ -108,10 +93,8 @@ export function setupProvenance(
 
   setupObservers(provenance, store);
 
-  if(graphPath != undefined)
-  {
+  if (graphPath !== undefined) {
     importProvenance();
-
   }
 
   function setDataset(dataset: Dataset) {
@@ -211,10 +194,14 @@ export function setupProvenance(
     );
   }
 
-  function addPointSelection(plot: Plot, points: number[]) {
+  function addPointSelection(
+    plot: Plot,
+    points: number[],
+    isPaintBrush: boolean = false
+  ) {
     if (points.length === 0) return;
     provenance.applyAction(
-      `Add Point Selection`,
+      isPaintBrush ? `P. Brush: ${points.length}` : `Add Point Selection`,
       (state: IntentState) => {
         for (let i = 0; i < state.plots.length; ++i) {
           if (plot.id === state.plots[i].id) {
@@ -257,8 +244,9 @@ export function setupProvenance(
     brushCollection: ExtendedBrushCollection,
     affectedBrush: ExtendedBrush
   ) {
+    const pointCount = affectedBrush.points.length;
     provenance.applyAction(
-      `Add brush to plot`,
+      `Add R. Brush: ${pointCount} points`,
       (state: IntentState) => {
         for (let i = 0; i < state.plots.length; ++i) {
           if (plot.id === state.plots[i].id) {
@@ -280,8 +268,9 @@ export function setupProvenance(
     brushCollection: ExtendedBrushCollection,
     affectedBrush: ExtendedBrush
   ) {
+    const pointCount = affectedBrush.points.length;
     provenance.applyAction(
-      `Change Brush`,
+      `Change R. Brush: ${pointCount}`,
       (state: IntentState) => {
         let i = 0;
         for (i = 0; i < state.plots.length; ++i) {
@@ -306,7 +295,7 @@ export function setupProvenance(
     affectedBrush: ExtendedBrush
   ) {
     provenance.applyAction(
-      `Remove Brush`,
+      `Remove R. Brush`,
       (state: IntentState) => {
         for (let i = 0; i < state.plots.length; ++i) {
           if (plot.id === state.plots[i].id) {
@@ -430,11 +419,19 @@ export function setupProvenance(
     );
   }
 
-  function lockPrediction(pred: Prediction) {
+  function lockPrediction(pred: Prediction | string) {
+    let predName = "";
+
+    if (typeof pred === "string") {
+      predName = pred;
+    } else {
+      predName = (pred as any).type;
+    }
+
     provenance.applyAction(
-      "Lock prediction",
+      predName,
       (state: IntentState) => {
-        state.lockedPrediction = pred;
+        state.lockedPrediction = pred as any;
         addDummyInteraction(state);
         return state;
       },
@@ -503,7 +500,11 @@ export interface ProvenanceActions {
   goToNode: (id: NodeID) => void;
   addPlot: (plot: Plot) => void;
   removePlot: (plot: Plot) => void;
-  addPointSelection: (plot: Plot, points: number[]) => void;
+  addPointSelection: (
+    plot: Plot,
+    points: number[],
+    isPaintBrush?: boolean
+  ) => void;
   removePointSelection: (plot: Plot, points: number[]) => void;
   addBrush: (
     plot: Plot,
@@ -526,7 +527,7 @@ export interface ProvenanceActions {
   changeBrushType: (brushType: BrushType) => void;
   changeBrushSize: (size: BrushSize) => void;
   invertSelection: (currentSelected: number[], all: number[]) => void;
-  lockPrediction: (pred: Prediction) => void;
+  lockPrediction: (pred: Prediction | string) => void;
   turnPredictionInSelection: (
     pred: Prediction,
     currentSelection: number[]
@@ -569,8 +570,7 @@ function setupObservers(
           ? MultiBrushBehavior.UNION
           : MultiBrushBehavior.INTERSECTION;
 
-      if(state.interactionHistory === undefined)
-      {
+      if (state.interactionHistory === undefined) {
         state.interactionHistory = [];
       }
 

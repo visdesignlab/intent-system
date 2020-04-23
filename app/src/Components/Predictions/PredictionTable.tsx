@@ -1,6 +1,6 @@
 import { selectAll } from 'd3';
 import { inject, observer } from 'mobx-react';
-import React, { FC, memo, useContext } from 'react';
+import React, { FC, memo, useContext, useEffect, useState } from 'react';
 import { Button, Header, Label, Popup, Table } from 'semantic-ui-react';
 
 import { ActionContext } from '../../Contexts';
@@ -8,6 +8,7 @@ import IntentStore from '../../Store/IntentStore';
 import { hide$ } from '../Scatterplot/RawPlot';
 import { FADE_COMP_IN, FADE_OUT } from '../Styles/MarkStyle';
 import hoverable from '../UtilComponent/hoverable';
+import { topPred$ } from './AnnotationBox';
 import JaccardBar from './JaccardBar';
 import { getAllSelections, PredictionRowType } from './PredictionRowType';
 import ProbabilityBar from './ProbabilityBar';
@@ -20,17 +21,50 @@ type Props = {
 
 const PredictionTable: FC<Props> = ({
   store,
-  predictions,
-  isTask = false
+  predictions: basePredictions,
+  isTask = false,
 }: Props) => {
   const { selectedPrediction, plots, multiBrushBehaviour } = store!;
+  const [predictionsInput, setPredictionsInput] = useState<PredictionRowType[]>(
+    []
+  );
+  const [sortColumn, setSortColumn] = useState<SortableColumns>("similarity");
+  const [direction, setDirection] = useState<
+    "ascending" | "descending" | "undefined"
+  >("descending");
+
+  type SortableColumns = "similarity" | "probability" | "rankAc";
+
+  const predString = JSON.stringify(basePredictions);
+
+  useEffect(() => {
+    if (predString === JSON.stringify(predictionsInput)) return;
+    let preds = JSON.parse(predString) as PredictionRowType[];
+    setPredictionsInput(preds);
+  }, [predString, predictionsInput]);
+
+  let predictions: PredictionRowType[] = [];
+
+  if (direction === "ascending")
+    predictions = predictionsInput.sort(
+      (a, b) => a[sortColumn] - b[sortColumn]
+    );
+  else
+    predictions = predictionsInput.sort(
+      (a, b) => b[sortColumn] - a[sortColumn]
+    );
+
+  useEffect(() => {
+    if (predictions.length > 0) topPred$.next(predictions[0]);
+  }, [predictions]);
+
   const barHeight = 30;
   const actions = useContext(ActionContext);
 
   const HoverTableCell = hoverable(Table.Cell);
 
   function predRowRender(pred: PredictionRowType, idx: number) {
-    const { matches, isnp, ipns, similarity, type, probability } = pred;
+    const { matches, isnp, ipns, similarity, type, probability, rankAc } = pred;
 
     function rowClick() {
       if (isTask) {
@@ -44,20 +78,22 @@ const PredictionTable: FC<Props> = ({
       } else {
         if (pred.intent === selectedPrediction) {
           actions.selectPrediction("none");
+          topPred$.next(predictions[0]);
         } else {
           actions.selectPrediction(pred.intent);
+          topPred$.next(pred);
         }
       }
     }
 
-    const marks = (pred.dataIds || []).map(d => `#mark-${d}`).join(",");
+    const marks = (pred.dataIds || []).map((d) => `#mark-${d}`).join(",");
 
     return (
       <Table.Row key={pred.intent} active={pred.intent === selectedPrediction}>
         {!isTask && (
           <Table.Cell>
             {pred.dims.length > 0
-              ? pred.dims.map(dim => (
+              ? pred.dims.map((dim) => (
                   <Label size="mini" circular key={dim}>
                     {dim}
                   </Label>
@@ -74,12 +110,12 @@ const PredictionTable: FC<Props> = ({
                   : [
                       {
                         selector: ".base-mark",
-                        classToApply: FADE_OUT
+                        classToApply: FADE_OUT,
                       },
                       {
-                        selector: matches.map(m => `#mark-${m}`).join(","),
-                        classToApply: FADE_COMP_IN
-                      }
+                        selector: matches.map((m) => `#mark-${m}`).join(","),
+                        classToApply: FADE_COMP_IN,
+                      },
                     ]
               }
             >
@@ -92,12 +128,12 @@ const PredictionTable: FC<Props> = ({
                   : [
                       {
                         selector: ".base-mark",
-                        classToApply: FADE_OUT
+                        classToApply: FADE_OUT,
                       },
                       {
-                        selector: isnp.map(m => `#mark-${m}`).join(","),
-                        classToApply: FADE_COMP_IN
-                      }
+                        selector: isnp.map((m) => `#mark-${m}`).join(","),
+                        classToApply: FADE_COMP_IN,
+                      },
                     ]
               }
             >
@@ -110,12 +146,12 @@ const PredictionTable: FC<Props> = ({
                   : [
                       {
                         selector: ".base-mark",
-                        classToApply: FADE_OUT
+                        classToApply: FADE_OUT,
                       },
                       {
-                        selector: ipns.map(m => `#mark-${m}`).join(","),
-                        classToApply: FADE_COMP_IN
-                      }
+                        selector: ipns.map((m) => `#mark-${m}`).join(","),
+                        classToApply: FADE_COMP_IN,
+                      },
                     ]
               }
             >
@@ -140,23 +176,29 @@ const PredictionTable: FC<Props> = ({
             label={isTask ? `Pattern ${idx + 1}` : type}
           />
         </Table.Cell>
+        <Table.Cell
+          onClick={rowClick}
+          onMouseOver={() => {
+            selectAll(".base-mark").classed(FADE_OUT, true);
+            if (marks.length > 0) selectAll(marks).classed(FADE_COMP_IN, true);
+          }}
+          onMouseOut={() => {
+            selectAll(".base-mark").classed(FADE_OUT, false);
+            if (marks.length > 0) selectAll(marks).classed(FADE_COMP_IN, false);
+          }}
+        >
+          <JaccardBar
+            height={barHeight}
+            score={rankAc}
+            label={rankAc.toFixed(2)}
+          />
+        </Table.Cell>
         {!isTask && (
           <Table.Cell onClick={rowClick}>
             <ProbabilityBar
               height={barHeight}
               score={probability}
               label={probability.toFixed(2)}
-            />
-          </Table.Cell>
-        )}
-        {!isTask && (
-          <Table.Cell>
-            <Button
-              icon="check"
-              positive
-              onClick={() => {
-                actions.lockPrediction(pred);
-              }}
             />
           </Table.Cell>
         )}
@@ -206,6 +248,18 @@ const PredictionTable: FC<Props> = ({
     );
   }
 
+  function sortHandler(column: SortableColumns) {
+    const isAlreadyCurrent = column === sortColumn;
+
+    if (isAlreadyCurrent) {
+      setDirection((dir) => (dir === "ascending" ? "descending" : "ascending"));
+      return;
+    }
+
+    setSortColumn(column);
+    setDirection("descending");
+  }
+
   return (
     <Table sortable textAlign="center" compact>
       <Table.Header>
@@ -227,9 +281,29 @@ const PredictionTable: FC<Props> = ({
               />
             </>
           )}
-          <Table.HeaderCell>Similarity</Table.HeaderCell>
-          {!isTask && <Table.HeaderCell>Probability</Table.HeaderCell>}
-          <Table.HeaderCell colSpan={isTask ? 2 : 3}></Table.HeaderCell>
+          {!isTask && (
+            <Table.HeaderCell
+              sorted={sortColumn === "similarity" ? direction : (null as any)}
+              onClick={() => sortHandler("similarity")}
+            >
+              Intent Rank
+            </Table.HeaderCell>
+          )}
+          <Table.HeaderCell
+            sorted={sortColumn === "rankAc" ? direction : (null as any)}
+            onClick={() => sortHandler("rankAc")}
+          >
+            Auto Complete Rank
+          </Table.HeaderCell>
+          {!isTask && (
+            <Table.HeaderCell
+              sorted={sortColumn === "probability" ? direction : (null as any)}
+              onClick={() => sortHandler("probability")}
+            >
+              Probability
+            </Table.HeaderCell>
+          )}
+          <Table.HeaderCell colSpan={isTask ? 1 : 2}></Table.HeaderCell>
         </Table.Row>
       </Table.Header>
       <Table.Body>{predictions.map(predRowRender)}</Table.Body>

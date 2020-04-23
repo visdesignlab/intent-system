@@ -83,12 +83,14 @@ class Range:
                 data_ids=[],
                 suggestion=None,
                 rank=(1 / (model.get_depth() * model.get_depth()))-0.0001,
+                rank_ac = 0.01,
                 info={"rules": list(sugg_paths)})
             suggestion = [sugg_pred]
 
         preds = [Prediction(
             intent=self.to_string(),
             rank=1 / (model.get_depth() * model.get_depth()),
+            rank_ac=0.01,
             data_ids=[],
             info={"rules": list(paths)},
             suggestion=suggestion),

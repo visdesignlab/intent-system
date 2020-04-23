@@ -51,7 +51,7 @@ const RawPlot: FC<Props> = ({
   width,
   xScale,
   yScale,
-  selections
+  selections,
 }: Props) => {
   const actions = useContext(ActionContext);
   const [mouseDown, setMouseDown] = useState(false);
@@ -60,9 +60,9 @@ const RawPlot: FC<Props> = ({
     multiBrushBehaviour,
     predictionSet,
     selectedPrediction,
-    brushType
+    brushType,
   } = store!;
-  const plot: Plot = plots.find(d => d.id === plotId) as any;
+  const plot: Plot = plots.find((d) => d.id === plotId) as any;
   let { selectedPoints, brushes } = plot;
 
   //Doing this to account for empty list from firebase
@@ -84,9 +84,9 @@ const RawPlot: FC<Props> = ({
 
   const rawData = useContext(DataContext);
 
-  const scaledData = data.map(d => ({
+  const scaledData = data.map((d) => ({
     x: xScale(d.x),
-    y: yScale(d.y)
+    y: yScale(d.y),
   }));
 
   const scaledDataString = JSON.stringify(scaledData);
@@ -117,8 +117,8 @@ const RawPlot: FC<Props> = ({
 
   const quad = useMemo(() => {
     return quadtree<{ x: number; y: number; category?: string }>()
-      .x(d => d.x)
-      .y(d => d.y)
+      .x((d) => d.x)
+      .y((d) => d.y)
       .addAll(JSON.parse(scaledDataString));
   }, [scaledDataString]);
 
@@ -218,14 +218,13 @@ const RawPlot: FC<Props> = ({
     clickSelectedPoints.push(...plt.selectedPoints);
 
     //Accounting for empty list from firebase
-    if(!plt.brushes)
-    {
+    if (!plt.brushes) {
       plt.brushes = {};
     }
 
     const allBrushes = Object.values(plt.brushes);
-    const brushedPoints = allBrushes.map(d => d.points);
-    brushSelectedPoints.push(...brushedPoints.flatMap(d => d));
+    const brushedPoints = allBrushes.map((d) => d.points);
+    brushSelectedPoints.push(...brushedPoints.flatMap((d) => d));
     brushCount += allBrushes.length;
   }
 
@@ -246,14 +245,13 @@ const RawPlot: FC<Props> = ({
 
   let { predictions } = predictionSet;
 
-  if(predictions===undefined)
-  {
+  if (predictions === undefined) {
     predictions = [];
   }
   const topThreeMemoized = predictions
-    .map(p => extendPrediction(p, selections.values, columnMap))
+    .map((p) => extendPrediction(p, selections.values, columnMap))
     .filter(
-      d =>
+      (d) =>
         d.type !== "Range" &&
         d.type !== "Simplified Range" &&
         d.type !== "Category"
@@ -265,7 +263,7 @@ const RawPlot: FC<Props> = ({
     setTopThree(topThreeMemoized);
   }
 
-  const selectedPred = predictions.find(p => p.intent === selectedPrediction);
+  const selectedPred = predictions.find((p) => p.intent === selectedPrediction);
 
   function drawMark(
     data: { x: number; y: number; category?: string },
@@ -340,7 +338,7 @@ const RawPlot: FC<Props> = ({
         />
       </g>
     ) : (
-      <g key={idx} pointerEvents="none">
+      <g key={idx} pointerEvents={taskConfig ? "none" : "default"}>
         <Mark
           id={`mark-${idx}`}
           extraClass={markClass}
@@ -356,7 +354,7 @@ const RawPlot: FC<Props> = ({
 
     const columns = [
       ...currColumn,
-      ...rawData.columns.filter(a => !currColumn.includes(a))
+      ...rawData.columns.filter((a) => !currColumn.includes(a)),
     ];
 
     const popupContent = (
@@ -370,7 +368,7 @@ const RawPlot: FC<Props> = ({
             </Table.Row>
           </Table.Header>
           <Table.Body>
-            {columns.map(col => {
+            {columns.map((col) => {
               return (
                 rawData.columnMap[col] && (
                   <Table.Row key={col}>
@@ -488,7 +486,7 @@ const RawPlot: FC<Props> = ({
   const onBrushEnd = useCallback(
     (mousePos?: MousePosition) => {
       if (freeFromRef.current.length === 0) return;
-      actions.addPointSelection(plot, freeFromRef.current);
+      actions.addPointSelection(plot, freeFromRef.current, true);
       freeFromRef.current = [...emptyFreeform];
       if (mousePos) {
         setMousePos(mousePos);
@@ -552,7 +550,7 @@ const RawPlot: FC<Props> = ({
             <Label.Group>
               {topThree.map((pred, pred_idx) => {
                 const idx = (pred.dataIds || [])
-                  .map(d => `#mark-${d}`)
+                  .map((d) => `#mark-${d}`)
                   .join(",");
 
                 return (
@@ -561,9 +559,9 @@ const RawPlot: FC<Props> = ({
                     configs={[
                       {
                         selector: ".base-mark",
-                        classToApply: FADE_OUT
+                        classToApply: FADE_OUT,
                       },
-                      { selector: idx, classToApply: FADE_COMP_IN }
+                      { selector: idx, classToApply: FADE_COMP_IN },
                     ]}
                     key={pred.intent}
                     onClick={() => {
@@ -577,7 +575,7 @@ const RawPlot: FC<Props> = ({
                       hide$.next(null);
                     }}
                   >
-                    Pattern {pred_idx + 1}
+                    {task ? `Pattern ${pred_idx + 1}` : pred.type}
                   </SelectionLabel>
                 );
               })}
