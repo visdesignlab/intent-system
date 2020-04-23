@@ -177,9 +177,29 @@ const ProvenanceVisualization: FC<Props> = ({ store }: Props) => {
 
   const popupNode = (node: any) => {
     // let annotation = "";
-    // if (extra.length > 0) {
-    //   annotation = extra[extra.length - 1].e.annotation;
-    // }
+    if (node.artifacts.extra.length > 0) {
+
+    let styles4 = {
+      fontWeight: "bold",
+      marginBottom:0,
+      marginTop:0,
+      padding:0
+    } as React.CSSProperties;
+
+    let styles5 = {
+      fontWeight: "normal",
+      marginBottom:0,
+      marginTop:0,
+      padding:0
+    } as React.CSSProperties;
+
+      return (
+        <div>
+          <h4 style={styles4}>{node.label}</h4>
+          <h5 style={styles5}>{node.artifacts.extra[node.artifacts.extra.length - 1].e.annotation}</h5>
+        </div>
+      );
+    }
 
     return (
       <h4>{node.label}</h4>
@@ -188,7 +208,7 @@ const ProvenanceVisualization: FC<Props> = ({ store }: Props) => {
 
 
   const lockedNodes = Object.values(graph.nodes)
-    .filter(d => d.label.includes("Lock"))
+    .filter(d => d.metadata.type === "Lock Prediction")
     .map(d => d.id);
 
   const map: BundleMap = {};
@@ -221,25 +241,25 @@ const ProvenanceVisualization: FC<Props> = ({ store }: Props) => {
     overflowY: 'auto',
   } as React.CSSProperties;
 
+  console.log(map);
+
   return (
     <div style={divStyle} ref={ref} className={provStyle}>
       {dimensions.width && dimensions.height && (
         <ProvVis
           graph={graph}
-          iconOnly={true}
+          iconOnly={false}
           root={fauxRoot ? fauxRoot.id : graph.root}
           current={graph.current}
           nodeMap={graph.nodes}
           width={width}
           gutter={20}
           backboneGutter={25}
-          sideOffset={width/4}
+          sideOffset={200}
           height={height * 0.9}
           verticalSpace={45}
           textSize={12}
           changeCurrent={(id: NodeID) => actions.goToNode(id)}
-          annotationHeight={50}
-          annotationContent={annotationNode}
           popupContent={popupNode}
           bundleMap={map}
           eventConfig={eventConfig}

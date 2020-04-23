@@ -90,7 +90,15 @@ function BackboneNode<T, S extends string, A>({
     }
   }
 
-  let label = "";
+  let label:string = "";
+  let annotate:string = "";
+
+  if (node.artifacts.extra.length > 0) {
+    annotate = ((node.artifacts.extra[node.artifacts.extra.length - 1].e) as any).annotation;
+  }
+
+
+
 
   if (bundleMap && Object.keys(bundleMap).includes(node.id) && clusterLabels) {
     label = bundleMap[node.id].bundleLabel;
@@ -105,6 +113,12 @@ function BackboneNode<T, S extends string, A>({
   if (!nodeMap[node.id]) {
     return null;
   }
+
+  if(annotate.length > 23)
+    annotate = annotate.substr(0, 23) + "..";
+
+  if(label.length > 23)
+    label = label.substr(0, 23) + "..";
 
   return (
     <Animate
@@ -127,14 +141,23 @@ function BackboneNode<T, S extends string, A>({
             transform={translate(padding, 0)}
           >
             {!iconOnly ?
-              (<Label
-              label={label}
+              [<text
+                y={-7}
               dominantBaseline="middle"
               textAnchor="start"
               fontSize={textSize}
-              fontWeight={current ? "bold" : "regular"}
+              fontWeight={"bold"}
               onClick={() => labelClicked(node)}
-            />) :
+            >{label}</text>,
+
+            <text
+            y={7}
+            dominantBaseline="middle"
+            textAnchor="start"
+            fontSize={textSize}
+            fontWeight={"regular"}
+            onClick={() => labelClicked(node)}
+          >{annotate}</text>] :
             (<g></g>)
 
             }

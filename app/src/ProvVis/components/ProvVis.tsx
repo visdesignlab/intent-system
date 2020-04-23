@@ -222,6 +222,8 @@ function ProvVis<T, S extends string, A>({
     );
   }
 
+  console.log(bundleMap);
+
   let maxHeight = (stratifiedList[0].height * verticalSpace)
   return (
     <div className={container} id="prov-vis">
