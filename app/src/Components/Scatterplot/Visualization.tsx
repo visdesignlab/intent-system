@@ -31,7 +31,7 @@ const Visualization: FC<Props> = ({ store }: Props) => {
 
   if (showCategories && data.categoricalColumns.includes(categoryColumn)) {
     _.chain(data.values)
-      .map(d => d[categoryColumn])
+      .map((d) => d[categoryColumn])
       .uniq()
       .value()
       .forEach((val, idx) => {
@@ -49,7 +49,7 @@ const Visualization: FC<Props> = ({ store }: Props) => {
       if (current) {
         setDims({
           height: current.clientHeight,
-          width: current.clientWidth
+          width: current.clientWidth,
         });
       }
     }
@@ -83,8 +83,14 @@ const visStyle = style({
   gridTemplateAreas: `
     "legend"
     "plot"
-    `
+    `,
 });
 
 const legendStyle = style({ gridArea: "legend" });
-const plotStyle = style({ gridArea: "plot", overflow: "auto" });
+const plotStyle = style({
+  gridArea: "plot",
+  overflow: "auto",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+});

@@ -508,6 +508,7 @@ const RawPlot: FC<Props> = ({
 
   const freeFormBrushComponent = (
     <FreeFormBrush
+      key={plot.id}
       extents={extents}
       extentPadding={10}
       onBrushStart={onBrushStart}

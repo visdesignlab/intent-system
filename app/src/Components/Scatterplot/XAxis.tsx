@@ -1,9 +1,10 @@
-import React, {FC, useEffect, useRef} from 'react';
+import { axisBottom, ScaleLinear, select } from 'd3';
+import { inject, observer } from 'mobx-react';
+import React, { FC, useEffect, useRef } from 'react';
+
 import IntentStore from '../../Store/IntentStore';
-import {inject, observer} from 'mobx-react';
-import {ScaleLinear, select, axisBottom} from 'd3';
+import { ColumnDef } from '../../Utils/Dataset';
 import translate from '../../Utils/Translate';
-import {ColumnDef} from '../../Utils/Dataset';
 
 interface Props {
   store?: IntentStore;
@@ -12,7 +13,7 @@ interface Props {
   dimension: ColumnDef;
 }
 
-const XAxis: FC<Props> = ({store, width, scale, dimension}: Props) => {
+const XAxis: FC<Props> = ({ store, width, scale, dimension }: Props) => {
   const axisRef = useRef<SVGGElement>(null);
 
   useEffect(() => {
@@ -32,12 +33,13 @@ const XAxis: FC<Props> = ({store, width, scale, dimension}: Props) => {
       <>
         <g ref={axisRef} />
         <text
-          transform={translate(width / 2, 40)}
-          fontSize="1.2em"
+          transform={translate(width / 2, 35)}
+          fontSize="1.1em"
           textAnchor="middle"
-          dominantBaseline="middle">
+          dominantBaseline="middle"
+        >
           <tspan>{`${dimension.short} | `}</tspan>
-          <tspan style={{fontWeight: 'bold'}}>{` ${dimension.text} `}</tspan>
+          <tspan style={{ fontWeight: "bold" }}>{` ${dimension.text} `}</tspan>
           {dimension.unit.length > 0 && <tspan>{`(${dimension.unit})`}</tspan>}
         </text>
       </>
@@ -45,4 +47,4 @@ const XAxis: FC<Props> = ({store, width, scale, dimension}: Props) => {
   );
 };
 
-export default inject('store')(observer(XAxis));
+export default inject("store")(observer(XAxis));

@@ -54,6 +54,7 @@ const App: FC<Props> = (_: Props) => {
     if (selectedDataset.key.length > 0) {
       axios.get(`/dataset/${selectedDataset.key}`).then((d) => {
         const data = loadData(d.data);
+        setData(data);
         if (data.numericColumns.length >= 2) {
           actions.addPlot({
             id: getPlotId(),
@@ -62,8 +63,14 @@ const App: FC<Props> = (_: Props) => {
             selectedPoints: [],
             brushes: {},
           });
+          actions.addPlot({
+            id: getPlotId(),
+            x: data.numericColumns[1],
+            y: data.numericColumns[2],
+            selectedPoints: [],
+            brushes: {},
+          });
         }
-        setData(data);
       });
     }
   }, [selectedDataset, actions]);
