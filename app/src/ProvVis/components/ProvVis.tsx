@@ -1,39 +1,31 @@
-import React, { useState, useEffect, ReactChild } from "react";
-import "semantic-ui-css/semantic.min.css";
-import {
-  ProvenanceGraph,
-  NodeID,
-  Nodes,
-  ProvenanceNode,
-  isStateNode,
-  StateNode
-} from "@visdesignlab/provenance-lib-core";
-import { stratify, HierarchyNode } from "d3";
-import { treeLayout } from "../Utils/TreeLayout";
-import findBundleParent from "../Utils/findBundleParent";
+import 'semantic-ui-css/semantic.min.css';
 
-import translate from "../Utils/translate";
-import { NodeGroup } from "react-move";
-import BackboneNode from "./BackboneNode";
-import Link from "./Link";
-import { treeColor } from "./Styles";
-import nodeTransitions from "./NodeTransitions";
-import linkTransitions from "./LinkTransitions";
-import bundleTransitions from "./BundleTransitions";
+import { isStateNode, NodeID, Nodes, ProvenanceGraph, ProvenanceNode, StateNode } from '@visdesignlab/provenance-lib-core';
+import { HierarchyNode, stratify } from 'd3';
+import React, { ReactChild, useEffect, useState } from 'react';
+import { NodeGroup } from 'react-move';
+import { Popup } from 'semantic-ui-react';
+import { style } from 'typestyle';
 
-import { style } from "typestyle";
-import { EventConfig } from "../Utils/EventConfig";
-import { BundleMap } from "../Utils/BundleMap";
-import { Popup } from "semantic-ui-react";
+import { BundleMap } from '../Utils/BundleMap';
+import { EventConfig } from '../Utils/EventConfig';
+import findBundleParent from '../Utils/findBundleParent';
+import translate from '../Utils/translate';
+import { treeLayout } from '../Utils/TreeLayout';
+import BackboneNode from './BackboneNode';
+import bundleTransitions from './BundleTransitions';
+import Link from './Link';
+import linkTransitions from './LinkTransitions';
+import nodeTransitions from './NodeTransitions';
+import { treeColor } from './Styles';
 
 interface ProvVisProps<T, S extends string, A> {
   graph: ProvenanceGraph<T, S, A>;
   root: NodeID;
   sideOffset?: number;
-  iconOnly?:boolean;
+  iconOnly?: boolean;
   current: NodeID;
   nodeMap: Nodes<T, S, A>;
-  changeCurrent?: (id: NodeID) => void;
   backboneGutter?: number;
   gutter?: number;
   verticalSpace?: number;
@@ -52,6 +44,7 @@ interface ProvVisProps<T, S extends string, A> {
   clusterLabels?: boolean;
   bundleMap?: BundleMap;
   eventConfig?: EventConfig<S>;
+  changeCurrent?: (id: NodeID) => void;
   popupContent?: (nodeId: StateNode<T, S, A>) => ReactChild;
   annotationContent?: (nodeId: StateNode<T, S, A>) => ReactChild;
 }
@@ -68,7 +61,7 @@ function ProvVis<T, S extends string, A>({
   root,
   current,
   changeCurrent,
-  iconOnly=false,
+  iconOnly = false,
   gutter = 15,
   backboneGutter = 20,
   verticalSpace = 50,
@@ -87,7 +80,7 @@ function ProvVis<T, S extends string, A>({
   bundleMap,
   eventConfig,
   popupContent,
-  annotationContent
+  annotationContent,
 }: ProvVisProps<T, S, A>) {
   const [first, setFirst] = useState(true);
   const [annotationOpen, setAnnotationOpen] = useState(-1);
@@ -98,7 +91,7 @@ function ProvVis<T, S extends string, A>({
   }, []);
 
   let nodeList = Object.values(nodeMap).filter(
-    d => d.metadata.createdOn! >= nodeMap[root].metadata.createdOn!
+    (d) => d.metadata.createdOn! >= nodeMap[root].metadata.createdOn!
   );
 
   let copyList = Array.from(nodeList);
@@ -116,8 +109,8 @@ function ProvVis<T, S extends string, A>({
   }
 
   const strat = stratify<ProvenanceNode<T, S, A>>()
-    .id(d => d.id)
-    .parentId(d => {
+    .id((d) => d.id)
+    .parentId((d) => {
       if (d.id === root) return null;
       if (isStateNode(d)) {
         if (
@@ -128,11 +121,14 @@ function ProvVis<T, S extends string, A>({
           let curr = d;
 
           while (true) {
-            if (!bundledNodes.includes(curr.parent) || Object.keys(bundleMap).includes(curr.parent)) {
+            if (
+              !bundledNodes.includes(curr.parent) ||
+              Object.keys(bundleMap).includes(curr.parent)
+            ) {
               return curr.parent;
             }
 
-            let temp = copyList.filter(d => {
+            let temp = copyList.filter((d) => {
               return d.id === curr.parent;
             })[0];
 
@@ -158,7 +154,6 @@ function ProvVis<T, S extends string, A>({
       }
     });
 
-
   for (let i = 0; i < nodeList.length; i++) {
     if (
       bundledNodes.includes(nodeList[i].id) &&
@@ -177,21 +172,18 @@ function ProvVis<T, S extends string, A>({
   const stratifiedList: StratifiedList<T, S, A> = stratifiedTree.descendants();
   const stratifiedMap: StratifiedMap<T, S, A> = {};
 
-  stratifiedList.forEach(c => (stratifiedMap[c.id!] = c));
+  stratifiedList.forEach((c) => (stratifiedMap[c.id!] = c));
   treeLayout(stratifiedMap, current, root);
 
   let maxHeight = 0;
   let maxWidth = 0;
 
-  for (let j in stratifiedList)
-  {
-    if(stratifiedList[j].depth > maxHeight)
-    {
+  for (let j in stratifiedList) {
+    if (stratifiedList[j].depth > maxHeight) {
       maxHeight = stratifiedList[j].depth;
     }
 
-    if((stratifiedList[j] as any).width > maxWidth)
-    {
+    if ((stratifiedList[j] as any).width > maxWidth) {
       maxWidth = (stratifiedList[j] as any).width;
     }
   }
@@ -240,28 +232,22 @@ function ProvVis<T, S extends string, A>({
 
   let shiftLeft = 0;
 
-  if(maxWidth == 0)
-  {
+  if (maxWidth == 0) {
     shiftLeft = 30;
-  }
-  else if (maxWidth == 1)
-  {
+  } else if (maxWidth == 1) {
     shiftLeft = 52;
-  }
-  else if (maxWidth > 1)
-  {
+  } else if (maxWidth > 1) {
     shiftLeft = 74;
   }
 
   return (
     <div className={container} id="prov-vis">
-      <svg height={(maxHeight < height) ? height : maxHeight} width={width}>
-        <rect height={height} width={width} fill="none" stroke="black" />
+      <svg height={maxHeight < height ? height : maxHeight} width={width}>
+        <rect height={height} width={width} fill="none" stroke="none" />
         <g id={"globalG"} transform={translate(shiftLeft, topOffset)}>
-
           <NodeGroup
             data={links}
-            keyAccessor={link => `${link.source.id}${link.target.id}`}
+            keyAccessor={(link) => `${link.source.id}${link.target.id}`}
             {...linkTransitions(
               xOffset,
               yOffset,
@@ -275,9 +261,9 @@ function ProvVis<T, S extends string, A>({
               bundleMap
             )}
           >
-            {linkArr => (
+            {(linkArr) => (
               <>
-                {linkArr.map(link => {
+                {linkArr.map((link) => {
                   const { key, state } = link;
 
                   return (
@@ -295,7 +281,7 @@ function ProvVis<T, S extends string, A>({
           </NodeGroup>
           <NodeGroup
             data={stratifiedList}
-            keyAccessor={d => d.id}
+            keyAccessor={(d) => d.id}
             {...nodeTransitions(
               xOffset,
               yOffset,
@@ -309,10 +295,10 @@ function ProvVis<T, S extends string, A>({
               bundleMap
             )}
           >
-            {nodes => {
+            {(nodes) => {
               return (
                 <>
-                  {nodes.map(node => {
+                  {nodes.map((node) => {
                     const { data: d, key, state } = node;
                     const popupTrigger = (
                       <g
@@ -385,7 +371,7 @@ function ProvVis<T, S extends string, A>({
           </NodeGroup>
           <NodeGroup
             data={keys}
-            keyAccessor={key => `${key}`}
+            keyAccessor={(key) => `${key}`}
             {...bundleTransitions(
               xOffset,
               verticalSpace,
@@ -400,9 +386,9 @@ function ProvVis<T, S extends string, A>({
               bundleMap
             )}
           >
-            {bundle => (
+            {(bundle) => (
               <>
-                {bundle.map(b => {
+                {bundle.map((b) => {
                   const { key, state } = b;
                   if (
                     bundleMap === undefined ||
@@ -421,7 +407,7 @@ function ProvVis<T, S extends string, A>({
                       )}
                     >
                       <rect
-                        style={{opacity:state.opacity}}
+                        style={{ opacity: state.opacity }}
                         width={iconOnly ? 42 : sideOffset - 15}
                         height={state.height}
                         rx="10"
@@ -448,5 +434,5 @@ const container = style({
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  overflow: "auto"
+  overflow: "auto",
 });

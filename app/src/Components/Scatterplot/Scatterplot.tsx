@@ -121,7 +121,7 @@ export default memo(inject("store")(observer(Scatterplot)));
 
 const surroundDiv = style({
   // padding: "0.5em",
-  // position: "relative",
+  position: "relative",
   // height: "100%",
   // width: "100%"
 });
