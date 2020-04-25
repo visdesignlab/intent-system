@@ -25,7 +25,7 @@ const Scatterplot: FC<Props> = ({
   height,
   plot,
   store,
-  selections
+  selections,
 }: Props) => {
   const svgRef = useRef<SVGSVGElement>(null);
   const data = useContext(DataContext);
@@ -60,21 +60,21 @@ const Scatterplot: FC<Props> = ({
   const xyData = useMemo(() => {
     const data: Data = JSON.parse(dataString);
 
-    return data.values.map(d => ({
+    return data.values.map((d) => ({
       x: d[x],
       y: d[y],
-      category: categoryColumn ? d[categoryColumn] : null
+      category: categoryColumn ? d[categoryColumn] : null,
     }));
   }, [dataString, categoryColumn, x, y]);
 
   const [xMin, xMax] = [
-    Math.min(...xyData.map(d => d.x)),
-    Math.max(...xyData.map(d => d.x))
+    Math.min(...xyData.map((d) => d.x)),
+    Math.max(...xyData.map((d) => d.x)),
   ];
 
   const [yMin, yMax] = [
-    Math.min(...xyData.map(d => d.y)),
-    Math.max(...xyData.map(d => d.y))
+    Math.min(...xyData.map((d) => d.y)),
+    Math.max(...xyData.map((d) => d.y)),
   ];
 
   const xScale = useMemo(() => {
@@ -94,7 +94,7 @@ const Scatterplot: FC<Props> = ({
   return (
     <div className={surroundDiv}>
       <ScatterplotControls plotID={plot.id} />
-      <svg className={svgStyle} ref={svgRef}>
+      <svg width={width} height={height} className={svgStyle} ref={svgRef}>
         <rect
           id="background"
           height={dim.height}
@@ -120,13 +120,13 @@ const Scatterplot: FC<Props> = ({
 export default memo(inject("store")(observer(Scatterplot)));
 
 const surroundDiv = style({
-  padding: "0.5em",
-  position: "relative",
-  height: "100%",
-  width: "100%"
+  // padding: "0.5em",
+  // position: "relative",
+  // height: "100%",
+  // width: "100%"
 });
 
 const svgStyle = style({
   height: "100%",
-  width: "100%"
+  width: "100%",
 });
