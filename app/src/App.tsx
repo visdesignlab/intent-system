@@ -63,13 +63,13 @@ const App: FC<Props> = (_: Props) => {
             selectedPoints: [],
             brushes: {},
           });
-          actions.addPlot({
-            id: getPlotId(),
-            x: data.numericColumns[1],
-            y: data.numericColumns[2],
-            selectedPoints: [],
-            brushes: {},
-          });
+          // actions.addPlot({
+          //   id: getPlotId(),
+          //   x: data.numericColumns[1],
+          //   y: data.numericColumns[2],
+          //   selectedPoints: [],
+          //   brushes: {},
+          // });
         }
       });
     }
