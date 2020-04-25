@@ -45,12 +45,8 @@ const PlotsGrid: FC<Props> = ({ store, height, width }: Props) => {
 
   const columnCount = plotCount >= breakCount ? breakCount : plotCount;
 
-  console.log({ plotCount, breakCount, rowCount, columnCount });
-
   const dividedHeight = height / rowCount;
   const dividedWidth = width / columnCount;
-
-  console.log({ dividedHeight, dividedWidth });
 
   let dimension = dividedWidth < dividedHeight ? dividedWidth : dividedHeight;
   dimension -= 10;
