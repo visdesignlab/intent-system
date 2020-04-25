@@ -1,9 +1,10 @@
-import React, {FC, useEffect, useRef} from 'react';
+import { axisLeft, ScaleLinear, select } from 'd3';
+import { inject, observer } from 'mobx-react';
+import React, { FC, useEffect, useRef } from 'react';
+
 import IntentStore from '../../Store/IntentStore';
-import {inject, observer} from 'mobx-react';
-import {ScaleLinear, select, axisLeft} from 'd3';
+import { ColumnDef } from '../../Utils/Dataset';
 import translate from '../../Utils/Translate';
-import {ColumnDef} from '../../Utils/Dataset';
 
 interface Props {
   store?: IntentStore;
@@ -12,7 +13,7 @@ interface Props {
   dimension: ColumnDef;
 }
 
-const YAxis: FC<Props> = ({height, scale, dimension}: Props) => {
+const YAxis: FC<Props> = ({ height, scale, dimension }: Props) => {
   const axisRef = useRef<SVGGElement>(null);
 
   useEffect(() => {
@@ -36,9 +37,10 @@ const YAxis: FC<Props> = ({height, scale, dimension}: Props) => {
           textAnchor="middle"
           dominantBaseline="middle"
           transform={`${translate(-35, height / 2)}rotate(270)`}
-          fontSize="1.2em">
+          fontSize="1.2em"
+        >
           <tspan>{`${dimension.short} | `}</tspan>
-          <tspan style={{fontWeight: 'bold'}}>{` ${dimension.text} `}</tspan>
+          <tspan style={{ fontWeight: "bold" }}>{` ${dimension.text} `}</tspan>
           {dimension.unit.length > 0 && <tspan>{`(${dimension.unit})`}</tspan>}
         </text>
       </>
@@ -46,4 +48,4 @@ const YAxis: FC<Props> = ({height, scale, dimension}: Props) => {
   );
 };
 
-export default inject('store')(observer(YAxis));
+export default inject("store")(observer(YAxis));
