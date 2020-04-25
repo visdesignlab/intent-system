@@ -391,13 +391,14 @@ function ProvVis<T, S extends string, A>({
                       )}
                     >
                       <rect
+                        style={{opacity:state.opacity}}
                         width={iconOnly ? 42 : sideOffset - 15}
                         height={state.height}
                         rx="10"
                         ry="10"
                         fill="none"
                         strokeWidth="2px"
-                        stroke="#39CCCC"
+                        stroke="rgb(248, 191, 132)"
                       ></rect>
                     </g>
                   );

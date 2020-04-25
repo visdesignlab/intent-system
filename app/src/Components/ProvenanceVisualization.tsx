@@ -65,99 +65,99 @@ const ProvenanceVisualization: FC<Props> = ({ store }: Props) => {
   const eventConfig: EventConfig<IntentEvents> = {
     'Load Dataset': {
       backboneGlyph: <LoadDataset size={22}/>,
-      currentGlyph: <LoadDataset size={22}fill={"cornflowerblue"}/>,
+      currentGlyph: <LoadDataset size={22}fill={"#2185d0"}/>,
       regularGlyph: <LoadDataset size={16}/>,
-      bundleGlyph:  <LoadDataset size={22}fill={"cornflowerblue"}/>
+      bundleGlyph:  <LoadDataset size={22}fill={"#2185d0"}/>
     },
     'MultiBrush': {
       backboneGlyph: <MultiBrush size={22}/>,
-      currentGlyph: <MultiBrush size={22}fill={"cornflowerblue"}/>,
+      currentGlyph: <MultiBrush size={22}fill={"#2185d0"}/>,
       regularGlyph: <MultiBrush size={16}/>,
-      bundleGlyph: <MultiBrush size={22}fill={"cornflowerblue"}/>
+      bundleGlyph: <MultiBrush size={22}fill={"#2185d0"}/>
     },
     'Switch Category Visibility': {
       backboneGlyph: <SwitchCategoryVisibility size={22}/>,
-      currentGlyph: <SwitchCategoryVisibility size={22}fill={"cornflowerblue"}/>,
+      currentGlyph: <SwitchCategoryVisibility size={22}fill={"#2185d0"}/>,
       regularGlyph: <SwitchCategoryVisibility size={16}/>,
-      bundleGlyph: <SwitchCategoryVisibility size={22}fill={"cornflowerblue"}/>
+      bundleGlyph: <SwitchCategoryVisibility size={22}fill={"#2185d0"}/>
     },
     'Change Category': {
       backboneGlyph: <ChangeCategory size={22}/>,
-      currentGlyph: <ChangeCategory size={22}fill={"cornflowerblue"}/>,
+      currentGlyph: <ChangeCategory size={22}fill={"#2185d0"}/>,
       regularGlyph: <ChangeCategory size={16}/>,
-      bundleGlyph: <ChangeCategory size={22}fill={"cornflowerblue"}/>
+      bundleGlyph: <ChangeCategory size={22}fill={"#2185d0"}/>
     },
     'Add Plot': {
       backboneGlyph: <AddPlot size={22}/>,
-      currentGlyph: <AddPlot size={22}fill={"cornflowerblue"}/>,
+      currentGlyph: <AddPlot size={22}fill={"#2185d0"}/>,
       regularGlyph: <AddPlot size={16}/>,
-      bundleGlyph: <AddPlot size={22}fill={"cornflowerblue"}/>
+      bundleGlyph: <AddPlot size={22}fill={"#2185d0"}/>
     },
     'Point Selection': {
       backboneGlyph: <PointSelection size={22}/>,
-      currentGlyph: <PointSelection size={22}fill={"cornflowerblue"}/>,
+      currentGlyph: <PointSelection size={22}fill={"#2185d0"}/>,
       regularGlyph: <PointSelection size={16}/>,
-      bundleGlyph: <PointSelection size={22}fill={"cornflowerblue"}/>
+      bundleGlyph: <PointSelection size={22}fill={"#2185d0"}/>
     },
     'Point Deselection': {
       backboneGlyph: <PointDeselection size={22}/>,
-      currentGlyph: <PointDeselection size={22}fill={"cornflowerblue"}/>,
+      currentGlyph: <PointDeselection size={22}fill={"#2185d0"}/>,
       regularGlyph: <PointDeselection size={16}/>,
-      bundleGlyph: <PointDeselection size={22}fill={"cornflowerblue"}/>
+      bundleGlyph: <PointDeselection size={22}fill={"#2185d0"}/>
     },
     'Add Brush': {
       backboneGlyph: <AddBrush size={22}/>,
-      currentGlyph: <AddBrush size={22}fill={"cornflowerblue"}/>,
+      currentGlyph: <AddBrush size={22}fill={"#2185d0"}/>,
       regularGlyph: <AddBrush size={16}/>,
-      bundleGlyph: <AddBrush size={22}fill={"cornflowerblue"}/>
+      bundleGlyph: <AddBrush size={22}fill={"#2185d0"}/>
     },
     'Lock Prediction': {
       backboneGlyph: <LockPrediction size={22}/>,
-      currentGlyph: <LockPrediction size={22}fill={"cornflowerblue"}/>,
+      currentGlyph: <LockPrediction size={22}fill={"#2185d0"}/>,
       regularGlyph: <LockPrediction size={16}/>,
-      bundleGlyph: <LockPrediction size={22}fill={"#39CCCC"}/>
+      bundleGlyph: <LockPrediction size={22}fill={"rgb(248, 191, 132)"}/>
     },
     'Turn Prediction': {
       backboneGlyph: <TurnPrediction size={22}/>,
-      currentGlyph: <TurnPrediction size={22}fill={"cornflowerblue"}/>,
+      currentGlyph: <TurnPrediction size={22}fill={"#2185d0"}/>,
       regularGlyph: <TurnPrediction size={16}/>,
-      bundleGlyph: <TurnPrediction size={22}fill={"cornflowerblue"}/>
+      bundleGlyph: <TurnPrediction size={22}fill={"#2185d0"}/>
     },
     'Invert': {
       backboneGlyph: <Invert size={22}/>,
-      currentGlyph: <Invert size={22}fill={"cornflowerblue"}/>,
+      currentGlyph: <Invert size={22}fill={"#2185d0"}/>,
       regularGlyph: <Invert size={16}/>,
-      bundleGlyph: <Invert size={22}fill={"cornflowerblue"}/>
+      bundleGlyph: <Invert size={22}fill={"#2185d0"}/>
     },
     'Change Brush': {
       backboneGlyph: <ChangeBrush size={22}/>,
-      currentGlyph: <ChangeBrush size={22}fill={"cornflowerblue"}/>,
+      currentGlyph: <ChangeBrush size={22}fill={"#2185d0"}/>,
       regularGlyph: <ChangeBrush size={16}/>,
-      bundleGlyph: <ChangeBrush size={22}fill={"cornflowerblue"}/>
+      bundleGlyph: <ChangeBrush size={22}fill={"#2185d0"}/>
     },
     'Remove Brush': {
       backboneGlyph: <RemoveBrush size={22}/>,
-      currentGlyph: <RemoveBrush size={22}fill={"cornflowerblue"}/>,
+      currentGlyph: <RemoveBrush size={22}fill={"#2185d0"}/>,
       regularGlyph: <RemoveBrush size={16}/>,
-      bundleGlyph: <RemoveBrush size={22}fill={"cornflowerblue"}/>
+      bundleGlyph: <RemoveBrush size={22}fill={"#2185d0"}/>
     },
     'Clear All': {
       backboneGlyph: <ClearAll size={22}/>,
-      currentGlyph: <ClearAll size={22}fill={"cornflowerblue"}/>,
+      currentGlyph: <ClearAll size={22}fill={"#2185d0"}/>,
       regularGlyph: <ClearAll size={16}/>,
-      bundleGlyph: <ClearAll size={22}fill={"#39CCCC"}/>
+      bundleGlyph: <ClearAll size={22}fill={"#ccc"}/>
     },
     'Change Brush Type': {
       backboneGlyph: <ChangeBrushType size={22}/>,
-      currentGlyph: <ChangeBrushType size={22}fill={"cornflowerblue"}/>,
+      currentGlyph: <ChangeBrushType size={22}fill={"#2185d0"}/>,
       regularGlyph: <ChangeBrushType size={16}/>,
-      bundleGlyph: <ChangeBrushType size={22}fill={"cornflowerblue"}/>
+      bundleGlyph: <ChangeBrushType size={22}fill={"#2185d0"}/>
     },
     'Change Brush Size': {
       backboneGlyph: <ChangeBrushSize size={22}/>,
-      currentGlyph: <ChangeBrushSize size={22}fill={"cornflowerblue"}/>,
+      currentGlyph: <ChangeBrushSize size={22}fill={"#2185d0"}/>,
       regularGlyph: <ChangeBrushSize size={16}/>,
-      bundleGlyph: <ChangeBrushSize size={22}fill={"steelgrey"}/>
+      bundleGlyph: <ChangeBrushSize size={22}fill={"#2185d0"}/>
     }
   };
 
@@ -230,7 +230,7 @@ const ProvenanceVisualization: FC<Props> = ({ store }: Props) => {
       const currNode = graph.nodes[testNode];
       if (isStateNode(currNode)) {
         const parent = graph.nodes[currNode.parent];
-        if (parent.metadata.type === "Add Plot" || parent.metadata.type === "Lock Prediction" || parent.children.length > 1)
+        if (parent.metadata.type === "Add Plot" || parent.metadata.type === "Lock Prediction" || parent.metadata.type === "Clear All" || parent.children.length > 1)
         {
           break;
         }

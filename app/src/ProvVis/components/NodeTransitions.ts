@@ -1,5 +1,7 @@
 import { getX } from './LinkTransitions';
 import { BundleMap } from '../Utils/BundleMap';
+import findBundleParent from "../Utils/findBundleParent";
+
 
 export default function nodeTransitions(
   xOffset: number,
@@ -15,8 +17,30 @@ export default function nodeTransitions(
 ) {
   xOffset = -xOffset;
   backboneOffset = -backboneOffset;
-  const start = () => {
-    return { x: 0, y: 0, opacity: 0 };
+  const start = (data: any) => {
+
+    let clusteredNodesInFront = 0;
+
+    const x = getX(data.width, xOffset, backboneOffset);
+
+    let parentId = findBundleParent(data.id, bundleMap)
+
+
+    clusteredNodesInFront =
+      clusteredNodesInFront === 0 ? clusteredNodesInFront : clusteredNodesInFront - 1;
+
+    let y = yOffset * data.depth - (yOffset - clusterOffset) * clusteredNodesInFront;
+
+    if(parentId != '' && bundleMap && !Object.keys(bundleMap).includes(data.id))
+    {
+      y = yOffset * (nodeMap[parentId].depth - bundleMap[parentId].bunchedNodes.length + 2)- (yOffset - clusterOffset) * clusteredNodesInFront;
+    }
+
+    if (annotationOpen !== -1 && data.depth > annotationOpen && data.width === 0) {
+      y += annotationHeight;
+    }
+
+    return { x: x, y: y - yOffset, opacity: 0 };
   };
 
   const enter = (data: any) => {

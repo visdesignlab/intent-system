@@ -60,7 +60,6 @@ function BackboneNode<T, S extends string, A>({
   let glyph = (
     <circle
       style={cursorStyle}
-      onClick={() => nodeClicked(node)}
       className={treeColor(current)}
       r={radius}
       strokeWidth={strokeWidth}
@@ -80,19 +79,19 @@ function BackboneNode<T, S extends string, A>({
       if (bundleMap && Object.keys(bundleMap).includes(node.id)) {
         dropDownAdded = true;
         glyph = (
-          <g style={cursorStyle} onClick={() => nodeClicked(node)} fontWeight={"none"}>
+          <g style={cursorStyle} fontWeight={"none"}>
             {bundleGlyph}
           </g>
         );
-      } else if (current) {
+      } if (current) {
         glyph = (
-          <g style={cursorStyle} onClick={() => nodeClicked(node)} fontWeight={"bold"}>
+          <g style={cursorStyle} fontWeight={"none"}>
             {currentGlyph}
           </g>
         );
-      } else {
+      } else if (!dropDownAdded) {
         glyph = (
-          <g style={cursorStyle} onClick={() => nodeClicked(node)} fontWeight={"none"}>
+          <g style={cursorStyle} fontWeight={"none"}>
             {backboneGlyph}
           </g>
         );
@@ -117,8 +116,6 @@ function BackboneNode<T, S extends string, A>({
   if (!nodeMap[node.id]) {
     return null;
   }
-
-
 
   if(annotate.length > 23)
     annotate = annotate.substr(0, 23) + "..";
@@ -150,11 +147,11 @@ function BackboneNode<T, S extends string, A>({
               (<g>
 
               { dropDownAdded ?
-                (<text style={cursorStyle} onClick={() => nodeClicked(node)} fontSize={10} fill={"#39CCCC"} textAnchor="middle" alignmentBaseline="middle" x={1} y={0} fontFamily="FontAwesome">{(expandedClusterList && expandedClusterList.includes(node.id)) ? "\uf0d8" :"\uf0d7"}</text>)
+                (<text style={cursorStyle} onClick={(e) => nodeClicked(node, e)} fontSize={12} fill={"rgb(248, 191, 132)"} textAnchor="middle" alignmentBaseline="middle" x={1} y={0} fontFamily="FontAwesome">{(expandedClusterList && expandedClusterList.includes(node.id)) ? "\uf0d8" :"\uf0d7"}</text>)
                 : (<g></g>)
               }
               <text
-              y={-7}
+              y={annotate.length == 0 ? 0 : -7}
               x={dropDownAdded ? 10 : 0}
               dominantBaseline="middle"
               textAnchor="start"
@@ -174,7 +171,7 @@ function BackboneNode<T, S extends string, A>({
           >{annotate}</text></g>) :
             (<g>
               { dropDownAdded ?
-                (<text style={cursorStyle} onClick={() => nodeClicked(node)} fontSize={10} fill={"#39CCCC"} textAnchor="middle" alignmentBaseline="middle" x={1} y={0} fontFamily="FontAwesome">{(expandedClusterList && expandedClusterList.includes(node.id)) ? "\uf0d8" :"\uf0d7"}</text>)
+                (<text style={cursorStyle} onClick={(e) => nodeClicked(node, e)} fontSize={12} fill={"rgb(248, 191, 132)"} textAnchor="middle" alignmentBaseline="middle" x={1} y={0} fontFamily="FontAwesome">{(expandedClusterList && expandedClusterList.includes(node.id)) ? "\uf0d8" :"\uf0d7"}</text>)
                 : (<g></g>)
               }
             </g>)
@@ -204,26 +201,25 @@ function BackboneNode<T, S extends string, A>({
     }
   }
 
-  function nodeClicked(node: ProvenanceNode<T, S, A>) {
+  function nodeClicked(node: ProvenanceNode<T, S, A>, event:any) {
     if (bundleMap && Object.keys(bundleMap).includes(node.id)) {
       let exemptCopy: string[] = Array.from(exemptList);
 
-      exemptCopy.includes(node.id)
-        ? exemptCopy.splice(
+      if(exemptCopy.includes(node.id))
+      {
+        exemptCopy.splice(
             exemptCopy.findIndex(d => d === node.id),
             1
           )
-        : exemptCopy.push(node.id);
+      }
+      else{
+        exemptCopy.push(node.id);
+      }
 
       setExemptList(exemptCopy);
     }
 
-    if (
-      annotationOpen !== -1 &&
-      (nodeMap[node.id].width > 0 || nodeMap[node.id].depth !== annotationOpen)
-    ) {
-      setAnnotationOpen(-1);
-    }
+    event.stopPropagation();
   }
 }
 

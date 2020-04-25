@@ -60,7 +60,7 @@ export default function bundleTransitions(
     height = clusterOffset * (bundleMap![data].bunchedNodes.length);
 
     if (!expandedClusterList.includes(data)) {
-      height = 0;
+      height = 10;
     }
 
     if (
@@ -74,7 +74,7 @@ export default function bundleTransitions(
     return {
       x: [x],
       y: [y],
-      opactiy: 1,
+      opacity: !expandedClusterList.includes(data) ? 0 : 1,
       timing: { duration },
       validity: validity,
       height: height
@@ -121,7 +121,7 @@ export default function bundleTransitions(
     height = clusterOffset * (bundleMap![data].bunchedNodes.length);
 
     if (!expandedClusterList.includes(data)) {
-      height = 0;
+      height = 10;
     }
 
     if (
@@ -135,7 +135,7 @@ export default function bundleTransitions(
     return {
       x: [x],
       y: [y],
-      opactiy: 1,
+      opacity: !expandedClusterList.includes(data) ? 0 : 1,
       timing: { duration },
       validity: validity,
       height: [height]
