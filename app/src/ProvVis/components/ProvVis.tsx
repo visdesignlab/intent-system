@@ -180,6 +180,22 @@ function ProvVis<T, S extends string, A>({
   stratifiedList.forEach(c => (stratifiedMap[c.id!] = c));
   treeLayout(stratifiedMap, current, root);
 
+  let maxHeight = 0;
+  let maxWidth = 0;
+
+  for (let j in stratifiedList)
+  {
+    if(stratifiedList[j].depth > maxHeight)
+    {
+      maxHeight = stratifiedList[j].depth;
+    }
+
+    if((stratifiedList[j] as any).width > maxWidth)
+    {
+      maxWidth = (stratifiedList[j] as any).width;
+    }
+  }
+
   const links = stratifiedTree.links();
 
   const xOffset = gutter;
@@ -222,12 +238,26 @@ function ProvVis<T, S extends string, A>({
     );
   }
 
-  let maxHeight = (stratifiedList[0].height * verticalSpace)
+  let shiftLeft = 0;
+
+  if(maxWidth == 0)
+  {
+    shiftLeft = 30;
+  }
+  else if (maxWidth == 1)
+  {
+    shiftLeft = 52;
+  }
+  else if (maxWidth > 1)
+  {
+    shiftLeft = 74;
+  }
+
   return (
     <div className={container} id="prov-vis">
       <svg height={(maxHeight < height) ? height : maxHeight} width={width}>
         <rect height={height} width={width} fill="none" stroke="black" />
-        <g transform={translate(width - sideOffset, topOffset)}>
+        <g id={"globalG"} transform={translate(shiftLeft, topOffset)}>
 
           <NodeGroup
             data={links}
