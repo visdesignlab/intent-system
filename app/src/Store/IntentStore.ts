@@ -3,13 +3,14 @@ import { action, computed, observable } from 'mobx';
 
 import { InteractionHistory, Prediction, PredictionSet } from '../contract';
 import { Dataset } from '../Utils/Dataset';
+import { SortableColumns, SortDirection } from './../Components/Predictions/PredictionTable';
 import { BrushSize, BrushType, defaultState, IntentState, MultiBrushBehaviour } from './IntentState';
 import { Annotation, IntentEvents } from './Provenance';
 
 export const predSet: PredictionSet = {
   dimensions: [],
   selectedIds: [],
-  predictions: []
+  predictions: [],
 };
 
 export default class IntentStore implements IntentState {
@@ -35,6 +36,8 @@ export default class IntentStore implements IntentState {
   @observable brushSize: BrushSize = defaultState.brushSize;
   @observable lockedPrediction: Prediction = defaultState.lockedPrediction;
   @observable turnedPrediction: string | null = defaultState.turnedPrediction;
+  @observable sortColumn: SortableColumns = "similarity";
+  @observable direction: SortDirection = "descending";
 
   // Artifact Properties
   @observable predictionSet = predSet;
@@ -60,15 +63,14 @@ export default class IntentStore implements IntentState {
     console.log(JSON.parse(JSON.stringify(this)));
   }
   @computed get isAnythingSelected() {
-    if(this.plots === undefined)
-    {
-      return false;;
+    if (this.plots === undefined) {
+      return false;
     }
 
     for (let i = 0; i < this.plots.length; ++i) {
       const plot = this.plots[i];
-      if(!plot.selectedPoints) plot.selectedPoints = [];
-      if(!plot.brushes) plot.brushes = {};
+      if (!plot.selectedPoints) plot.selectedPoints = [];
+      if (!plot.brushes) plot.brushes = {};
 
       if (plot.selectedPoints.length > 0) return true;
       if (Object.keys(plot.brushes).length > 0) return true;
