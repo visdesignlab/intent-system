@@ -582,13 +582,15 @@ function setupObservers(
     if (extra.length > 0) {
       const latest = extra[extra.length - 1];
       const pSet = latest.e.predictionSet;
-      const selections = getAllSelections(
-        store.plots,
-        store.multiBrushBehaviour === "Union"
-      );
-      pSet.predictions = pSet.predictions.map((d) =>
-        extendRange(d, selections.values)
-      );
+      if (pSet) {
+        const selections = getAllSelections(
+          store.plots,
+          store.multiBrushBehaviour === "Union"
+        );
+        pSet.predictions = pSet.predictions.map((d) =>
+          extendRange(d, selections.values)
+        );
+      }
       store.predictionSet = pSet;
       store.annotation = latest.e.annotation;
       store.graph = provenance.graph();
