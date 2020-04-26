@@ -32,8 +32,6 @@ const PredictionTable: FC<Props> = ({
     []
   );
 
-  // const { sortColumn = "similarity", direction = "descending" } = store!;
-
   const [sortColumn, setSortColumn] = useState<SortableColumns>("similarity");
   const [direction, setDirection] = useState<SortDirection>("descending");
 
@@ -91,7 +89,11 @@ const PredictionTable: FC<Props> = ({
     const marks = (pred.dataIds || []).map((d) => `#mark-${d}`).join(",");
 
     return (
-      <Table.Row key={pred.intent} active={pred.intent === selectedPrediction}>
+      <Table.Row
+        key={pred.intent}
+        active={pred.intent === selectedPrediction}
+        onClick={rowClick}
+      >
         {!isTask && (
           <Table.Cell>
             {pred.dims.length > 0
@@ -120,6 +122,7 @@ const PredictionTable: FC<Props> = ({
                       },
                     ]
               }
+              onClick={() => {}}
             >
               {matches.length}
             </HoverTableCell>
@@ -162,7 +165,7 @@ const PredictionTable: FC<Props> = ({
           </>
         )}
         <Table.Cell
-          onClick={rowClick}
+          // onClick={rowClick}
           onMouseOver={() => {
             selectAll(".base-mark").classed(FADE_OUT, true);
             if (marks.length > 0) selectAll(marks).classed(FADE_COMP_IN, true);
@@ -179,7 +182,7 @@ const PredictionTable: FC<Props> = ({
           />
         </Table.Cell>
         <Table.Cell
-          onClick={rowClick}
+          // onClick={rowClick}
           onMouseOver={() => {
             selectAll(".base-mark").classed(FADE_OUT, true);
             if (marks.length > 0) selectAll(marks).classed(FADE_COMP_IN, true);
@@ -196,7 +199,9 @@ const PredictionTable: FC<Props> = ({
           />
         </Table.Cell>
         {!isTask && (
-          <Table.Cell onClick={rowClick}>
+          <Table.Cell
+          // onClick={rowClick}
+          >
             <ProbabilityBar
               height={barHeight}
               score={probability}

@@ -1,6 +1,7 @@
 import { Extra, initProvenance, isStateNode, NodeID, Provenance, StateNode } from '@visdesignlab/provenance-lib-core';
 import axios from 'axios';
 
+import { extendRange, getAllSelections } from '../Components/Predictions/PredictionRowType';
 import { MultiBrushBehavior, Prediction, PredictionRequest, PredictionSet } from '../contract';
 import { Dataset } from '../Utils/Dataset';
 import {
@@ -401,15 +402,17 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
       (state: IntentState) => {
         const basePlot = state.plots[0];
 
-        const newSelection = pred.dataIds || [];
+        let newSelection = pred.dataIds || [];
+
         for (let i = 0; i < state.plots.length; ++i) {
           if (i === 0) state.plots[i].selectedPoints = newSelection;
           else state.plots[i].selectedPoints = [];
           state.plots[i].brushes = {};
         }
 
-        removePointSelectionInteraction(state, basePlot, currentSelections);
+        clearSelectionInteraction(state);
         addPointSelectionInteraction(state, basePlot, newSelection);
+        if (pred.intent.includes("Range")) addDummyInteraction(state);
 
         state.turnedPrediction = pred.intent;
         return state;
@@ -419,7 +422,10 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
     );
   }
 
-  function lockPrediction(pred: Prediction | string) {
+  function lockPrediction(
+    pred: Prediction | string,
+    currentSelections: number[] = []
+  ) {
     let predName = "";
 
     if (typeof pred === "string") {
@@ -432,7 +438,25 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
       predName,
       (state: IntentState) => {
         state.lockedPrediction = pred as any;
-        addDummyInteraction(state);
+
+        if (typeof pred !== "string") {
+          const basePlot = state.plots[0];
+
+          let newSelection = pred.dataIds || [];
+
+          for (let i = 0; i < state.plots.length; ++i) {
+            if (i === 0) state.plots[i].selectedPoints = newSelection;
+            else state.plots[i].selectedPoints = [];
+            state.plots[i].brushes = {};
+          }
+
+          clearSelectionInteraction(state);
+          addPointSelectionInteraction(state, basePlot, newSelection);
+          if (predName.includes("Range")) addDummyInteraction(state);
+
+          state.turnedPrediction = pred.intent;
+        }
+
         return state;
       },
       undefined,
@@ -527,7 +551,10 @@ export interface ProvenanceActions {
   changeBrushType: (brushType: BrushType) => void;
   changeBrushSize: (size: BrushSize) => void;
   invertSelection: (currentSelected: number[], all: number[]) => void;
-  lockPrediction: (pred: Prediction | string) => void;
+  lockPrediction: (
+    pred: Prediction | string,
+    currentSelection?: number[]
+  ) => void;
   turnPredictionInSelection: (
     pred: Prediction,
     currentSelection: number[]
@@ -554,7 +581,15 @@ function setupObservers(
   provenance.addArtifactObserver((extra: Extra<Annotation>[]) => {
     if (extra.length > 0) {
       const latest = extra[extra.length - 1];
-      store.predictionSet = latest.e.predictionSet;
+      const pSet = latest.e.predictionSet;
+      const selections = getAllSelections(
+        store.plots,
+        store.multiBrushBehaviour === "Union"
+      );
+      pSet.predictions = pSet.predictions.map((d) =>
+        extendRange(d, selections.values)
+      );
+      store.predictionSet = pSet;
       store.annotation = latest.e.annotation;
       store.graph = provenance.graph();
     } else {

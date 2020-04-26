@@ -1,15 +1,16 @@
-import React, { FC, ReactChild } from "react";
-import translate from "../Utils/translate";
-import { ProvenanceNode, StateNode } from "@visdesignlab/provenance-lib-core";
-import { treeColor } from "./Styles";
-import { Animate } from "react-move";
-import { EventConfig } from "../Utils/EventConfig";
-import { BundleMap } from "../Utils/BundleMap";
-import { Popup } from "semantic-ui-react";
+import { ProvenanceNode, StateNode } from '@visdesignlab/provenance-lib-core';
+import React, { ReactChild } from 'react';
+import { Animate } from 'react-move';
+import { Popup } from 'semantic-ui-react';
+
+import { BundleMap } from '../Utils/BundleMap';
+import { EventConfig } from '../Utils/EventConfig';
+import translate from '../Utils/translate';
+import { treeColor } from './Styles';
 
 interface BackboneNodeProps<T, S extends string, A> {
   first: boolean;
-  iconOnly:boolean;
+  iconOnly: boolean;
   current: boolean;
   duration: number;
   node: StateNode<T, S, A>;
@@ -48,12 +49,12 @@ function BackboneNode<T, S extends string, A>({
   eventConfig,
   popupContent,
   annotationContent,
-  expandedClusterList
+  expandedClusterList,
 }: BackboneNodeProps<T, S, A>) {
   const padding = 15;
 
   let cursorStyle = {
-    cursor:"pointer"
+    cursor: "pointer",
   } as React.CSSProperties;
 
   // console.log(JSON.parse(JSON.stringify(node)));
@@ -83,7 +84,8 @@ function BackboneNode<T, S extends string, A>({
             {bundleGlyph}
           </g>
         );
-      } if (current) {
+      }
+      if (current) {
         glyph = (
           <g style={cursorStyle} fontWeight={"none"}>
             {currentGlyph}
@@ -99,13 +101,13 @@ function BackboneNode<T, S extends string, A>({
     }
   }
 
-  let label:string = "";
-  let annotate:string = "";
+  let label: string = "";
+  let annotate: string = "";
 
   if (node.artifacts.extra.length > 0) {
-    annotate = ((node.artifacts.extra[node.artifacts.extra.length - 1].e) as any).annotation;
+    annotate = (node.artifacts.extra[node.artifacts.extra.length - 1].e as any)
+      .annotation;
   }
-
 
   label = node.label;
   // else if(!backboneBundleNodes.includes(node.id) || !clusterLabels)
@@ -117,71 +119,100 @@ function BackboneNode<T, S extends string, A>({
     return null;
   }
 
-  if(annotate.length > 23)
-    annotate = annotate.substr(0, 23) + "..";
+  if (annotate.length > 23) annotate = annotate.substr(0, 23) + "..";
 
-  if(label.length > 23)
-    label = label.substr(0, 23) + "..";
+  if (label.length > 23) label = label.substr(0, 23) + "..";
 
   let labelG = (
+    <g style={{ opacity: 1 }} transform={translate(padding, 0)}>
+      {!iconOnly ? (
+        <g>
+          {dropDownAdded ? (
+            <text
+              style={cursorStyle}
+              onClick={(e) => nodeClicked(node, e)}
+              fontSize={17}
+              fill={"rgb(248, 191, 132)"}
+              textAnchor="middle"
+              alignmentBaseline="middle"
+              x={1}
+              y={0}
+              fontFamily="FontAwesome"
+            >
+              {expandedClusterList && expandedClusterList.includes(node.id)
+                ? "\uf0d8"
+                : "\uf0d7"}
+            </text>
+          ) : (
+            <g></g>
+          )}
+          <text
+            y={annotate.length === 0 ? 0 : -7}
+            x={dropDownAdded ? 10 : 0}
+            dominantBaseline="middle"
+            textAnchor="start"
+            fontSize={textSize}
+            fontWeight={"bold"}
+            onClick={() => labelClicked(node)}
+          >
+            {label}
+          </text>
+          ,
+          <text
+            y={7}
+            x={dropDownAdded ? 10 : 0}
+            dominantBaseline="middle"
+            textAnchor="start"
+            fontSize={textSize}
+            fontWeight={"regular"}
+            onClick={() => labelClicked(node)}
+          >
+            {annotate}
+          </text>
+        </g>
+      ) : (
+        <g>
+          {dropDownAdded ? (
+            <text
+              style={cursorStyle}
+              onClick={(e) => nodeClicked(node, e)}
+              fontSize={17}
+              fill={"rgb(248, 191, 132)"}
+              textAnchor="middle"
+              alignmentBaseline="middle"
+              x={1}
+              y={0}
+              fontFamily="FontAwesome"
+            >
+              {expandedClusterList && expandedClusterList.includes(node.id)
+                ? "\uf0d8"
+                : "\uf0d7"}
+            </text>
+          ) : (
+            <g></g>
+          )}
+        </g>
+      )}
 
-              <g
-                style={{ opacity: 1 }}
-                transform={translate(padding, 0)}
-              >
-                {!iconOnly ?
-                  (<g>
-
-                  { dropDownAdded ?
-                    (<text style={cursorStyle} onClick={(e) => nodeClicked(node, e)} fontSize={17} fill={"rgb(248, 191, 132)"} textAnchor="middle" alignmentBaseline="middle" x={1} y={0} fontFamily="FontAwesome">{(expandedClusterList && expandedClusterList.includes(node.id)) ? "\uf0d8" :"\uf0d7"}</text>)
-                    : (<g></g>)
-                  }
-                  <text
-                  y={annotate.length == 0 ? 0 : -7}
-                  x={dropDownAdded ? 10 : 0}
-                  dominantBaseline="middle"
-                  textAnchor="start"
-                  fontSize={textSize}
-                  fontWeight={"bold"}
-                  onClick={() => labelClicked(node)}
-                >{label}</text>,
-
-                <text
-                y={7}
-                x={dropDownAdded ? 10 : 0}
-                dominantBaseline="middle"
-                textAnchor="start"
-                fontSize={textSize}
-                fontWeight={"regular"}
-                onClick={() => labelClicked(node)}
-              >{annotate}</text></g>) :
-                (<g>
-                  { dropDownAdded ?
-                    (<text style={cursorStyle} onClick={(e) => nodeClicked(node, e)} fontSize={17} fill={"rgb(248, 191, 132)"} textAnchor="middle" alignmentBaseline="middle" x={1} y={0} fontFamily="FontAwesome">{(expandedClusterList && expandedClusterList.includes(node.id)) ? "\uf0d8" :"\uf0d7"}</text>)
-                    : (<g></g>)
-                  }
-                </g>)
-
-                }
-
-                {annotationOpen !== -1 &&
-                nodeMap[node.id].depth === annotationOpen &&
-                annotationContent ? (
-                  <g>{annotationContent(nodeMap[node.id])}</g>
-                ) : (
-                  <g></g>
-                )}
-              </g>)
+      {annotationOpen !== -1 &&
+      nodeMap[node.id].depth === annotationOpen &&
+      annotationContent ? (
+        <g>{annotationContent(nodeMap[node.id])}</g>
+      ) : (
+        <g></g>
+      )}
+    </g>
+  );
 
   return (
     <Animate
       start={{ opacity: 0 }}
       enter={{
         opacity: [1],
-        timing: { duration: 100, delay: first ? 0 : duration }
+        timing: { duration: 100, delay: first ? 0 : duration },
       }}
     >
-      {state => (
+      {(state) => (
         <>
           {popupContent !== undefined && nodeMap[node.id].depth > 0 ? (
             <Popup content={popupContent(node)} trigger={glyph} />
@@ -210,18 +241,16 @@ function BackboneNode<T, S extends string, A>({
     }
   }
 
-  function nodeClicked(node: ProvenanceNode<T, S, A>, event:any) {
+  function nodeClicked(node: ProvenanceNode<T, S, A>, event: any) {
     if (bundleMap && Object.keys(bundleMap).includes(node.id)) {
       let exemptCopy: string[] = Array.from(exemptList);
 
-      if(exemptCopy.includes(node.id))
-      {
+      if (exemptCopy.includes(node.id)) {
         exemptCopy.splice(
-            exemptCopy.findIndex(d => d === node.id),
-            1
-          )
-      }
-      else{
+          exemptCopy.findIndex((d) => d === node.id),
+          1
+        );
+      } else {
         exemptCopy.push(node.id);
       }
 
@@ -234,8 +263,8 @@ function BackboneNode<T, S extends string, A>({
 
 export default BackboneNode;
 
-const Label: FC<{ label: string } & React.SVGProps<SVGTextElement>> = (props: {
-  label: string;
-}) => {
-  return <text {...props}>{props.label}</text>;
-};
+// const Label: FC<{ label: string } & React.SVGProps<SVGTextElement>> = (props: {
+//   label: string;
+// }) => {
+//   return <text {...props}>{props.label}</text>;
+// };

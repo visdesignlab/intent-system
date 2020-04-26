@@ -123,7 +123,6 @@ function ProvVis<T, S extends string, A>({
           let curr = d;
 
           while (true) {
-
             // let bundlePar = findBundleParent(curr.parent, bundleMap);
             // if(bundlePar.length > 0)
             // {
@@ -139,7 +138,6 @@ function ProvVis<T, S extends string, A>({
             if (
               !bundledNodes.includes(curr.parent) ||
               Object.keys(bundleMap).includes(curr.parent)
-
             ) {
               return curr.parent;
             }
@@ -159,10 +157,8 @@ function ProvVis<T, S extends string, A>({
 
         let allExpanded = true;
 
-        for(let j in bundleParents)
-        {
-          if(!expandedClusterList.includes(bundleParents[j]))
-          {
+        for (let j in bundleParents) {
+          if (!expandedClusterList.includes(bundleParents[j])) {
             allExpanded = false;
             collapsedParent = bundleParents[j];
             break;
@@ -185,15 +181,12 @@ function ProvVis<T, S extends string, A>({
     });
 
   for (let i = 0; i < nodeList.length; i++) {
-
     let bundleParents = findBundleParent(nodeList[i].id, bundleMap);
 
     let allExpanded = true;
 
-    for(let j in bundleParents)
-    {
-      if(!expandedClusterList.includes(bundleParents[j]))
-      {
+    for (let j in bundleParents) {
+      if (!expandedClusterList.includes(bundleParents[j])) {
         allExpanded = false;
         break;
       }
@@ -276,9 +269,9 @@ function ProvVis<T, S extends string, A>({
 
   let shiftLeft = 0;
 
-  if (maxWidth == 0) {
+  if (maxWidth === 0) {
     shiftLeft = 30;
-  } else if (maxWidth == 1) {
+  } else if (maxWidth === 1) {
     shiftLeft = 52;
   } else if (maxWidth > 1) {
     shiftLeft = 74;
@@ -286,23 +279,35 @@ function ProvVis<T, S extends string, A>({
 
   let svgWidth = width;
 
-  if(document.getElementById("globalG") !== null)
-  {
-    if(document.getElementById("globalG")!.getBoundingClientRect().width.valueOf() > svgWidth)
-    {
+  if (document.getElementById("globalG") !== null) {
+    if (
+      document
+        .getElementById("globalG")!
+        .getBoundingClientRect()
+        .width.valueOf() > svgWidth
+    ) {
       console.log("in here");
-      svgWidth = document.getElementById("globalG")!.getBoundingClientRect().width.valueOf() + 10
+      svgWidth =
+        document
+          .getElementById("globalG")!
+          .getBoundingClientRect()
+          .width.valueOf() + 10;
     }
   }
 
   let overflowStyle = {
     overflowX: "auto",
-    overflowY: "auto"
+    overflowY: "auto",
   } as React.CSSProperties;
 
   return (
     <div style={overflowStyle} className={container} id="prov-vis">
-      <svg style={{overflow:"visible"}}id={"topSvg"} height={maxHeight < height ? height : maxHeight} width={svgWidth}>
+      <svg
+        style={{ overflow: "visible" }}
+        id={"topSvg"}
+        height={maxHeight < height ? height : maxHeight}
+        width={svgWidth}
+      >
         <rect height={height} width={width} fill="none" stroke="none" />
         <g id={"globalG"} transform={translate(shiftLeft, topOffset)}>
           <NodeGroup

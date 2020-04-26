@@ -35,7 +35,7 @@ const Predictions: FC<Props> = ({ store }: Props) => {
 
   return (
     <div className={predictionColumnStyle(!isManual)}>
-      {!task && <AnnotationBox />}
+      {!task && <AnnotationBox selections={selections.values} />}
       {!isManual && <PredictionList selections={selections.values} />}
       {!task && <Selections selections={selections} />}
     </div>
