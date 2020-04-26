@@ -34,7 +34,7 @@ interface Props {
 }
 
 const ProvenanceVisualization: FC<Props> = ({ store }: Props) => {
-  const { graph } = store!;
+  const { graph, isAtRoot, isAtLatest } = store!;
   const ref = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ height: 0, width: 0 });
 
@@ -249,6 +249,8 @@ const ProvenanceVisualization: FC<Props> = ({ store }: Props) => {
     width: "100%",
   } as React.CSSProperties;
 
+  const isProvenanceReady = graph.current !== graph.root;
+
   return (
     <div style={divStyle} ref={ref} className={provStyle}>
       <Header as="h3" style={{ marginTop: "10px" }}>
@@ -263,8 +265,17 @@ const ProvenanceVisualization: FC<Props> = ({ store }: Props) => {
           else setVisMode("label");
         }}
       />
+      {/* <Divider />
+      <Button.Group primary size="tiny">
+        <Button icon disabled={isAtRoot}>
+          <Icon name="undo" />
+        </Button>
+        <Button icon>
+          <Icon name="redo" disabled={isAtLatest} />
+        </Button>
+      </Button.Group> */}
       <Divider />
-      {dimensions.width && dimensions.height && (
+      {isProvenanceReady && dimensions.width && dimensions.height && (
         <ProvVis
           graph={graph}
           iconOnly={visMode === "icon"}

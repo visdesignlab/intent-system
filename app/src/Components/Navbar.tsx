@@ -1,7 +1,7 @@
 import { inject, observer } from 'mobx-react';
 import React, { memo, useContext, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Button, Container, Dropdown, Header, Icon, Image, Menu, Modal, Radio } from 'semantic-ui-react';
+import { Button, Container, Dropdown, Header, Icon, Image, Menu, Radio } from 'semantic-ui-react';
 import { style } from 'typestyle';
 
 import { ActionContext, TaskConfigContext } from '../Contexts';
@@ -27,6 +27,8 @@ function Navbar({ store, data, datasets, setDataset }: NavbarProps) {
     plots,
     brushType,
     brushSize,
+    isAtRoot,
+    isAtLatest,
   } = store!;
 
   const selections = getAllSelections(plots, multiBrushBehaviour === "Union")
@@ -97,7 +99,7 @@ function Navbar({ store, data, datasets, setDataset }: NavbarProps) {
     <Menu.Item>
       <Button primary onClick={() => setAddingPlot(true)}>
         <Icon name="add" />
-        Add Plot
+        Plot
       </Button>
     </Menu.Item>
   );
@@ -244,7 +246,7 @@ function Navbar({ store, data, datasets, setDataset }: NavbarProps) {
               </Menu.Item>
               <Menu.Item>
                 <Link to="/study">
-                  <Button content="Study Mode" size="tiny" primary />
+                  <Button content="Study" size="tiny" primary />
                 </Link>
               </Menu.Item>
             </>
@@ -261,20 +263,24 @@ function Navbar({ store, data, datasets, setDataset }: NavbarProps) {
               {brushSelection}
               {invertSelectionButton}
               {clearSelectionButton}
-              {task ? (
+              <Menu.Item>
+                <Button.Group primary size="mini">
+                  <Button
+                    icon
+                    disabled={isAtRoot}
+                    onClick={() => actions.goBack()}
+                  >
+                    <Icon name="undo" />
+                  </Button>
+                  <Button icon disabled={isAtLatest}>
+                    <Icon name="redo" onClick={() => actions.goForward()} />
+                  </Button>
+                </Button.Group>
+              </Menu.Item>
+              {task && (
                 <Menu.Item>
                   <Header as="h2">{taskTypeDesc}</Header>
                 </Menu.Item>
-              ) : (
-                <Modal
-                  trigger={
-                    <Menu.Item>
-                      <Icon name="info circle" size="large" />
-                    </Menu.Item>
-                  }
-                >
-                  <Modal.Header>Intent Inference System</Modal.Header>
-                </Modal>
               )}
             </>
           )}

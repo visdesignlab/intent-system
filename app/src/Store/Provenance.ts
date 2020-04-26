@@ -484,6 +484,14 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
     );
   }
 
+  function goBack() {
+    provenance.goBackOneStep();
+  }
+
+  function goForward() {
+    provenance.goForwardOneStep();
+  }
+
   return {
     provenance,
     actions: {
@@ -507,6 +515,8 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
       changeBrushSize,
       lockPrediction,
       invertSelection,
+      goBack,
+      goForward,
     },
   };
 }
@@ -550,6 +560,8 @@ export interface ProvenanceActions {
   selectPrediction: (pred: string) => void;
   changeBrushType: (brushType: BrushType) => void;
   changeBrushSize: (size: BrushSize) => void;
+  goBack: () => void;
+  goForward: () => void;
   invertSelection: (currentSelected: number[], all: number[]) => void;
   lockPrediction: (
     pred: Prediction | string,
@@ -573,7 +585,7 @@ function setupObservers(
   store: IntentStore
 ) {
   provenance.addGlobalObserver(() => {
-    store.isAtRoot = provenance.current().id === provenance.root().id;
+    store.isAtRoot = provenance.current().label.includes("Load Dataset");
     store.isAtLatest = provenance.current().children.length === 0;
     store.graph = provenance.graph();
   });

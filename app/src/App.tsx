@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { Provider } from 'mobx-react';
 import React, { FC, useEffect, useMemo, useState } from 'react';
+import { Button, Icon, Modal } from 'semantic-ui-react';
 import { style } from 'typestyle';
 
 import Navbar from './Components/Navbar';
@@ -104,28 +105,45 @@ const App: FC<Props> = (_: Props) => {
   };
 
   return datasets.length > 0 && data ? (
-    <Provider store={store}>
-      <DataContext.Provider value={data}>
-        <ActionContext.Provider value={actions}>
-          <div className={layoutStyle}>
-            <div className={visStyle}>
-              <Navbar
-                data={data}
-                datasets={datasets}
-                setDataset={setSelectedDataset}
-              />
-              <Visualization />
+    <>
+      <Provider key={store.dataset.key} store={store}>
+        <DataContext.Provider value={data}>
+          <ActionContext.Provider value={actions}>
+            <div className={layoutStyle}>
+              <div className={visStyle}>
+                <Navbar
+                  data={data}
+                  datasets={datasets}
+                  setDataset={setSelectedDataset}
+                />
+                <Visualization />
+              </div>
+              <Predictions />
+              <ProvenanceVisualization />
             </div>
-            <Predictions />
-            <ProvenanceVisualization />
-          </div>
-        </ActionContext.Provider>
-      </DataContext.Provider>
-    </Provider>
+          </ActionContext.Provider>
+        </DataContext.Provider>
+      </Provider>
+      <Modal
+        trigger={
+          <Button className={infoQuestion} circular icon>
+            <Icon name="question" />
+          </Button>
+        }
+      >
+        <Modal.Header>Intent Inference System</Modal.Header>
+      </Modal>
+    </>
   ) : null;
 };
 
 export default App;
+
+const infoQuestion = style({
+  position: "absolute",
+  bottom: 5,
+  left: 5,
+});
 
 const layoutStyle = style({
   display: "grid",
