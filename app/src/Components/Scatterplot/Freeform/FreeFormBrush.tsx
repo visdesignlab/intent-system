@@ -28,7 +28,7 @@ const FreeFormBrush: FC<Props> = ({
   onBrushStart,
   onBrush,
   onBrushEnd,
-  store
+  store,
 }: Props) => {
   const brushRef = useRef<SVGCircleElement>(null);
   const layerRef = useRef<SVGRectElement>(null);
@@ -38,11 +38,12 @@ const FreeFormBrush: FC<Props> = ({
 
   const radius = parseInt(brushSize) || 20;
 
+  const [mouseIn, setMouseIn] = useState(false);
   const [mouseDown, setMouseDown] = useState(false);
 
   const [height, width] = [
     Math.abs(bottom + extentPadding - (top - extentPadding)),
-    Math.abs(left - extentPadding - (right + extentPadding))
+    Math.abs(left - extentPadding - (right + extentPadding)),
   ];
 
   function handleMouseDown(event: React.MouseEvent<SVGElement, MouseEvent>) {
@@ -70,6 +71,7 @@ const FreeFormBrush: FC<Props> = ({
   }
 
   function handleMove(event: MouseEvent) {
+    if (!mouseIn) return;
     const node = brushRef.current;
     const targetNode = layerRef.current;
     if (node && targetNode) {
@@ -111,6 +113,10 @@ const FreeFormBrush: FC<Props> = ({
     <g
       onMouseDown={handleMouseDown}
       transform={translate(-extentPadding, -extentPadding)}
+      onMouseEnter={() => setMouseIn(true)}
+      onMouseLeave={() => {
+        if (!mouseDown) setMouseIn(false);
+      }}
     >
       <rect
         ref={layerRef}
@@ -136,5 +142,5 @@ const FreeFormBrush: FC<Props> = ({
 export default memo(inject("store")(observer(FreeFormBrush)));
 
 const brushStyle = style({
-  cursor: "grabbing"
+  cursor: "grabbing",
 });

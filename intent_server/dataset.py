@@ -3934,6 +3934,11 @@ class Dataset:
             'raptor_defense',
             'war_reg_season',
             'war_playoffs',
+            'PPG',
+            'BPG',
+            'APG',
+            'SPG',
+            '3P%',
             'season'
         ]]
 
@@ -3943,6 +3948,11 @@ class Dataset:
             'raptor_defense': 'float',
             'war_reg_season': 'float',
             'war_playoffs': 'float',
+            'PPG': 'float',
+            'BPG': 'float',
+            'APG': 'float',
+            'SPG': 'float',
+            '3P%': 'float',
             'season': 'category'
         }
 
@@ -3978,10 +3988,41 @@ class Dataset:
                 'short': 'E',
                 'type': 'numeric'
             },
+
+            'PPG': {
+                'text': 'Points Per Game',
+                'unit': '',
+                'short': 'F',
+                'type': 'numeric'
+            },
+            'BPG': {
+                'text': 'Blocks Per Game',
+                'unit': '',
+                'short': 'G',
+                'type': 'numeric'
+            },
+            'APG': {
+                'text': 'Assists Per Game',
+                'unit': '',
+                'short': 'H',
+                'type': 'numeric'
+            },
+            'SPG': {
+                'text': 'Steals Per Game',
+                'unit': '',
+                'short': 'I',
+                'type': 'numeric'
+            },
+            '3P%': {
+                'text': 'Three Point Percentage',
+                'unit': '',
+                'short': 'J',
+                'type': 'numeric'
+            },
             'season': {
                 'text': 'Season',
                 'unit': '',
-                'short': 'F',
+                'short': 'K',
                 'type': 'categorical'
             },
         })

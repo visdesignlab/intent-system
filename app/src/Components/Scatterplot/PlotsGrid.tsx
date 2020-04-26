@@ -15,8 +15,7 @@ interface Props {
 const PlotsGrid: FC<Props> = ({ store, height, width }: Props) => {
   let { plots, multiBrushBehaviour } = store!;
 
-  if(plots === undefined)
-  {
+  if (plots === undefined) {
     plots = [];
   }
 
@@ -37,6 +36,7 @@ const PlotsGrid: FC<Props> = ({ store, height, width }: Props) => {
   }
 
   let rowCount = Math.floor(plotCount / breakCount);
+
   if (rowCount === 0) {
     rowCount += 1;
   } else if (plotCount > breakCount && plotCount % breakCount !== 0) {
@@ -49,7 +49,7 @@ const PlotsGrid: FC<Props> = ({ store, height, width }: Props) => {
   const dividedWidth = width / columnCount;
 
   let dimension = dividedWidth < dividedHeight ? dividedWidth : dividedHeight;
-  dimension -= 8;
+  dimension -= 10;
 
   return (
     <div className={flexStyle}>
@@ -70,8 +70,8 @@ const PlotsGrid: FC<Props> = ({ store, height, width }: Props) => {
 export default memo(inject("store")(observer(PlotsGrid)));
 
 const flexStyle = style({
-  height: "100%",
-  width: "100%",
+  height: `100%`,
+  width: `100%`,
   display: "flex",
   flexWrap: "wrap",
   alignItems: "center",

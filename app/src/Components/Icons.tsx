@@ -1,5 +1,7 @@
 import React from 'react';
 import translate from '../Utils/Translate';
+import { symbol, symbols } from 'd3';
+
 
 interface AddTaskGlyphProps {
   size?: number;
@@ -156,7 +158,7 @@ export function LoadDataset({ size = 15, fill = '#ccc' }: AddTaskGlyphProps) {
     <g>
       <circle fill="white" r={size - size/4} />
       <g transform={translate(-size / 2, -size / 2)}>
-        <text fontSize={size} fill={fill} textAnchor="middle" alignmentBaseline="middle" x={size/2} y={size/2} fontFamily="FontAwesome">&#xf56d;</text>
+        <text fontSize={size} fill={fill} textAnchor="middle" alignmentBaseline="middle" x={size/2} y={size/2} fontFamily="FontAwesome">&#xf0ce;</text>
       </g>
     </g>
   );
@@ -174,11 +176,12 @@ export function MultiBrush({ size = 15, fill = '#ccc' }: AddTaskGlyphProps) {
 }
 
 export function SwitchCategoryVisibility({ size = 15, fill = '#ccc' }: AddTaskGlyphProps) {
+
   return (
     <g>
       <circle fill="white" r={size - size/4} />
       <g transform={translate(-size / 2, -size / 2)}>
-        <text fontSize={size} fill={fill} textAnchor="middle" alignmentBaseline="middle" x={size/2} y={size/2} fontFamily="FontAwesome">&#xf128;</text>
+        <text fontSize={size} fill={fill} textAnchor="middle" alignmentBaseline="middle" x={size/2} y={size/2} fontFamily="FontAwesome">&#xf61f;</text>
       </g>
     </g>
   );
@@ -208,7 +211,7 @@ export function ChangeCategory({ size = 15, fill = '#ccc' }: AddTaskGlyphProps) 
     <g>
       <circle fill="white" r={size - size/4} />
       <g transform={translate(-size / 2, -size / 2)}>
-        <text fontSize={size} fill={fill} textAnchor="middle" alignmentBaseline="middle" x={size/2} y={size/2} fontFamily="FontAwesome">&#xf128;</text>
+        <text fontSize={size} fill={fill} textAnchor="middle" alignmentBaseline="middle" x={size/2} y={size/2} fontFamily="FontAwesome">&#xf61f;</text>
       </g>
     </g>
   );
