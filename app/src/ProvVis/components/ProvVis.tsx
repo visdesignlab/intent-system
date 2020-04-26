@@ -240,9 +240,29 @@ function ProvVis<T, S extends string, A>({
     shiftLeft = 74;
   }
 
+
+  let svgWidth = width;
+
+  if(document.getElementById("globalG") !== null)
+  {
+
+    if(document.getElementById("globalG")!.getBoundingClientRect().width.valueOf() > svgWidth)
+    {
+      console.log("in here");
+      svgWidth = document.getElementById("globalG")!.getBoundingClientRect().width.valueOf() + 10
+    }
+  }
+
+  let overflowStyle = {
+    overflowX: "auto",
+    overflowY: "auto",
+    width: width,
+    height: height
+  } as React.CSSProperties;
+
   return (
-    <div className={container} id="prov-vis">
-      <svg height={maxHeight < height ? height : maxHeight} width={width}>
+    <div style={overflowStyle} className={container} id="prov-vis">
+      <svg style={{overflow:"visible"}}id={"topSvg"} height={maxHeight < height ? height : maxHeight} width={svgWidth}>
         <rect height={height} width={width} fill="none" stroke="none" />
         <g id={"globalG"} transform={translate(shiftLeft, topOffset)}>
           <NodeGroup

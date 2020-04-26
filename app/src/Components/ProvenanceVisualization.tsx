@@ -246,14 +246,18 @@ const ProvenanceVisualization: FC<Props> = ({ store }: Props) => {
 
   let divStyle = {
     overflowY: "auto",
+    overflowX: "auto",
+    height:"100%",
+    width:"100%"
   } as React.CSSProperties;
 
   return (
     <div style={divStyle} ref={ref} className={provStyle}>
-      <Header as="h3">History</Header>
+      <Header as="h3" style={{marginTop:"10px"}}>History</Header>
       <Radio
         toggle
         label="Show Labels"
+        style={{float:"left"}}
         checked={visMode === "label"}
         onChange={() => {
           if (visMode === "label") setVisMode("icon");
@@ -268,7 +272,7 @@ const ProvenanceVisualization: FC<Props> = ({ store }: Props) => {
           root={fauxRoot ? fauxRoot.id : graph.root}
           current={graph.current}
           nodeMap={graph.nodes}
-          width={width}
+          width={visMode === "label" ? width : width / 2}
           gutter={20}
           backboneGutter={25}
           sideOffset={200}
