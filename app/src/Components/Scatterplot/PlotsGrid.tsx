@@ -74,6 +74,6 @@ const flexStyle = style({
   width: `100%`,
   display: "flex",
   flexWrap: "wrap",
-  alignItems: "center",
+  alignItems: "flex-start",
   justifyContent: "center",
 });
