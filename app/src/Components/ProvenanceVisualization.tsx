@@ -34,7 +34,7 @@ interface Props {
 }
 
 const ProvenanceVisualization: FC<Props> = ({ store }: Props) => {
-  const { graph } = store!;
+  const { graph, isAtRoot, isAtLatest } = store!;
   const ref = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ height: 0, width: 0 });
 
@@ -265,6 +265,15 @@ const ProvenanceVisualization: FC<Props> = ({ store }: Props) => {
           else setVisMode("label");
         }}
       />
+      {/* <Divider />
+      <Button.Group primary size="tiny">
+        <Button icon disabled={isAtRoot}>
+          <Icon name="undo" />
+        </Button>
+        <Button icon>
+          <Icon name="redo" disabled={isAtLatest} />
+        </Button>
+      </Button.Group> */}
       <Divider />
       {isProvenanceReady && dimensions.width && dimensions.height && (
         <ProvVis
