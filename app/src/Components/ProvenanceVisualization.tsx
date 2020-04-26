@@ -249,6 +249,8 @@ const ProvenanceVisualization: FC<Props> = ({ store }: Props) => {
     width: "100%",
   } as React.CSSProperties;
 
+  const isProvenanceReady = graph.current !== graph.root;
+
   return (
     <div style={divStyle} ref={ref} className={provStyle}>
       <Header as="h3" style={{ marginTop: "10px" }}>
@@ -264,7 +266,7 @@ const ProvenanceVisualization: FC<Props> = ({ store }: Props) => {
         }}
       />
       <Divider />
-      {dimensions.width && dimensions.height && (
+      {isProvenanceReady && dimensions.width && dimensions.height && (
         <ProvVis
           graph={graph}
           iconOnly={visMode === "icon"}

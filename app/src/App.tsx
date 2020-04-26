@@ -104,7 +104,7 @@ const App: FC<Props> = (_: Props) => {
   };
 
   return datasets.length > 0 && data ? (
-    <Provider store={store}>
+    <Provider key={store.dataset.key} store={store}>
       <DataContext.Provider value={data}>
         <ActionContext.Provider value={actions}>
           <div className={layoutStyle}>
