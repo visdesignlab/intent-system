@@ -13,7 +13,7 @@ import BrushComponent from '../Brush/Components/BrushComponent';
 import { Brush, BrushAffectType, BrushCollection } from '../Brush/Types/Brush';
 import { extendPrediction, PredictionRowType, UserSelections } from '../Predictions/PredictionRowType';
 import { $hideError } from '../Study/TaskComponents/TaskComponent';
-import { COLOR, FADE_COMP_IN, FADE_OUT, FADE_OUT_PRED_SELECTION, REGULAR_MARK_STYLE } from '../Styles/MarkStyle';
+import { COLOR, FADE_COMP_IN, FADE_COMP_IN_2, FADE_OUT, FADE_OUT_2, REGULAR_MARK_STYLE } from '../Styles/MarkStyle';
 import hoverable from '../UtilComponent/hoverable';
 import FreeFormBrush from './Freeform/FreeFormBrush';
 import Mark from './Mark';
@@ -313,7 +313,7 @@ const RawPlot: FC<Props> = ({
         }`;
       } else {
         markClass = `${markClass} ${
-          isInSelectedPred ? "" : FADE_OUT_PRED_SELECTION
+          isInSelectedPred ? FADE_COMP_IN_2 : FADE_OUT_2
         }`;
       }
     }

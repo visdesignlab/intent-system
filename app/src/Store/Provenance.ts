@@ -412,6 +412,7 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
 
         clearSelectionInteraction(state);
         addPointSelectionInteraction(state, basePlot, newSelection);
+        if (pred.intent.includes("Range")) addDummyInteraction(state);
 
         state.turnedPrediction = pred.intent;
         return state;
@@ -451,6 +452,7 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
 
           clearSelectionInteraction(state);
           addPointSelectionInteraction(state, basePlot, newSelection);
+          if (predName.includes("Range")) addDummyInteraction(state);
 
           state.turnedPrediction = pred.intent;
         }
@@ -578,7 +580,6 @@ function setupObservers(
 
   provenance.addArtifactObserver((extra: Extra<Annotation>[]) => {
     if (extra.length > 0) {
-      console.log("Test");
       const latest = extra[extra.length - 1];
       const pSet = latest.e.predictionSet;
       const selections = getAllSelections(
