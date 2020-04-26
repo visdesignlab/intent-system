@@ -18,3 +18,6 @@ class Dimensions:
 
     def indices(self) -> List[str]:
         return self.dims
+
+    def dim_count(self) -> int:
+        return len(self.dims)

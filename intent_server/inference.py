@@ -121,7 +121,6 @@ class Inference:
                                 else ["", ""], filtered))  # type: ignore
 
         tuple_dims = set(map(lambda x: Dimensions(x), list_of_dims))
-        print(tuple_dims, file=sys.stderr)
 
         all_dims = list(unique_everseen([y for x in list_of_dims for y in x]))
         dims = Dimensions(all_dims)
@@ -141,8 +140,12 @@ class Inference:
 
         for intent in self.intents:
             # All dimensions
-            pred = intent.to_prediction(sel_array, relevant_data)
-            list_of_predictions.extend(pred)
+            if "Regression" not in intent.to_string():
+                pred = intent.to_prediction(sel_array, relevant_data)
+                list_of_predictions.extend(pred)
+            elif "Regression" in intent.to_string() and dims.dim_count() <= 2:
+                pred = intent.to_prediction(sel_array, relevant_data)
+                list_of_predictions.extend(pred)
 
             for d in tuple_dims:
                 pred = intent.to_prediction(sel_array, self.dataset.subset(d))
