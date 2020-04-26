@@ -19,6 +19,9 @@ type Props = {
   isTask: boolean;
 };
 
+export type SortableColumns = "similarity" | "probability" | "rankAc";
+export type SortDirection = "ascending" | "descending" | "undefined";
+
 const PredictionTable: FC<Props> = ({
   store,
   predictions: basePredictions,
@@ -28,12 +31,11 @@ const PredictionTable: FC<Props> = ({
   const [predictionsInput, setPredictionsInput] = useState<PredictionRowType[]>(
     []
   );
-  const [sortColumn, setSortColumn] = useState<SortableColumns>("similarity");
-  const [direction, setDirection] = useState<
-    "ascending" | "descending" | "undefined"
-  >("descending");
 
-  type SortableColumns = "similarity" | "probability" | "rankAc";
+  // const { sortColumn = "similarity", direction = "descending" } = store!;
+
+  const [sortColumn, setSortColumn] = useState<SortableColumns>("similarity");
+  const [direction, setDirection] = useState<SortDirection>("descending");
 
   const predString = JSON.stringify(basePredictions);
 
@@ -253,9 +255,18 @@ const PredictionTable: FC<Props> = ({
 
     if (isAlreadyCurrent) {
       setDirection((dir) => (dir === "ascending" ? "descending" : "ascending"));
+      // if (store) {
+      //   store.direction =
+      //     direction === "ascending" ? "descending" : "ascending";
+      // }
+
       return;
     }
 
+    // if (store) {
+    //   store.sortColumn = column;
+    //   store.direction = "descending";
+    // }
     setSortColumn(column);
     setDirection("descending");
   }
