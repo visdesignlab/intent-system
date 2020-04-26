@@ -1,6 +1,7 @@
 import { Extra, initProvenance, isStateNode, NodeID, Provenance, StateNode } from '@visdesignlab/provenance-lib-core';
 import axios from 'axios';
 
+import { extendRange, getAllSelections } from '../Components/Predictions/PredictionRowType';
 import { MultiBrushBehavior, Prediction, PredictionRequest, PredictionSet } from '../contract';
 import { Dataset } from '../Utils/Dataset';
 import {
@@ -401,14 +402,14 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
       (state: IntentState) => {
         const basePlot = state.plots[0];
 
-        const newSelection = pred.dataIds || [];
+        let newSelection = pred.dataIds || [];
+
         for (let i = 0; i < state.plots.length; ++i) {
           if (i === 0) state.plots[i].selectedPoints = newSelection;
           else state.plots[i].selectedPoints = [];
           state.plots[i].brushes = {};
         }
 
-        // removePointSelectionInteraction(state, basePlot, currentSelections);
         clearSelectionInteraction(state);
         addPointSelectionInteraction(state, basePlot, newSelection);
 
@@ -440,7 +441,7 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
         if (typeof pred !== "string") {
           const basePlot = state.plots[0];
 
-          const newSelection = pred.dataIds || [];
+          let newSelection = pred.dataIds || [];
 
           for (let i = 0; i < state.plots.length; ++i) {
             if (i === 0) state.plots[i].selectedPoints = newSelection;
@@ -448,7 +449,6 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
             state.plots[i].brushes = {};
           }
 
-          // removePointSelectionInteraction(state, basePlot, currentSelections);
           clearSelectionInteraction(state);
           addPointSelectionInteraction(state, basePlot, newSelection);
 
@@ -578,8 +578,17 @@ function setupObservers(
 
   provenance.addArtifactObserver((extra: Extra<Annotation>[]) => {
     if (extra.length > 0) {
+      console.log("Test");
       const latest = extra[extra.length - 1];
-      store.predictionSet = latest.e.predictionSet;
+      const pSet = latest.e.predictionSet;
+      const selections = getAllSelections(
+        store.plots,
+        store.multiBrushBehaviour === "Union"
+      );
+      pSet.predictions = pSet.predictions.map((d) =>
+        extendRange(d, selections.values)
+      );
+      store.predictionSet = pSet;
       store.annotation = latest.e.annotation;
       store.graph = provenance.graph();
     } else {

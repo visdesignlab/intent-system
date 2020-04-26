@@ -241,7 +241,8 @@ const RawPlot: FC<Props> = ({
     return { left: 0, top: 0, right: width, bottom: height };
   }, [height, width]);
 
-  const { columnMap } = useContext(DataContext);
+  const dataset = useContext(DataContext);
+  const { columnMap } = dataset;
 
   let { predictions } = predictionSet;
 
@@ -249,7 +250,7 @@ const RawPlot: FC<Props> = ({
     predictions = [];
   }
   const topThreeMemoized = predictions
-    .map((p) => extendPrediction(p, selections.values, columnMap))
+    .map((p) => extendPrediction(p, selections.values, columnMap, dataset))
     .filter(
       (d) =>
         d.type !== "Range" &&
