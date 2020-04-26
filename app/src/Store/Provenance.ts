@@ -408,7 +408,8 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
           state.plots[i].brushes = {};
         }
 
-        removePointSelectionInteraction(state, basePlot, currentSelections);
+        // removePointSelectionInteraction(state, basePlot, currentSelections);
+        clearSelectionInteraction(state);
         addPointSelectionInteraction(state, basePlot, newSelection);
 
         state.turnedPrediction = pred.intent;
@@ -419,7 +420,10 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
     );
   }
 
-  function lockPrediction(pred: Prediction | string) {
+  function lockPrediction(
+    pred: Prediction | string,
+    currentSelections: number[] = []
+  ) {
     let predName = "";
 
     if (typeof pred === "string") {
@@ -432,7 +436,25 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
       predName,
       (state: IntentState) => {
         state.lockedPrediction = pred as any;
-        addDummyInteraction(state);
+
+        if (typeof pred !== "string") {
+          const basePlot = state.plots[0];
+
+          const newSelection = pred.dataIds || [];
+
+          for (let i = 0; i < state.plots.length; ++i) {
+            if (i === 0) state.plots[i].selectedPoints = newSelection;
+            else state.plots[i].selectedPoints = [];
+            state.plots[i].brushes = {};
+          }
+
+          // removePointSelectionInteraction(state, basePlot, currentSelections);
+          clearSelectionInteraction(state);
+          addPointSelectionInteraction(state, basePlot, newSelection);
+
+          state.turnedPrediction = pred.intent;
+        }
+
         return state;
       },
       undefined,
@@ -527,7 +549,10 @@ export interface ProvenanceActions {
   changeBrushType: (brushType: BrushType) => void;
   changeBrushSize: (size: BrushSize) => void;
   invertSelection: (currentSelected: number[], all: number[]) => void;
-  lockPrediction: (pred: Prediction | string) => void;
+  lockPrediction: (
+    pred: Prediction | string,
+    currentSelection?: number[]
+  ) => void;
   turnPredictionInSelection: (
     pred: Prediction,
     currentSelection: number[]

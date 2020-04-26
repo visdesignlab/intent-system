@@ -10,11 +10,12 @@ import { PredictionRowType } from './PredictionRowType';
 
 interface Props {
   store?: IntentStore;
+  selections: number[];
 }
 
 export const topPred$ = new BehaviorSubject<PredictionRowType | null>(null);
 
-const AnnotationBox: FC<Props> = ({ store }: Props) => {
+const AnnotationBox: FC<Props> = ({ store, selections }: Props) => {
   const { annotation = "" } = store!;
   const [annotationText, setAnnotationText] = useState(annotation);
   const [topPrediction, setTopPrediction] = useState<PredictionRowType | null>(
@@ -52,48 +53,48 @@ const AnnotationBox: FC<Props> = ({ store }: Props) => {
             />
           </Form.Field>
           <Form.Field className={centerButton}>
-            <Button.Group>
-              <Button
-                basic
-                color="green"
-                onClick={() => {
-                  if (annotationText.length === 0) {
-                    setHideError(false);
-                    setErrorMessage("Please annotate something.");
-                    return;
-                  }
+            <Button
+              basic
+              color="green"
+              onClick={() => {
+                if (annotationText.length === 0) {
+                  setHideError(false);
+                  setErrorMessage("Please annotate something.");
+                  return;
+                }
+                actions.annotateNode(annotationText);
+              }}
+            >
+              Annotate
+            </Button>
+            <Button
+              basic
+              color="green"
+              disabled={topPrediction === null}
+              onClick={() => {
+                if (topPrediction) {
+                  actions.selectPrediction("none");
+                  actions.lockPrediction(topPrediction, selections);
+                }
+                if (annotationText.length > 0) {
                   actions.annotateNode(annotationText);
-                }}
-              >
-                Annotate
-              </Button>
-              <Button
-                basic
-                color="green"
-                disabled={topPrediction === null}
-                onClick={() => {
-                  if (topPrediction) {
-                    actions.lockPrediction(topPrediction);
-                  }
-                  if (annotationText.length > 0) {
-                    actions.annotateNode(annotationText);
-                  }
-                }}
-              >
-                Save Insight: {topPrediction?.type || "...."}
-              </Button>
-              <Button
-                basic
-                color="green"
-                onClick={() => {
-                  actions.lockPrediction("Other");
-                  if (annotationText.length > 0)
-                    actions.annotateNode(annotationText);
-                }}
-              >
-                Save Insight: Custom
-              </Button>
-            </Button.Group>
+                }
+              }}
+            >
+              Save Insight: {topPrediction?.type || "...."}
+            </Button>
+            <Button
+              basic
+              color="green"
+              onClick={() => {
+                actions.selectPrediction("none");
+                actions.lockPrediction("Other");
+                if (annotationText.length > 0)
+                  actions.annotateNode(annotationText);
+              }}
+            >
+              Save Insight: Custom
+            </Button>
           </Form.Field>
           {!hideError && errorMessage.length > 0 && (
             <Form.Field>

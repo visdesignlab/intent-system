@@ -32,8 +32,6 @@ const PredictionTable: FC<Props> = ({
     []
   );
 
-  // const { sortColumn = "similarity", direction = "descending" } = store!;
-
   const [sortColumn, setSortColumn] = useState<SortableColumns>("similarity");
   const [direction, setDirection] = useState<SortDirection>("descending");
 
