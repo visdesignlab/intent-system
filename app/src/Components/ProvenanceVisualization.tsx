@@ -8,7 +8,6 @@ import { ActionContext } from '../Contexts';
 import ProvVis from '../ProvVis/components/ProvVis';
 import { Bundle, BundleMap } from '../ProvVis/Utils/BundleMap';
 import { EventConfig } from '../ProvVis/Utils/EventConfig';
-import translate from '../ProvVis/Utils/translate';
 import IntentStore from '../Store/IntentStore';
 import { IntentEvents } from '../Store/Provenance';
 import {
@@ -158,19 +157,19 @@ const ProvenanceVisualization: FC<Props> = ({ store }: Props) => {
     },
   };
 
-  const annotationNode = (node: any) => {
-    const { extra } = node.data.artifacts;
-    let annotation = "";
-    if (extra.length > 0) {
-      annotation = extra[extra.length - 1].e.annotation;
-    }
+  // const annotationNode = (node: any) => {
+  //   const { extra } = node.data.artifacts;
+  //   let annotation = "";
+  //   if (extra.length > 0) {
+  //     annotation = extra[extra.length - 1].e.annotation;
+  //   }
 
-    return (
-      <g transform={translate(0, 20)}>
-        <text>{annotation}</text>
-      </g>
-    );
-  };
+  //   return (
+  //     <g transform={translate(0, 20)}>
+  //       <text>{annotation}</text>
+  //     </g>
+  //   );
+  // };
 
   const popupNode = (node: any) => {
     //
@@ -246,13 +245,15 @@ const ProvenanceVisualization: FC<Props> = ({ store }: Props) => {
   let divStyle = {
     overflowY: "auto",
     overflowX: "auto",
-    height:"100%",
-    width:"100%"
+    height: "100%",
+    width: "100%",
   } as React.CSSProperties;
 
   return (
     <div style={divStyle} ref={ref} className={provStyle}>
-      <Header as="h3" style={{marginTop:"10px"}}>History</Header>
+      <Header as="h3" style={{ marginTop: "10px" }}>
+        History
+      </Header>
       <Radio
         toggle
         label="Show Labels"

@@ -16,6 +16,8 @@ interface Props {
 const PredictionList: FC<Props> = ({ store, selections }: Props) => {
   const { isLoadingPredictions, predictionSet } = store!;
 
+  const data = useContext(DataContext);
+
   const { columnMap } = useContext(DataContext);
   let { predictions } = predictionSet;
 
@@ -28,7 +30,7 @@ const PredictionList: FC<Props> = ({ store, selections }: Props) => {
   const [preds, setPreds] = useState<PredictionRowType[]>([]);
 
   let computedPreds = predictions
-    .map((pred) => extendPrediction(pred, selections, columnMap))
+    .map((pred) => extendPrediction(pred, selections, columnMap, data))
     .sort((a, b) => b.similarity - a.similarity);
 
   if (task) {
