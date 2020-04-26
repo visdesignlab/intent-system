@@ -72,7 +72,6 @@ export default function linkTransitions(
     //     clusteredNodesInFront++;
     //   }
     // }
-
     clusteredNodesInFront =
       clusteredNodesInFront === 0 ? clusteredNodesInFront : clusteredNodesInFront - 1;
 

@@ -11,6 +11,7 @@ import {
 import { stratify, HierarchyNode } from "d3";
 import { treeLayout } from "../Utils/TreeLayout";
 import findBundleParent from "../Utils/findBundleParent";
+import isRecursiveParent from "../Utils/isRecursiveBundle";
 
 import translate from "../Utils/translate";
 import { NodeGroup } from "react-move";
@@ -115,11 +116,17 @@ function ProvVis<T, S extends string, A>({
     }
   }
 
+
+
   const strat = stratify<ProvenanceNode<T, S, A>>()
     .id(d => d.id)
     .parentId(d => {
       if (d.id === root) return null;
+
+      // //console.log(JSON.parse(JSON.stringify(d)));
+
       if (isStateNode(d)) {
+        //If you are a unexpanded bundle, find your parent by going straight up.
         if (
           bundleMap &&
           Object.keys(bundleMap).includes(d.id) &&
@@ -129,6 +136,8 @@ function ProvVis<T, S extends string, A>({
 
           while (true) {
             if (!bundledNodes.includes(curr.parent) || Object.keys(bundleMap).includes(curr.parent)) {
+              //console.log(d.id);
+              //console.log(curr.parent);
               return curr.parent;
             }
 
@@ -142,29 +151,75 @@ function ProvVis<T, S extends string, A>({
           }
         }
 
-        let bundleParent = findBundleParent(d.parent, bundleMap);
+        let bundleParents = findBundleParent(d.parent, bundleMap);
+        let collapsedParent = undefined;
+
+        let allExpanded = true;
+
+        //console.log("ALL PARENT STUFF")
+        //console.log(expandedClusterList)
+
+        for(let j in bundleParents)
+        {
+          //console.log(bundleParents[j])
+          if(!expandedClusterList.includes(bundleParents[j]))
+          {
+            allExpanded = false;
+            collapsedParent = bundleParents[j];
+            break;
+          }
+        }
+
+        // let recursiveParent = isRecursiveParent(d.id, nodeList, bundledNodes, expandedClusterList, bundleMap);
+        // //console.log(recursiveParent);
+        //
+        // if(recursiveParent != '')
+        // {
+        //   //console.log(d.id);
+        //   //console.log(recursiveParent);
+        //   return recursiveParent;
+        // }
 
         if (
           bundledNodes.includes(d.parent) &&
           bundleMap &&
           !Object.keys(bundleMap).includes(d.parent) &&
-          !expandedClusterList.includes(bundleParent)
+          !allExpanded
         ) {
-          return bundleParent;
+          //console.log(d.parent);
+          //console.log(collapsedParent);
+          return collapsedParent;
         }
+
+
+        //console.log(d.parent);
+        //console.log(d.parent);
         return d.parent;
       } else {
         return null;
       }
     });
 
+  //console.log(bundleMap);
 
   for (let i = 0; i < nodeList.length; i++) {
+
+    let bundleParents = findBundleParent(nodeList[i].id, bundleMap);
+
+    let allExpanded = true;
+
+    for(let j in bundleParents)
+    {
+      if(!expandedClusterList.includes(bundleParents[j]))
+      {
+        allExpanded = false;
+        break;
+      }
+    }
+
     if (
       bundledNodes.includes(nodeList[i].id) &&
-      !expandedClusterList.includes(
-        findBundleParent(nodeList[i].id, bundleMap)
-      ) &&
+      !allExpanded &&
       bundleMap &&
       !Object.keys(bundleMap).includes(nodeList[i].id)
     ) {
@@ -174,8 +229,12 @@ function ProvVis<T, S extends string, A>({
   }
 
   const stratifiedTree = strat(nodeList);
+  // //console.log(JSON.parse(JSON.stringify(stratifiedTree)));
+
   const stratifiedList: StratifiedList<T, S, A> = stratifiedTree.descendants();
   const stratifiedMap: StratifiedMap<T, S, A> = {};
+
+  //console.log(stratifiedList);
 
   stratifiedList.forEach(c => (stratifiedMap[c.id!] = c));
   treeLayout(stratifiedMap, current, root);

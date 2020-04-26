@@ -37,13 +37,13 @@ export default function bundleTransitions(
         //   validity = false;
         // }
         if (
-          stratifiedMap[bundleMap[data].bunchedNodes[i]].depth < highestDepth
+          stratifiedMap[bundleMap[data].bunchedNodes[i]] && stratifiedMap[bundleMap[data].bunchedNodes[i]].depth < highestDepth
         ) {
           highestDepth = stratifiedMap[bundleMap[data].bunchedNodes[i]].depth;
         }
 
         if (
-          stratifiedMap[bundleMap[data].bunchedNodes[i]].depth > lowestDepth
+          stratifiedMap[bundleMap[data].bunchedNodes[i]] && stratifiedMap[bundleMap[data].bunchedNodes[i]].depth > lowestDepth
         ) {
           lowestDepth = stratifiedMap[bundleMap[data].bunchedNodes[i]].depth;
         }
@@ -57,7 +57,16 @@ export default function bundleTransitions(
     }
 
     let height = 0;
-    height = clusterOffset * (bundleMap![data].bunchedNodes.length);
+
+    for(let j in bundleMap![data].bunchedNodes)
+    {
+      if(stratifiedMap[bundleMap![data].bunchedNodes[j]])
+      {
+        height++
+      }
+    }
+
+    height = clusterOffset * height;
 
     if (!expandedClusterList.includes(data)) {
       height = 10;
@@ -98,13 +107,13 @@ export default function bundleTransitions(
         //   validity = false;
         // }
         if (
-          stratifiedMap[bundleMap[data].bunchedNodes[i]].depth < highestDepth
+          stratifiedMap[bundleMap[data].bunchedNodes[i]] && stratifiedMap[bundleMap[data].bunchedNodes[i]].depth < highestDepth
         ) {
           highestDepth = stratifiedMap[bundleMap[data].bunchedNodes[i]].depth;
         }
 
         if (
-          stratifiedMap[bundleMap[data].bunchedNodes[i]].depth > lowestDepth
+          stratifiedMap[bundleMap[data].bunchedNodes[i]] && stratifiedMap[bundleMap[data].bunchedNodes[i]].depth > lowestDepth
         ) {
           lowestDepth = stratifiedMap[bundleMap[data].bunchedNodes[i]].depth;
         }

@@ -23,7 +23,9 @@ export default function nodeTransitions(
 
     const x = getX(data.width, xOffset, backboneOffset);
 
-    let parentId = findBundleParent(data.id, bundleMap)
+    let parentId = findBundleParent(data.id, bundleMap).filter((d => {
+      return nodeMap[d].width === 0;
+    }))[0];
 
 
     clusteredNodesInFront =
@@ -31,7 +33,7 @@ export default function nodeTransitions(
 
     let y = yOffset * data.depth - (yOffset - clusterOffset) * clusteredNodesInFront;
 
-    if(parentId != '' && bundleMap && !Object.keys(bundleMap).includes(data.id))
+    if(parentId != undefined && bundleMap && !Object.keys(bundleMap).includes(data.id))
     {
       y = yOffset * (nodeMap[parentId].depth - bundleMap[parentId].bunchedNodes.length + 2)- (yOffset - clusterOffset) * clusteredNodesInFront;
     }
