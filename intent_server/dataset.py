@@ -4034,8 +4034,6 @@ class Dataset:
     def load_iris_data() -> 'Dataset':
         df = pd.read_csv('data/iris.csv')
 
-        print(df)
-
         df['Label'] = 0
 
         for i in range(0, len(df['Label'])):
