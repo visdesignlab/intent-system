@@ -3922,8 +3922,10 @@ class Dataset:
         # is_season = df['season'] == 2019
 
         # df = df[is_season]
-        enough_mp = df['mp'] >= 2500
-        df = df[enough_mp]
+        enough_mp = df[(df['season'] == 2019) & (df["mp"] >= 1500)]
+
+        df = enough_mp
+
         df.astype({'season': str})
         df["player_name"] = df["player_name"].map(
             str) + df["season"].map(lambda x: " (" + str(x) + ")")
@@ -4024,6 +4026,71 @@ class Dataset:
                 'unit': '',
                 'short': 'K',
                 'type': 'categorical'
+            },
+        })
+
+
+    @staticmethod
+    def load_iris_data() -> 'Dataset':
+        df = pd.read_csv('data/iris.csv')
+
+        print(df)
+
+        df['Label'] = 0
+
+        for i in range(0, len(df['Label'])):
+            df.loc[i, ('Label')] = i
+
+        convert_dict = {
+            'Label': 'category',
+            'sepal_length': 'float',
+            'sepal_width': 'float',
+            'petal_length': 'float',
+            'petal_width': 'float',
+            'species': 'category'
+        }
+
+        df = df.astype(convert_dict)
+        df['Label'] = df['Label'].apply(str)
+
+        return Dataset('Label', df,
+                       'Iris Dataset', {
+            'Label': {
+                'text': 'Index',
+                'unit': '',
+                'short': 'A',
+                'type': 'label'
+            },
+            'sepal_length': {
+                'text': 'Sepal Length',
+                'unit': '',
+                'short': 'B',
+                'type': 'numeric'
+            },
+            'sepal_width': {
+                'text': 'Sepal Width',
+                'unit': '',
+                'short': 'C',
+                'type': 'numeric'
+            },
+            'petal_length': {
+                'text': 'Petal Length',
+                'unit': '',
+                'short': 'D',
+                'type': 'numeric'
+            },
+            'petal_width': {
+                'text': 'Petal Width',
+                'unit': '',
+                'short': 'E',
+                'type': 'numeric'
+            },
+
+            'species': {
+                'text': 'Species',
+                'unit': '',
+                'short': 'F',
+                'type': 'category'
             },
         })
 

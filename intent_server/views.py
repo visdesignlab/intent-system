@@ -27,7 +27,7 @@ datasets = {
     # 'MDAMB231MacrophageMacroMito': Dataset.load_macro_mito(),
     'nba_raptor': Dataset.load_nba_raptor_data(),
     'sp500': Dataset.load_sp500_data(),
-
+    'iris': Dataset.load_iris_data(),
     'out_easy_training_1': Dataset.load_out_easy_training_1(),
     'out_easy_task_1': Dataset.load_out_easy_task_1(),
     'out_easy_task_2': Dataset.load_out_easy_task_2(),
