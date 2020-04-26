@@ -250,7 +250,7 @@ const ProvenanceVisualization: FC<Props> = ({ store }: Props) => {
 
   return (
     <div style={divStyle} ref={ref} className={provStyle}>
-      <Header as="h1">History</Header>
+      <Header as="h3">History</Header>
       <Radio
         toggle
         label="Show Labels"

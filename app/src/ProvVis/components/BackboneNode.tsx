@@ -123,6 +123,56 @@ function BackboneNode<T, S extends string, A>({
   if(label.length > 23)
     label = label.substr(0, 23) + "..";
 
+  let labelG = (
+
+              <g
+                style={{ opacity: 1 }}
+                transform={translate(padding, 0)}
+              >
+                {!iconOnly ?
+                  (<g>
+
+                  { dropDownAdded ?
+                    (<text style={cursorStyle} onClick={(e) => nodeClicked(node, e)} fontSize={17} fill={"rgb(248, 191, 132)"} textAnchor="middle" alignmentBaseline="middle" x={1} y={0} fontFamily="FontAwesome">{(expandedClusterList && expandedClusterList.includes(node.id)) ? "\uf0d8" :"\uf0d7"}</text>)
+                    : (<g></g>)
+                  }
+                  <text
+                  y={annotate.length == 0 ? 0 : -7}
+                  x={dropDownAdded ? 10 : 0}
+                  dominantBaseline="middle"
+                  textAnchor="start"
+                  fontSize={textSize}
+                  fontWeight={"bold"}
+                  onClick={() => labelClicked(node)}
+                >{label}</text>,
+
+                <text
+                y={7}
+                x={dropDownAdded ? 10 : 0}
+                dominantBaseline="middle"
+                textAnchor="start"
+                fontSize={textSize}
+                fontWeight={"regular"}
+                onClick={() => labelClicked(node)}
+              >{annotate}</text></g>) :
+                (<g>
+                  { dropDownAdded ?
+                    (<text style={cursorStyle} onClick={(e) => nodeClicked(node, e)} fontSize={17} fill={"rgb(248, 191, 132)"} textAnchor="middle" alignmentBaseline="middle" x={1} y={0} fontFamily="FontAwesome">{(expandedClusterList && expandedClusterList.includes(node.id)) ? "\uf0d8" :"\uf0d7"}</text>)
+                    : (<g></g>)
+                  }
+                </g>)
+
+                }
+
+                {annotationOpen !== -1 &&
+                nodeMap[node.id].depth === annotationOpen &&
+                annotationContent ? (
+                  <g>{annotationContent(nodeMap[node.id])}</g>
+                ) : (
+                  <g></g>
+                )}
+              </g>)
+
   return (
     <Animate
       start={{ opacity: 0 }}
@@ -139,53 +189,12 @@ function BackboneNode<T, S extends string, A>({
             glyph
           )}
           {/* {glyph} */}
-          <g
-            style={{ opacity: state.opacity }}
-            transform={translate(padding, 0)}
-          >
-            {!iconOnly ?
-              (<g>
 
-              { dropDownAdded ?
-                (<text style={cursorStyle} onClick={(e) => nodeClicked(node, e)} fontSize={12} fill={"rgb(248, 191, 132)"} textAnchor="middle" alignmentBaseline="middle" x={1} y={0} fontFamily="FontAwesome">{(expandedClusterList && expandedClusterList.includes(node.id)) ? "\uf0d8" :"\uf0d7"}</text>)
-                : (<g></g>)
-              }
-              <text
-              y={annotate.length == 0 ? 0 : -7}
-              x={dropDownAdded ? 10 : 0}
-              dominantBaseline="middle"
-              textAnchor="start"
-              fontSize={textSize}
-              fontWeight={"bold"}
-              onClick={() => labelClicked(node)}
-            >{label}</text>,
-
-            <text
-            y={7}
-            x={dropDownAdded ? 10 : 0}
-            dominantBaseline="middle"
-            textAnchor="start"
-            fontSize={textSize}
-            fontWeight={"regular"}
-            onClick={() => labelClicked(node)}
-          >{annotate}</text></g>) :
-            (<g>
-              { dropDownAdded ?
-                (<text style={cursorStyle} onClick={(e) => nodeClicked(node, e)} fontSize={12} fill={"rgb(248, 191, 132)"} textAnchor="middle" alignmentBaseline="middle" x={1} y={0} fontFamily="FontAwesome">{(expandedClusterList && expandedClusterList.includes(node.id)) ? "\uf0d8" :"\uf0d7"}</text>)
-                : (<g></g>)
-              }
-            </g>)
-
-            }
-
-            {annotationOpen !== -1 &&
-            nodeMap[node.id].depth === annotationOpen &&
-            annotationContent ? (
-              <g>{annotationContent(nodeMap[node.id])}</g>
-            ) : (
-              <g></g>
-            )}
-          </g>
+          {popupContent !== undefined && nodeMap[node.id].depth > 0 ? (
+            <Popup content={popupContent(node)} trigger={labelG} />
+          ) : (
+            labelG
+          )}
         </>
       )}
     </Animate>
