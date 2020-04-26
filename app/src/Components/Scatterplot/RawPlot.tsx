@@ -399,7 +399,7 @@ const RawPlot: FC<Props> = ({
     return taskConfig ? (
       mark
     ) : (
-      <Popup key={idx} content={popupContent} trigger={mark} />
+      <Popup hoverable key={idx} content={popupContent} trigger={mark} />
     );
   }
 
