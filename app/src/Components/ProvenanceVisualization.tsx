@@ -54,8 +54,8 @@ const ProvenanceVisualization: FC<Props> = ({ store }: Props) => {
 
   const { width, height } = dimensions;
 
-  const fauxRoot = Object.values(graph.nodes).find((d) =>
-    d.label.includes("Load Dataset")
+  const fauxRoot = Object.values(graph.nodes).find(
+    (d) => d.metadata.type === "Load Dataset"
   );
 
   const eventConfig: EventConfig<IntentEvents> = {

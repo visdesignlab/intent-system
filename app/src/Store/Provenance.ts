@@ -101,7 +101,7 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
   function setDataset(dataset: Dataset) {
     store.resetStore(defaultState);
     provenance.applyAction(
-      `Load Dataset: ${dataset.name}`,
+      `Load ${dataset.name}`,
       (state: IntentState) => {
         state.dataset = dataset;
         return state;
@@ -130,7 +130,7 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
 
   function changeCategory(category: string) {
     provenance.applyAction(
-      `Switch category encoding: ${category}`,
+      `Category: ${category}`,
       (state: IntentState) => {
         state.categoryColumn = category;
         addDummyInteraction(state);
@@ -143,7 +143,7 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
 
   function toggleMultiBrushBehaviour(brushBehaviour: MultiBrushBehaviour) {
     provenance.applyAction(
-      `Set brush behaviour: ${brushBehaviour}`,
+      `${brushBehaviour} selections`,
       (state: IntentState) => {
         state.multiBrushBehaviour = brushBehaviour;
         addDummyInteraction(state);
@@ -160,7 +160,7 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
 
   function addPlot(plot: Plot) {
     provenance.applyAction(
-      `Add plot for ${plot.x} - ${plot.y}`,
+      `Add plot: ${plot.x} - ${plot.y}`,
       (state: IntentState) => {
         state.plots.push(plot);
 
@@ -174,7 +174,7 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
 
   function removePlot(plot: Plot) {
     provenance.applyAction(
-      `Remove plot for ${plot.x} - ${plot.y}`,
+      `Remove plot: ${plot.x} - ${plot.y}`,
       (state: IntentState) => {
         const plots: Plots = [];
 
@@ -221,7 +221,7 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
 
   function removePointSelection(plot: Plot, points: number[]) {
     provenance.applyAction(
-      `Remove Point Selection`,
+      `Unselect points`,
       (state: IntentState) => {
         for (let i = 0; i < state.plots.length; ++i) {
           if (plot.id === state.plots[i].id) {
@@ -316,7 +316,7 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
 
   function clearSelections() {
     provenance.applyAction(
-      `Clear all selections`,
+      `Clear all`,
       (state: IntentState) => {
         for (let i = 0; i < state.plots.length; ++i) {
           state.plots[i].selectedPoints = [];
@@ -346,7 +346,7 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
     switch (brushType) {
       case "Rectangular":
       case "Freeform":
-        message = `Switch to ${brushType} brush`;
+        message = `${brushType === "Freeform" ? "Paint" : "Rectangular"} brush`;
         break;
       case "None":
       default:
@@ -373,7 +373,7 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
 
   function invertSelection(currentSelected: number[], all: number[]) {
     provenance.applyAction(
-      `Invert current selection`,
+      `Invert selection`,
       (state: IntentState) => {
         const newSelection = all.filter((a) => !currentSelected.includes(a));
         for (let i = 0; i < state.plots.length; ++i) {
@@ -398,7 +398,7 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
     currentSelections: number[]
   ) {
     provenance.applyAction(
-      `Turn prediction in selection`,
+      `${(pred as any).type} ➞ Selection`,
       (state: IntentState) => {
         const basePlot = state.plots[0];
 
@@ -465,10 +465,10 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
   }
 
   function changeBrushSize(size: BrushSize) {
-    let message = `Change brush size to ${size}`;
+    let message = `Brush size: ${size}`;
 
     if (store.brushType === "Rectangular") {
-      message = "Switch to freeform brush";
+      message = "Paint brush";
     }
 
     provenance.applyAction(
