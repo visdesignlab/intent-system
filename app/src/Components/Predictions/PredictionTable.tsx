@@ -189,33 +189,37 @@ const PredictionTable: FC<Props> = ({
             label={isTask ? `Pattern ${idx + 1}` : type}
           />
         </Table.Cell>
-        <Table.Cell
-          // onClick={rowClick}
-          onMouseOver={() => {
-            selectAll(".base-mark").classed(FADE_OUT, true);
-            if (marks.length > 0) selectAll(marks).classed(FADE_COMP_IN, true);
-          }}
-          onMouseOut={() => {
-            selectAll(".base-mark").classed(FADE_OUT, false);
-            if (marks.length > 0) selectAll(marks).classed(FADE_COMP_IN, false);
-          }}
-        >
-          <JaccardBar
-            height={barHeight}
-            score={rankAc}
-            label={rankAc.toFixed(2)}
-          />
-        </Table.Cell>
         {!isTask && (
-          <Table.Cell
-          // onClick={rowClick}
-          >
-            <ProbabilityBar
-              height={barHeight}
-              score={probability}
-              label={probability.toFixed(2)}
-            />
-          </Table.Cell>
+          <>
+            <Table.Cell
+              // onClick={rowClick}
+              onMouseOver={() => {
+                selectAll(".base-mark").classed(FADE_OUT, true);
+                if (marks.length > 0)
+                  selectAll(marks).classed(FADE_COMP_IN, true);
+              }}
+              onMouseOut={() => {
+                selectAll(".base-mark").classed(FADE_OUT, false);
+                if (marks.length > 0)
+                  selectAll(marks).classed(FADE_COMP_IN, false);
+              }}
+            >
+              <JaccardBar
+                height={barHeight}
+                score={rankAc}
+                label={rankAc.toFixed(2)}
+              />
+            </Table.Cell>
+            <Table.Cell
+            // onClick={rowClick}
+            >
+              <ProbabilityBar
+                height={barHeight}
+                score={probability}
+                label={probability.toFixed(2)}
+              />
+            </Table.Cell>
+          </>
         )}
         {/* <Table.Cell>
           <Button
@@ -313,19 +317,23 @@ const PredictionTable: FC<Props> = ({
               Intent Rank
             </Table.HeaderCell>
           )}
-          <Table.HeaderCell
-            sorted={sortColumn === "rankAc" ? direction : (null as any)}
-            onClick={() => sortHandler("rankAc")}
-          >
-            Auto Complete Rank
-          </Table.HeaderCell>
           {!isTask && (
-            <Table.HeaderCell
-              sorted={sortColumn === "probability" ? direction : (null as any)}
-              onClick={() => sortHandler("probability")}
-            >
-              Probability
-            </Table.HeaderCell>
+            <>
+              <Table.HeaderCell
+                sorted={sortColumn === "rankAc" ? direction : (null as any)}
+                onClick={() => sortHandler("rankAc")}
+              >
+                Auto Complete Rank
+              </Table.HeaderCell>
+              <Table.HeaderCell
+                sorted={
+                  sortColumn === "probability" ? direction : (null as any)
+                }
+                onClick={() => sortHandler("probability")}
+              >
+                Probability
+              </Table.HeaderCell>
+            </>
           )}
           <Table.HeaderCell></Table.HeaderCell>
         </Table.Row>
