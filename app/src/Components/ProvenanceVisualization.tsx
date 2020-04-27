@@ -34,7 +34,7 @@ interface Props {
 }
 
 const ProvenanceVisualization: FC<Props> = ({ store }: Props) => {
-  const { graph, isAtRoot, isAtLatest } = store!;
+  const { graph } = store!;
   const ref = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ height: 0, width: 0 });
 
