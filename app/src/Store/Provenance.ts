@@ -105,6 +105,8 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
       `Load ${dataset.name}`,
       (state: IntentState) => {
         state.dataset = dataset;
+        state.showCategories = false;
+        state.categoryColumn = "";
         return state;
       },
       undefined,
