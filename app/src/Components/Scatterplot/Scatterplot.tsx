@@ -3,7 +3,7 @@ import { inject, observer } from 'mobx-react';
 import React, { FC, memo, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { style } from 'typestyle';
 
-import { DataContext } from '../../Contexts';
+import { ConfigContext, DataContext } from '../../Contexts';
 import { Plot } from '../../Store/IntentState';
 import IntentStore from '../../Store/IntentStore';
 import { Data } from '../../Utils/Dataset';
@@ -31,6 +31,7 @@ const Scatterplot: FC<Props> = ({
   const data = useContext(DataContext);
 
   const { categoryColumn, plots } = store!;
+  const config = useContext(ConfigContext);
 
   const [dim, setDim] = useState({ height: 0, width: 0 });
   const { height: dh, width: dw } = dim;
@@ -92,7 +93,7 @@ const Scatterplot: FC<Props> = ({
   }, [adjustedHeight, yMax, yMin]);
 
   return (
-    <div className={surroundDiv}>
+    <div className={surroundDiv(config !== null)}>
       <ScatterplotControls plotID={plot.id} />
       <svg width={width} height={height} className={svgStyle} ref={svgRef}>
         <rect
@@ -119,12 +120,24 @@ const Scatterplot: FC<Props> = ({
 
 export default memo(inject("store")(observer(Scatterplot)));
 
-const surroundDiv = style({
-  // padding: "0.5em",
-  position: "relative",
-  // height: "100%",
-  // width: "100%"
-});
+const surroundDiv = (studyMode: boolean = false) => {
+  console.log(studyMode);
+  if (studyMode) {
+    return style({
+      padding: "0.5em",
+      position: "relative",
+      height: "100%",
+      width: "100%",
+    });
+  }
+
+  return style({
+    // padding: "0.5em",
+    position: "relative",
+    // height: "100%",
+    // width: "100%"
+  });
+};
 
 const svgStyle = style({
   height: "100%",

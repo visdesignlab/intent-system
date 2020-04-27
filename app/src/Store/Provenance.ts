@@ -18,6 +18,7 @@ import {
 import IntentStore from './IntentStore';
 import {
   addDummyInteraction,
+  addDummyInteractionTrigger,
   addInvertSelectionInteraction,
   addPlotInteraction,
   addPointSelectionInteraction,
@@ -433,7 +434,7 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
 
         clearSelectionInteraction(state);
         addPointSelectionInteraction(state, basePlot, newSelection);
-        if (pred.intent.includes("Range")) addDummyInteraction(state);
+        addDummyInteractionTrigger(state);
 
         state.turnedPrediction = pred.intent;
         return state;
@@ -494,7 +495,7 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
 
           clearSelectionInteraction(state);
           addPointSelectionInteraction(state, basePlot, newSelection);
-          if (predName.includes("Range")) addDummyInteraction(state);
+          addDummyInteractionTrigger(state);
 
           state.turnedPrediction = pred.intent;
         }
@@ -671,7 +672,9 @@ function setupObservers(
       const lastInteractionIsNull =
         state.interactionHistory[state.interactionHistory.length - 1] === null;
 
-      const interactionHistory = state.interactionHistory.filter((d) => d);
+      const interactionHistory = state.interactionHistory
+        .filter((d) => d)
+        .filter((d: any) => typeof d !== "string");
 
       const request: PredictionRequest = {
         multiBrushBehavior,

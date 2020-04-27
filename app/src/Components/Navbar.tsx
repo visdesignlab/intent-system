@@ -264,20 +264,22 @@ function Navbar({ store, data, datasets, setDataset }: NavbarProps) {
               {brushSelection}
               {invertSelectionButton}
               {clearSelectionButton}
-              <Menu.Item>
-                <Button.Group primary size="mini">
-                  <Button
-                    icon
-                    disabled={isAtRoot}
-                    onClick={() => actions.goBack()}
-                  >
-                    <Icon name="undo" />
-                  </Button>
-                  <Button icon disabled={isAtLatest}>
-                    <Icon name="redo" onClick={() => actions.goForward()} />
-                  </Button>
-                </Button.Group>
-              </Menu.Item>
+              {!task && (
+                <Menu.Item>
+                  <Button.Group primary size="mini">
+                    <Button
+                      icon
+                      disabled={isAtRoot}
+                      onClick={() => actions.goBack()}
+                    >
+                      <Icon name="undo" />
+                    </Button>
+                    <Button icon disabled={isAtLatest}>
+                      <Icon name="redo" onClick={() => actions.goForward()} />
+                    </Button>
+                  </Button.Group>
+                </Menu.Item>
+              )}
               {task && (
                 <Menu.Item>
                   <Header as="h2">{taskTypeDesc}</Header>

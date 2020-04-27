@@ -41,7 +41,7 @@ const Video: FC<Props> = ({ actions }: Props) => {
         <Link
           to="/trainingm/"
           style={{
-            pointerEvents: enableButton ? "all" : "none",
+            pointerEvents: enableButton || debugMode ? "all" : "none",
           }}
         >
           <Button

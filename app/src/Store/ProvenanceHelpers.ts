@@ -5,6 +5,10 @@ export function addDummyInteraction(state: IntentState) {
   state.interactionHistory.push(null as any);
 }
 
+export function addDummyInteractionTrigger(state: IntentState) {
+  state.interactionHistory.push(`Trigger_${Math.random().toFixed(4)}` as any);
+}
+
 export function addPointSelectionInteraction(
   state: IntentState,
   plot: Plot,
@@ -18,11 +22,11 @@ export function addPointSelectionInteraction(
         id: plot.id,
         x: plot.x,
         y: plot.y,
-        color: state.categoryColumn
+        color: state.categoryColumn,
       },
       dimensions: [plot.x, plot.y],
-      dataIds: points
-    }
+      dataIds: points,
+    },
   });
 }
 
@@ -31,13 +35,13 @@ export function addInvertSelectionInteraction(
   points: number[]
 ) {
   state.interactionHistory = [];
-  state.plots.forEach(plot => addPlotInteraction(state, plot));
+  state.plots.forEach((plot) => addPlotInteraction(state, plot));
   addPointSelectionInteraction(state, state.plots[0], points);
 }
 
 export function clearSelectionInteraction(state: IntentState) {
   state.interactionHistory = [];
-  state.plots.forEach(plot => addPlotInteraction(state, plot));
+  state.plots.forEach((plot) => addPlotInteraction(state, plot));
 }
 
 export function removePointSelectionInteraction(
@@ -53,11 +57,11 @@ export function removePointSelectionInteraction(
         id: plot.id,
         x: plot.x,
         y: plot.y,
-        color: state.categoryColumn
+        color: state.categoryColumn,
       },
       dimensions: [plot.x, plot.y],
-      dataIds: points
-    }
+      dataIds: points,
+    },
   });
 }
 
@@ -80,9 +84,9 @@ export function brushInteraction(
         id: plot.id,
         x: plot.x,
         y: plot.y,
-        color: state.categoryColumn
-      }
-    }
+        color: state.categoryColumn,
+      },
+    },
   });
 }
 
@@ -97,9 +101,9 @@ export function removeBrushInteraction(
       x1: null as any,
       x2: null as any,
       y1: null as any,
-      y2: null as any
+      y2: null as any,
     },
-    points: []
+    points: [],
   });
 }
 
@@ -112,9 +116,9 @@ export function addPlotInteraction(state: IntentState, plot: Plot) {
         id: plot.id,
         x: plot.x,
         y: plot.y,
-        color: state.categoryColumn
-      }
-    }
+        color: state.categoryColumn,
+      },
+    },
   });
 }
 
@@ -126,7 +130,7 @@ export function removePlotInteraction(state: IntentState, plot: Plot) {
 
   const brushes = Object.values(plot.brushes);
   if (brushes.length > 0) {
-    brushes.forEach(affectedBrush => {
+    brushes.forEach((affectedBrush) => {
       removeBrushInteraction(state, plot, affectedBrush);
     });
   }
@@ -139,8 +143,8 @@ export function removePlotInteraction(state: IntentState, plot: Plot) {
         id: plot.id,
         x: plot.x,
         y: plot.y,
-        color: state.categoryColumn
-      }
-    }
+        color: state.categoryColumn,
+      },
+    },
   });
 }
