@@ -50,7 +50,7 @@ export interface IntentState {
 export const defaultState: IntentState = {
   dataset: { key: "", name: "" },
   multiBrushBehaviour: "Union",
-  showCategories: false,
+  showCategories: true,
   categoryColumn: "",
   plots: [],
   interactionHistory: [],

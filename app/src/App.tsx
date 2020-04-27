@@ -29,6 +29,8 @@ function getRandomNumber(num: number): number {
   return Math.ceil(randomNumber);
 }
 
+let firstLoad = true;
+
 const App: FC<Props> = (_: Props) => {
   const [datasets, setDatasets] = useState<Datasets>([]);
   const [selectedDataset, setSelectedDataset] = useState<Dataset>({
@@ -64,13 +66,16 @@ const App: FC<Props> = (_: Props) => {
             selectedPoints: [],
             brushes: {},
           });
-          actions.addPlot({
-            id: getPlotId(),
-            x: data.numericColumns[1],
-            y: data.numericColumns[2],
-            selectedPoints: [],
-            brushes: {},
-          });
+          if (firstLoad) {
+            actions.addPlot({
+              id: getPlotId(),
+              x: data.numericColumns[2],
+              y: data.numericColumns[4],
+              selectedPoints: [],
+              brushes: {},
+            });
+            firstLoad = false;
+          }
         }
       });
     }
