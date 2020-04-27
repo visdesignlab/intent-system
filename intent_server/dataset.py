@@ -3941,6 +3941,7 @@ class Dataset:
             'APG',
             'SPG',
             '3P%',
+            'POS',
             'season'
         ]]
 
@@ -3955,6 +3956,7 @@ class Dataset:
             'APG': 'float',
             'SPG': 'float',
             '3P%': 'float',
+            'POS': 'category',
             'season': 'category'
         }
 
@@ -4021,10 +4023,16 @@ class Dataset:
                 'short': 'J',
                 'type': 'numeric'
             },
+            'POS': {
+                'text': 'Position',
+                'unit': '',
+                'short': 'K',
+                'type': 'categorical'
+            },
             'season': {
                 'text': 'Season',
                 'unit': '',
-                'short': 'K',
+                'short': 'L',
                 'type': 'categorical'
             },
         })
