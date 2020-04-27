@@ -4099,19 +4099,21 @@ class Dataset:
         selection = df[[
             'Name',
             'Price',
-            'Earnings/Share',
-            'Price/Sales',
-            'Price/Earnings',
+            'Earnings-Share',
+            'Price-Sales',
+            'Price-Earnings',
             'Market Cap',
             'Sector'
         ]]
 
+        selection.dropna(inplace=True)
+
         convert_dict = {
             'Name': 'category',
                     'Price': 'float',
-                    'Earnings/Share': 'float',
-                    'Price/Sales': 'float',
-                    'Price/Earnings': 'float',
+                    'Earnings-Share': 'float',
+                    'Price-Sales': 'float',
+                    'Price-Earnings': 'float',
                     'Market Cap': 'float',
                     'Sector': 'category'
         }
@@ -4129,19 +4131,19 @@ class Dataset:
                 'short': 'B',
                 'type': 'numeric'
             },
-            'Earnings/Share': {
+            'Earnings-Share': {
                 'text': 'Earnings per Share',
                 'unit': '',
                 'short': 'C',
                 'type': 'numeric'
             },
-            'Price/Sales': {
+            'Price-Sales': {
                 'text': 'Price per Sales',
                 'unit': '',
                 'short': 'D',
                 'type': 'numeric'
             },
-            'Price/Earnings': {
+            'Price-Earnings': {
                 'text': 'Price per Earnings',
                 'unit': '',
                 'short': 'E',

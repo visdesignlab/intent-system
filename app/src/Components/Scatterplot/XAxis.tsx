@@ -20,7 +20,9 @@ const XAxis: FC<Props> = ({ store, width, scale, dimension }: Props) => {
     const current = axisRef.current;
     if (current) {
       const axis = axisBottom(scale).tickFormat((d: any) => {
-        if (d >= 500000) return `${d / 1000000}M`;
+        if (d >= 1000000)
+          return `${d.toString()[0]}e${d.toString().length - 1}`;
+        if (d >= 500000) return `${d / 100000}M`;
         if (d >= 1000) return `${d / 1000}K`;
         return d;
       });

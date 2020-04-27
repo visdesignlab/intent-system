@@ -74,6 +74,7 @@ function Navbar({ store, data, datasets, setDataset }: NavbarProps) {
         scrolling
         search
         options={datasetsList}
+        selectOnBlur={false}
         onChange={(_, data) => {
           setDataset(datasets.filter((d) => d.key === data.value)[0]);
         }}

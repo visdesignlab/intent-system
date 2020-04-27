@@ -12,7 +12,7 @@ export type ColumnDef = {
   unit: string;
 };
 
-export type ColumnMap = {[key: string]: ColumnDef};
+export type ColumnMap = { [key: string]: ColumnDef };
 
 export interface Data {
   name: string;
@@ -25,15 +25,15 @@ export interface Data {
 }
 
 export function loadData(dataset: any): Data {
-  const {name, labelColumn, values, column_header_map} = dataset;
+  const { name, labelColumn, values, column_header_map } = dataset;
   const columnMap: ColumnMap = column_header_map;
 
   const columns: string[] = Object.keys(columnMap);
   const numericColumns: string[] = Object.keys(columnMap).filter(
-    col => columnMap[col].type === 'numeric',
+    (col) => columnMap[col].type === "numeric"
   );
   const categoricalColumns: string[] = Object.keys(columnMap).filter(
-    col => columnMap[col].type === 'categorical',
+    (col) => columnMap[col].type === "categorical"
   );
 
   return {

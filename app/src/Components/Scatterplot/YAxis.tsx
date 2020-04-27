@@ -20,6 +20,8 @@ const YAxis: FC<Props> = ({ height, scale, dimension }: Props) => {
     const current = axisRef.current;
     if (current) {
       const axis = axisLeft(scale).tickFormat((d: any) => {
+        if (d >= 1000000)
+          return `${d.toString()[0]}e${d.toString().length - 1}`;
         if (d >= 500000) return `${d / 1000000}M`;
         if (d >= 1000) return `${d / 1000}K`;
         return d;
