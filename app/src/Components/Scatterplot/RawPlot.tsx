@@ -571,7 +571,8 @@ const RawPlot: FC<Props> = ({
                       selectAll(".base-mark").classed(FADE_COMP_IN, false);
                       actions.turnPredictionInSelection(
                         pred,
-                        selections.values
+                        selections.values,
+                        columnMap
                       );
 
                       hide$.next(null);

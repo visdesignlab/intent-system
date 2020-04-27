@@ -118,8 +118,10 @@ const App: FC<Props> = (_: Props) => {
                 />
                 <Visualization />
               </div>
-              <Predictions />
-              <ProvenanceVisualization />
+              <div className={sideLayout}>
+                <Predictions />
+                <ProvenanceVisualization />
+              </div>
             </div>
           </ActionContext.Provider>
         </DataContext.Provider>
@@ -149,9 +151,18 @@ const layoutStyle = style({
   display: "grid",
   height: "100vh",
   width: "100vw",
-  gridTemplateColumns: "5fr 2fr 1fr",
+  gridTemplateColumns: "5fr 3fr",
   gridTemplateAreas: `
-  "vis pred prov"
+  "vis side"
+  `,
+});
+
+const sideLayout = style({
+  display: "grid",
+  gridArea: "side",
+  gridTemplateColumns: "auto min-content",
+  gridTemplateAreas: `
+    "pred prov"
   `,
 });
 

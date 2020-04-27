@@ -1,9 +1,9 @@
 import { Extra, initProvenance, isStateNode, NodeID, Provenance, StateNode } from '@visdesignlab/provenance-lib-core';
 import axios from 'axios';
 
-import { extendRange, getAllSelections } from '../Components/Predictions/PredictionRowType';
+import { extendRange, getAllSelections, PredictionRowType } from '../Components/Predictions/PredictionRowType';
 import { MultiBrushBehavior, Prediction, PredictionRequest, PredictionSet } from '../contract';
-import { Dataset } from '../Utils/Dataset';
+import { ColumnMap, Dataset } from '../Utils/Dataset';
 import {
   BrushSize,
   BrushType,
@@ -395,17 +395,38 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
 
   function turnPredictionInSelection(
     pred: Prediction,
-    currentSelections: number[]
+    currentSelections: number[],
+    columnMap: ColumnMap
   ) {
     provenance.applyAction(
       `${(pred as any).type} ➞ Selection`,
       (state: IntentState) => {
-        const basePlot = state.plots[0];
+        const { dims = [] } = pred as PredictionRowType;
+
+        let basePlot = state.plots[0];
+
+        if (dims.length === 2) {
+          let dimNames = dims.map((d) => {
+            const di = Object.entries(columnMap).filter(
+              ([k, v]) => v.short === d
+            );
+            return di[0][0];
+          });
+
+          for (let i = 0; i < state.plots.length; ++i) {
+            const p = state.plots[i];
+            if (dimNames.includes(p.x) && dimNames.includes(p.y)) {
+              basePlot = p;
+              break;
+            }
+          }
+        }
 
         let newSelection = pred.dataIds || [];
 
         for (let i = 0; i < state.plots.length; ++i) {
-          if (i === 0) state.plots[i].selectedPoints = newSelection;
+          if (state.plots[i].id === basePlot.id)
+            state.plots[i].selectedPoints = newSelection;
           else state.plots[i].selectedPoints = [];
           state.plots[i].brushes = {};
         }
@@ -424,6 +445,7 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
 
   function lockPrediction(
     pred: Prediction | string,
+    columnMap: ColumnMap,
     currentSelections: number[] = []
   ) {
     let predName = "";
@@ -440,12 +462,32 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
         state.lockedPrediction = pred as any;
 
         if (typeof pred !== "string") {
-          const basePlot = state.plots[0];
+          const { dims = [] } = pred as PredictionRowType;
+
+          let basePlot = state.plots[0];
+
+          if (dims.length === 2) {
+            let dimNames = dims.map((d) => {
+              const di = Object.entries(columnMap).filter(
+                ([k, v]) => v.short === d
+              );
+              return di[0][0];
+            });
+
+            for (let i = 0; i < state.plots.length; ++i) {
+              const p = state.plots[i];
+              if (dimNames.includes(p.x) && dimNames.includes(p.y)) {
+                basePlot = p;
+                break;
+              }
+            }
+          }
 
           let newSelection = pred.dataIds || [];
 
           for (let i = 0; i < state.plots.length; ++i) {
-            if (i === 0) state.plots[i].selectedPoints = newSelection;
+            if (state.plots[i].id === basePlot.id)
+              state.plots[i].selectedPoints = newSelection;
             else state.plots[i].selectedPoints = [];
             state.plots[i].brushes = {};
           }
@@ -565,11 +607,13 @@ export interface ProvenanceActions {
   invertSelection: (currentSelected: number[], all: number[]) => void;
   lockPrediction: (
     pred: Prediction | string,
+    colMap: ColumnMap,
     currentSelection?: number[]
   ) => void;
   turnPredictionInSelection: (
     pred: Prediction,
-    currentSelection: number[]
+    currentSelection: number[],
+    colMap: ColumnMap
   ) => void;
 }
 

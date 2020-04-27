@@ -3,7 +3,7 @@ import { inject, observer } from 'mobx-react';
 import React, { FC, memo, useContext, useEffect, useState } from 'react';
 import { Button, Header, Label, Popup, Table } from 'semantic-ui-react';
 
-import { ActionContext } from '../../Contexts';
+import { ActionContext, DataContext } from '../../Contexts';
 import IntentStore from '../../Store/IntentStore';
 import { hide$ } from '../Scatterplot/RawPlot';
 import { FADE_COMP_IN, FADE_OUT } from '../Styles/MarkStyle';
@@ -31,6 +31,7 @@ const PredictionTable: FC<Props> = ({
   const [predictionsInput, setPredictionsInput] = useState<PredictionRowType[]>(
     []
   );
+  const { columnMap } = useContext(DataContext);
 
   const [sortColumn, setSortColumn] = useState<SortableColumns>("similarity");
   const [direction, setDirection] = useState<SortDirection>("descending");
@@ -67,23 +68,30 @@ const PredictionTable: FC<Props> = ({
     const { matches, isnp, ipns, similarity, type, probability, rankAc } = pred;
 
     function rowClick() {
-      if (isTask) {
-        selectAll(".base-mark")
-          .classed(FADE_COMP_IN, false)
-          .classed(FADE_OUT, false);
-        const curr = getAllSelections(plots, multiBrushBehaviour === "Union")
-          .values;
-        actions.turnPredictionInSelection(pred, curr);
-        hide$.next(null);
-      } else {
-        if (pred.intent === selectedPrediction) {
-          actions.selectPrediction("none");
-          topPred$.next(predictions[0]);
-        } else {
-          actions.selectPrediction(pred.intent);
-          topPred$.next(pred);
-        }
-      }
+      selectAll(".base-mark")
+        .classed(FADE_COMP_IN, false)
+        .classed(FADE_OUT, false);
+      const curr = getAllSelections(plots, multiBrushBehaviour === "Union")
+        .values;
+      actions.turnPredictionInSelection(pred, curr, columnMap);
+      hide$.next(null);
+      // if (isTask) {
+      //   selectAll(".base-mark")
+      //     .classed(FADE_COMP_IN, false)
+      //     .classed(FADE_OUT, false);
+      //   const curr = getAllSelections(plots, multiBrushBehaviour === "Union")
+      //     .values;
+      //   actions.turnPredictionInSelection(pred, curr);
+      //   hide$.next(null);
+      // } else {
+      //   if (pred.intent === selectedPrediction) {
+      //     actions.selectPrediction("none");
+      //     topPred$.next(predictions[0]);
+      //   } else {
+      //     actions.selectPrediction(pred.intent);
+      //     topPred$.next(pred);
+      //   }
+      // }
     }
 
     const marks = (pred.dataIds || []).map((d) => `#mark-${d}`).join(",");
@@ -209,7 +217,7 @@ const PredictionTable: FC<Props> = ({
             />
           </Table.Cell>
         )}
-        <Table.Cell>
+        {/* <Table.Cell>
           <Button
             icon="hand pointer"
             primary
@@ -222,7 +230,7 @@ const PredictionTable: FC<Props> = ({
               hide$.next(null);
             }}
           />
-        </Table.Cell>
+        </Table.Cell> */}
         <Table.Cell>
           <Popup
             hoverable
@@ -319,7 +327,7 @@ const PredictionTable: FC<Props> = ({
               Probability
             </Table.HeaderCell>
           )}
-          <Table.HeaderCell colSpan={isTask ? 1 : 2}></Table.HeaderCell>
+          <Table.HeaderCell></Table.HeaderCell>
         </Table.Row>
       </Table.Header>
       <Table.Body>{predictions.map(predRowRender)}</Table.Body>

@@ -4,7 +4,7 @@ import { BehaviorSubject } from 'rxjs';
 import { Button, Card, Form, Message, TextArea } from 'semantic-ui-react';
 import { style } from 'typestyle';
 
-import { ActionContext } from '../../Contexts';
+import { ActionContext, DataContext } from '../../Contexts';
 import IntentStore from '../../Store/IntentStore';
 import { PredictionRowType } from './PredictionRowType';
 
@@ -23,6 +23,7 @@ const AnnotationBox: FC<Props> = ({ store, selections }: Props) => {
   );
   const [hideError, setHideError] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
+  const { columnMap } = useContext(DataContext);
 
   useEffect(() => {
     const sub = topPred$.subscribe((next) => setTopPrediction(next));
@@ -74,7 +75,7 @@ const AnnotationBox: FC<Props> = ({ store, selections }: Props) => {
               onClick={() => {
                 if (topPrediction) {
                   actions.selectPrediction("none");
-                  actions.lockPrediction(topPrediction, selections);
+                  actions.lockPrediction(topPrediction, columnMap, selections);
                 }
                 if (annotationText.length > 0) {
                   actions.annotateNode(annotationText);
@@ -88,7 +89,7 @@ const AnnotationBox: FC<Props> = ({ store, selections }: Props) => {
               color="green"
               onClick={() => {
                 actions.selectPrediction("none");
-                actions.lockPrediction("Other");
+                actions.lockPrediction("Other", columnMap);
                 if (annotationText.length > 0)
                   actions.annotateNode(annotationText);
               }}

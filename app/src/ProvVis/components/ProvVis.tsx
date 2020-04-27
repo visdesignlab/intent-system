@@ -279,21 +279,21 @@ function ProvVis<T, S extends string, A>({
 
   let svgWidth = width;
 
-  if (document.getElementById("globalG") !== null) {
-    if (
-      document
-        .getElementById("globalG")!
-        .getBoundingClientRect()
-        .width.valueOf() > svgWidth
-    ) {
-      console.log("in here");
-      svgWidth =
-        document
-          .getElementById("globalG")!
-          .getBoundingClientRect()
-          .width.valueOf() + 10;
-    }
-  }
+  // if (document.getElementById("globalG") !== null) {
+  //   if (
+  //     document
+  //       .getElementById("globalG")!
+  //       .getBoundingClientRect()
+  //       .width.valueOf() > svgWidth
+  //   ) {
+  //     console.log("in here");
+  //     svgWidth =
+  //       document
+  //         .getElementById("globalG")!
+  //         .getBoundingClientRect()
+  //         .width.valueOf() + 10;
+  //   }
+  // }
 
   let overflowStyle = {
     overflowX: "auto",

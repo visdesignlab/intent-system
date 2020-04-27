@@ -45,9 +45,11 @@ const ProvenanceVisualization: FC<Props> = ({ store }: Props) => {
   useEffect(() => {
     const current = ref.current;
     if (current && dimensions.width === 0 && dimensions.height === 0) {
+      const w = current.clientWidth;
+
       setDimensions({
         height: current.clientHeight,
-        width: current.clientWidth,
+        width: w < 200 ? 200 : w,
       });
     }
   }, [dimensions]);
@@ -252,13 +254,13 @@ const ProvenanceVisualization: FC<Props> = ({ store }: Props) => {
   const isProvenanceReady = graph.current !== graph.root;
 
   return (
-    <div style={divStyle} ref={ref} className={provStyle}>
+    <div ref={ref} className={provStyle}>
       <Header as="h3" style={{ marginTop: "10px" }}>
         History
       </Header>
       <Radio
         toggle
-        label="Show Labels"
+        label="Labels"
         checked={visMode === "label"}
         onChange={() => {
           if (visMode === "label") setVisMode("icon");
@@ -282,7 +284,7 @@ const ProvenanceVisualization: FC<Props> = ({ store }: Props) => {
           root={fauxRoot ? fauxRoot.id : graph.root}
           current={graph.current}
           nodeMap={graph.nodes}
-          width={visMode === "label" ? width : width / 2}
+          width={visMode === "label" ? width : width * 0.65}
           gutter={20}
           backboneGutter={25}
           sideOffset={200}
