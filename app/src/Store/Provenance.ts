@@ -53,6 +53,8 @@ export type Annotation = {
   predictionSet: PredictionSet;
 };
 
+let firstLoad = true;
+
 export function setupProvenance(store: IntentStore): ProvenanceControl {
   const provenance = initProvenance<IntentState, IntentEvents, Annotation>(
     defaultState,
@@ -99,12 +101,17 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
     importProvenance();
   }
 
-  function setDataset(dataset: Dataset) {
+  function setDataset(dataset: Dataset, first: boolean = false) {
     store.resetStore(defaultState);
     provenance.applyAction(
       `Load ${dataset.name}`,
       (state: IntentState) => {
         state.dataset = dataset;
+        if (!first) {
+          state.showCategories = false;
+          state.categoryColumn = "";
+        }
+
         return state;
       },
       undefined,
@@ -570,7 +577,7 @@ export interface ProvenanceControl {
 }
 
 export interface ProvenanceActions {
-  setDataset: (dataset: Dataset) => void;
+  setDataset: (dataset: Dataset, first?: boolean) => void;
   toggleCategories: (show: boolean, categories?: string[]) => void;
   changeCategory: (category: string) => void;
   toggleMultiBrushBehaviour: (brushBehaviour: MultiBrushBehaviour) => void;

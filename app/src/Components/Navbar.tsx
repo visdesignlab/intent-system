@@ -264,7 +264,7 @@ function Navbar({ store, data, datasets, setDataset }: NavbarProps) {
               {brushSelection}
               {invertSelectionButton}
               {clearSelectionButton}
-              {!task && (
+              {!task && false && (
                 <Menu.Item>
                   <Button.Group primary size="mini">
                     <Button

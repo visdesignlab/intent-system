@@ -99,7 +99,7 @@ const App: FC<Props> = (_: Props) => {
 
         let datasetIdx = datasetNum;
         setSelectedDataset(datasets[datasetIdx]);
-        actions.setDataset(datasets[datasetIdx]);
+        actions.setDataset(datasets[datasetIdx], true);
       }
     });
   }, [datasetString, actions]);
