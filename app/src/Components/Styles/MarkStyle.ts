@@ -23,7 +23,7 @@ export const REGULAR_MARK_STYLE = style(
   hoverEffect
 );
 
-export const union_color = "rgb(244, 106, 15)";
+export const union_color = "rgb(244, 106, 15) !important";
 const intersection_color = "rgb(44, 127, 184)";
 
 export const UNION_MARK_STYLE = style(
