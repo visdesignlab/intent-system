@@ -98,6 +98,7 @@ const PredictionTable: FC<Props> = ({
 
     return (
       <Table.Row
+        selectable
         key={pred.intent}
         active={pred.intent === selectedPrediction}
         onClick={rowClick}
@@ -116,6 +117,7 @@ const PredictionTable: FC<Props> = ({
         {!isTask && (
           <>
             <HoverTableCell
+              selectable
               configs={
                 matches.length === 0
                   ? []
@@ -135,6 +137,7 @@ const PredictionTable: FC<Props> = ({
               {matches.length}
             </HoverTableCell>
             <HoverTableCell
+              selectable
               configs={
                 isnp.length === 0
                   ? []
@@ -153,6 +156,7 @@ const PredictionTable: FC<Props> = ({
               {isnp.length}
             </HoverTableCell>
             <HoverTableCell
+              selectable
               configs={
                 ipns.length === 0
                   ? []
@@ -211,7 +215,17 @@ const PredictionTable: FC<Props> = ({
               />
             </Table.Cell>
             <Table.Cell
-            // onClick={rowClick}
+              onMouseOver={() => {
+                selectAll(".base-mark").classed(FADE_OUT, true);
+                if (marks.length > 0)
+                  selectAll(marks).classed(FADE_COMP_IN, true);
+              }}
+              onMouseOut={() => {
+                selectAll(".base-mark").classed(FADE_OUT, false);
+                if (marks.length > 0)
+                  selectAll(marks).classed(FADE_COMP_IN, false);
+              }}
+              // onClick={rowClick}
             >
               <ProbabilityBar
                 height={barHeight}
@@ -289,7 +303,7 @@ const PredictionTable: FC<Props> = ({
   }
 
   return (
-    <Table sortable textAlign="center" compact>
+    <Table sortable textAlign="center" selecttable compact>
       <Table.Header>
         <Table.Row>
           {!isTask && <Table.HeaderCell>Dims</Table.HeaderCell>}
