@@ -65,7 +65,7 @@ export function ClearAll({ size = 15, fill = "#ccc" }: AddTaskGlyphProps) {
           fontSize={size}
           fill={fill}
           textAnchor="middle"
-          alignmentBaseline="middle"
+          dominantBaseline="middle"
 
 
           fontFamily="FontAwesome"
@@ -87,7 +87,7 @@ export function RemoveBrush({ size = 15, fill = "#ccc" }: AddTaskGlyphProps) {
           fontSize={size}
           fill={fill}
           textAnchor="middle"
-          alignmentBaseline="middle"
+          dominantBaseline="middle"
 
 
           fontFamily="FontAwesome"
@@ -109,7 +109,7 @@ export function ChangeBrush({ size = 15, fill = "#ccc" }: AddTaskGlyphProps) {
           fontSize={size}
           fill={fill}
           textAnchor="middle"
-          alignmentBaseline="middle"
+          dominantBaseline="middle"
 
 
           fontFamily="FontAwesome"
@@ -131,7 +131,7 @@ export function Invert({ size = 15, fill = "#ccc" }: AddTaskGlyphProps) {
           fontSize={size}
           fill={fill}
           textAnchor="middle"
-          alignmentBaseline="middle"
+          dominantBaseline="middle"
 
 
           fontFamily="FontAwesome"
@@ -180,7 +180,7 @@ export function LockPrediction({
           fontSize={size}
           fill={fill}
           textAnchor="middle"
-          alignmentBaseline="middle"
+          dominantBaseline="middle"
 
 
           fontFamily="FontAwesome"
@@ -202,7 +202,7 @@ export function AddBrush({ size = 15, fill = "#ccc" }: AddTaskGlyphProps) {
           fontSize={size}
           fill={fill}
           textAnchor="middle"
-          alignmentBaseline="middle"
+          dominantBaseline="middle"
 
           fontFamily="FontAwesome"
         >
@@ -226,7 +226,7 @@ export function PointDeselection({
           fontSize={size}
           fill={fill}
           textAnchor="middle"
-          alignmentBaseline="middle"
+          dominantBaseline="middle"
 
 
           fontFamily="FontAwesome"
@@ -251,7 +251,7 @@ export function PointSelection({
           fontSize={size}
           fill={fill}
           textAnchor="middle"
-          alignmentBaseline="middle"
+          dominantBaseline="middle"
 
 
           fontFamily="FontAwesome"
@@ -315,7 +315,7 @@ export function LoadDataset({ size = 15, fill = "#ccc" }: AddTaskGlyphProps) {
           fontSize={size}
           fill={fill}
           textAnchor="middle"
-          alignmentBaseline="middle"
+          dominantBaseline="middle"
 
 
           fontFamily="FontAwesome"
@@ -355,7 +355,7 @@ export function SwitchCategoryVisibility({
           fontSize={size}
           fill={fill}
           textAnchor="middle"
-          alignmentBaseline="middle"
+          dominantBaseline="middle"
 
 
           fontFamily="FontAwesome"
@@ -441,7 +441,7 @@ export function ChangeCategory({
           fontSize={size}
           fill={fill}
           textAnchor="middle"
-          alignmentBaseline="middle"
+          dominantBaseline="middle"
 
 
           fontFamily="FontAwesome"
