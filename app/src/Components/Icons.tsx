@@ -60,14 +60,14 @@ export function ClearAll({ size = 15, fill = "#ccc" }: AddTaskGlyphProps) {
   return (
     <g>
       <circle fill="white" r={size - size / 4} />
-      <g transform={translate(-size / 2, -size / 2)}>
+      <g>
         <text
           fontSize={size}
           fill={fill}
           textAnchor="middle"
           alignmentBaseline="middle"
-          x={size / 2}
-          y={size / 2}
+
+
           fontFamily="FontAwesome"
         >
           &#xf2ed;
@@ -82,14 +82,14 @@ export function RemoveBrush({ size = 15, fill = "#ccc" }: AddTaskGlyphProps) {
   return (
     <g>
       <circle fill="white" r={size - size / 4} />
-      <g transform={translate(-size / 2, -size / 2)}>
+      <g>
         <text
           fontSize={size}
           fill={fill}
           textAnchor="middle"
           alignmentBaseline="middle"
-          x={size / 2}
-          y={size / 2}
+
+
           fontFamily="FontAwesome"
         >
           &#xf057;
@@ -110,8 +110,8 @@ export function ChangeBrush({ size = 15, fill = "#ccc" }: AddTaskGlyphProps) {
           fill={fill}
           textAnchor="middle"
           alignmentBaseline="middle"
-          x={size / 2}
-          y={size / 2}
+
+
           fontFamily="FontAwesome"
         >
           &#xf044;
@@ -126,14 +126,14 @@ export function Invert({ size = 15, fill = "#ccc" }: AddTaskGlyphProps) {
   return (
     <g>
       <circle fill="white" r={size - size / 4} />
-      <g transform={translate(-size / 2, -size / 2)}>
+      <g>
         <text
           fontSize={size}
           fill={fill}
           textAnchor="middle"
           alignmentBaseline="middle"
-          x={size / 2}
-          y={size / 2}
+
+
           fontFamily="FontAwesome"
         >
           &#xf042;
@@ -175,14 +175,14 @@ export function LockPrediction({
   return (
     <g>
       <circle fill="white" r={size - size / 4} />
-      <g transform={translate(-size / 2, -size / 2)}>
+      <g>
         <text
           fontSize={size}
           fill={fill}
           textAnchor="middle"
           alignmentBaseline="middle"
-          x={size / 2}
-          y={size / 2}
+
+
           fontFamily="FontAwesome"
         >
           &#xf0eb;
@@ -197,17 +197,16 @@ export function AddBrush({ size = 15, fill = "#ccc" }: AddTaskGlyphProps) {
   return (
     <g>
       <circle fill="white" r={size - size / 4} />
-      <g transform={translate(-size / 2, -size / 2)}>
+      <g>
         <text
           fontSize={size}
           fill={fill}
           textAnchor="middle"
           alignmentBaseline="middle"
-          x={size / 2}
-          y={size / 2}
+
           fontFamily="FontAwesome"
         >
-          &#xf5ef;
+          &#xf5cb;
         </text>
       </g>
     </g>
@@ -222,14 +221,14 @@ export function PointDeselection({
   return (
     <g>
       <circle fill="white" r={size - size / 4} />
-      <g transform={translate(-size / 2, -size / 2)}>
+      <g>
         <text
           fontSize={size}
           fill={fill}
           textAnchor="middle"
           alignmentBaseline="middle"
-          x={size / 2}
-          y={size / 2}
+
+
           fontFamily="FontAwesome"
         >
           &#xf12d;
@@ -247,14 +246,14 @@ export function PointSelection({
   return (
     <g>
       <circle fill="white" r={size - size / 4} />
-      <g transform={translate(-size / 2, -size / 2)}>
+      <g>
         <text
           fontSize={size}
           fill={fill}
           textAnchor="middle"
           alignmentBaseline="middle"
-          x={size / 2}
-          y={size / 2}
+
+
           fontFamily="FontAwesome"
         >
           &#xf1fc;
@@ -311,14 +310,14 @@ export function LoadDataset({ size = 15, fill = "#ccc" }: AddTaskGlyphProps) {
   return (
     <g>
       <circle fill="white" r={size - size / 4} />
-      <g transform={translate(-size / 2, -size / 2)}>
+      <g>
         <text
           fontSize={size}
           fill={fill}
           textAnchor="middle"
           alignmentBaseline="middle"
-          x={size / 2}
-          y={size / 2}
+
+
           fontFamily="FontAwesome"
         >
           &#xf0ce;
@@ -351,14 +350,14 @@ export function SwitchCategoryVisibility({
   return (
     <g>
       <circle fill="white" r={size - size / 4} />
-      <g transform={translate(-size / 2, -size / 2)}>
+      <g>
         <text
           fontSize={size}
           fill={fill}
           textAnchor="middle"
           alignmentBaseline="middle"
-          x={size / 2}
-          y={size / 2}
+
+
           fontFamily="FontAwesome"
         >
           &#xf61f;
@@ -437,14 +436,14 @@ export function ChangeCategory({
   return (
     <g>
       <circle fill="white" r={size - size / 4} />
-      <g transform={translate(-size / 2, -size / 2)}>
+      <g>
         <text
           fontSize={size}
           fill={fill}
           textAnchor="middle"
           alignmentBaseline="middle"
-          x={size / 2}
-          y={size / 2}
+
+
           fontFamily="FontAwesome"
         >
           &#xf61f;
