@@ -4096,7 +4096,7 @@ class Dataset:
                 'text': 'Species',
                 'unit': '',
                 'short': 'F',
-                'type': 'category'
+                'type': 'categorical'
             },
         })
 
