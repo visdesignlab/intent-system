@@ -209,8 +209,8 @@ const PredictionTable: FC<Props> = ({
             >
               <JaccardBar
                 height={barHeight}
-                score={rankAc}
-                label={rankAc.toFixed(2)}
+                score={rankAc !== undefined ? rankAc : 0}
+                label={rankAc !== undefined ? rankAc.toFixed(2) : '0'}
               />
             </Table.Cell>
             <Table.Cell
