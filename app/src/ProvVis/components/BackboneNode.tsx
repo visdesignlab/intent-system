@@ -104,7 +104,7 @@ function BackboneNode<T, S extends string, A>({
   let label: string = "";
   let annotate: string = "";
 
-  if (node.artifacts.extra.length > 0) {
+  if (node.artifacts.extra && node.artifacts.extra.length > 0) {
     annotate = (node.artifacts.extra[node.artifacts.extra.length - 1].e as any)
       .annotation;
   }

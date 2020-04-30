@@ -176,7 +176,7 @@ const ProvenanceVisualization: FC<Props> = ({ store }: Props) => {
   const popupNode = (node: any) => {
     //
     // // let annotation = "";
-    if (node.artifacts.extra.length > 0) {
+    if (node.artifacts.extra && node.artifacts.extra.length > 0) {
       let styles4 = {
         fontWeight: "bold",
         marginBottom: 0,
