@@ -121,7 +121,6 @@ const Scatterplot: FC<Props> = ({
 export default memo(inject("store")(observer(Scatterplot)));
 
 const surroundDiv = (studyMode: boolean = false) => {
-  console.log(studyMode);
   if (studyMode) {
     return style({
       padding: "0.5em",

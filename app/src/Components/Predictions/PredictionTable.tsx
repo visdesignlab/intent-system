@@ -98,7 +98,6 @@ const PredictionTable: FC<Props> = ({
 
     return (
       <Table.Row
-        selectable
         key={pred.intent}
         active={pred.intent === selectedPrediction}
         onClick={rowClick}
@@ -303,7 +302,7 @@ const PredictionTable: FC<Props> = ({
   }
 
   return (
-    <Table sortable textAlign="center" selecttable compact>
+    <Table sortable textAlign="center" selectable compact>
       <Table.Header>
         <Table.Row>
           {!isTask && <Table.HeaderCell>Dims</Table.HeaderCell>}
