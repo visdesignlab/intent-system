@@ -104,7 +104,7 @@ export function ChangeBrush({ size = 15, fill = "#ccc" }: AddTaskGlyphProps) {
   return (
     <g>
       <circle fill="white" r={size - size / 4} />
-      <g transform={translate(-size / 2, -size / 2)}>
+      <g>
         <text
           fontSize={size}
           fill={fill}
