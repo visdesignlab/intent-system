@@ -120,9 +120,8 @@ function ProvVis<T, S extends string, A>({
           Object.keys(bundleMap).includes(d.id) &&
           !expandedClusterList.includes(d.id)
         ) {
-          let curr = d;
-
           while (true) {
+            let curr = d;
             // let bundlePar = findBundleParent(curr.parent, bundleMap);
             // if(bundlePar.length > 0)
             // {
