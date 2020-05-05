@@ -1,5 +1,7 @@
 import { Extra, initProvenance, isStateNode, NodeID, Provenance, StateNode } from '@visdesignlab/provenance-lib-core';
 import axios from 'axios';
+import { json } from 'd3-fetch'
+import {url} from '../'
 
 import { extendRange, getAllSelections, PredictionRowType } from '../Components/Predictions/PredictionRowType';
 import { MultiBrushBehavior, Prediction, PredictionRequest, PredictionSet } from '../contract';
@@ -55,14 +57,22 @@ export type Annotation = {
 
 let firstLoad = true;
 
-export function setupProvenance(store: IntentStore): ProvenanceControl {
+export function setupProvenance(store: IntentStore, url?: any): ProvenanceControl {
   const provenance = initProvenance<IntentState, IntentEvents, Annotation>(
     defaultState,
     true
   );
 
-  const url = new URLSearchParams(window.location.search);
-  const graphPath = url.get("graphPath");
+
+  let graphPath = "";
+  let paperFigure = "";
+
+  if(url)
+  {
+    graphPath = url.get('graphPath');
+    paperFigure = url.get('paperFigure')
+  }
+
 
   function importProvenance() {
     graphRTD
@@ -71,7 +81,8 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
       .then(function(dataSnapshot) {
         let dataJson: any = dataSnapshot.val();
         if (
-          !dataJson ||
+          !
+          dataJson ||
           !dataJson["nodes"] ||
           !dataJson["current"] ||
           !dataJson["root"]
@@ -85,8 +96,19 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
           }
         }
 
+        console.log(dataJson);
         provenance.importProvenanceGraph(JSON.stringify(dataJson));
       });
+  }
+
+  function importPaperURL() {
+    if(paperFigure === 'auto-complete' || paperFigure === 'paper-teaser' || paperFigure === 'prediction-interface')
+    {
+      let dataJson = json(`/paperFigs/${paperFigure}.json`).then(function(d) {
+        console.log(d);
+        provenance.importProvenanceGraph(JSON.stringify(d));
+      })
+    }
   }
 
   store.graph = provenance.graph();
@@ -97,8 +119,15 @@ export function setupProvenance(store: IntentStore): ProvenanceControl {
 
   setupObservers(provenance, store);
 
+
   if (graphPath !== undefined) {
     importProvenance();
+  }
+
+  console.log(paperFigure)
+
+  if (paperFigure !== undefined) {
+    importPaperURL();
   }
 
   function setDataset(dataset: Dataset, first: boolean = false) {
@@ -640,6 +669,7 @@ function setupObservers(
     store.isAtRoot = provenance.current().label.includes("Load Dataset");
     store.isAtLatest = provenance.current().children.length === 0;
     store.graph = provenance.graph();
+    console.log(JSON.stringify(provenance.graph()));
   });
 
   provenance.addArtifactObserver((extra: Extra<Annotation>[]) => {
@@ -704,7 +734,6 @@ function setupObservers(
                     annotation: "",
                     predictionSet: predictionSet,
                   };
-
                   provenance.addExtraToNodeArtifact(current.id, annotate);
                 }
               })

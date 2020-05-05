@@ -3,6 +3,8 @@ import { Provider } from 'mobx-react';
 import React, { FC, useEffect, useMemo, useState } from 'react';
 import { Button, Icon, Modal } from 'semantic-ui-react';
 import { style } from 'typestyle';
+import { useLocation } from 'react-router-dom';
+
 
 import Navbar from './Components/Navbar';
 import Predictions from './Components/Predictions/Predictions';
@@ -43,9 +45,10 @@ const App: FC<Props> = (_: Props) => {
   const selectedDatasetString = JSON.stringify(selectedDataset);
 
   const datasetString = JSON.stringify(datasets);
+  const url = new URLSearchParams(useLocation().search);
 
   const { provenance, actions } = useMemo(() => {
-    const { provenance, actions } = setupProvenance(store);
+    const { provenance, actions } = setupProvenance(store, url);
     const ds: Dataset = JSON.parse(selectedDatasetString);
     if (ds.key.length > 0) {
       actions.setDataset(ds);
