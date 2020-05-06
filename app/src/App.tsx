@@ -96,6 +96,7 @@ const App: FC<Props> = (_: Props) => {
 
         if (paperFigure === "auto-complete") datasetName = "out_hard_task_3";
         if (paperFigure === "paper-teaser") datasetName = "cluster";
+        if (paperFigure === "prediction-interface") datasetName = "gapminder";
 
         let datasetNum = getRandomNumber(datasets.length - 1) * 0 + 1;
         setDatasets(datasets);
