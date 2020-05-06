@@ -120,8 +120,11 @@ function ProvVis<T, S extends string, A>({
           Object.keys(bundleMap).includes(d.id) &&
           !expandedClusterList.includes(d.id)
         ) {
+          let curr = d;
+
           while (true) {
-            let curr = d;
+            //need this to remove linter warning.
+            let localCurr = curr;
             // let bundlePar = findBundleParent(curr.parent, bundleMap);
             // if(bundlePar.length > 0)
             // {
@@ -135,14 +138,14 @@ function ProvVis<T, S extends string, A>({
             // }
 
             if (
-              !bundledNodes.includes(curr.parent) ||
-              Object.keys(bundleMap).includes(curr.parent)
+              !bundledNodes.includes(localCurr.parent) ||
+              Object.keys(bundleMap).includes(localCurr.parent)
             ) {
-              return curr.parent;
+              return localCurr.parent;
             }
 
-            let temp = copyList.filter((d) => {
-              return d.id === curr.parent;
+            let temp = copyList.filter(function(d) {
+              return d.id === localCurr.parent;
             })[0];
 
             if (isStateNode(temp)) {

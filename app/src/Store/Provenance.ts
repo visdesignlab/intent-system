@@ -2,7 +2,6 @@ import { Extra, initProvenance, isStateNode, NodeID, Provenance, StateNode } fro
 import axios from 'axios';
 import { json } from 'd3-fetch';
 
-import { url } from '../';
 import { extendRange, getAllSelections, PredictionRowType } from '../Components/Predictions/PredictionRowType';
 import { MultiBrushBehavior, Prediction, PredictionRequest, PredictionSet } from '../contract';
 import { ColumnMap, Dataset } from '../Utils/Dataset';

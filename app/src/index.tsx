@@ -26,7 +26,6 @@ const isCompatible =
 export const currTime = Date.now();
 console.log(currTime);
 
-export const url = new URLSearchParams(window.location.search);
 
 export function useConfig(): AppConfig {
   let config: AppConfig = {
