@@ -3,7 +3,8 @@ import 'semantic-ui-css/semantic.min.css';
 import whyDidYouRender from '@welldone-software/why-did-you-render';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { HashRouter, Route, Switch, useLocation } from 'react-router-dom';
+import { HashRouter, Link, Route, Switch, useLocation } from 'react-router-dom';
+import { Button, Card, Container, Message } from 'semantic-ui-react';
 
 import App from './App';
 import { AppConfig, Mode } from './AppConfig';
@@ -25,7 +26,6 @@ const isCompatible =
 
 export const currTime = Date.now();
 console.log(currTime);
-
 
 export function useConfig(): AppConfig {
   let config: AppConfig = {
@@ -92,6 +92,55 @@ const render = (
     <Switch>
       <Route path="/study">
         <StudyMode />
+      </Route>
+      <Route path="/error">
+        <Container>
+          <Message>
+            <Message.Header>Something went wrong with the URL.</Message.Header>
+            <Message.Content>
+              If you are here after clicking on the links in the paper, it might
+              be an issue with the pdf reader not parsing the links properly.
+            </Message.Content>
+          </Message>
+
+          <Card.Group centered>
+            <Card centered raised>
+              {/* <Image src="/imgs/teaser.png" size="medium" /> */}
+              <Card.Content textAlign="center">
+                {/* <Card.Header>Teaser Figure</Card.Header> */}
+                <Card.Content extra>
+                  <Link to="/?paperFigure=paper-teaser" target="_blank">
+                    <Button content="Teaser Figure" />
+                  </Link>
+                </Card.Content>
+              </Card.Content>
+            </Card>
+
+            <Card centered raised>
+              {/* <Image src="/imgs/autocomplete.png" size="medium" /> */}
+              <Card.Content textAlign="center">
+                {/* <Card.Header>Auto Complete</Card.Header> */}
+                <Card.Content extra>
+                  <Link to="/?paperFigure=auto-complete" target="_blank">
+                    <Button content="Auto Complete" />
+                  </Link>
+                </Card.Content>
+              </Card.Content>
+            </Card>
+
+            <Card centered raised>
+              {/* <Image src="/imgs/teaser.png" /> */}
+              <Card.Content textAlign="center">
+                {/* <Card.Header>Prediction Interface</Card.Header> */}
+                <Card.Content extra>
+                  <Link to="/?paperFigure=prediction-interface" target="_blank">
+                    <Button content="Prediction Interface" />
+                  </Link>
+                </Card.Content>
+              </Card.Content>
+            </Card>
+          </Card.Group>
+        </Container>
       </Route>
       <Route component={App} />
     </Switch>

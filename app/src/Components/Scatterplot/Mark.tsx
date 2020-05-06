@@ -23,7 +23,7 @@ const Mark: FC<Props> = ({
   category,
   type,
   extraClass,
-  id
+  id,
 }: Props) => {
   const { showCategories } = store!;
 

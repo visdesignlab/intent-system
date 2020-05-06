@@ -112,6 +112,11 @@ def index():  # type: ignore
 def study():
     return redirect('index.html')
 
+@views.app_errorhandler(404)
+def handle(e):
+    print("Hello, world", file=sys.stderr)
+    return redirect("/index.html#/error")
+
 @views.route('/dataset', methods=['GET'])
 def route_dataset_list():  # type: ignore
     finalDatasets = []
