@@ -84,7 +84,7 @@ function ProvVis<T, S extends string, A>({
 }: ProvVisProps<T, S, A>) {
   const [first, setFirst] = useState(true);
   const [annotationOpen, setAnnotationOpen] = useState(-1);
-  const [expandedClusterList, setExpandedClusterList] = useState<string[]>([]);
+  const [expandedClusterList, setExpandedClusterList] = useState<string[]>(bundleMap ? Object.keys(bundleMap).filter(d => bundleMap[d].metadata.includes(d)) : []);
 
   useEffect(() => {
     setFirst(false);

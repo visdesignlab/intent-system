@@ -215,10 +215,17 @@ const ProvenanceVisualization: FC<Props> = ({ store }: Props) => {
 
   lockedNodes.forEach((node) => {
     const bundle: Bundle = {
-      metadata: null,
+      metadata: [],
       bundleLabel: "Locked Prediction",
       bunchedNodes: [],
     };
+
+    const insightOnly: string[] = [];
+
+    if(graph.nodes[node].label.includes("Insight"))
+    {
+      insightOnly.push(node)
+    }
 
     const toBunch: string[] = [];
 
@@ -231,7 +238,8 @@ const ProvenanceVisualization: FC<Props> = ({ store }: Props) => {
         if (
           parent.metadata.type === "Add Plot" ||
           parent.metadata.type === "Lock Prediction" ||
-          parent.metadata.type === "Clear All"
+          parent.metadata.type === "Clear All" ||
+          parent.children.length > 1
         ) {
           break;
         }
@@ -240,7 +248,10 @@ const ProvenanceVisualization: FC<Props> = ({ store }: Props) => {
         testNode = parent.id;
       } else break;
     }
+
     bundle.bunchedNodes = toBunch.reverse();
+    bundle.metadata = insightOnly;
+
     map[node] = bundle;
   });
 
