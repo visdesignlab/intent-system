@@ -1,7 +1,6 @@
 import { Extra, initProvenance, isStateNode, NodeID, Provenance, StateNode } from '@visdesignlab/provenance-lib-core';
 import axios from 'axios';
 import { json } from 'd3-fetch'
-import {url} from '../'
 
 import { extendRange, getAllSelections, PredictionRowType } from '../Components/Predictions/PredictionRowType';
 import { MultiBrushBehavior, Prediction, PredictionRequest, PredictionSet } from '../contract';

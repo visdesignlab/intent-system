@@ -153,13 +153,13 @@ export function TurnPrediction({
       <g transform={translate(-size / 2, -size / 2)}>
         <svg height={size} width={size} viewBox="0 0 141.75 141.75">
           <g id="Layer 1">
-            <path stroke={fill} stroke-width="25" d="M11.34-11.34L11.6801+130.41L153.09+130.41" fill="none" stroke-linecap="round" opacity="1" stroke-linejoin="miter"/>
+            <path stroke={fill} strokeWidth="25" d="M11.34-11.34L11.6801+130.41L153.09+130.41" fill="none" strokeLinecap="round" opacity="1" strokeLinejoin="miter"/>
             <path d="M41.0944+103.248C41.0944+96.3307+46.8061+90.7234+53.8519+90.7234C60.8977+90.7234+66.6094+96.4351+66.6094+103.481C66.6094+110.527+60.8977+116.238+53.8519+116.238C46.8061+116.238+41.0944+110.165+41.0944+103.248Z" opacity="1" fill={fill}/>
             <path d="M28.3369+70.6417C28.3369+63.7248+34.0486+58.1175+41.0944+58.1175C48.1402+58.1175+53.8519+63.8292+53.8519+70.875C53.8519+77.9208+48.1402+83.6325+41.0944+83.6325C34.0486+83.6325+28.3369+77.5587+28.3369+70.6417Z" opacity="1" fill={fill}/>
             <path d="M66.6094+83.3992C66.6094+76.4823+72.3211+70.875+79.3669+70.875C86.4127+70.875+92.1244+76.5867+92.1244+83.6325C92.1244+90.6783+86.4127+96.39+79.3669+96.39C72.3211+96.39+66.6094+90.3162+66.6094+83.3992Z" opacity="1" fill={fill}/>
             <path d="M53.8519+57.8842C53.8519+50.9673+59.5636+45.36+66.6094+45.36C73.6552+45.36+79.3669+51.0717+79.3669+58.1175C79.3669+65.1633+73.6552+70.875+66.6094+70.875C59.5636+70.875+53.8519+64.8012+53.8519+57.8842Z" opacity="1" fill={fill}/>
             <path d="M101.341+31.4476C101.341+24.5307+107.053+18.9234+114.098+18.9234C121.144+18.9234+126.856+24.6352+126.856+31.6809C126.856+38.7267+121.144+44.4384+114.098+44.4384C107.053+44.4384+101.341+38.3646+101.341+31.4476Z" opacity="1" fill={fill}/>
-            <path stroke={fill} stroke-width="8" d="M90.001+31.2403C90.001+18.175+100.79+7.58342+114.098+7.58342C127.407+7.58342+138.196+18.3722+138.196+31.6809C138.196+44.9896+127.407+55.7784+114.098+55.7784C100.79+55.7784+90.001+44.3056+90.001+31.2403Z" fill="none" stroke-linecap="round" opacity="1" stroke-linejoin="round"/>
+            <path stroke={fill} strokeWidth="8" d="M90.001+31.2403C90.001+18.175+100.79+7.58342+114.098+7.58342C127.407+7.58342+138.196+18.3722+138.196+31.6809C138.196+44.9896+127.407+55.7784+114.098+55.7784C100.79+55.7784+90.001+44.3056+90.001+31.2403Z" fill="none" strokeLinecap="round" opacity="1" strokeLinejoin="round"/>
           </g>
         </svg>
       </g>
@@ -334,8 +334,8 @@ export function MultiBrush({ size = 15, fill = "#ccc" }: AddTaskGlyphProps) {
       <g transform={translate(-size / 2, -size / 2)}>
         <svg height={size} width={size} viewBox="0 0 141.75 141.75">
           <g id="Layer 1">
-            <path stroke={fill} stroke-width="15" d="M70.875+133.084C94.2246+133.264+117.574+113.829+117.574+87.3323C117.574+60.8354+117.574+0+117.574+0" fill="none" stroke-linecap="butt" opacity="1" stroke-linejoin="round"/>
-            <path stroke={fill} stroke-width="15" d="M70.875+133.084C47.5254+133.264+24.1758+113.829+24.1758+87.3323C24.1758+60.8354+24.1758+0+24.1758+0" fill="none" stroke-linecap="butt" opacity="1" stroke-linejoin="round"/>
+            <path stroke={fill} strokeWidth="15" d="M70.875+133.084C94.2246+133.264+117.574+113.829+117.574+87.3323C117.574+60.8354+117.574+0+117.574+0" fill="none" strokeLinecap="butt" opacity="1" strokeLinejoin="round"/>
+            <path stroke={fill} strokeWidth="15" d="M70.875+133.084C47.5254+133.264+24.1758+113.829+24.1758+87.3323C24.1758+60.8354+24.1758+0+24.1758+0" fill="none" strokeLinecap="butt" opacity="1" strokeLinejoin="round"/>
           </g>
         </svg>
       </g>
