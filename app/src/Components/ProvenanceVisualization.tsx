@@ -244,12 +244,12 @@ const ProvenanceVisualization: FC<Props> = ({ store }: Props) => {
     map[node] = bundle;
   });
 
-  let divStyle = {
-    overflowY: "auto",
-    overflowX: "auto",
-    height: "100%",
-    width: "100%",
-  } as React.CSSProperties;
+  // let divStyle = {
+  //   overflowY: "auto",
+  //   overflowX: "auto",
+  //   height: "100%",
+  //   width: "100%",
+  // } as React.CSSProperties;
 
   const isProvenanceReady = graph.current !== graph.root;
 

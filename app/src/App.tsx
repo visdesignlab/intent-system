@@ -1,10 +1,9 @@
 import axios from 'axios';
 import { Provider } from 'mobx-react';
 import React, { FC, useEffect, useMemo, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Button, Icon, Modal } from 'semantic-ui-react';
 import { style } from 'typestyle';
-import { useLocation } from 'react-router-dom';
-
 
 import Navbar from './Components/Navbar';
 import Predictions from './Components/Predictions/Predictions';
@@ -61,6 +60,9 @@ const App: FC<Props> = (_: Props) => {
       axios.get(`/dataset/${selectedDataset.key}`).then((d) => {
         const data = loadData(d.data);
         setData(data);
+
+        if (url.get("paperFigure")) return;
+
         if (data.numericColumns.length >= 2) {
           actions.addPlot({
             id: getPlotId(),
@@ -89,8 +91,12 @@ const App: FC<Props> = (_: Props) => {
       const datasets: any[] = response.data;
 
       if (datasetString !== JSON.stringify(datasets)) {
-        const url = new URLSearchParams(window.location.search);
-        const datasetName = url.get("datasetName");
+        let datasetName = url.get("datasetName");
+        const paperFigure = url.get("paperFigure");
+
+        if (paperFigure === "auto-complete") datasetName = "out_hard_task_3";
+        if (paperFigure === "paper-teaser") datasetName = "cluster";
+
         let datasetNum = getRandomNumber(datasets.length - 1) * 0 + 1;
         setDatasets(datasets);
 

@@ -1,8 +1,8 @@
 import { Extra, initProvenance, isStateNode, NodeID, Provenance, StateNode } from '@visdesignlab/provenance-lib-core';
 import axios from 'axios';
-import { json } from 'd3-fetch'
-import {url} from '../'
+import { json } from 'd3-fetch';
 
+import { url } from '../';
 import { extendRange, getAllSelections, PredictionRowType } from '../Components/Predictions/PredictionRowType';
 import { MultiBrushBehavior, Prediction, PredictionRequest, PredictionSet } from '../contract';
 import { ColumnMap, Dataset } from '../Utils/Dataset';
@@ -55,24 +55,24 @@ export type Annotation = {
   predictionSet: PredictionSet;
 };
 
-let firstLoad = true;
+// let firstLoad = true;
 
-export function setupProvenance(store: IntentStore, url?: any): ProvenanceControl {
+export function setupProvenance(
+  store: IntentStore,
+  url?: any
+): ProvenanceControl {
   const provenance = initProvenance<IntentState, IntentEvents, Annotation>(
     defaultState,
     true
   );
 
-
   let graphPath = "";
   let paperFigure = "";
 
-  if(url)
-  {
-    graphPath = url.get('graphPath');
-    paperFigure = url.get('paperFigure')
+  if (url) {
+    graphPath = url.get("graphPath");
+    paperFigure = url.get("paperFigure");
   }
-
 
   function importProvenance() {
     graphRTD
@@ -81,8 +81,7 @@ export function setupProvenance(store: IntentStore, url?: any): ProvenanceContro
       .then(function(dataSnapshot) {
         let dataJson: any = dataSnapshot.val();
         if (
-          !
-          dataJson ||
+          !dataJson ||
           !dataJson["nodes"] ||
           !dataJson["current"] ||
           !dataJson["root"]
@@ -102,12 +101,16 @@ export function setupProvenance(store: IntentStore, url?: any): ProvenanceContro
   }
 
   function importPaperURL() {
-    if(paperFigure === 'auto-complete' || paperFigure === 'paper-teaser' || paperFigure === 'prediction-interface')
-    {
+    if (
+      paperFigure === "auto-complete" ||
+      paperFigure === "paper-teaser" ||
+      paperFigure === "prediction-interface"
+    ) {
+      store.showCategories = false;
       let dataJson = json(`/paperFigs/${paperFigure}.json`).then(function(d) {
         console.log(d);
         provenance.importProvenanceGraph(JSON.stringify(d));
-      })
+      });
     }
   }
 
@@ -119,12 +122,11 @@ export function setupProvenance(store: IntentStore, url?: any): ProvenanceContro
 
   setupObservers(provenance, store);
 
-
   if (graphPath !== undefined) {
     importProvenance();
   }
 
-  console.log(paperFigure)
+  console.log(paperFigure);
 
   if (paperFigure !== undefined) {
     importPaperURL();
@@ -669,7 +671,6 @@ function setupObservers(
     store.isAtRoot = provenance.current().label.includes("Load Dataset");
     store.isAtLatest = provenance.current().children.length === 0;
     store.graph = provenance.graph();
-    console.log(JSON.stringify(provenance.graph()));
   });
 
   provenance.addArtifactObserver((extra: Extra<Annotation>[]) => {
