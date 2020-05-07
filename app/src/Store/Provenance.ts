@@ -106,7 +106,7 @@ export function setupProvenance(
       paperFigure === "prediction-interface"
     ) {
       store.showCategories = false;
-      let dataJson = json(`/paperFigs/${paperFigure}.json`).then(function(d) {
+      json(`/paperFigs/${paperFigure}.json`).then(function(d) {
         console.log(d);
         provenance.importProvenanceGraph(JSON.stringify(d));
       });

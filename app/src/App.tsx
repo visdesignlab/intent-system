@@ -44,7 +44,12 @@ const App: FC<Props> = (_: Props) => {
   const selectedDatasetString = JSON.stringify(selectedDataset);
 
   const datasetString = JSON.stringify(datasets);
-  const url = new URLSearchParams(useLocation().search);
+
+  const location = useLocation();
+
+  const url = useMemo(() => {
+    return new URLSearchParams(location.search);
+  }, [location]);
 
   const { provenance, actions } = useMemo(() => {
     const { provenance, actions } = setupProvenance(store, url);
@@ -53,7 +58,7 @@ const App: FC<Props> = (_: Props) => {
       actions.setDataset(ds);
     }
     return { provenance, actions };
-  }, [selectedDatasetString]);
+  }, [selectedDatasetString, url]);
 
   useEffect(() => {
     if (selectedDataset.key.length > 0) {
@@ -84,7 +89,7 @@ const App: FC<Props> = (_: Props) => {
         }
       });
     }
-  }, [selectedDataset, actions]);
+  }, [selectedDataset, actions, url]);
 
   useEffect(() => {
     axios.get("./dataset").then((response) => {
@@ -112,7 +117,7 @@ const App: FC<Props> = (_: Props) => {
         actions.setDataset(datasets[datasetIdx], true);
       }
     });
-  }, [datasetString, actions]);
+  }, [datasetString, actions, url]);
 
   (window as any).printProv = () => {
     const node = Object.values(provenance.graph().nodes);
