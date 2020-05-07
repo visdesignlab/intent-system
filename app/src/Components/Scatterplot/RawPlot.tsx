@@ -251,13 +251,14 @@ const RawPlot: FC<Props> = ({
   }
   const topThreeMemoized = predictions
     .map((p) => extendPrediction(p, selections.values, columnMap, dataset))
-    .filter(
-      (d) =>
-        d.type !== "Range" &&
-        d.type !== "Simplified Range" &&
-        d.type !== "Category"
+    .filter((d) =>
+      task
+        ? d.type !== "Range" &&
+          d.type !== "Simplified Range" &&
+          d.type !== "Category"
+        : true
     )
-    .sort((a, b) => b.similarity - a.similarity)
+    .sort((a, b) => b.rankAc - a.rankAc)
     .slice(0, 3);
 
   if (JSON.stringify(topThree) !== JSON.stringify(topThreeMemoized)) {
