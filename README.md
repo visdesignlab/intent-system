@@ -2,6 +2,8 @@
 
 # Intent System
 
+![GitHub Logo](app/public/imgs/teaser.png)
+
 The system is deployed to: https://vdl.sci.utah.edu/predicting-intent
 
 ## Development
