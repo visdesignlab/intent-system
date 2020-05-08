@@ -1,16 +1,25 @@
-[![Build Status](https://travis-ci.com/visdesignlab/intent-system.svg?branch=master)](https://travis-ci.com/visdesignlab/intent-system)
+<!-- [![Build Status](https://travis-ci.com/visdesignlab/intent-system.svg?branch=master)](https://travis-ci.com/visdesignlab/intent-system) -->
 
-# intent-system
+# Intent System
 
-The server is deployed to: https://intent-system.herokuapp.com/
+The system is deployed to: https://vdl.sci.utah.edu/predicting-intent
 
 ## Development
 
-To start the frontend along with the prediction server, we provide a thin starter script that uses `yarn`:
+To build the server you need `python3`, `pipenv` and `yarn` package manager.
 
-    yarn install
-    yarn run start
-    
-The server can also be started without the frontend to allow debugging, for example with _Postman_:
+### First time
 
-    python3 -m run.py
+After cloning the repository for the first time, ensure you have `python3` and `pipenv`, then run:
+
+```shell
+yarn run build-env
+```
+
+### Starting development server
+
+To start the server run:
+
+```shell
+yarn start
+```
