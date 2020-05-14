@@ -1,19 +1,19 @@
-import axios from 'axios';
-import { Provider } from 'mobx-react';
-import React, { FC, useEffect, useMemo, useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import { Button, Icon, Modal } from 'semantic-ui-react';
-import { style } from 'typestyle';
+import axios from "axios";
+import { Provider } from "mobx-react";
+import React, { FC, useEffect, useMemo, useState } from "react";
+import { useLocation } from "react-router-dom";
+import { Button, Icon, Modal } from "semantic-ui-react";
+import { style } from "typestyle";
 
-import Navbar from './Components/Navbar';
-import Predictions from './Components/Predictions/Predictions';
-import ProvenanceVisualization from './Components/ProvenanceVisualization';
-import Visualization from './Components/Scatterplot/Visualization';
-import { ActionContext, DataContext } from './Contexts';
-import IntentStore from './Store/IntentStore';
-import { setupProvenance } from './Store/Provenance';
-import { Data, Dataset, Datasets, loadData } from './Utils/Dataset';
-import getPlotId from './Utils/PlotIDGen';
+import Navbar from "./Components/Navbar";
+import Predictions from "./Components/Predictions/Predictions";
+import ProvenanceVisualization from "./Components/ProvenanceVisualization";
+import Visualization from "./Components/Scatterplot/Visualization";
+import { ActionContext, DataContext } from "./Contexts";
+import IntentStore from "./Store/IntentStore";
+import { setupProvenance } from "./Store/Provenance";
+import { Data, Dataset, Datasets, loadData } from "./Utils/Dataset";
+import getPlotId from "./Utils/PlotIDGen";
 
 type Props = {};
 
@@ -154,6 +154,35 @@ const App: FC<Props> = (_: Props) => {
         }
       >
         <Modal.Header>Intent Inference System</Modal.Header>
+        <Modal.Content>
+          <p>
+            The purpose of this tool is to predict user intents in the form of
+            patterns when brushing in scatterplots.
+          </p>
+          <p>
+            This project is developed at the{" "}
+            <a href="https://vdl.sci.utah.edu/">Visualization Design Lab</a> at
+            the <a href="https://www.sci.utah.edu/">SCI Institute</a> at the
+            University of Utah by Kiran Gadhave, Jochen Görtler, Zach Cutler,
+            and Alexander Lex, with contributions by Jeff Phillips, Miriah
+            Meyer, and Oliver Deussen.
+          </p>{" "}
+          <p>
+            Please visit the{" "}
+            <a href="https://vdl.sci.utah.edu/publications/2020_intent/">
+              publication page
+            </a>{" "}
+            for more details and information on how to cite this work. The
+            source code and documentation is available{" "}
+            <a href="https://github.com/visdesignlab/intent-system">here</a>.
+            This project is funded by the National Science Foundation trough
+            grant{" "}
+            <a href="https://vdl.sci.utah.edu/projects/2018-nsf-reproducibility/">
+              IIS 1751238
+            </a>
+            .
+          </p>
+        </Modal.Content>
       </Modal>
     </>
   ) : null;
