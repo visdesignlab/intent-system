@@ -31,7 +31,7 @@
     "@welldone-software/why-did-you-render": "^3.3.9",
     "concurrently": "^4.1.1",
     "kill-port": "^1.5.2",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "onchange": "^6.1.0",
     "react-move": "^6.1.0"
   },
