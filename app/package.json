@@ -23,7 +23,7 @@
     "rxjs": "^6.5.4",
     "semantic-ui-css": "^2.4.1",
     "semantic-ui-react": "^0.88.1",
-    "serialize-javascript": "^2.1.1",
+    "serialize-javascript": "^3.1.0",
     "styled-components": "^5.0.1",
     "typescript": "^3.7.2",
     "typestyle": "^2.0.4"
