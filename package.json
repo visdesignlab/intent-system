@@ -33,10 +33,23 @@
     "kill-port": "^1.5.2",
     "lodash": "^4.17.15",
     "onchange": "^6.1.0",
-    "react-move": "^6.1.0"
+    "react-move": "^6.1.0",
+    "typescript": "^3.7.2"
   },
   "devDependencies": {
     "@babel/helper-call-delegate": "^7.8.7",
-    "git-cz": "^4.7.1"
+    "git-cz": "^4.7.1",
+    "@typescript-eslint/eslint-plugin": "^2.22.0",
+    "@typescript-eslint/parser": "^2.22.0",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb": "^18.0.1",
+    "eslint-config-prettier": "^6.10.0",
+    "eslint-import-resolver-typescript": "^2.0.0",
+    "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-json": "^2.1.0",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-prettier": "^3.1.2",
+    "eslint-plugin-react": "^7.19.0",
+    "prettier": "^1.19.1"
   }
 }
