@@ -1,4 +1,4 @@
-import { style } from 'typestyle';
+import { style } from "typestyle";
 
 const goldenBorder = {
   stroke: "gold",
@@ -82,7 +82,6 @@ export const FADE_COMP_IN_2 = style({
 
 export const FADE_SELECTION_IN = style({
   $unique: true,
-  opacity: 1,
   ...goldenBorder,
   fill: "black",
   $debugName: "fadeselin",

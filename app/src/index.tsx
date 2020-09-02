@@ -1,16 +1,16 @@
-import 'semantic-ui-css/semantic.min.css';
+import "semantic-ui-css/semantic.min.css";
 
-import whyDidYouRender from '@welldone-software/why-did-you-render';
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { HashRouter, Link, Route, Switch, useLocation } from 'react-router-dom';
-import { Button, Card, Container, Message } from 'semantic-ui-react';
+import whyDidYouRender from "@welldone-software/why-did-you-render";
+import React from "react";
+import ReactDOM from "react-dom";
+import { HashRouter, Link, Route, Switch, useLocation } from "react-router-dom";
+import { Button, Card, Container, Message } from "semantic-ui-react";
 
-import App from './App';
-import { AppConfig, Mode } from './AppConfig';
-import * as serviceWorker from './serviceWorker';
-import { DatasetType } from './Study/TaskList';
-import StudyMode from './StudyMode';
+import App from "./App";
+import { AppConfig, Mode } from "./AppConfig";
+import * as serviceWorker from "./serviceWorker";
+import { DatasetType } from "./Study/TaskList";
+import StudyMode from "./StudyMode";
 
 const PROLIFIC_PID = "PROLIFIC_PID";
 const STUDY_ID = "STUDY_ID";
