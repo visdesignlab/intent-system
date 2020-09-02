@@ -36,6 +36,7 @@
     "react-move": "^6.1.0"
   },
   "devDependencies": {
-    "@babel/helper-call-delegate": "^7.8.7"
+    "@babel/helper-call-delegate": "^7.8.7",
+    "git-cz": "^4.7.1"
   }
 }
