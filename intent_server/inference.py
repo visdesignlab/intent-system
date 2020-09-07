@@ -1,7 +1,7 @@
 from .dataset import Dataset
 from .dimensions import Dimensions
 from .algorithms import LinearRegression, Outlier, Skyline, Range, KMeansCluster
-from .algorithms import Categories, DBSCANCluster, Inverse, QuadraticRegression
+from .algorithms import Categories, DBSCANCluster, Inverse, QuadraticRegression, DBSCANOutlier
 
 from .vendor.interactions import Prediction, Interaction, InteractionTypeKind
 from .vendor.interactions import PredictionSet, MultiBrushBehavior
@@ -77,6 +77,12 @@ class Inference:
             Outlier(),
             Outlier(contamination=0.1),
             Outlier(contamination=0.05),
+            Outlier(alg="if"),
+            Outlier(alg="if",contamination=0.1),
+            Outlier(alg="if",contamination=0.05),
+            DBSCANOutlier(0.25),
+            DBSCANOutlier(0.5),
+            DBSCANOutlier(0.75),
             Inverse(Outlier()),
             Skyline(),
             KMeansCluster(2),
@@ -174,7 +180,7 @@ class Inference:
             clf.classes_.flatten().tolist(),
             clf.predict_proba(sel_array.transpose()).flatten().tolist()))
 
-        
+
         for p in unique_predictions:
             if p.intent in probs:
                 if p.info is None:
@@ -204,7 +210,7 @@ class Inference:
 
         #     pred.info['probability'] = met
 
-            
+
 
         return PredictionSet(
             predictions=unique_predictions,

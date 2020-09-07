@@ -1,5 +1,6 @@
 from sklearn.cluster import DBSCAN
 from sklearn import preprocessing
+import sys
 
 import pandas as pd
 
@@ -7,13 +8,13 @@ from ..intent import Intent
 from typing import Optional, Dict, Any
 
 
-class DBSCANCluster(Intent):
+class DBSCANOutlier(Intent):
     def __init__(self, eps: float) -> None:
         super().__init__()
         self.dbscan = DBSCAN(eps)
 
     def to_string(self) -> str:
-        return 'Outlier:DBSCAN'
+        return 'Cluster:DBSCAN'
 
     def compute(self, df: pd.DataFrame) -> pd.DataFrame:
         nan_dropped = df.dropna()
@@ -34,6 +35,9 @@ class DBSCANCluster(Intent):
                 columns=[self.to_string() + ":" + v],
                 index=df.index, dtype=int),
                 values), axis='columns')
+        result[result >= 0] = 0
+        result[result == -1] = 1
+        print(result, file=sys.stderr)
         return result
 
     def info(self) -> Optional[Dict[str, Any]]:

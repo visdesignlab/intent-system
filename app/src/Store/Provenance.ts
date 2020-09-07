@@ -1,10 +1,26 @@
-import { Extra, initProvenance, isStateNode, NodeID, Provenance, StateNode } from '@visdesignlab/provenance-lib-core';
-import axios from 'axios';
-import { json } from 'd3-fetch';
+import {
+  Extra,
+  initProvenance,
+  isStateNode,
+  NodeID,
+  Provenance,
+  StateNode,
+} from "@visdesignlab/provenance-lib-core";
+import axios from "axios";
+import { json } from "d3-fetch";
 
-import { extendRange, getAllSelections, PredictionRowType } from '../Components/Predictions/PredictionRowType';
-import { MultiBrushBehavior, Prediction, PredictionRequest, PredictionSet } from '../contract';
-import { ColumnMap, Dataset } from '../Utils/Dataset';
+import {
+  extendRange,
+  getAllSelections,
+  PredictionRowType,
+} from "../Components/Predictions/PredictionRowType";
+import {
+  MultiBrushBehavior,
+  Prediction,
+  PredictionRequest,
+  PredictionSet,
+} from "../contract";
+import { ColumnMap, Dataset } from "../Utils/Dataset";
 import {
   BrushSize,
   BrushType,
@@ -15,8 +31,8 @@ import {
   MultiBrushBehaviour,
   Plot,
   Plots,
-} from './IntentState';
-import IntentStore from './IntentStore';
+} from "./IntentState";
+import IntentStore from "./IntentStore";
 import {
   addDummyInteraction,
   addDummyInteractionTrigger,
@@ -28,8 +44,8 @@ import {
   removeBrushInteraction,
   removePlotInteraction,
   removePointSelectionInteraction,
-} from './ProvenanceHelpers';
-import { graphRTD } from './StudyStore/FirebaseHandler';
+} from "./ProvenanceHelpers";
+import { graphRTD } from "./StudyStore/FirebaseHandler";
 
 export type IntentEvents =
   | "Load Dataset"
@@ -121,13 +137,11 @@ export function setupProvenance(
 
   setupObservers(provenance, store);
 
-  if (graphPath !== undefined) {
+  if (graphPath) {
     importProvenance();
   }
 
-  console.log(paperFigure);
-
-  if (paperFigure !== undefined) {
+  if (paperFigure) {
     importPaperURL();
   }
 
