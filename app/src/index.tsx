@@ -29,10 +29,6 @@ const isCompatible =
 export const currTime = Date.now();
 console.log(currTime);
 
-const test = new IntentStore(defaultState);
-(window as any).test = test;
-console.log(test);
-
 export function useConfig(): AppConfig {
   let config: AppConfig = {
     mode: "default",

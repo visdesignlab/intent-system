@@ -1,17 +1,25 @@
-import { ProvenanceGraph } from '@visdesignlab/provenance-lib-core';
-import { action, computed, observable } from 'mobx';
+import { ProvenanceGraph } from "@visdesignlab/provenance-lib-core";
+import { action, computed, observable } from "mobx";
 
-import { InteractionHistory, Prediction, PredictionSet } from '../contract';
-import { Dataset } from '../Utils/Dataset';
-import { SortableColumns, SortDirection } from './../Components/Predictions/PredictionTable';
-import { BrushSize, BrushType, defaultState, IntentState, MultiBrushBehaviour } from './IntentState';
-import { Annotation, IntentEvents } from './Provenance';
+import { InteractionHistory, Prediction, PredictionSet } from "../contract";
+import { Dataset } from "../Utils/Dataset";
+import {
+  BrushSize,
+  BrushType,
+  defaultState,
+  IntentState,
+  MultiBrushBehaviour,
+} from "./IntentState";
+import { Annotation, IntentEvents } from "./Provenance";
 
 export const predSet: PredictionSet = {
   dimensions: [],
   selectedIds: [],
   predictions: [],
 };
+
+export type SortableColumns = "similarity" | "probability" | "rankAc";
+export type SortDirection = "ascending" | "descending" | "undefined";
 
 export default class IntentStore implements IntentState {
   // Graph properties
@@ -37,7 +45,7 @@ export default class IntentStore implements IntentState {
   @observable lockedPrediction: Prediction = defaultState.lockedPrediction;
   @observable turnedPrediction: string | null = defaultState.turnedPrediction;
   @observable sortColumn: SortableColumns = "similarity";
-  @observable direction: SortDirection = "descending";
+  @observable sortDirection: SortDirection = "descending";
 
   // Artifact Properties
   @observable predictionSet = predSet;
@@ -47,6 +55,8 @@ export default class IntentStore implements IntentState {
   // Restore state action
   @action resetStore(state?: IntentState) {
     Object.assign(this, { ...defaultState, ...state });
+    this.sortDirection = "descending";
+    this.sortColumn = "similarity";
     this.resetPredAndAnnotation();
   }
   @action resetPrediction() {
@@ -62,6 +72,14 @@ export default class IntentStore implements IntentState {
   @action printStore() {
     console.log(JSON.parse(JSON.stringify(this)));
   }
+
+  @action setSortColumn(col: SortableColumns) {
+    this.sortColumn = col;
+  }
+  @action setSortDirection(dir: SortDirection) {
+    this.sortDirection = dir;
+  }
+
   @computed get isAnythingSelected() {
     if (this.plots === undefined) {
       return false;
