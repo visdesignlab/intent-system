@@ -4,10 +4,7 @@ import React, { FC, memo, useContext, useEffect, useState } from "react";
 import { Button, Header, Label, Popup, Table } from "semantic-ui-react";
 
 import { ActionContext, DataContext } from "../../Contexts";
-import IntentStore, {
-  SortableColumns,
-  SortDirection,
-} from "../../Store/IntentStore";
+import IntentStore, { SortableColumns } from "../../Store/IntentStore";
 import { hide$ } from "../Scatterplot/RawPlot";
 import { FADE_COMP_IN, FADE_OUT } from "../Styles/MarkStyle";
 import hoverable from "../UtilComponent/hoverable";
@@ -15,6 +12,7 @@ import { topPred$ } from "./AnnotationBox";
 import JaccardBar from "./JaccardBar";
 import { getAllSelections, PredictionRowType } from "./PredictionRowType";
 import ProbabilityBar from "./ProbabilityBar";
+import useDeepCompareEffect from "use-deep-compare-effect";
 
 type Props = {
   store?: IntentStore;
@@ -28,9 +26,7 @@ const PredictionTable: FC<Props> = ({
   isTask = false,
 }: Props) => {
   const { selectedPrediction, plots, multiBrushBehaviour } = store!;
-  const [predictionsInput, setPredictionsInput] = useState<PredictionRowType[]>(
-    []
-  );
+  const [predictions, setPredictions] = useState<PredictionRowType[]>([]);
   const { columnMap } = useContext(DataContext);
 
   const {
@@ -38,31 +34,19 @@ const PredictionTable: FC<Props> = ({
     sortDirection: direction = "descending",
   } = store!;
 
-  // const [sortColumn, setSortColumn] = useState<SortableColumns>("similarity");
-  // const [direction, setDirection] = useState<SortDirection>("descending");
+  useDeepCompareEffect(() => {
+    let pred = predictions.length > 0 ? predictions : basePredictions;
+    pred = JSON.parse(JSON.stringify(pred));
 
-  const predString = JSON.stringify(basePredictions);
+    if (direction === "ascending") {
+      pred.sort((a, b) => a[sortColumn] - b[sortColumn]);
+    } else {
+      pred.sort((b, a) => a[sortColumn] - b[sortColumn]);
+    }
 
-  useEffect(() => {
-    if (predString === JSON.stringify(predictionsInput)) return;
-    let preds = JSON.parse(predString) as PredictionRowType[];
-    setPredictionsInput(preds);
-  }, [predString, predictionsInput]);
-
-  let predictions: PredictionRowType[] = [];
-
-  if (direction === "ascending")
-    predictions = predictionsInput.sort(
-      (a, b) => a[sortColumn] - b[sortColumn]
-    );
-  else
-    predictions = predictionsInput.sort(
-      (a, b) => b[sortColumn] - a[sortColumn]
-    );
-
-  useEffect(() => {
-    if (predictions.length > 0) topPred$.next(predictions[0]);
-  }, [predictions]);
+    setPredictions(pred);
+    if (pred.length > 0) topPred$.next(pred[0]);
+  }, [basePredictions, direction, sortColumn]);
 
   const barHeight = 30;
   const actions = useContext(ActionContext);
