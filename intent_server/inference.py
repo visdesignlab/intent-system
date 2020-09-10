@@ -74,12 +74,6 @@ class Inference:
     def __init__(self, dataset: Dataset) -> None:
         self.dataset = dataset
         self.intents = [
-            Outlier(),
-            Outlier(contamination=0.1),
-            Outlier(contamination=0.05),
-            Outlier(alg="if"),
-            Outlier(alg="if",contamination=0.1),
-            Outlier(alg="if",contamination=0.05),
             DBSCANOutlier(0.25),
             DBSCANOutlier(0.5),
             DBSCANOutlier(0.75),

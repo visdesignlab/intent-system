@@ -103,7 +103,7 @@ const App: FC<Props> = (_: Props) => {
         if (paperFigure === "paper-teaser") datasetName = "cluster";
         if (paperFigure === "prediction-interface") datasetName = "gapminder";
 
-        let datasetNum = getRandomNumber(datasets.length - 1) * 0 + 8;
+        let datasetNum = getRandomNumber(datasets.length - 1) * 0 + 12;
         setDatasets(datasets);
 
         for (let j in datasets) {

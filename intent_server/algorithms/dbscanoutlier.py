@@ -1,7 +1,7 @@
 from sklearn.cluster import DBSCAN
 from sklearn import preprocessing
 import sys
-
+import numpy as np
 import pandas as pd
 
 from ..intent import Intent
@@ -14,31 +14,22 @@ class DBSCANOutlier(Intent):
         self.dbscan = DBSCAN(eps)
 
     def to_string(self) -> str:
-        return 'Cluster:DBSCAN'
+        return 'Outlier:DBSCAN'
 
     def compute(self, df: pd.DataFrame) -> pd.DataFrame:
-        nan_dropped = df.dropna()
+        nan_dropped = df.select_dtypes(include=['number']).dropna()
 
-        min_max_scaler = preprocessing.MinMaxScaler()
-        scaled = min_max_scaler.fit_transform(nan_dropped.values)
+        scaler = preprocessing.RobustScaler()
+        scaled = scaler.fit_transform(nan_dropped.values)
 
-        self.dbscan.fit(scaled)
+        labels = self.dbscan.fit_predict(scaled)
 
-        labels = pd.DataFrame(data=self.dbscan.labels_,
-                              index=nan_dropped.index).applymap(str)
+        labels[labels >= 0] = 0
+        labels[labels == -1] = 1
 
-        inc_nan = labels.reindex(index=df.index, fill_value='NaN')
-        values = inc_nan.iloc[:, 0].unique()
-        result = pd.concat(
-            map(lambda v: pd.DataFrame(  # type: ignore
-                data=(inc_nan.iloc[:, 0] == v).astype('int').values,
-                columns=[self.to_string() + ":" + v],
-                index=df.index, dtype=int),
-                values), axis='columns')
-        result[result >= 0] = 0
-        result[result == -1] = 1
-        print(result, file=sys.stderr)
+        result = pd.DataFrame(data=labels,
+                              index=nan_dropped.index, columns=[self.to_string()])
         return result
 
     def info(self) -> Optional[Dict[str, Any]]:
-        return {"params": self.dbscan.get_params()}
+        return {"params": self.dbscan.get_params(), "type": "DBSCAN Outliers" }

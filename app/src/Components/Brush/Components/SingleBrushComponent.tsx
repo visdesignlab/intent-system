@@ -75,8 +75,11 @@ function SingleBrushComponent({
   });
 
   useEffect(() => {
-    if (JSON.stringify(position) !== JSON.stringify({ x: initX, y: initY }))
-      setPosition({ x: initX, y: initY });
+    const newPos = { x: initX, y: initY };
+    setPosition((position) => {
+      if (JSON.stringify(position) !== JSON.stringify(newPos)) return newPos;
+      return position;
+    });
   }, [initX, initY]);
 
   useEffect(() => {

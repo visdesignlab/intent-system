@@ -1,6 +1,6 @@
 import { selectAll } from "d3";
 import { inject, observer } from "mobx-react";
-import React, { FC, memo, useContext, useEffect, useState } from "react";
+import React, { FC, memo, useContext, useState } from "react";
 import { Button, Header, Label, Popup, Table } from "semantic-ui-react";
 
 import { ActionContext, DataContext } from "../../Contexts";
@@ -276,24 +276,10 @@ const PredictionTable: FC<Props> = ({
       store?.setSortDirection(
         direction === "ascending" ? "descending" : "ascending"
       );
-
-      // setDirection((dir) => (dir === "ascending" ? "descending" : "ascending"));
-      // if (store) {
-      //   store.direction =
-      //     direction === "ascending" ? "descending" : "ascending";
-      // }
-
       return;
     }
-
-    // if (store) {
-    //   store.sortColumn = column;
-    //   store.direction = "descending";
-    // }
     store?.setSortColumn(column);
     store?.setSortDirection("descending");
-    // setSortColumn(column);
-    // setDirection("descending");
   }
 
   return (
