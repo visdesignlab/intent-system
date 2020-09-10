@@ -112,6 +112,13 @@ export function setupProvenance(
 
         console.log(dataJson);
         provenance.importProvenanceGraph(JSON.stringify(dataJson));
+
+        window.onmessage = function(e: any) {
+          console.log("message recieved!");
+          if (provenance.graph().nodes[e.data]) {
+            provenance.goToNode(e.data);
+          }
+        };
       });
   }
 
