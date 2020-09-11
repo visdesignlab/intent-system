@@ -1,11 +1,11 @@
-import Vimeo from '@u-wave/react-vimeo';
-import React, { FC, useContext, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Button, Container, Message } from 'semantic-ui-react';
-import { style } from 'typestyle';
+import Vimeo from "@u-wave/react-vimeo";
+import React, { FC, useContext, useState } from "react";
+import { Link } from "react-router-dom";
+import { Button, Container, Message } from "semantic-ui-react";
+import { style } from "typestyle";
 
-import { ConfigContext } from '../Contexts';
-import { StudyActions } from '../Store/StudyStore/StudyProvenance';
+import { ConfigContext } from "../Contexts";
+import { StudyActions } from "../Store/StudyStore/StudyProvenance";
 
 type Props = {
   actions: StudyActions;
@@ -19,7 +19,8 @@ const Video: FC<Props> = ({ actions }: Props) => {
     <>
       <div className={centerThings}>
         <Vimeo
-          video="401985009"
+          video="457094075"
+          // video="401985009"
           width="800"
           autoplay={false}
           showTitle={false}
