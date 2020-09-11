@@ -1,13 +1,21 @@
-import { symbol, symbols } from 'd3';
-import _ from 'lodash';
-import { inject, observer } from 'mobx-react';
-import React, { createContext, FC, memo, useContext, useEffect, useRef, useState } from 'react';
-import { style } from 'typestyle';
+import { symbol, symbols } from "d3";
+import _ from "lodash";
+import { inject, observer } from "mobx-react";
+import React, {
+  createContext,
+  FC,
+  memo,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import { style } from "typestyle";
 
-import { DataContext } from '../../Contexts';
-import IntentStore from '../../Store/IntentStore';
-import Legend from './Legend';
-import PlotsGrid from './PlotsGrid';
+import { DataContext } from "../../Contexts";
+import IntentStore from "../../Store/IntentStore";
+import Legend from "./Legend";
+import PlotsGrid from "./PlotsGrid";
 
 export interface Props {
   store?: IntentStore;
@@ -55,8 +63,9 @@ const Visualization: FC<Props> = ({ store }: Props) => {
     }
   }, [height, width]);
 
-  const adjustedHeight = height * 1;
-  const adjustedWidth = width * 1;
+  let adjustedHeight = height * 1;
+  let adjustedWidth = width * 1;
+  adjustedWidth = adjustedHeight = 1000;
 
   return (
     <div ref={ref} className={visStyle}>

@@ -1,10 +1,15 @@
-import { inject, observer } from 'mobx-react';
-import React, { FC, memo, useState } from 'react';
-import { style } from 'typestyle';
+import { inject, observer } from "mobx-react";
+import React, { FC, memo, useState, useContext } from "react";
+import { style } from "typestyle";
 
-import IntentStore from '../../Store/IntentStore';
-import { defaultSelections, getAllSelections, UserSelections } from '../Predictions/PredictionRowType';
-import Scatterplot from './Scatterplot';
+import IntentStore from "../../Store/IntentStore";
+import {
+  defaultSelections,
+  getAllSelections,
+  UserSelections,
+} from "../Predictions/PredictionRowType";
+import Scatterplot from "./Scatterplot";
+import { TaskConfigContext } from "../../Contexts";
 
 interface Props {
   store?: IntentStore;
@@ -14,6 +19,8 @@ interface Props {
 
 const PlotsGrid: FC<Props> = ({ store, height, width }: Props) => {
   let { plots, multiBrushBehaviour } = store!;
+
+  const task = useContext(TaskConfigContext);
 
   if (plots === undefined) {
     plots = [];
@@ -50,6 +57,12 @@ const PlotsGrid: FC<Props> = ({ store, height, width }: Props) => {
 
   let dimension = dividedWidth < dividedHeight ? dividedWidth : dividedHeight;
   dimension -= 10;
+  if (dimension < 0) {
+    dimension = 1000;
+  }
+  if (task && dimension > 1000) {
+    dimension = 1000;
+  }
 
   return (
     <div className={flexStyle}>
