@@ -1,10 +1,10 @@
-import { inject, observer } from 'mobx-react';
-import React, { FC } from 'react';
-import { Link } from 'react-router-dom';
-import { Button, Container, Header, Modal } from 'semantic-ui-react';
+import { inject, observer } from "mobx-react";
+import React, { FC } from "react";
+import { Link } from "react-router-dom";
+import { Button, Container, Header, Modal } from "semantic-ui-react";
 
-import { StudyActions } from '../../Store/StudyStore/StudyProvenance';
-import StudyStore from '../../Store/StudyStore/StudyStore';
+import { StudyActions } from "../../Store/StudyStore/StudyProvenance";
+import StudyStore from "../../Store/StudyStore/StudyStore";
 
 type Props = {
   studyStore?: StudyStore;
@@ -18,22 +18,26 @@ const Consent: FC<Props> = ({ studyStore, actions }: Props) => {
         Consent
       </Header>
       <Header>
-        Enabling Reproducibility of Interactive Visual Data Analysis
+        Capturing User’s Intent when Brushing in Data Visualizations.
       </Header>
       <p>
-        The purpose of this research study is to learn about preferences for
-        data analysis using user-driven selections and computer supported
-        selections.
+        You will complete a high-level task on an interactive scatterplot. As
+        you complete the given task, the system suggests a list of intents, and
+        you will select the intent that closely matches what you were trying to
+        do. The goal is to measure how well the predicted intents match your
+        own.
       </p>
-      {/* <p>
-        This study will consist of you using a visualization tool and completing
-        the tasks.
-      </p> */}
+      <p>
+        You will see a training video which walks you through the system and how
+        to use it to complete the tasks. You will go through 2 phases in the
+        study. The phases are auto-complete supported selections and manual
+        selections tasks for identifying patterns. The order is randomized. Each
+        phase is preceded by training tasks. After all the tasks are completed,
+        you will fill up a feedback form.
+      </p>
       <p>
         The potential risks to participants are minimal. There may be minor risk
-        of discomfort for participants as they are observed and surveyed. There
-        is a potential for psychological harm (e.g., embarrassment) from being
-        observed and surveyed.
+        of discomfort.
       </p>
       <p>
         We will not disclose your identity and use only anonymized data in the
@@ -56,27 +60,26 @@ const Consent: FC<Props> = ({ studyStore, actions }: Props) => {
         <a href="mailto:irb@hsc.utah.edu">irb@hsc.utah.edu</a>.
       </p>
       <p>
-        It should take 20 minutes to one hour to complete the study.
-        Participation in this study is voluntary. You can choose not to take
-        part in all or any part of the study. You can choose not to finish the
-        study or omit any question you prefer not to answer without penalty or
-        loss of benefits.
+        It should take 15 minutes to complete the study. Participation in this
+        study is voluntary. You can choose not to take part in all or any part
+        of the study. You can choose not to finish the study or omit any
+        question you prefer not to answer without penalty or loss of benefits.
       </p>
       <p>
-        By returning this questionnaire, you are giving your consent to
+        By completing the study tasks, you are giving your consent to
         participate. We appreciate your participation.
       </p>
       <Modal trigger={<Button content="I Consent" positive />}>
         <Modal.Header>Conditions for Participation and Payment</Modal.Header>
         <Modal.Content>
-          <p>We estimate that this study will take about 30 minutes.</p>
+          <p>We estimate that this study will take about 15 minutes.</p>
           <p>
             A desktop or notebook computer with a mouse or a touch-pad is
             required to participate. You cannot participate on a mobile device
             of any kind.
           </p>
           <p>
-            The study consists of watching an 8 minute instructional video, a
+            The study consists of watching an 5 minute instructional video, a
             short training period, and the study in two conditions, followed by
             a one-page survey.
           </p>
