@@ -16,9 +16,9 @@ const PROLIFIC_PID = "PROLIFIC_PID";
 const STUDY_ID = "STUDY_ID";
 const SESSION_ID = "SESSION_ID";
 
-whyDidYouRender(React, {
-  trackHooks: true,
-});
+// whyDidYouRender(React, {
+//   trackHooks: true,
+// });
 
 const userAgent = navigator.userAgent.toLocaleLowerCase();
 const isCompatible =

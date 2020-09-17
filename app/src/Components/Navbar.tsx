@@ -1,14 +1,23 @@
-import { inject, observer } from 'mobx-react';
-import React, { memo, useContext, useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Button, Container, Dropdown, Header, Icon, Image, Menu, Radio } from 'semantic-ui-react';
-import { style } from 'typestyle';
+import { inject, observer } from "mobx-react";
+import React, { memo, useContext, useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
+import {
+  Button,
+  Container,
+  Dropdown,
+  Header,
+  Icon,
+  Image,
+  Menu,
+  Radio,
+} from "semantic-ui-react";
+import { style } from "typestyle";
 
-import { ActionContext, TaskConfigContext } from '../Contexts';
-import { TaskTypeDescription } from '../Study/TaskList';
-import { Data, Dataset } from '../Utils/Dataset';
-import AddPlotMenu from './AddPlotMenu';
-import { getAllSelections } from './Predictions/PredictionRowType';
+import { ActionContext, TaskConfigContext } from "../Contexts";
+import { TaskTypeDescription } from "../Study/TaskList";
+import { Data, Dataset } from "../Utils/Dataset";
+import AddPlotMenu from "./AddPlotMenu";
+import { getAllSelections } from "./Predictions/PredictionRowType";
 
 interface NavbarProps {
   store?: any;
@@ -242,9 +251,9 @@ function Navbar({ store, data, datasets, setDataset }: NavbarProps) {
         <Menu compact size="mini">
           {!task && (
             <>
-              <Menu.Item>
-                <Image src="/imgs/vdl-logo-icon.svg" size="mini" />
-              </Menu.Item>
+              {/* <Menu.Item> */}
+              {/*   <Image src="/imgs/vdl-logo-icon.svg" size="mini" /> */}
+              {/* </Menu.Item> */}
               <Menu.Item>
                 <Link to="/study">
                   <Button content="Study" size="tiny" primary />

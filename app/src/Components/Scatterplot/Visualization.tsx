@@ -65,7 +65,7 @@ const Visualization: FC<Props> = ({ store }: Props) => {
 
   let adjustedHeight = height * 1;
   let adjustedWidth = width * 1;
-  adjustedWidth = adjustedHeight = 1000;
+  // adjustedWidth = adjustedHeight = 1000;
 
   return (
     <div ref={ref} className={visStyle}>

@@ -12,29 +12,30 @@ type Props = {
 };
 
 const Video: FC<Props> = ({ actions }: Props) => {
-  const [enableButton, setEnableButton] = useState(false);
+  const [enableButton, setEnableButton] = useState(true);
   const { debugMode } = useContext(ConfigContext);
 
   return (
     <>
-      <div className={centerThings}>
-        <Vimeo
-          video="457094075"
-          // video="401985009"
-          width="800"
-          autoplay={false}
-          showTitle={false}
-          showByline={false}
-          showPortrait={false}
-          onEnd={() => {
-            setEnableButton(true);
-          }}
-        />
-      </div>
+      {/* <div className={centerThings}> */}
+      {/* <Vimeo */}
+      {/*     video="459045008" */}
+      {/*     // {/1* video="457094075" *1/} */}
+      {/*     // video="401985009" */}
+      {/*     width="800" */}
+      {/*     autoplay={false} */}
+      {/*     showTitle={false} */}
+      {/*     showByline={false} */}
+      {/*     showPortrait={false} */}
+      {/* onEnd={() => { */}
+      {/* setEnableButton(true); */}
+      {/*     }} */}
+      {/* /> */}
+      {/* </div> */}
       <Container textAlign="center">
         <Message compact>
-          Please watch this video as part of the study. You will be able to
-          proceed once you have completed watching the video.
+          We have included this video in supplementary material for review
+          purposes.
         </Message>
       </Container>
       <br />

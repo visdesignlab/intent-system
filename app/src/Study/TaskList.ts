@@ -68,12 +68,12 @@ export function getAllTasks(config: AppConfig): TaskConfiguration {
     return true;
   });
 
-  tl.forEach((d) => {
-    if (d.dataset === "out_easy_task_5") d.training = "yes";
-  });
+  // tl.forEach((d) => {
+  //   if (d.dataset === "out_easy_task_5") d.training = "yes";
+  // });
 
   // Keep only outliers
-  tl = tl.filter((d) => d.type === "outlier");
+  // tl = tl.filter((d) => d.type === "outlier");
 
   // Filter out training medium
   tl = tl.filter((d) => !(d.training === "yes" && d.difficulty === "medium"));

@@ -76,7 +76,7 @@ const App: FC<Props> = (_: Props) => {
             selectedPoints: [],
             brushes: {},
           });
-          /*          if (firstLoad) {
+          if (firstLoad) {
             actions.addPlot({
               id: getPlotId(),
               x: data.numericColumns[2],
@@ -85,7 +85,7 @@ const App: FC<Props> = (_: Props) => {
               brushes: {},
             });
             firstLoad = false;
-          } */
+          }
         }
       });
     }
@@ -103,7 +103,7 @@ const App: FC<Props> = (_: Props) => {
         if (paperFigure === "paper-teaser") datasetName = "cluster";
         if (paperFigure === "prediction-interface") datasetName = "gapminder";
 
-        let datasetNum = getRandomNumber(datasets.length - 1) * 0 + 12;
+        let datasetNum = getRandomNumber(datasets.length - 1) * 0 + 1;
         setDatasets(datasets);
 
         for (let j in datasets) {

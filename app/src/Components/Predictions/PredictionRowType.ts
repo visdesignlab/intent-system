@@ -1,9 +1,9 @@
-import _ from 'lodash';
+import _ from "lodash";
 
-import { Prediction } from '../../contract';
-import { Plots } from '../../Store/IntentState';
-import { ColumnMap } from '../../Utils/Dataset';
-import { Data } from './../../Utils/Dataset';
+import { Prediction } from "../../contract";
+import { Plots } from "../../Store/IntentState";
+import { ColumnMap } from "../../Utils/Dataset";
+import { Data } from "./../../Utils/Dataset";
 
 export type PredictionType =
   | "Outlier"

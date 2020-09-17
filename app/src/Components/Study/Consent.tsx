@@ -45,19 +45,18 @@ const Consent: FC<Props> = ({ studyStore, actions }: Props) => {
       </p>
       <p>
         If you have any questions complaints or if you feel you have been harmed
-        by this research please contact{" "}
-        <em>
-          Alexander Lex, School of Computing, University of Utah, 72 South
-          Central Campus Drive, Room 3887 or by phone at +1 801 585 6513.
-        </em>
+        by this research please contact {"<redacted>"}
+        {/* <em> */}
+        {/*   Alexander Lex, School of Computing, University of Utah, 72 South */}
+        {/*   Central Campus Drive, Room 3887 or by phone at +1 801 585 6513. */}
+        {/* </em> */}
       </p>
       <p>
         Contact the Institutional Review Board (IRB) if you have questions
         regarding your rights as a research participant. Also, contact the IRB
         if you have questions, complaints or concerns which you do not feel you
-        can discuss with the investigator. The University of Utah IRB may be
-        reached by phone at +1 (801) 581-3655 or by e-mail at{" "}
-        <a href="mailto:irb@hsc.utah.edu">irb@hsc.utah.edu</a>.
+        can discuss with the investigator. The {"<redacted>"} may be reached by
+        phone at {"<redacted>"} or by e-mail at {"<redacted>"}.
       </p>
       <p>
         It should take 15 minutes to complete the study. Participation in this
