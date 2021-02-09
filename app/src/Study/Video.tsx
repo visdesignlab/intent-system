@@ -17,21 +17,11 @@ const Video: FC<Props> = ({ actions }: Props) => {
 
   return (
     <>
-      {/* <div className={centerThings}> */}
-      {/* <Vimeo */}
-      {/*     video="459045008" */}
-      {/*     // {/1* video="457094075" *1/} */}
-      {/*     // video="401985009" */}
-      {/*     width="800" */}
-      {/*     autoplay={false} */}
-      {/*     showTitle={false} */}
-      {/*     showByline={false} */}
-      {/*     showPortrait={false} */}
-      {/* onEnd={() => { */}
-      {/* setEnableButton(true); */}
-      {/*     }} */}
-      {/* /> */}
-      {/* </div> */}
+    <div className={centerThings}>
+      <video width="750" height="500" controls >
+        <source src="video/training-deck-with-vids_anon_small.m4v" type="video/mp4"/>
+      </video>
+    </div>
       <Container textAlign="center">
         <Message compact>
           We have included this video in supplementary material for review
