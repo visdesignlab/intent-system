@@ -1,13 +1,12 @@
-import { inject, observer } from 'mobx-react';
-import React, { FC, memo, useContext } from 'react';
-import { Divider, Header, Label, Statistic } from 'semantic-ui-react';
-import { style } from 'typestyle';
-
-import { DataContext } from '../../Contexts';
-import IntentStore from '../../Store/IntentStore';
-import { FADE_IN, FADE_OUT, FADE_SELECTION_IN } from '../Styles/MarkStyle';
-import hoverable from '../UtilComponent/hoverable';
-import { UserSelections } from './PredictionRowType';
+import { inject, observer } from "mobx-react";
+import React, { FC, memo, useContext } from "react";
+import { Divider, Header, Label, Statistic } from "semantic-ui-react";
+import { style } from "typestyle";
+import { DataContext } from "../../Contexts";
+import IntentStore from "../../Store/IntentStore";
+import { FADE_IN, FADE_OUT, FADE_SELECTION_IN } from "../Styles/MarkStyle";
+import hoverable from "../UtilComponent/hoverable";
+import { UserSelections } from "./PredictionRowType";
 
 export interface Props {
   store?: IntentStore;
@@ -104,21 +103,23 @@ const Selections: FC<Props> = ({ store, selections }: Props) => {
         <Divider />
       </div>
       <div className={selectionList}>
-        {selections.values.map((idx) => (
-          <SelectionLabel
-            as="a"
-            className={selectionLabelMargin}
-            configs={[
-              {
-                selector: `#mark-${idx}`,
-                classToApply: FADE_SELECTION_IN,
-              },
-            ]}
-            key={idx}
-          >
-            {data.values[idx][data.labelColumn]}
-          </SelectionLabel>
-        ))}
+        {selections.values.map((idx) => {
+          return (
+            <SelectionLabel
+              as="a"
+              className={selectionLabelMargin}
+              configs={[
+                {
+                  selector: `#mark-${idx}`,
+                  classToApply: FADE_SELECTION_IN,
+                },
+              ]}
+              key={idx}
+            >
+              {data.values[idx][data.labelColumn]}
+            </SelectionLabel>
+          );
+        })}
       </div>
       {/* <div>
         <Divider />

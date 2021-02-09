@@ -8,7 +8,7 @@ import {
 } from "@visdesignlab/provenance-lib-core";
 import axios from "axios";
 import { json } from "d3-fetch";
-
+import { toJS } from "mobx";
 import {
   extendRange,
   getAllSelections,
@@ -126,12 +126,14 @@ export function setupProvenance(
     if (
       paperFigure === "auto-complete" ||
       paperFigure === "paper-teaser" ||
-      paperFigure === "prediction-interface"
+      paperFigure === "prediction-interface" ||
+      paperFigure === "study-example"
     ) {
-      store.showCategories = false;
+      console.log(toJS(store));
+      store.resetStore();
       json(`/paperFigs/${paperFigure}.json`).then(function(d) {
-        console.log(d);
         provenance.importProvenanceGraph(JSON.stringify(d));
+        console.log(provenance.graph());
       });
     }
   }

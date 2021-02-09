@@ -4,7 +4,6 @@ import React, { FC, useEffect, useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { Button, Icon, Modal } from "semantic-ui-react";
 import { style } from "typestyle";
-
 import Navbar from "./Components/Navbar";
 import Predictions from "./Components/Predictions/Predictions";
 import ProvenanceVisualization from "./Components/ProvenanceVisualization";
@@ -102,6 +101,7 @@ const App: FC<Props> = (_: Props) => {
         if (paperFigure === "auto-complete") datasetName = "out_hard_task_3";
         if (paperFigure === "paper-teaser") datasetName = "cluster";
         if (paperFigure === "prediction-interface") datasetName = "gapminder";
+        if (paperFigure === "study-example") datasetName = "out_hard_task_4";
 
         let datasetNum = getRandomNumber(datasets.length - 1) * 0 + 1;
         setDatasets(datasets);
