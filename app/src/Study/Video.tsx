@@ -18,16 +18,16 @@ const Video: FC<Props> = ({ actions }: Props) => {
   return (
     <>
     <div className={centerThings}>
-      <video width="750" height="500" controls >
+      <video width="800" controls >
         <source src="video/training-deck-with-vids_anon_small.m4v" type="video/mp4"/>
-      </video>
+     </video>
     </div>
-      <Container textAlign="center">
+      {/*<Container textAlign="center">
         <Message compact>
           We have included this video in supplementary material for review
           purposes.
         </Message>
-      </Container>
+      </Container>*/}
       <br />
       <div className={centerThings}>
         <Link

@@ -53,14 +53,12 @@ const Visualization: FC<Props> = ({ store }: Props) => {
 
   useEffect(() => {
     const current = ref.current;
-    if (current && (height === 0 || width === 0)) {
       if (current) {
         setDims({
           height: current.clientHeight,
           width: current.clientWidth,
         });
       }
-    }
   }, [height, width]);
 
   let adjustedHeight = height * 1;
