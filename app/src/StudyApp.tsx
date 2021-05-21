@@ -1,19 +1,32 @@
-import Axios from 'axios';
-import { Provider } from 'mobx-react';
-import React, { memo, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { style } from 'typestyle';
+import Axios from "axios";
+import { Provider } from "mobx-react";
+import React, {
+  memo,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import { style } from "typestyle";
 
-import Navbar from './Components/Navbar';
-import Predictions from './Components/Predictions/Predictions';
-import Visualization from './Components/Scatterplot/Visualization';
-import TaskComponent from './Components/Study/TaskComponents/TaskComponent';
-import { ActionContext, ConfigContext, DataContext, ProvenanceContext, TaskConfigContext } from './Contexts';
-import IntentStore from './Store/IntentStore';
-import { setupProvenance } from './Store/Provenance';
-import { StudyActions } from './Store/StudyStore/StudyProvenance';
-import { TaskDescription } from './Study/TaskList';
-import { Data, loadData } from './Utils/Dataset';
-import getPlotId from './Utils/PlotIDGen';
+import Navbar from "./Components/Navbar";
+import Predictions from "./Components/Predictions/Predictions";
+import Visualization from "./Components/Scatterplot/Visualization";
+import TaskComponent from "./Components/Study/TaskComponents/TaskComponent";
+import {
+  ActionContext,
+  ConfigContext,
+  DataContext,
+  ProvenanceContext,
+  TaskConfigContext,
+} from "./Contexts";
+import IntentStore from "./Store/IntentStore";
+import { setupProvenance } from "./Store/Provenance";
+import { StudyActions } from "./Store/StudyStore/StudyProvenance";
+import { TaskDescription } from "./Study/TaskList";
+import { Data, loadData } from "./Utils/Dataset";
+import getPlotId from "./Utils/PlotIDGen";
 
 type Props = {
   task: TaskDescription;
@@ -30,7 +43,7 @@ const StudyApp = ({ task: t, studyActions }: Props) => {
   const { dataset, plots, category } = task;
 
   useEffect(() => {
-    Axios.get(`/dataset/${dataset}`).then(d => {
+    Axios.get(`/dataset/${dataset}`).then((d) => {
       const data = loadData(d.data);
       setData(data);
       if (studyActions) studyActions.setLoading(false);
@@ -46,13 +59,13 @@ const StudyApp = ({ task: t, studyActions }: Props) => {
   useEffect(() => {
     if (!data) return;
     actions.setDataset({ key: dataset, name: data.name });
-    plots.forEach(plot => {
+    plots.forEach((plot) => {
       actions.addPlot({
         id: getPlotId(),
         x: plot.x,
         y: plot.y,
         selectedPoints: [],
-        brushes: {}
+        brushes: {},
       });
     });
     actions.toggleCategories(category.show, [category.column]);
@@ -80,7 +93,7 @@ const StudyApp = ({ task: t, studyActions }: Props) => {
               isTraining,
               hasCenter,
               hasCategory,
-              isCoding
+              isCoding,
             }}
           >
             <ProvenanceContext.Provider value={() => provenance.graph()}>
@@ -118,16 +131,18 @@ const layoutStyle = (isGuide: boolean) =>
       ? `
   "question vis pred"
   `
-      : `"question vis"`
+      : `"question vis"`,
   });
 
 const visStyle = style({
   gridArea: "vis",
   display: "grid",
+  width: "100%",
+  height: "100%",
   gridTemplateRows: "min-content auto",
   overflow: "hidden",
   gridTemplateAreas: `
   "nav"
   "vis"
-  `
+  `,
 });

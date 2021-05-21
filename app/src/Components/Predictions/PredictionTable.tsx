@@ -1,17 +1,18 @@
-import { selectAll } from 'd3';
-import { inject, observer } from 'mobx-react';
-import React, { FC, memo, useContext, useEffect, useState } from 'react';
-import { Button, Header, Label, Popup, Table } from 'semantic-ui-react';
+import { selectAll } from "d3";
+import { inject, observer } from "mobx-react";
+import React, { FC, memo, useContext, useState } from "react";
+import { Button, Header, Label, Popup, Table } from "semantic-ui-react";
 
-import { ActionContext, DataContext } from '../../Contexts';
-import IntentStore from '../../Store/IntentStore';
-import { hide$ } from '../Scatterplot/RawPlot';
-import { FADE_COMP_IN, FADE_OUT } from '../Styles/MarkStyle';
-import hoverable from '../UtilComponent/hoverable';
-import { topPred$ } from './AnnotationBox';
-import JaccardBar from './JaccardBar';
-import { getAllSelections, PredictionRowType } from './PredictionRowType';
-import ProbabilityBar from './ProbabilityBar';
+import { ActionContext, DataContext } from "../../Contexts";
+import IntentStore, { SortableColumns } from "../../Store/IntentStore";
+import { hide$ } from "../Scatterplot/RawPlot";
+import { FADE_COMP_IN, FADE_OUT } from "../Styles/MarkStyle";
+import hoverable from "../UtilComponent/hoverable";
+import { topPred$ } from "./AnnotationBox";
+import JaccardBar from "./JaccardBar";
+import { getAllSelections, PredictionRowType } from "./PredictionRowType";
+import ProbabilityBar from "./ProbabilityBar";
+import useDeepCompareEffect from "use-deep-compare-effect";
 
 type Props = {
   store?: IntentStore;
@@ -19,45 +20,33 @@ type Props = {
   isTask: boolean;
 };
 
-export type SortableColumns = "similarity" | "probability" | "rankAc";
-export type SortDirection = "ascending" | "descending" | "undefined";
-
 const PredictionTable: FC<Props> = ({
   store,
   predictions: basePredictions,
   isTask = false,
 }: Props) => {
   const { selectedPrediction, plots, multiBrushBehaviour } = store!;
-  const [predictionsInput, setPredictionsInput] = useState<PredictionRowType[]>(
-    []
-  );
+  const [predictions, setPredictions] = useState<PredictionRowType[]>([]);
   const { columnMap } = useContext(DataContext);
 
-  const [sortColumn, setSortColumn] = useState<SortableColumns>("similarity");
-  const [direction, setDirection] = useState<SortDirection>("descending");
+  const {
+    sortColumn = "similarity",
+    sortDirection: direction = "descending",
+  } = store!;
 
-  const predString = JSON.stringify(basePredictions);
+  useDeepCompareEffect(() => {
+    let pred = predictions.length > 0 ? predictions : basePredictions;
+    pred = JSON.parse(JSON.stringify(pred));
 
-  useEffect(() => {
-    if (predString === JSON.stringify(predictionsInput)) return;
-    let preds = JSON.parse(predString) as PredictionRowType[];
-    setPredictionsInput(preds);
-  }, [predString, predictionsInput]);
+    if (direction === "ascending") {
+      pred.sort((a, b) => a[sortColumn] - b[sortColumn]);
+    } else {
+      pred.sort((b, a) => a[sortColumn] - b[sortColumn]);
+    }
 
-  let predictions: PredictionRowType[] = [];
-
-  if (direction === "ascending")
-    predictions = predictionsInput.sort(
-      (a, b) => a[sortColumn] - b[sortColumn]
-    );
-  else
-    predictions = predictionsInput.sort(
-      (a, b) => b[sortColumn] - a[sortColumn]
-    );
-
-  useEffect(() => {
-    if (predictions.length > 0) topPred$.next(predictions[0]);
-  }, [predictions]);
+    setPredictions(pred);
+    if (pred.length > 0) topPred$.next(pred[0]);
+  }, [basePredictions, direction, sortColumn]);
 
   const barHeight = 30;
   const actions = useContext(ActionContext);
@@ -210,7 +199,7 @@ const PredictionTable: FC<Props> = ({
               <JaccardBar
                 height={barHeight}
                 score={rankAc !== undefined ? rankAc : 0}
-                label={rankAc !== undefined ? rankAc.toFixed(2) : '0'}
+                label={rankAc !== undefined ? rankAc.toFixed(2) : "0"}
               />
             </Table.Cell>
             <Table.Cell
@@ -284,21 +273,13 @@ const PredictionTable: FC<Props> = ({
     const isAlreadyCurrent = column === sortColumn;
 
     if (isAlreadyCurrent) {
-      setDirection((dir) => (dir === "ascending" ? "descending" : "ascending"));
-      // if (store) {
-      //   store.direction =
-      //     direction === "ascending" ? "descending" : "ascending";
-      // }
-
+      store?.setSortDirection(
+        direction === "ascending" ? "descending" : "ascending"
+      );
       return;
     }
-
-    // if (store) {
-    //   store.sortColumn = column;
-    //   store.direction = "descending";
-    // }
-    setSortColumn(column);
-    setDirection("descending");
+    store?.setSortColumn(column);
+    store?.setSortDirection("descending");
   }
 
   return (

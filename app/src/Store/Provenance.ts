@@ -1,10 +1,26 @@
-import { Extra, initProvenance, isStateNode, NodeID, Provenance, StateNode } from '@visdesignlab/provenance-lib-core';
-import axios from 'axios';
-import { json } from 'd3-fetch';
-
-import { extendRange, getAllSelections, PredictionRowType } from '../Components/Predictions/PredictionRowType';
-import { MultiBrushBehavior, Prediction, PredictionRequest, PredictionSet } from '../contract';
-import { ColumnMap, Dataset } from '../Utils/Dataset';
+import {
+  Extra,
+  initProvenance,
+  isStateNode,
+  NodeID,
+  Provenance,
+  StateNode,
+} from "@visdesignlab/provenance-lib-core";
+import axios from "axios";
+import { json } from "d3-fetch";
+import { toJS } from "mobx";
+import {
+  extendRange,
+  getAllSelections,
+  PredictionRowType,
+} from "../Components/Predictions/PredictionRowType";
+import {
+  MultiBrushBehavior,
+  Prediction,
+  PredictionRequest,
+  PredictionSet,
+} from "../contract";
+import { ColumnMap, Dataset } from "../Utils/Dataset";
 import {
   BrushSize,
   BrushType,
@@ -15,8 +31,8 @@ import {
   MultiBrushBehaviour,
   Plot,
   Plots,
-} from './IntentState';
-import IntentStore from './IntentStore';
+} from "./IntentState";
+import IntentStore from "./IntentStore";
 import {
   addDummyInteraction,
   addDummyInteractionTrigger,
@@ -28,8 +44,8 @@ import {
   removeBrushInteraction,
   removePlotInteraction,
   removePointSelectionInteraction,
-} from './ProvenanceHelpers';
-import { graphRTD } from './StudyStore/FirebaseHandler';
+} from "./ProvenanceHelpers";
+import { graphRTD } from "./StudyStore/FirebaseHandler";
 
 export type IntentEvents =
   | "Load Dataset"
@@ -96,6 +112,13 @@ export function setupProvenance(
 
         console.log(dataJson);
         provenance.importProvenanceGraph(JSON.stringify(dataJson));
+
+        window.onmessage = function(e: any) {
+          console.log("message recieved!");
+          if (provenance.graph().nodes[e.data]) {
+            provenance.goToNode(e.data);
+          }
+        };
       });
   }
 
@@ -103,12 +126,15 @@ export function setupProvenance(
     if (
       paperFigure === "auto-complete" ||
       paperFigure === "paper-teaser" ||
-      paperFigure === "prediction-interface"
+      paperFigure === "prediction-interface" ||
+      paperFigure === "study-example" ||
+      paperFigure === "iris"
     ) {
-      store.showCategories = false;
+      console.log(toJS(store));
+      store.resetStore();
       json(`/paperFigs/${paperFigure}.json`).then(function(d) {
-        console.log(d);
         provenance.importProvenanceGraph(JSON.stringify(d));
+        console.log(provenance.graph());
       });
     }
   }
@@ -121,13 +147,11 @@ export function setupProvenance(
 
   setupObservers(provenance, store);
 
-  if (graphPath !== undefined) {
+  if (graphPath) {
     importProvenance();
   }
 
-  console.log(paperFigure);
-
-  if (paperFigure !== undefined) {
+  if (paperFigure) {
     importPaperURL();
   }
 

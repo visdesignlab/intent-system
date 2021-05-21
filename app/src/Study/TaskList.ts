@@ -1,5 +1,5 @@
-import { AppConfig } from '../AppConfig';
-import { getTaskFromString } from './TaskString';
+import { AppConfig } from "../AppConfig";
+import { getTaskFromString } from "./TaskString";
 
 export type TaskType = "manual" | "supported";
 export type TaskTypeDescription = "User Driven" | "Computer Supported";
@@ -64,16 +64,21 @@ export function getAllTasks(config: AppConfig): TaskConfiguration {
   // Filter out all category tasks
   let tl = taskList.filter((d) => d.type !== "category");
   tl = tl.filter((d) => {
-    if (
-      ["out_easy_task_5", "out_med_task_5", "out_hard_task_5"].includes(
-        d.dataset
-      )
-    )
-      return false;
+    if (["out_med_task_5", "out_hard_task_5"].includes(d.dataset)) return false;
     return true;
   });
+
+  // tl.forEach((d) => {
+  //   if (d.dataset === "out_easy_task_5") d.training = "yes";
+  // });
+
+  // Keep only outliers
+  // tl = tl.filter((d) => d.type === "outlier");
+
   // Filter out training medium
   tl = tl.filter((d) => !(d.training === "yes" && d.difficulty === "medium"));
+
+  console.table(tl, ["id", "type", "training", "difficulty", "manual"]);
 
   if (task !== "none") {
     tl = tl.filter((d) => d.type === task);
@@ -81,10 +86,6 @@ export function getAllTasks(config: AppConfig): TaskConfiguration {
 
   let trainingTasks = tl.filter((d) => d.training === "yes");
   let tasks = tl.filter((d) => d.training === "no");
-
-  // if (config.taskId) {
-  //   tasks = tasks.filter(d => d.id === config.taskId);
-  // }
 
   tasks = assignSupportedOrNot(tasks);
 
@@ -101,8 +102,20 @@ export function getAllTasks(config: AppConfig): TaskConfiguration {
       "Supported tasks":
         tasks.length - tasks.filter((d) => d.manual === "manual").length,
     });
-    console.table(trainingTasks.sort(), ["id", "type", "difficulty", "manual"]);
-    console.table(tasks.sort(), ["id", "type", "difficulty", "manual"]);
+    console.table(trainingTasks.sort(), [
+      "id",
+      "type",
+      "training",
+      "difficulty",
+      "manual",
+    ]);
+    console.table(tasks.sort(), [
+      "id",
+      "type",
+      "training",
+      "difficulty",
+      "manual",
+    ]);
   }
 
   if (isCoding && !config.taskId) {

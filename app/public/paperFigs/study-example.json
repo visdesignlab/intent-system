@@ -1,0 +1,300 @@
+{
+  "nodes": {
+    "2d95d392-62c7-46bc-9588-6969f0d716d6": {
+      "id": "2d95d392-62c7-46bc-9588-6969f0d716d6",
+      "label": "Root",
+      "metadata": {
+        "createdOn": 1612890100188,
+        "type": "Root"
+      },
+      "children": ["94081330-a2e8-47bd-bea8-ebb0b664f7ac"],
+      "state": {
+        "dataset": {
+          "key": "",
+          "name": ""
+        },
+        "multiBrushBehaviour": "Union",
+        "showCategories": true,
+        "categoryColumn": "",
+        "plots": [],
+        "interactionHistory": [],
+        "brushType": "Freeform",
+        "lockedPrediction": null,
+        "brushSize": "50",
+        "turnedPrediction": null
+      }
+    },
+    "94081330-a2e8-47bd-bea8-ebb0b664f7ac": {
+      "id": "94081330-a2e8-47bd-bea8-ebb0b664f7ac",
+      "label": "Load Outlier (Linear) Hard 2",
+      "metadata": {
+        "createdOn": 1612890100191,
+        "type": "Load Dataset"
+      },
+      "artifacts": {
+        "diffs": [
+          {
+            "kind": "E",
+            "path": ["dataset", "key"],
+            "lhs": "",
+            "rhs": "out_hard_task_4"
+          },
+          {
+            "kind": "E",
+            "path": ["dataset", "name"],
+            "lhs": "",
+            "rhs": "Outlier (Linear) Hard 2"
+          },
+          {
+            "kind": "E",
+            "path": ["showCategories"],
+            "lhs": true,
+            "rhs": false
+          }
+        ],
+        "extra": []
+      },
+      "parent": "2d95d392-62c7-46bc-9588-6969f0d716d6",
+      "children": ["47cd1c24-5654-4d49-ab8d-4c95bbe32a5c"],
+      "state": {
+        "dataset": {
+          "key": "out_hard_task_4",
+          "name": "Outlier (Linear) Hard 2"
+        },
+        "multiBrushBehaviour": "Union",
+        "showCategories": false,
+        "categoryColumn": "",
+        "plots": [],
+        "interactionHistory": [],
+        "brushType": "Freeform",
+        "lockedPrediction": null,
+        "brushSize": "50",
+        "turnedPrediction": null
+      }
+    },
+    "47cd1c24-5654-4d49-ab8d-4c95bbe32a5c": {
+      "id": "47cd1c24-5654-4d49-ab8d-4c95bbe32a5c",
+      "label": "Add plot: X - Y",
+      "metadata": {
+        "createdOn": 1612890100428,
+        "type": "Add Plot"
+      },
+      "artifacts": {
+        "diffs": [
+          {
+            "kind": "A",
+            "path": ["plots"],
+            "index": 0,
+            "item": {
+              "kind": "N",
+              "rhs": {
+                "id": "plot1612890100428",
+                "x": "X",
+                "y": "Y",
+                "selectedPoints": [],
+                "brushes": {}
+              }
+            }
+          },
+          {
+            "kind": "A",
+            "path": ["interactionHistory"],
+            "index": 0,
+            "item": {
+              "kind": "N",
+              "rhs": {
+                "visualizationType": "Scatterplot",
+                "interactionType": {
+                  "kind": "ADD",
+                  "plot": {
+                    "id": "plot1612890100428",
+                    "x": "X",
+                    "y": "Y",
+                    "color": ""
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "extra": [
+          {
+            "time": 1612890101217,
+            "e": {
+              "annotation": "",
+              "predictionSet": {
+                "dimensions": [],
+                "predictions": [],
+                "selectedIds": [],
+                "time": 0.005434989929199219
+              }
+            }
+          }
+        ]
+      },
+      "parent": "94081330-a2e8-47bd-bea8-ebb0b664f7ac",
+      "children": ["f612e1d9-c94a-4c51-bead-d996d54e7007"],
+      "state": {
+        "dataset": {
+          "key": "out_hard_task_4",
+          "name": "Outlier (Linear) Hard 2"
+        },
+        "multiBrushBehaviour": "Union",
+        "showCategories": false,
+        "categoryColumn": "",
+        "plots": [
+          {
+            "id": "plot1612890100428",
+            "x": "X",
+            "y": "Y",
+            "selectedPoints": [],
+            "brushes": {}
+          }
+        ],
+        "interactionHistory": [
+          {
+            "visualizationType": "Scatterplot",
+            "interactionType": {
+              "kind": "ADD",
+              "plot": {
+                "id": "plot1612890100428",
+                "x": "X",
+                "y": "Y",
+                "color": ""
+              }
+            }
+          }
+        ],
+        "brushType": "Freeform",
+        "lockedPrediction": null,
+        "brushSize": "50",
+        "turnedPrediction": null
+      }
+    },
+    "f612e1d9-c94a-4c51-bead-d996d54e7007": {
+      "id": "f612e1d9-c94a-4c51-bead-d996d54e7007",
+      "label": "P. Brush: 4",
+      "metadata": {
+        "createdOn": 1612890106861,
+        "type": "Point Selection"
+      },
+      "artifacts": {
+        "diffs": [
+          {
+            "kind": "A",
+            "path": ["plots", 0, "selectedPoints"],
+            "index": 3,
+            "item": {
+              "kind": "N",
+              "rhs": 205
+            }
+          },
+          {
+            "kind": "A",
+            "path": ["plots", 0, "selectedPoints"],
+            "index": 2,
+            "item": {
+              "kind": "N",
+              "rhs": 203
+            }
+          },
+          {
+            "kind": "A",
+            "path": ["plots", 0, "selectedPoints"],
+            "index": 1,
+            "item": {
+              "kind": "N",
+              "rhs": 208
+            }
+          },
+          {
+            "kind": "A",
+            "path": ["plots", 0, "selectedPoints"],
+            "index": 0,
+            "item": {
+              "kind": "N",
+              "rhs": 206
+            }
+          },
+          {
+            "kind": "A",
+            "path": ["interactionHistory"],
+            "index": 1,
+            "item": {
+              "kind": "N",
+              "rhs": {
+                "visualizationType": "Scatterplot",
+                "interactionType": {
+                  "kind": "selection",
+                  "plot": {
+                    "id": "plot1612890100428",
+                    "x": "X",
+                    "y": "Y",
+                    "color": ""
+                  },
+                  "dimensions": ["X", "Y"],
+                  "dataIds": [206, 208, 203, 205]
+                }
+              }
+            }
+          }
+        ],
+        "extra": []
+      },
+      "parent": "47cd1c24-5654-4d49-ab8d-4c95bbe32a5c",
+      "children": [],
+      "state": {
+        "dataset": {
+          "key": "out_hard_task_4",
+          "name": "Outlier (Linear) Hard 2"
+        },
+        "multiBrushBehaviour": "Union",
+        "showCategories": false,
+        "categoryColumn": "",
+        "plots": [
+          {
+            "id": "plot1612890100428",
+            "x": "X",
+            "y": "Y",
+            "selectedPoints": [206, 208, 203, 205],
+            "brushes": {}
+          }
+        ],
+        "interactionHistory": [
+          {
+            "visualizationType": "Scatterplot",
+            "interactionType": {
+              "kind": "ADD",
+              "plot": {
+                "id": "plot1612890100428",
+                "x": "X",
+                "y": "Y",
+                "color": ""
+              }
+            }
+          },
+          {
+            "visualizationType": "Scatterplot",
+            "interactionType": {
+              "kind": "selection",
+              "plot": {
+                "id": "plot1612890100428",
+                "x": "X",
+                "y": "Y",
+                "color": ""
+              },
+              "dimensions": ["X", "Y"],
+              "dataIds": [206, 208, 203, 205]
+            }
+          }
+        ],
+        "brushType": "Freeform",
+        "lockedPrediction": null,
+        "brushSize": "50",
+        "turnedPrediction": null
+      }
+    }
+  },
+  "root": "2d95d392-62c7-46bc-9588-6969f0d716d6",
+  "current": "f612e1d9-c94a-4c51-bead-d996d54e7007"
+}

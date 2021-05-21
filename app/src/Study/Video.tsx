@@ -1,41 +1,33 @@
-import Vimeo from '@u-wave/react-vimeo';
-import React, { FC, useContext, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Button, Container, Message } from 'semantic-ui-react';
-import { style } from 'typestyle';
+import Vimeo from "@u-wave/react-vimeo";
+import React, { FC, useContext, useState } from "react";
+import { Link } from "react-router-dom";
+import { Button, Container, Message } from "semantic-ui-react";
+import { style } from "typestyle";
 
-import { ConfigContext } from '../Contexts';
-import { StudyActions } from '../Store/StudyStore/StudyProvenance';
+import { ConfigContext } from "../Contexts";
+import { StudyActions } from "../Store/StudyStore/StudyProvenance";
 
 type Props = {
   actions: StudyActions;
 };
 
 const Video: FC<Props> = ({ actions }: Props) => {
-  const [enableButton, setEnableButton] = useState(false);
+  const [enableButton, setEnableButton] = useState(true);
   const { debugMode } = useContext(ConfigContext);
 
   return (
     <>
-      <div className={centerThings}>
-        <Vimeo
-          video="401985009"
-          width="800"
-          autoplay={false}
-          showTitle={false}
-          showByline={false}
-          showPortrait={false}
-          onEnd={() => {
-            setEnableButton(true);
-          }}
-        />
-      </div>
-      <Container textAlign="center">
+    <div className={centerThings}>
+      <video width="800" controls >
+        <source src="video/training-deck-with-vids_anon_small.m4v" type="video/mp4"/>
+     </video>
+    </div>
+      {/*<Container textAlign="center">
         <Message compact>
-          Please watch this video as part of the study. You will be able to
-          proceed once you have completed watching the video.
+          We have included this video in supplementary material for review
+          purposes.
         </Message>
-      </Container>
+      </Container>*/}
       <br />
       <div className={centerThings}>
         <Link

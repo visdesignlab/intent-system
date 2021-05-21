@@ -1,16 +1,25 @@
-import { scaleLinear } from 'd3';
-import { inject, observer } from 'mobx-react';
-import React, { FC, memo, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { style } from 'typestyle';
+import { scaleLinear } from "d3";
+import { inject, observer } from "mobx-react";
+import React, {
+  FC,
+  memo,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useLayoutEffect,
+} from "react";
+import { style } from "typestyle";
 
-import { ConfigContext, DataContext } from '../../Contexts';
-import { Plot } from '../../Store/IntentState';
-import IntentStore from '../../Store/IntentStore';
-import { Data } from '../../Utils/Dataset';
-import translate from '../../Utils/Translate';
-import { UserSelections } from '../Predictions/PredictionRowType';
-import RawPlot from './RawPlot';
-import ScatterplotControls from './ScatterplotControls';
+import { ConfigContext, DataContext } from "../../Contexts";
+import { Plot } from "../../Store/IntentState";
+import IntentStore from "../../Store/IntentStore";
+import { Data } from "../../Utils/Dataset";
+import translate from "../../Utils/Translate";
+import { UserSelections } from "../Predictions/PredictionRowType";
+import RawPlot from "./RawPlot";
+import ScatterplotControls from "./ScatterplotControls";
 
 export interface Props {
   store?: IntentStore;
@@ -33,16 +42,21 @@ const Scatterplot: FC<Props> = ({
   const { categoryColumn, plots } = store!;
   const config = useContext(ConfigContext);
 
-  const [dim, setDim] = useState({ height: 0, width: 0 });
-  const { height: dh, width: dw } = dim;
+  const [dim, setDim] = useState({ height: height, width: width });
+  // const { height: dh, width: dw } = dim;
 
-  useEffect(() => {
-    const { current } = svgRef;
-    if (current && dh === 0 && dw === 0) {
-      const size = current.getBoundingClientRect();
-      setDim({ height: size.height, width: size.width });
-    }
-  }, [dh, dw]);
+  const temp = Math.random();
+
+  // useLayoutEffect(() => {
+  //   const { current } = svgRef;
+  //   if (current && temp) {
+  //     const size = current.getBoundingClientRect();
+  //     setDim((d) => {
+  //       if (d.height === size.height && d.width === size.width) return d;
+  //       return { height: size.height, width: size.width };
+  //     });
+  //   }
+  // }, [temp]);
 
   let reducePercentage = 0.85;
 

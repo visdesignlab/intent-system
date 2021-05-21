@@ -1,9 +1,9 @@
-import React, { FC, memo, useEffect, useRef, useState } from 'react';
+import React, { FC, memo, useEffect, useRef, useState } from "react";
 
-import getBrushId from '../../../Utils/BrushIDGen';
-import { Brush, BrushAffectType, BrushCollection } from '../Types/Brush';
-import { BrushableRegion } from '../Types/BrushableRegion';
-import SingleBrushComponent, { ResizeDirection } from './SingleBrushComponent';
+import getBrushId from "../../../Utils/BrushIDGen";
+import { Brush, BrushAffectType, BrushCollection } from "../Types/Brush";
+import { BrushableRegion } from "../Types/BrushableRegion";
+import SingleBrushComponent, { ResizeDirection } from "./SingleBrushComponent";
 
 export type BrushUpdateFunction = (
   brushes: BrushCollection,
@@ -31,13 +31,13 @@ const BrushComponent: FC<Props> = ({
   onBrushUpdate,
   extentPadding = 0,
   initialBrushes = {},
-  switchOff = true
+  switchOff = true,
 }: Props) => {
   const { left, right, top, bottom } = extents;
   const [height, width] = [Math.abs(bottom - top), Math.abs(left - right)];
   const [adjustedHeight, adjustedWidth] = [
     Math.abs(bottom + extentPadding - (top - extentPadding)),
-    Math.abs(left - extentPadding - (right + extentPadding))
+    Math.abs(left - extentPadding - (right + extentPadding)),
   ];
   const ibString = JSON.stringify(initialBrushes);
 
@@ -51,8 +51,9 @@ const BrushComponent: FC<Props> = ({
   const [activeBrushId, setActiveBrushId] = useState<string | null>(null);
   const [
     resizeDirection,
-    setResizeDirection
+    setResizeDirection,
   ] = useState<ResizeDirection | null>(null);
+
   // Effects
   useEffect(() => {
     const initalBrushes: BrushCollection = JSON.parse(ibString);
@@ -80,8 +81,8 @@ const BrushComponent: FC<Props> = ({
         x1: (event.clientX - currentTarget.left - extentPadding) / width,
         x2: (event.clientX - currentTarget.left - extentPadding) / width,
         y1: (event.clientY - currentTarget.top - extentPadding) / height,
-        y2: (event.clientY - currentTarget.top - extentPadding) / height
-      }
+        y2: (event.clientY - currentTarget.top - extentPadding) / height,
+      },
     };
     brushes[brush.id] = brush;
     setMouseDown(true);
@@ -142,7 +143,7 @@ const BrushComponent: FC<Props> = ({
 
       onBrushUpdate(brushes, currentBrush, "Add", {
         x: event.clientX - left,
-        y: event.clientY - top
+        y: event.clientY - top,
       });
 
       if (JSON.stringify(brushes) !== JSON.stringify(baseBrushes))
@@ -277,7 +278,7 @@ const BrushComponent: FC<Props> = ({
     />
   );
 
-  const brs = Object.values(brushes).map(brush => {
+  const brs = Object.values(brushes).map((brush) => {
     let { x1, y1, x2, y2 } = correctBrushExtents(brush.extents);
     [x1, y1, x2, y2] = [x1 * width, y1 * height, x2 * width, y2 * height];
     return (

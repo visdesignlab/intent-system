@@ -1,10 +1,10 @@
-import { select } from 'd3';
-import React, { memo, useEffect, useRef, useState } from 'react';
-import styled from 'styled-components';
+import { select } from "d3";
+import React, { memo, useEffect, useRef, useState } from "react";
+import styled from "styled-components";
 
-import translate from '../../../Utils/Translate';
-import { Brush, BrushCollection } from '../Types/Brush';
-import { BrushUpdateFunction } from './BrushComponent';
+import translate from "../../../Utils/Translate";
+import { Brush, BrushCollection } from "../Types/Brush";
+import { BrushUpdateFunction } from "./BrushComponent";
 
 interface Props {
   x: number;
@@ -46,13 +46,13 @@ function SingleBrushComponent({
   brushId,
   onResizeStart,
   removeBrush,
-  extentPadding
+  extentPadding,
 }: Props) {
   // States
   const [mouseDown, setMouseDown] = useState(false);
   const [position, setPosition] = useState<{ x: number; y: number }>({
     x: initX,
-    y: initY
+    y: initY,
   });
   const [diff, setDiff] = useState<{
     diffX: number;
@@ -75,8 +75,11 @@ function SingleBrushComponent({
   });
 
   useEffect(() => {
-    if (JSON.stringify(position) !== JSON.stringify({ x: initX, y: initY }))
-      setPosition({ x: initX, y: initY });
+    const newPos = { x: initX, y: initY };
+    setPosition((position) => {
+      if (JSON.stringify(position) !== JSON.stringify(newPos)) return newPos;
+      return position;
+    });
   }, [initX, initY]);
 
   useEffect(() => {
@@ -108,7 +111,7 @@ function SingleBrushComponent({
     const { left, top } = target;
     let [newX, newY] = [
       event.clientX - left - diffX,
-      event.clientY - top - diffY
+      event.clientY - top - diffY,
     ];
 
     if (
@@ -135,7 +138,7 @@ function SingleBrushComponent({
       x / extentWidth,
       (x + width) / extentWidth,
       y / extentHeight,
-      (y + height) / extentHeight
+      (y + height) / extentHeight,
     ];
 
     const brs: Brush = {
@@ -144,8 +147,8 @@ function SingleBrushComponent({
         x1,
         x2,
         y1,
-        y2
-      }
+        y2,
+      },
     };
     brushesCopy[brushId] = brs;
 
@@ -176,11 +179,11 @@ function SingleBrushComponent({
         height={height}
         width={width}
         onMouseDown={handleMouseDown}
-        onMouseEnter={_ => {
+        onMouseEnter={(_) => {
           clearInterval(timeoutClear);
           setShowCloseIcon(true);
         }}
-        onMouseLeave={_ => {
+        onMouseLeave={(_) => {
           const tout = setTimeout(() => setShowCloseIcon(false), 900);
           setTimeoutClear(tout);
         }}

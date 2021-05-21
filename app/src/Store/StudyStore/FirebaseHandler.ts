@@ -1,7 +1,6 @@
-import { ProvenanceGraph } from '@visdesignlab/provenance-lib-core';
-
-import { initializeFirebase } from './Firebase';
-import { StudyState } from './StudyState';
+import { ProvenanceGraph } from "@visdesignlab/provenance-lib-core";
+import { initializeFirebase } from "./Firebase";
+import { StudyState } from "./StudyState";
 
 export const { firestore: db, rtd, graphRTD } = initializeFirebase();
 
@@ -48,6 +47,7 @@ export default function logToFirebase() {
 
   return function({ participantId, studyId, sessionId, graph }: LoggingParams) {
     const path = `${participantId}/${studyId}/${sessionId}`;
+    console.log(path);
     const nodes = Object.keys(graph.nodes);
     const nodeToAdd: string[] = [];
     for (let node of nodes) {

@@ -1,6 +1,6 @@
 from sklearn.cluster import DBSCAN
 from sklearn import preprocessing
-
+import sys
 import pandas as pd
 
 from ..intent import Intent
@@ -34,6 +34,8 @@ class DBSCANCluster(Intent):
                 columns=[self.to_string() + ":" + v],
                 index=df.index, dtype=int),
                 values), axis='columns')
+        result = result.loc[:, ~result.columns.str.endswith("-1")]
+
         return result
 
     def info(self) -> Optional[Dict[str, Any]]:

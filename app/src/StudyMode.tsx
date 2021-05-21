@@ -1,13 +1,16 @@
-import { ProvenanceGraph } from '@visdesignlab/provenance-lib-core';
-import { Provider } from 'mobx-react';
-import React, { FC, useState } from 'react';
+import { ProvenanceGraph } from "@visdesignlab/provenance-lib-core";
+import { Provider } from "mobx-react";
+import React, { FC, useState } from "react";
 
-import { useConfig } from '.';
-import { ConfigContext } from './Contexts';
-import { setupStudy, StudyProvenanceControl } from './Store/StudyStore/StudyProvenance';
-import StudyStore from './Store/StudyStore/StudyStore';
-import StudyParent from './Study/StudyParent';
-import { getAllTasks } from './Study/TaskList';
+import { useConfig } from ".";
+import { ConfigContext } from "./Contexts";
+import {
+  setupStudy,
+  StudyProvenanceControl,
+} from "./Store/StudyStore/StudyProvenance";
+import StudyStore from "./Store/StudyStore/StudyStore";
+import StudyParent from "./Study/StudyParent";
+import { getAllTasks } from "./Study/TaskList";
 
 type Props = {};
 
