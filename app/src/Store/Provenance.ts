@@ -127,7 +127,8 @@ export function setupProvenance(
       paperFigure === "auto-complete" ||
       paperFigure === "paper-teaser" ||
       paperFigure === "prediction-interface" ||
-      paperFigure === "study-example"
+      paperFigure === "study-example" ||
+      paperFigure === "iris"
     ) {
       console.log(toJS(store));
       store.resetStore();

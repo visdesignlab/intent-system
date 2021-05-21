@@ -102,6 +102,7 @@ const App: FC<Props> = (_: Props) => {
         if (paperFigure === "paper-teaser") datasetName = "cluster";
         if (paperFigure === "prediction-interface") datasetName = "gapminder";
         if (paperFigure === "study-example") datasetName = "out_hard_task_4";
+        if (paperFigure === "iris") datasetName = "iris";
 
         let datasetNum = getRandomNumber(datasets.length - 1) * 0 + 1;
         setDatasets(datasets);
@@ -120,8 +121,8 @@ const App: FC<Props> = (_: Props) => {
   }, [datasetString, actions, url]);
 
   (window as any).printProv = () => {
-    const node = Object.values(provenance.graph().nodes);
-    console.table(node);
+    const node = provenance.graph();
+    console.log(node);
   };
 
   return datasets.length > 0 && data ? (
